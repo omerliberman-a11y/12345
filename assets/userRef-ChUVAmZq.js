@@ -1,0 +1,1 @@
+import{X as e,al as l}from"./index-DvkmOkGJ.js";const o=128,r=80;function u(n){if(n===null||typeof n!="object"||Array.isArray(n))return null;const t=n,i=e(t.id,o),s=l(t.name,r);return i===null||s===null?null:{id:i,name:s}}export{u as s};
