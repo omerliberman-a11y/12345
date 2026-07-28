@@ -1,0 +1,1 @@
+import{_ as e,ao as o}from"./index-BjA-uepe.js";const r=128,l=80;function u(n){if(n===null||typeof n!="object"||Array.isArray(n))return null;const t=n,i=e(t.id,r),s=o(t.name,l);return i===null||s===null?null:{id:i,name:s}}export{u as s};
