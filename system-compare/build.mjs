@@ -159,6 +159,20 @@ async function main() {
   ctx.routes = routes;
   ctx.routeByPath = new Map(routes.map((r) => [r.path, r]));
 
+  // The full planned URL space (independent of which page modules exist yet). `scripts/check.mjs --planned`
+  // accepts links to these, so a partial build (--only=…) can still be link-checked.
+  const planned = new Set([
+    '/', '/categories/', '/software/', '/comparisons/', '/compare/', '/shortlist/', '/search/', '/faq/', '/tools/cost/', '/ai/', '/guides/',
+    '/research-updates/', '/countries/', '/partners/', '/partners/apply/', '/about/', '/methodology/', '/editorial-policy/', '/how-we-make-money/',
+    '/corrections/', '/contact/', '/privacy/', '/terms/', '/accessibility/', '/feed.xml', '/atom.xml', '/llms.txt', '/llms-full.txt', '/sitemap.xml', '/404.html',
+    ...ctx.categories.map((c) => ctx.url.category(c.id)),
+    ...ctx.vendors.flatMap((v) => [ctx.url.software(v.id), ctx.url.alternatives(v.id)]),
+    ...ctx.comparisons.map((c) => ctx.url.vs(c.id)),
+    ...ctx.guides.map((g) => ctx.url.guide(g.id)),
+    ...routes.map((r) => r.path),
+  ]);
+  await writeFile(path.join(OUT, '.planned-routes.json'), JSON.stringify([...planned]));
+
   let pageCount = 0;
   for (const r of routes) {
     if (ONLY && !ONLY.includes(r.module)) continue;

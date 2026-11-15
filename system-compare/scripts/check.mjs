@@ -12,6 +12,14 @@ const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const argv = process.argv.slice(2);
 const dir = path.resolve(ROOT, argv.find((a) => !a.startsWith('--')) || 'dist');
 const asJson = argv.includes('--json');
+const usePlanned = argv.includes('--planned');
+const only = (argv.find((a) => a.startsWith('--only=')) || '').split('=')[1]; // comma-separated path prefixes to report on
+let planned = new Set();
+if (usePlanned && existsSync(path.join(dir, '.planned-routes.json'))) planned = new Set(JSON.parse(await readFile(path.join(dir, '.planned-routes.json'), 'utf8')));
+const sitePath = (file) => {
+  let p = '/' + path.relative(dir, file).split(path.sep).join('/');
+  return p.replace(/index\.html$/, '');
+};
 const max = Number((argv.find((a) => a.startsWith('--max=')) || '--max=40').split('=')[1]);
 
 async function walk(d) {
@@ -29,8 +37,9 @@ const htmlFiles = files.filter((f) => f.endsWith('.html'));
 const fileSet = new Set(files);
 const errors = [];
 const warnings = [];
-const err = (file, msg) => errors.push({ file: path.relative(dir, file), msg });
-const warn = (file, msg) => warnings.push({ file: path.relative(dir, file), msg });
+const inScope = (file) => !only || only.split(',').some((pre) => sitePath(file).startsWith(pre));
+const err = (file, msg) => inScope(file) && errors.push({ file: path.relative(dir, file), msg });
+const warn = (file, msg) => inScope(file) && warnings.push({ file: path.relative(dir, file), msg });
 
 const idsByFile = new Map();
 const pages = [];
@@ -142,6 +151,9 @@ for (const pg of pages) {
       if (clean.endsWith('/') || (existsSync(base) && !fileSet.has(base))) target = path.join(base, 'index.html');
     }
     if (!fileSet.has(target)) {
+      const sp = sitePath(target);
+      if (sp.startsWith('/go/')) continue; // server-side redirect service, not part of the static build
+      if (planned.has(sp)) continue;
       err(file, `broken ${tag} link: ${url}`);
       continue;
     }

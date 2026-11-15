@@ -74,7 +74,7 @@ export function scoreHelp(ctx, { align } = {}) {
   return html`<details class="${cx('pop', align === 'right' && 'pop--right')}" data-pop>
     <summary aria-label="How the score works"><i class="info" aria-hidden="true">i</i></summary>
     <div class="pop__panel">
-      <h4>Documented-fit score</h4>
+      <p class="pop__title">Documented-fit score</p>
       <p>How much of this category’s checklist is documented in official sources, from 0 to 100. It is research, not a customer rating or a hands-on test.</p>
       <p>Unverified items score zero. No score is shown until 80% of the checklist weight has been checked — that is what “Score pending” means.</p>
       <p><a href="/methodology/">How we score</a></p>

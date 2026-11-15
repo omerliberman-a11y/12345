@@ -1,0 +1,15 @@
+{
+  "name": "System Compare US",
+  "short_name": "System Compare",
+  "description": "Compare business software: capabilities, prices and limits from dated official sources.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#4a3aff",
+  "icons": [
+    { "src": "brand/icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "brand/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "brand/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
