@@ -11,11 +11,11 @@ be revalidated, because its URL stays the same when its content changes.
 | Paths | Why | `Cache-Control` |
 |---|---|---|
 | `/assets/css/*`, `/assets/js/*` | stylesheets and scripts, a content hash in every name (`site.88246ff417.css`) | `public, max-age=31536000, immutable` |
-| `/assets/fonts/*` | web fonts, content-hashed (`inter-latin.3100e775e8.woff2`; plus the font licence text) | `public, max-age=31536000, immutable` |
+| `/assets/fonts/*` | web fonts only, content-hashed (`inter-latin.3100e775e8.woff2`) | `public, max-age=31536000, immutable` |
 | `/assets/articles/sized/*` | the responsive hero images the pages load, content-hashed | `public, max-age=31536000, immutable` |
 | `/data/*.js` | loaded as `/data/<name>.js?v=<version>`; the version is a hash of every generated data file, so any change to any of them gives every data URL a new query string | `public, max-age=31536000, immutable` **if** the CDN keeps the query string in its cache key or is purged on each deploy (Netlify, Cloudflare Pages and Vercel purge on deploy); otherwise `no-cache` |
 | HTML: every `/…/` page and `/404.html`; `/sitemap*.xml`, `/robots.txt`, `/llms.txt`, `/llms-full.txt`, `/feed.xml`, `/atom.xml`, `/site.webmanifest` | fixed URLs that name the current hashed assets and the data version | `no-cache` (revalidate every time; send `ETag` or `Last-Modified` so a check costs a 304) |
-| Images with fixed names: `/assets/logos/*`, `/assets/research-cards/*`, `/assets/social-preview.png`, `/assets/articles/*.webp\|png` (not `sized/`), `/assets/articles/social/*`, `/brand/*`, `/favicon.svg` | the catalog, `og:image` tags, social-network caches, old shares and browser icon lookups use these exact names, so they are never renamed | `no-cache`, or a short `public, max-age=86400` |
+| Fixed names: `/assets/licenses/*` (the font licence text), images `/assets/logos/*`, `/assets/research-cards/*`, `/assets/social-preview.png`, `/assets/articles/*.webp\|png` (not `sized/`), `/assets/articles/social/*`, `/brand/*`, `/favicon.svg` | the catalog, `og:image` tags, social-network caches, old shares and browser icon lookups use these exact names, so they are never renamed | `no-cache`, or a short `public, max-age=86400` |
 | `/partners-ui.js` | the partner application script kept from the live site, unhashed | `no-cache` |
 
 Why the fixed-name images are not immutable: they can change under the same name. The logos were re-encoded in place
