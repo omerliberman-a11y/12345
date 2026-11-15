@@ -36,6 +36,8 @@
     history.replaceState(null, '', location.pathname + (s ? '?' + s : '') + location.hash);
   }
   function matches(tr) {
+    // products already in the shortlist stay visible while you filter for challengers
+    if (tr.classList.contains('is-picked')) return true;
     if (state.f.scored && Number(tr.getAttribute('data-score')) < 0) return false;
     if (state.f.priced && tr.getAttribute('data-price') === '') return false;
     if (state.f.ai) { var ai = tr.getAttribute('data-ai'); if (ai !== 'native' && ai !== 'agent') return false; }

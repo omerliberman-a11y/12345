@@ -63,6 +63,24 @@ function render(ctx, category) {
   const partner = ctx.site.categoryPartners[category.id];
   const related = group.categories.filter((c) => c.id !== category.id);
 
+  // ---------------------------------------------------------------- "at a glance": picks by situation, from data only
+  const link = (v) => html`<a href="${ctx.url.software(v.id)}">${v.name}</a>`;
+  const topScore = scoredList[0] ? ctx.fit(category.id, scoredList[0].id).score : null;
+  const glance = [
+    scoredList.length && {
+      label: 'Highest documented fit',
+      value: s.recommended.length > 1 ? `${s.recommended.length} products tie` : link(scoredList[0]),
+      sub: s.recommended.length > 1 ? `at ${topScore}/100: ${s.recommended.slice(0, 3).map((v) => v.name).join(', ')}${s.recommended.length > 3 ? '…' : ''}` : `${topScore}/100`,
+    },
+    pf.min && {
+      label: 'Lowest verified starting price',
+      value: link(pf.min.v),
+      sub: `${pf.min.p.headline} ${pf.min.p.unit}`.trim(),
+    },
+    { label: 'Scored so far', value: `${nScored} of ${s.total}`, sub: s.pending ? `${s.pending} pending under the 80% evidence gate` : 'every product has a published score' },
+    { label: 'Native AI or AI agents', value: `${nAi} of ${s.total}`, sub: 'documented in official sources' },
+  ];
+
   // ---------------------------------------------------------------- page head
   const head = html`<header class="wrap page-head page-head--wide">
     <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
@@ -75,7 +93,10 @@ function render(ctx, category) {
       html`<a href="/methodology/">How we score</a>`,
     ])}
   </header>
-  <div class="wrap cat-answer">${ui.answer(ctx, quick)}</div>`;
+  <div class="wrap cat-answer">
+    ${ui.answer(ctx, quick)}
+    ${ui.facts(glance)}
+  </div>`;
 
   const nav = ui.subnav(
     [

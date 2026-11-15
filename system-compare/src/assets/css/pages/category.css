@@ -49,3 +49,7 @@
 .cat-criteria b { display: block; font-weight: 600; }
 .cat-criteria span { display: block; font-size: var(--fs-sm); color: var(--ink-2); }
 .cat-demo { max-width: 70ch; }
+
+.cat-answer .facts { margin-top: var(--s-8); max-width: 62rem; }
+.cat-answer .facts dd a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 0.18em; }
+.cat-answer .facts dd a:hover { color: var(--brand); }
