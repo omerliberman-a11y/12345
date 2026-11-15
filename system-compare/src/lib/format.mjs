@@ -21,7 +21,8 @@ export function fmtMoney(amount, currency = 'USD', categoryId) {
     style: 'currency',
     currency: currency || 'USD',
     minimumFractionDigits: whole ? 0 : 2,
-    maximumFractionDigits: whole ? 0 : categoryId === 'sms-marketing' ? 4 : 2,
+    // per-message and per-minute rates below ten cents keep up to four decimals ($0.0083), everything else two
+    maximumFractionDigits: whole ? 0 : categoryId === 'sms-marketing' || Math.abs(Number(amount)) < 0.1 ? 4 : 2,
   }).format(amount);
 }
 
@@ -43,4 +44,21 @@ export function planLabel(plan) {
   if (isList) return `${p} plans`;
   if (/, | — | \+ /.test(p)) return `“${p}” plan`;
   return `${p} plan`;
+}
+
+/**
+ * A plan or offer name without the product name it repeats, for printing right after that product name:
+ * dropNamePrefix("Adobe Firefly", "Firefly Standard — individual") → "Standard — individual";
+ * dropNamePrefix("WooCommerce", "WooCommerce core") → "core"; no overlap → the text unchanged.
+ */
+export function dropNamePrefix(name, text) {
+  const words = String(name || '').trim().split(/\s+/);
+  const rest = String(text || '').trim();
+  for (let i = 0; i < words.length; i++) {
+    const tail = words.slice(i).join(' ');
+    if (tail && rest.toLowerCase().startsWith(tail.toLowerCase()) && (rest.length === tail.length || /[\s,:—–-]/.test(rest[tail.length]))) {
+      return rest.slice(tail.length).replace(/^[\s,:—–-]+/, '');
+    }
+  }
+  return rest;
 }

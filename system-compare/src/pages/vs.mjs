@@ -228,7 +228,7 @@ function render(ctx, comparison) {
             : html`<b>None of the ${activeRows.length}</b> scored checks differ: ${a.name} and ${b.name} have the same documented status on every one. Equal statuses do not mean the products or prices are identical.`
         }${
           offDiffRows.length
-            ? html` <span class="cmp-count__off">${offDiffRows.length} of the ${inactiveRows.length} checks that are not scored yet also ${differWord(offDiffRows.length)}.</span>`
+            ? html` <span class="cmp-count__off">${offDiffRows.length} of the ${inactiveRows.length} checks that are not scored yet ${diffRows.length ? 'also ' : ''}${differWord(offDiffRows.length)}.</span>`
             : ''
         }</p>
       </div>
@@ -239,7 +239,7 @@ function render(ctx, comparison) {
             ${items.map((it) => {
               const other = items.filter((o) => o !== it).map((o) => o.v.name).join(' or ');
               return html`<div class="cmp-ahead__col" data-i="${it.i}">
-                <h3>${dot()}Where ${it.v.name} is ahead (${ahead[it.i].length})</h3>
+                <h3>${dot()}Where ${it.v.name} is ahead${ahead[it.i].length ? ` (${ahead[it.i].length})` : ''}</h3>
                 ${
                   ahead[it.i].length
                     ? html`<ul class="cmp-ahead__list">${ahead[it.i].map(diffLine)}</ul>`

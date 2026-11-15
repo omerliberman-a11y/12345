@@ -5,7 +5,7 @@
 import { html, text, cx, attrs } from '../lib/html.mjs';
 import * as ui from '../lib/components.mjs';
 import { title as seoTitle, describe, fits } from '../lib/seo.mjs';
-import { fxMark, fxLegend, sourceMap, evidenceLinks, offerPrice, offerPriceCell, offerEvidence, decisionNote, researchLinks, tight, dated } from './category-factual.mjs';
+import { fxMark, fxLegend, sourceMap, evidenceLinks, offerPrice, offerPriceCell, offerEvidence, decisionNote, researchLinks, tight, dated, NO_SCORE_LABEL } from './category-factual.mjs';
 
 export function routes(ctx) {
   return ctx.comparisons
@@ -59,7 +59,7 @@ function render(ctx, record) {
     ${ui.trustline([
       html`Updated ${ui.time(ctx, checked)}`,
       `${ctx.plural(offers.length, 'selected offer')} · US buying context`,
-      'Documented comparison — no score or ranked order',
+      NO_SCORE_LABEL,
       approver && `${approver.name}, ${String(approver.role || '').toLowerCase()}`,
       html`<a href="/methodology/">How we score</a>`,
     ])}

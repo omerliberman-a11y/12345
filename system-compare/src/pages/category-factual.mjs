@@ -27,6 +27,9 @@ export const fxLegend = () => html`<p class="legend" aria-label="Legend">${['yes
  * Data sentences now and then carry an ISO date ("Page updated 2025-04-09; …"). The text is never rewritten;
  * the date is only wrapped in <time datetime> so every date on the page is machine-readable.
  */
+/** The label every documentary page carries instead of a score (the methodology page quotes it). */
+export const NO_SCORE_LABEL = 'Documented comparison — no score or ranked order';
+
 export const dated = (s) => {
   const parts = String(s ?? '').split(/\b(20\d\d-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01]))\b/);
   return parts.length === 1 ? s : raw(parts.map((part, i) => (i % 2 ? `<time datetime="${part}">${fmtDate(part)}</time>` : esc(part))).join(''));
@@ -123,11 +126,16 @@ function render(ctx, category) {
   const numericOffers = allOffers.filter((o) => o.price.hasAmount);
   const quoteOffers = allOffers.filter((o) => o.price.state === 'quote');
   const unverifiedOffers = allOffers.filter((o) => o.price.state === 'unverified');
-  // Lowest published amount for the answer: the numerically lowest offer as printed. Equal amounts prefer USD,
-  // then another verified currency, then a symbol-only price. Currencies and units are never converted.
-  const rankCur = (o) => (o.price.currency === 'USD' ? 0 : o.price.verifiedCurrency ? 1 : 2);
-  const lowest = [...numericOffers].sort((a, b) => a.price.amount - b.price.amount || rankCur(a) - rankCur(b))[0] || null;
-  const mixedCurrency = new Set(numericOffers.map((o) => o.price.currency || 'not verified')).size > 1;
+  // Lowest published amount: stated only when every published price is in one verified currency (currencies and
+  // units are never converted), and every offer that shares the amount is named or counted — never one of them.
+  const currencyKeys = new Set(numericOffers.map((o) => (o.price.verifiedCurrency ? o.price.currency : '?')));
+  const comparable = numericOffers.length === 1 || (numericOffers.length > 1 && currencyKeys.size === 1 && !currencyKeys.has('?'));
+  const minAmount = comparable ? Math.min(...numericOffers.map((o) => o.price.amount)) : null;
+  const lowestGroup = comparable ? numericOffers.filter((o) => o.price.amount === minAmount) : [];
+  const lowest = lowestGroup[0] || null;
+  const mixedCurrency = currencyKeys.size > 1;
+  // "Adobe Firefly" + "Firefly Standard — individual" → "Adobe Firefly Standard — individual"
+  const offerName = (o) => `${o.supplier.name} ${ctx.dropNamePrefix(o.supplier.name, o.plan.name)}`.trim();
   const priceWords = (o) => {
     const extra = [o.price.unit, o.price.currencyNote && 'currency not verified'].filter(Boolean).join('; ');
     return `${o.price.main}${extra ? ` (${extra})` : ''}`;
@@ -145,10 +153,16 @@ function render(ctx, category) {
   ]);
 
   // ---- quick answer (data only)
-  const priceSentence = lowest
-    ? `${numericOffers.length} of the ${nOffers} offers ${numericOffers.length === 1 ? 'has' : 'have'} a published price; ${
-        numericOffers.length === 1 ? 'it is' : 'the lowest published amount is'
-      } ${priceWords(lowest)} for ${lowest.supplier.name} ${lowest.plan.name}.`
+  const havePrice =
+    nOffers === 1 ? 'The one documented offer has' : numericOffers.length === nOffers ? `All ${nOffers} offers have` : `${numericOffers.length} of the ${nOffers} offers ${numericOffers.length === 1 ? 'has' : 'have'}`;
+  const priceSentence = numericOffers.length
+    ? `${havePrice} a published price${
+        !comparable
+          ? '; they are not all in one verified currency, so no single lowest amount is stated.'
+          : lowestGroup.length === 1
+            ? `; ${numericOffers.length === 1 ? 'it is' : 'the lowest published amount is'} ${priceWords(lowest)} for ${offerName(lowest)}.`
+            : `; ${lowestGroup.length} offers share the lowest published amount, ${lowest.price.main}${lowestGroup.length <= 4 ? `: ${sentenceList(ctx, lowestGroup.map(offerName))}` : ''}.`
+      }`
     : `None of the ${nOffers} offers has a published price${
         quoteOffers.length === nOffers
           ? `: all ${nOffers} are quote-only`
@@ -161,9 +175,13 @@ function render(ctx, category) {
   const glance = [
     { label: 'Suppliers documented', value: String(suppliers.length), sub: 'listed by buying approach, not ranked' },
     { label: 'Offers documented', value: String(nOffers), sub: [numericOffers.length && `${numericOffers.length} with a published price`, quoteOffers.length && `${quoteOffers.length} quote-only`, unverifiedOffers.length && `${unverifiedOffers.length} not verified`].filter(Boolean).join(' · ') },
-    lowest
-      ? { label: 'Lowest published amount', value: html`<a href="#plans-${lowest.supplier.id}">${lowest.price.main}</a>`, sub: [lowest.price.currencyNote, `${lowest.supplier.name} ${lowest.plan.name}`, lowest.price.unit].filter(Boolean).join(' · ') }
-      : { label: 'Published prices', value: 'None', sub: quoteOffers.length ? 'ask each supplier for a quote' : 'not verified for these offers' },
+    lowestGroup.length === 1
+      ? { label: 'Lowest published amount', value: html`<a href="#plans-${lowest.supplier.id}">${lowest.price.main}</a>`, sub: [lowest.price.currencyNote, offerName(lowest), lowest.price.unit].filter(Boolean).join(' · ') }
+      : lowestGroup.length > 1
+        ? { label: 'Lowest published amount', value: lowest.price.main, sub: `shared by ${lowestGroup.length} offers` }
+        : numericOffers.length
+          ? { label: 'Published prices', value: `${numericOffers.length} of ${nOffers} offers`, sub: 'not in one verified currency — no single lowest amount' }
+          : { label: 'Published prices', value: 'None', sub: quoteOffers.length ? 'ask each supplier for a quote' : 'not verified for these offers' },
     { label: 'Criteria compared', value: html`<a href="#factual-comparison">${criteria.length}</a>`, sub: `${F.sources.length} dated official sources` },
   ];
 
@@ -174,13 +192,13 @@ function render(ctx, category) {
     ${ui.trustline([
       html`Evidence checked ${ui.time(ctx, checked)}`,
       `${ctx.plural(suppliers.length, 'supplier')} · ${ctx.plural(nOffers, 'offer')}`,
-      'Documented comparison — no score or ranked order',
+      NO_SCORE_LABEL,
       approver && `${approver.name}, ${String(approver.role || '').toLowerCase()}`,
       html`<a href="/methodology/">How we score</a>`,
     ])}
   </header>
   <div class="wrap cat-answer">
-    ${ui.answer(ctx, quick, { meta: lowest ? `${mixedCurrency ? 'Currencies, units' : 'Units'} and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.` : null })}
+    ${ui.answer(ctx, quick, { meta: lowest ? 'Units and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.' : null })}
     ${ui.facts(glance)}
   </div>`;
 

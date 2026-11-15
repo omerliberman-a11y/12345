@@ -10,7 +10,7 @@ import * as sc from './scoring.mjs';
 import config from '../../site.config.mjs';
 
 export { fmtDate, isoDate, maxDate, fmtMoney, plural, listText, planLabel } from './format.mjs';
-import { fmtDate, isoDate, maxDate, fmtMoney, plural, listText, planLabel } from './format.mjs';
+import { fmtDate, isoDate, maxDate, fmtMoney, plural, listText, planLabel, dropNamePrefix } from './format.mjs';
 import { createSeo } from './seo.mjs';
 import { createAnswers } from './answers.mjs';
 
@@ -106,6 +106,20 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
   /** The category used for a vendor's headline price / default comparison scope. */
   const primaryCategory = (vendor) => categoryById.get(vendor.categories?.[0]) || vendorCategories(vendor)[0] || null;
 
+  /**
+   * A catalog unit made readable inside a sentence ("starts at $0 per workspace"). Only the shape changes:
+   * a bare noun gets "per", a trailing qualifier goes in brackets, and text that is not a unit at all
+   * ("one location; up to 10 employees") is bracketed whole. Tables keep the unit exactly as recorded.
+   */
+  function sentenceUnit(u) {
+    if (!u) return '';
+    if (/^additional /i.test(u) || /^[a-z]+$/i.test(u)) return `per ${u}`;
+    const m = u.match(/^(per (?:minute|month|year|[\w-]+\/(?:month|year))) (hosting only|software base|software)$/i);
+    if (m) return `${m[1]} (${m[2]})`;
+    if (/^(per|monthly|one-time|flat|annual|yearly|from|each)\b/i.test(u)) return u;
+    return `(${u})`;
+  }
+
   // ------------------------------------------------------------------ price view-model
   // Units are free text in the catalog ("user/month", "account / month", "month plus fees").
   // Normalise only the shape, never the meaning: "user/month" → "per user/month".
@@ -144,6 +158,9 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
     let unit = normUnit(p.unit);
     const annual = hasAmount && p.billing === 'annual';
     if (annual) unit = unit.replace(/,?\s*(annual billing|billed annually)$/i, '');
+    const unitPhrase = hasAmount ? sentenceUnit(unit) : '';
+    // "billed annually" is part of the price: it is said wherever the amount is said, unless the unit already says it
+    const billingPhrase = annual && !/annual|per year|\/year/i.test(unit) ? 'billed annually' : '';
     return {
       state, // amount | quote | usage | unverified
       hasAmount,
@@ -164,8 +181,12 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
       checkedAt: checked,
       checkedLabel: checked ? `Price checked ${fmtDate(checked)}` : 'Price-check date not recorded',
       smsUnverified: Boolean(p.smsUnverified),
-      // one-line text for meta descriptions / answers: "$35 per user/month, billed annually"
-      text: hasAmount ? `${headline}${unit ? ' ' + unit : ''}${annual ? ', billed annually' : ''}` : headline.toLowerCase(),
+      // for sentences: the unit in readable form, the billing note unless the unit already carries it, and both
+      // joined — "$35 per user/month, billed annually", "$0 per workspace", "$0.05 per minute (hosting only)"
+      unitPhrase,
+      billingPhrase,
+      phrase: hasAmount ? `${headline}${unitPhrase ? ' ' + unitPhrase : ''}${billingPhrase ? `, ${billingPhrase}` : ''}` : headline.toLowerCase(),
+      text: hasAmount ? `${headline}${unitPhrase ? ' ' + unitPhrase : ''}${billingPhrase ? `, ${billingPhrase}` : ''}` : headline.toLowerCase(),
     };
   }
 
@@ -401,6 +422,7 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
     plural,
     listText,
     planLabel,
+    dropNamePrefix,
     year,
     today,
     vendorUpdated,

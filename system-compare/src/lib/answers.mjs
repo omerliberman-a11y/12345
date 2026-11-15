@@ -59,12 +59,12 @@ export function createAnswers(ctx) {
   const noPriceWhy = (p) => (p.state === 'quote' || p.state === 'usage' || p.smsUnverified ? ` (${p.headline.toLowerCase()})` : '');
   const priceFrom = (vendor, categoryId) => {
     const p = ctx.price(vendor, categoryId);
-    return p.hasAmount ? `from ${p.headline}${p.unit ? ' ' + p.unit : ''}` : null;
+    return p.hasAmount ? `from ${p.phrase}` : null;
   };
   const scoredName = (vendor, categoryId, { withPrice = true } = {}) => {
     const s = ctx.score(categoryId, vendor.id);
     const p = withPrice ? priceFrom(vendor, categoryId) : null;
-    return `${vendor.name} (${s.value}/100${p ? `, ${p}` : ''})`;
+    return `${vendor.name} (${s.value}/100${p ? `, ${p.replace(/ \(([^)]*)\)/, ' — $1')}` : ''})`;
   };
   const asOf = () => fmtDate(ctx.catalog.checkedAt);
   // vendor.avoidIf is "You need …" (133 of 149), a clause ("… is required") or a buyer description ("A team assuming …")
@@ -130,13 +130,30 @@ export function createAnswers(ctx) {
     return `Of the ${s.total} ${things} we researched, ${L.lead} has the highest documented-fit score${L.followers ? `, followed by ${L.followers}` : ''}.${pendingText}${tail}`;
   }
 
+  // a $0 "software base" of a product that charges by usage is not a starting price
+  const zeroBase = (x) => x.p.amount === 0 && (x.p.model === 'mixed' || x.v.pricing?.model === 'mixed');
+  /** "$0 per workspace (Agile CRM and EngageBay)" — every product that shares an amount is named. */
+  const priceGroupText = (group) =>
+    group.every((x) => x.p.phrase === group[0].p.phrase)
+      ? `${group[0].p.phrase} (${listText(group.map((x) => x.v.name))})`
+      : listText(group.map((x) => `${x.p.phrase} (${x.v.name})`));
+
   function categoryPriceFacts(category) {
     const s = ctx.summary(category.id);
-    const priced = s.ranked
-      .map((v) => ({ v, p: ctx.price(v, category.id) }))
-      .filter((x) => x.p.hasAmount && x.p.currency === 'USD' && !(x.p.amount === 0 && x.v.pricing?.model === 'mixed'));
+    const priced = s.ranked.map((v) => ({ v, p: ctx.price(v, category.id) })).filter((x) => x.p.hasAmount && x.p.currency === 'USD' && !zeroBase(x));
     priced.sort((a, b) => a.p.amount - b.p.amount);
-    return { priced, unpriced: s.total - priced.length, min: priced[0] || null, max: priced[priced.length - 1] || null, total: s.total };
+    const min = priced[0] || null;
+    const max = priced[priced.length - 1] || null;
+    return {
+      priced,
+      unpriced: s.total - priced.length,
+      min,
+      max,
+      // every product that shares the lowest / highest amount (a single product is never named when several tie)
+      minGroup: min ? priced.filter((x) => x.p.amount === min.p.amount) : [],
+      maxGroup: max ? priced.filter((x) => x.p.amount === max.p.amount) : [],
+      total: s.total,
+    };
   }
 
   function categoryFaq(category) {
@@ -155,7 +172,7 @@ export function createAnswers(ctx) {
       const drivers = (category.costDrivers || []).slice(0, 2).map(stripDot);
       out.push({
         q: `How much does ${categoryNoun(category)} cost?`,
-        a: `Among the ${pf.priced.length} ${things} with a verified public starting price, list prices range from ${pf.min.p.headline} ${pf.min.p.unit} (${pf.min.v.name}) to ${pf.max.p.headline} ${pf.max.p.unit} (${pf.max.v.name}). ${
+        a: `Among the ${pf.priced.length} ${things} with a verified public starting price, list prices range from ${priceGroupText(pf.minGroup)} to ${priceGroupText(pf.maxGroup)}. ${
           pf.unpriced ? `${plural(pf.unpriced, 'product')} ${pf.unpriced === 1 ? 'is' : 'are'} quote-only, usage-based or without a verified public price. ` : ''
         }Units differ between vendors, so compare a full quote for the same team size.${drivers.length ? ` Main cost drivers: ${drivers.join('; ')}.` : ''}`,
       });
@@ -190,7 +207,7 @@ export function createAnswers(ctx) {
       ? `Its documented-fit score is pending: ${s.checked} of ${s.total} checklist items (${s.coveragePct}% of the weight) are checked as of ${fmtDate(s.checkedAt || ctx.catalog.checkedAt)}, below the 80% gate.`
       : `It scores ${s.value}/100 for documented fit (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${fmtDate(s.checkedAt)}` : ''}).`;
     const priceText = p.hasAmount
-      ? `Published pricing starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}${onPlan(p.plan)}${p.billingNote ? `, ${p.billingNote}` : ''}${p.checkedAt ? ` (price checked ${fmtDate(p.checkedAt)})` : ''}.`
+      ? `Published pricing starts at ${p.headline}${p.unitPhrase ? ' ' + p.unitPhrase : ''}${onPlan(p.plan)}${p.billingPhrase ? `, ${p.billingPhrase}` : ''}${p.checkedAt ? ` (price checked ${fmtDate(p.checkedAt)})` : ''}.`
       : `No verified public starting price is recorded${noPriceWhy(p)}.`;
     return `${vendor.name} is one of ${total} ${things} we researched. ${scoreText} ${priceText} Best for: ${lowerFirst(sentence(vendor.bestFor))}`;
   }
@@ -204,7 +221,7 @@ export function createAnswers(ctx) {
       p.hasAmount
         ? {
             q: `How much does ${vendor.name} cost?`,
-            a: `${vendor.name}’s published pricing starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}${onPlan(p.plan)}${p.billingNote ? `, ${p.billingNote}` : ''}. ${sentence(p.summary)}${p.checkedAt ? ` Price checked ${fmtDate(p.checkedAt)}.` : ''}`.trim(),
+            a: `${vendor.name}’s published pricing starts at ${p.headline}${p.unitPhrase ? ' ' + p.unitPhrase : ''}${onPlan(p.plan)}${p.billingPhrase ? `, ${p.billingPhrase}` : ''}. ${sentence(p.summary)}${p.checkedAt ? ` Price checked ${fmtDate(p.checkedAt)}.` : ''}`.trim(),
           }
         : {
             q: `How much does ${vendor.name} cost?`,
@@ -271,7 +288,7 @@ export function createAnswers(ctx) {
   function pairQuickAnswer(category, a, b) {
     const f = pairFacts(category, a, b);
     const side = (v, s, p) =>
-      `${v.name} ${s.pending ? `is score-pending (${s.checked} of ${s.total} items checked)` : `scores ${s.value}/100`}${p.hasAmount ? ` and starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}` : ', with no verified public starting price'}`;
+      `${v.name} ${s.pending ? `is score-pending (${s.checked} of ${s.total} items checked)` : `scores ${s.value}/100`}${p.hasAmount ? ` and starts at ${p.phrase}` : ', with no verified public starting price'}`;
     const diffText = f.diff.length
       ? `They differ on ${f.diff.length} of ${f.active.length} scored checks (${f.diff.slice(0, 3).map((r) => r.feature.label).join('; ')}).`
       : `Their documented status is the same on all ${f.active.length} scored checks.`;
@@ -289,7 +306,12 @@ export function createAnswers(ctx) {
       return { kind: 'partial', leader: done, text: `Only ${done.name} has a published score (${s.value}/100). ${open.name} is still score-pending, so the two cannot be ranked against each other yet.` };
     }
     if (f.sa.value === f.sb.value) {
-      return { kind: 'tie', text: `${a.name} and ${b.name} have the same documented-fit score (${f.sa.value}/100). Choose on the differences below, on price and on fit for your team.` };
+      return {
+        kind: 'tie',
+        text: f.diff.length
+          ? `${a.name} and ${b.name} have the same documented-fit score (${f.sa.value}/100). Choose on the differences below, on price and on fit for your team.`
+          : `${a.name} and ${b.name} have the same documented-fit score (${f.sa.value}/100) and the same documented status on every scored check. Choose on price, plan limits and fit for your team.`,
+      };
     }
     const [hi, lo, sh, sl] = f.sa.value > f.sb.value ? [a, b, f.sa, f.sb] : [b, a, f.sb, f.sa];
     return { kind: 'lead', leader: hi, text: `${hi.name} has the higher documented-fit score: ${sh.value}/100 against ${sl.value}/100 for ${lo.name}. A higher score means more of the checklist is documented, not that the product is better for every team.` };
@@ -318,7 +340,7 @@ export function createAnswers(ctx) {
       q: `Which is cheaper, ${a.name} or ${b.name}?`,
       a:
         f.pa.hasAmount && f.pb.hasAmount
-          ? `${a.name} starts at ${f.pa.headline} ${f.pa.unit}; ${b.name} starts at ${f.pb.headline} ${f.pb.unit}. Units and plan limits differ, so compare a full quote for the same team size and term.`
+          ? `${a.name} starts at ${f.pa.phrase}; ${b.name} starts at ${f.pb.phrase}. Units and plan limits differ, so compare a full quote for the same team size and term.`
           : `A like-for-like price cannot be stated: ${listText([!f.pa.hasAmount && a.name, !f.pb.hasAmount && b.name].filter(Boolean))} ${!f.pa.hasAmount && !f.pb.hasAmount ? 'have' : 'has'} no verified public starting price. Ask both vendors to quote the same scope.`,
     });
     const aiLine = (x) => `${x.name}: ${lowerFirst(ctx.aiLevel(x).label)}${x.ai?.summary ? ` — ${firstSentence(x.ai.summary)}` : '.'}`;
@@ -334,7 +356,7 @@ export function createAnswers(ctx) {
     const focalPrice = ctx.price(vendor, category.id);
     const cheaper =
       focalPrice.hasAmount && focalPrice.currency === 'USD'
-        ? others.map((v) => ({ v, p: ctx.price(v, category.id) })).filter((x) => x.p.hasAmount && x.p.currency === 'USD' && x.p.amount < focalPrice.amount).sort((x, y) => x.p.amount - y.p.amount)
+        ? others.map((v) => ({ v, p: ctx.price(v, category.id) })).filter((x) => x.p.hasAmount && x.p.currency === 'USD' && x.p.amount < focalPrice.amount && !zeroBase(x)).sort((x, y) => x.p.amount - y.p.amount)
         : [];
     return { s, others, scored, focalPrice, cheaper };
   }
@@ -365,7 +387,7 @@ export function createAnswers(ctx) {
     if (f.cheaper.length) {
       out.push({
         q: `Which ${vendor.name} alternatives have a lower starting price?`,
-        a: `${vendor.name} starts at ${f.focalPrice.headline} ${f.focalPrice.unit}. Lower public starting prices are published by ${listText(f.cheaper.slice(0, 4).map((x) => `${x.v.name} (${x.p.headline} ${x.p.unit})`))}. Units and plan limits differ, so check what each entry price includes.`,
+        a: `${vendor.name} starts at ${f.focalPrice.phrase}. Lower public starting prices are published by ${listText(f.cheaper.slice(0, 4).map((x) => `${x.v.name} (${x.p.phrase})`))}. Units and plan limits differ, so check what each entry price includes.`,
       });
     }
     const agents = f.others.filter((v) => ['native', 'agent'].includes(v.ai?.level));
@@ -396,6 +418,7 @@ export function createAnswers(ctx) {
     alternativesFaq,
     leaders,
     scoreGroups,
+    priceGroupText,
     firstSentence,
     sentence,
     stripDot,

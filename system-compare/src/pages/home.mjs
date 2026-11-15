@@ -13,11 +13,18 @@ function render(ctx) {
   const { site } = ctx;
   const live = ctx.liveHead('/') || {};
 
-  // Category spotlights: the scored categories among the editorial picks, in that order, then other
-  // scored categories with at least 3 scored products (so every tab has a real ranking to show).
-  const picks = site.home.featuredCategories.map((id) => ctx.category(id)).filter((c) => c && !ctx.isFactual(c));
-  const more = ctx.scoredCategories.filter((c) => !picks.includes(c) && ctx.summary(c.id).scored >= 3 && ctx.isIndexable(ctx.url.category(c.id)));
-  const spotlights = [...picks, ...more].filter((c) => ctx.summary(c.id).scored >= 1).slice(0, 6);
+  // Category previews follow the published method (/methodology/, "Category previews …"): catalogue order,
+  // only categories with at least two scored products, and a later category is skipped when one of its tied
+  // leaders already leads an earlier preview. Rows are scored products only and a tie is never cut apart.
+  const leadersSeen = new Set();
+  const spotlights = [];
+  for (const c of ctx.scoredCategories) {
+    const s = ctx.summary(c.id);
+    if (s.scored < 2 || s.recommended.some((v) => leadersSeen.has(v.id))) continue;
+    s.recommended.forEach((v) => leadersSeen.add(v.id));
+    spotlights.push(c);
+    if (spotlights.length === 6) break;
+  }
 
   const totalSuppliers = ctx.factualCategories.reduce((n, c) => n + (c.factual?.suppliers?.length || 0), 0);
   const indexableVs = ctx.comparisons.filter((c) => ctx.isIndexable(ctx.url.vs(c.id)));
@@ -47,7 +54,7 @@ function render(ctx) {
       <div class="hero__chips">
         <span class="hero__chips-label">Popular</span>
         ${ui.chipLinks(
-          ['crm', 'email-marketing', 'accounting', 'payroll', 'customer-service', 'project-management'].map((id) => ({ href: ctx.url.category(id), label: ctx.category(id).name })),
+          site.home.featuredCategories.filter((id) => ctx.category(id)).slice(0, 6).map((id) => ({ href: ctx.url.category(id), label: ctx.category(id).name })),
         )}
       </div>
       <p class="hero__proof">
@@ -63,7 +70,7 @@ function render(ctx) {
     <div class="wrap">
       ${ui.sectionHead('Highest documented fit, by category', {
         id: 'top-h',
-        sub: 'The top of each ranking. Scores show how much of a category checklist is documented in official sources.',
+        sub: 'The highest scores in each category; products with the same score are shown together. A score is the share of the category checklist documented in official sources.',
       })}
       <div class="tabs" data-tabs>
         <div class="seg tabs__list" role="tablist" aria-label="Category">
@@ -73,9 +80,10 @@ function render(ctx) {
         </div>
         ${spotlights.map((c, i) => {
           const s = ctx.summary(c.id);
-          const rows = ctx.topWithTies(c.id, s.ranked, 5).map((vendor) => ({ vendor }));
+          const scored = s.ranked.filter((v) => !s.results.get(v.id).isPending);
+          const rows = ctx.topWithTies(c.id, scored, 5).map((vendor) => ({ vendor }));
           return html`<div class="tabs__panel" role="tabpanel" id="panel-${c.id}" aria-labelledby="tab-${c.id}"${raw(i === 0 ? '' : ' hidden')}>
-            ${ui.productTable(ctx, c.id, rows, { id: `top-${c.id}`, sortable: false, lazyFrom: i === 0 ? 5 : 0, caption: `${c.name}: top ${rows.length} by documented-fit score` })}
+            ${ui.productTable(ctx, c.id, rows, { id: `top-${c.id}`, sortable: false, lazyFrom: i === 0 ? 5 : 0, caption: `${c.name}: the ${rows.length} highest documented-fit scores` })}
             <p class="tabs__more"><a class="link-arrow" href="${ctx.url.category(c.id)}">See all ${s.total} ${A.categoryThings(c)}</a></p>
           </div>`;
         })}

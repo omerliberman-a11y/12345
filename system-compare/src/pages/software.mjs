@@ -67,14 +67,24 @@ function render(ctx, vendor) {
     [`${name} pricing, features & AI`, `${name}: pricing & features`, `${name} pricing`, name].map((core) => seoTitle(core, year)).find((t) => t.includes('| System Compare') && !t.includes('…')) ||
     seoTitle(name, year);
   const live = ctx.liveHead(path) || {};
-  const sTxt = s.pending ? `score pending (${s.coveragePct}% checked)` : `${s.value}/100 documented fit`;
-  const pShort = p.hasAmount ? `, from ${p.headline}${p.unit ? ' ' + p.unit : ''}` : '';
+  // Description: what the product is (the curated summary sentence) first, then the score and price fact
+  // when they fit in 155 characters. The summary alone is the fallback.
+  const lead = A.stripDot(A.firstSentence(vendor.description));
+  // the summary already names the product when it contains one of the name's own words ("Sales Hub combines …")
+  const nameWords = name.split(/[^A-Za-z0-9.]+/).filter((w) => w.length >= 3);
+  const named = nameWords.some((w) => lead.slice(0, 40).includes(w)) ? lead : `${name}: ${A.lowerFirst(lead)}`;
+  const fact = s.pending ? `Score pending in ${primary.name}` : `${s.value}/100 documented fit in ${primary.name}`;
+  const factPrice = p.hasAmount ? `, from ${p.phrase}` : '';
   const checkedMon = monYear(ctx.maxDate(vendor.checkedAt, pricing.verifiedAt));
   const description = describe([
-    `${name} for ${primary.name}: ${sTxt}${pShort}. AI, plan limits and ${vendor.sources.length} official sources, checked ${checkedMon}.`,
-    `${name} for ${primary.name}: ${sTxt}${pShort}. AI, limits and sources, checked ${checkedMon}.`,
-    `${name}: ${sTxt}${pShort}. AI, limits and official sources.`,
-    `${name}: ${sTxt}. Pricing, AI, limits and official sources.`,
+    `${named}. ${fact}${factPrice}. Checked ${checkedMon}.`,
+    `${named}. ${fact}${factPrice}.`,
+    `${named}. ${fact}.`,
+    `${lead}. ${fact}${factPrice}.`,
+    `${lead}. ${fact}.`,
+    `${named}.`,
+    `${lead}.`,
+    `${name} for ${primary.name}: ${fact}${factPrice}. AI, limits and official sources.`,
     live.description,
   ]);
 

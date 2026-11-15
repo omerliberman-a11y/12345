@@ -10,6 +10,7 @@
 // contact.mjs and partners-apply.mjs reuse.
 
 import { html, raw, text } from '../lib/html.mjs';
+import { NO_SCORE_LABEL } from './category-factual.mjs';
 import * as ui from '../lib/components.mjs';
 
 // ------------------------------------------------------------------ toolkit (shared with sibling modules)
@@ -585,7 +586,7 @@ function renderMethodology(ctx) {
   const documentary = html`<section class="doc-sec" id="documentary" aria-labelledby="documentary-h">
     <h2 id="documentary-h">Categories without a score</h2>
     <p>
-      ${factual.length} of the ${ctx.categories.length} categories are documentary. They list suppliers, plans, prices and dated official sources, but their evidence checklist has not yet been classified into the four score groups — so no supplier in them has a documented-fit score or a rank. Those pages say “${sc.LABELS.factualPending}”. Their evidence is published the same way, dated and linked to official sources; only the score is withheld.
+      ${factual.length} of the ${ctx.categories.length} categories are documentary. They list suppliers, plans, prices and dated official sources, but their evidence checklist has not yet been classified into the four score groups — so no supplier in them has a documented-fit score or a rank. Those pages are labelled “${NO_SCORE_LABEL}”. Their evidence is published the same way, dated and linked to official sources; only the score is withheld.
     </p>
     <details class="doc-more">
       <summary>Show the ${factual.length} documentary categories</summary>

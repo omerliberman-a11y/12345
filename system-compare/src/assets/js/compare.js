@@ -64,6 +64,7 @@
     var p = v.pr, unit = [p.u, p.b].filter(Boolean).join(' · ');
     var node = el('span.price', null, [el('span.price__main' + (hasAmount(v) ? '.num' : '.price__main--text'), { text: p.h })]);
     if (hasAmount(v) && unit) node.appendChild(el('span.price__unit', { text: unit }));
+    else if (!hasAmount(v) && p.bs) node.appendChild(el('span.price__unit', { text: p.bs })); // the pricing basis as recorded
     if (opts && opts.plan && p.pl) node.appendChild(el('span.price__unit', { text: 'Plan: ' + p.pl }));
     if (opts && opts.checked && p.d) node.appendChild(el('span.price__unit', null, ['Checked ', timeEl(p.d)]));
     return node;
@@ -548,7 +549,7 @@
     var top = Math.max.apply(null, items.map(function (it) { return it.v.sc; }));
     var leaders = items.filter(function (it) { return it.v.sc === top; }), rest = items.filter(function (it) { return it.v.sc !== top; });
     var tail = ' A higher score means more of the checklist is documented, not that the product is better for every team.';
-    if (!rest.length) return { kind: 'tie', text: (n === 2 ? nm(items[0]) + ' and ' + nm(items[1]) : listText(items.map(nm))) + ' have the same documented-fit score (' + top + '/100). Choose on the differences below, on price and on fit for your team.' };
+    if (!rest.length) return { kind: 'tie', text: (n === 2 ? nm(items[0]) + ' and ' + nm(items[1]) : listText(items.map(nm))) + ' have the same documented-fit score (' + top + '/100)' + (m.diff.length ? '. Choose on the differences below, on price and on fit for your team.' : ' and the same documented status on every scored check. Choose on price, plan limits and fit for your team.') };
     if (n === 2) return { kind: 'lead', leader: leaders[0], text: nm(leaders[0]) + ' has the higher documented-fit score: ' + top + '/100 against ' + rest[0].v.sc + '/100 for ' + nm(rest[0]) + '.' + tail };
     if (leaders.length === 1) return { kind: 'lead', leader: leaders[0], text: nm(leaders[0]) + ' has the highest documented-fit score of the ' + n + ': ' + top + '/100, ahead of ' + listText(rest.map(ns)) + '.' + tail };
     return { kind: 'tie', text: listText(leaders.map(nm)) + ' share the highest documented-fit score (' + top + '/100), ahead of ' + listText(rest.map(ns)) + '.' + tail };
@@ -724,7 +725,7 @@
           : [el('b', { text: 'None of the ' + m.active.length }), ' scored checks differ: ' + listText(m.items.map(function (it) { return it.v.n; })) + ' have the same documented status on every one. Equal statuses do not mean the products or prices are identical.']),
       ])]),
     ]);
-    if (m.offDiff.length) add($('.cmp-count', diffSec), [' ', el('span.cmp-count__off', { text: m.offDiff.length + ' of the ' + m.inactive.length + ' checks that are not scored yet also ' + (m.offDiff.length === 1 ? 'differs' : 'differ') + '.' })]);
+    if (m.offDiff.length) add($('.cmp-count', diffSec), [' ', el('span.cmp-count__off', { text: m.offDiff.length + ' of the ' + m.inactive.length + ' checks that are not scored yet ' + (m.diff.length ? 'also ' : '') + (m.offDiff.length === 1 ? 'differs' : 'differ') + '.' })]);
     var offLine = function (it) {
       var list = m.aheadOff[it.i];
       if (!list.length) return null;
@@ -740,7 +741,7 @@
         colsBox = el('div.cmp-ahead', null, m.items.map(function (it) {
           var rest = m.items.filter(function (o) { return o !== it; }).map(function (o) { return o.v.n; }).join(' or ');
           return el('div.cmp-ahead__col', { 'data-i': it.i }, [
-            el('h3', null, [dot(), 'Where ' + it.v.n + ' is ahead (' + m.ahead[it.i].length + ')']),
+            el('h3', null, [dot(), 'Where ' + it.v.n + ' is ahead' + (m.ahead[it.i].length ? ' (' + m.ahead[it.i].length + ')' : '')]),
             m.ahead[it.i].length ? el('ul.cmp-ahead__list', null, m.ahead[it.i].map(diffLine)) : el('p.cmp-none', { text: 'No scored check is documented as supported for ' + it.v.n + ' and not for ' + rest + '.' }),
             offLine(it),
           ]);
@@ -825,7 +826,7 @@
     var priceLine = function (it) {
       var p = it.v.pr;
       return hasAmount(it.v)
-        ? it.v.n + ' starts at ' + p.h + (p.u ? ' ' + p.u : '') + (p.b ? ', ' + p.b : '') + (p.pl ? ' (plan: ' + p.pl + ')' : '')
+        ? it.v.n + ' starts at ' + (p.ph || p.h + (p.u ? ' ' + p.u : '') + (p.b ? ', ' + p.b : '')) + (p.pl ? ' (plan: ' + p.pl + ')' : '')
         : it.v.n + ' has no verified public starting price' + (p.h === 'Custom quote' ? ' (custom quote)' : p.h === 'Usage-based' ? ' (usage-based pricing)' : '');
     };
     var priceDates = [];

@@ -3,7 +3,7 @@
 //
 // Shape: { id, name, asOf, groups: [[id,label,weight]], features: [[id,label,groupId,active,description,tier,demoQuestion]],
 //          vs: [[vendorA, vendorB, comparisonId]],
-//          vendors: [{ id, n, lg, dk, sc, pe, rk, rec, ck, to, cov, da, gr, pr:{h,a,u,b,pl,s,d,src,x,m,go,aff,host}, bf, av,
+//          vendors: [{ id, n, lg, dk, sc, pe, rk, pl, rec, ck, to, cov, da, gr, pr:{h,a,u,b,ph,bs,pl,s,d,src,x,m,go,aff,host}, bf, av,
 //                      ai, aiS, aiL, aiU, ig, rd, go, aff, host,
 //                      c: [[statusCode, note, verificationCode, date, source]] }] }
 // statusCode: y | p | n | u   verificationCode: d (official documentation) | v (vendor confirmed) | '' (not verified)
@@ -46,7 +46,8 @@ export function categoryData(ctx, category) {
         cov: sc.coveragePct,
         da: sc.checkedAt || '',
         gr: sc.groups.filter((g) => g.totalCount > 0).map((g) => [g.id, +g.earned.toFixed(2), +g.weight.toFixed(2), g.checkedCount, g.totalCount]),
-        pr: { h: p.headline, a: p.hasAmount && p.currency === 'USD' ? p.amount : null, u: p.unit, b: p.billingNote, pl: p.plan, s: p.summary, d: p.checkedAt || '', src: p.sourceUrl || '', x: p.extras, m: p.modelLabel, go: outPricing.href, aff: outPricing.affiliate ? 1 : 0, host: outPricing.attrs['data-destination-host'] },
+        // ph = sentence form ("$14 per seat/month, billed annually"); bs = pricing basis when no amount is verified
+        pr: { h: p.headline, a: p.hasAmount && p.currency === 'USD' ? p.amount : null, u: p.unit, b: p.billingNote, ph: p.hasAmount ? p.phrase : '', bs: p.hasAmount ? '' : p.basis, pl: p.plan, s: p.summary, d: p.checkedAt || '', src: p.sourceUrl || '', x: p.extras, m: p.modelLabel, go: outPricing.href, aff: outPricing.affiliate ? 1 : 0, host: outPricing.attrs['data-destination-host'] },
         bf: v.bestFor || '',
         av: v.avoidIf || '',
         ai: ctx.aiLevel(v).label,

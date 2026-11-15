@@ -80,8 +80,8 @@ function render(ctx, category) {
     },
     pf.min && {
       label: 'Lowest verified starting price',
-      value: link(pf.min.v),
-      sub: `${pf.min.p.headline} ${pf.min.p.unit}`.trim(),
+      value: pf.minGroup.length === 1 ? link(pf.min.v) : pf.minGroup.length <= 2 ? ui.join(pf.minGroup.map((x) => link(x.v)), ', ') : `${pf.minGroup.length} products`,
+      sub: pf.minGroup.every((x) => x.p.phrase === pf.min.p.phrase) ? pf.min.p.phrase : `${pf.min.p.headline} each; units differ`,
     },
     { label: 'Scored so far', value: `${nScored} of ${s.total}`, sub: s.pending ? `${s.pending} pending under the 80% evidence gate` : 'every product has a published score' },
     { label: 'Native AI or AI agents', value: `${nAi} of ${s.total}`, sub: 'documented in official sources' },
@@ -218,14 +218,22 @@ function render(ctx, category) {
   </section>`;
 
   // ---------------------------------------------------------------- costs
-  const cheapest = pf.priced.slice(0, 5);
+  // the five lowest, extended so products that share the fifth amount are not cut apart
+  let cheapestEnd = Math.min(5, pf.priced.length);
+  while (cheapestEnd < pf.priced.length && cheapestEnd < 8 && pf.priced[cheapestEnd].p.amount === pf.priced[cheapestEnd - 1].p.amount) cheapestEnd++;
+  const cheapest = pf.priced.slice(0, cheapestEnd);
+  // "<strong>$0 per workspace</strong> (Agile CRM and EngageBay)": every product that shares an amount is named
+  const priceGroup = (g) =>
+    g.every((x) => x.p.phrase === g[0].p.phrase)
+      ? html`<strong>${g[0].p.phrase}</strong> (${ctx.listText(g.map((x) => x.v.name))})`
+      : ui.join(g.map((x) => html`<strong>${x.p.phrase}</strong> (${x.v.name})`), ' and ');
   const costs = html`<section class="wrap section" id="costs" aria-labelledby="costs-h">
     ${ui.sectionHead(`How much does ${noun} cost?`, { id: 'costs-h' })}
     <div class="cat-two">
       <div class="prose">
         ${
           pf.priced.length >= 2
-            ? html`<p>Among the ${pf.priced.length} ${things} with a verified public starting price, list prices range from <strong>${pf.min.p.headline} ${pf.min.p.unit}</strong> (${pf.min.v.name}) to <strong>${pf.max.p.headline} ${pf.max.p.unit}</strong> (${pf.max.v.name}). ${
+            ? html`<p>Among the ${pf.priced.length} ${things} with a verified public starting price, list prices range from ${priceGroup(pf.minGroup)} to ${priceGroup(pf.maxGroup)}. ${
                 pf.unpriced ? `${ctx.plural(pf.unpriced, 'product')} ${pf.unpriced === 1 ? 'is' : 'are'} quote-only, usage-based or without a verified public price.` : ''
               } Units differ between vendors, so compare a full quote for the same team size.</p>`
             : html`<p>Most ${things} in this ranking do not publish a verified starting price for US buyers. Ask each vendor to quote the same scope, term and team size.</p>`
@@ -241,11 +249,11 @@ function render(ctx, category) {
                 <thead><tr><th scope="col">Lowest verified starting prices</th><th scope="col" class="num">From</th></tr></thead>
                 <tbody>
                   ${cheapest.map(
-                    ({ v, p }) => html`<tr><th scope="row"><a href="${ctx.url.software(v.id)}#pricing">${v.name}</a><small>${[p.planLabel, p.unit, p.billingNote].filter(Boolean).join(' · ')}</small></th><td class="num">${p.headline}</td></tr>`,
+                    ({ v, p }) => html`<tr><th scope="row"><a href="${ctx.url.software(v.id)}#pricing">${v.name}</a> <small>${[ctx.dropNamePrefix(v.name, p.planLabel), p.unit, p.billingNote].filter(Boolean).join(' · ')}</small></th><td class="num">${p.headline}</td></tr>`,
                   )}
                 </tbody>
               </table>
-              <p class="table-note">Public list prices as observed on the dates shown on each profile. Not quotes; taxes and add-ons are excluded.</p>
+              <p class="table-note">Public list prices as observed on the dates shown on each profile. Not quotes: tax treatment is not documented and add-ons are not included.</p>
             </div>`
           : ''
       }
