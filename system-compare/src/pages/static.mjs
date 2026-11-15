@@ -13,6 +13,17 @@ import { html, raw, text } from '../lib/html.mjs';
 import { NO_SCORE_LABEL } from './category-factual.mjs';
 import * as ui from '../lib/components.mjs';
 
+/**
+ * The publisher's description, with the catalog's own counts appended when it is too short to describe the
+ * page in a search result (only /about/ today). Never rewrites the publisher's sentence.
+ */
+function fuller(ctx, path, description) {
+  const d = String(description || '').trim();
+  if (path !== '/about/' || d.length >= 70) return d;
+  const more = `${d.replace(/\.$/, '')}: ${ctx.vendors.length} product profiles in ${ctx.categories.length} categories, researched from dated official sources.`;
+  return more.length <= 155 ? more : d;
+}
+
 // ------------------------------------------------------------------ toolkit (shared with sibling modules)
 export const slug = (s) =>
   String(s)
@@ -313,7 +324,7 @@ function renderPolicy(ctx, path) {
 
   return {
     title: live.title || `${src.h1} | System Compare US`,
-    description: live.description || ctx.pages[path]?.description,
+    description: fuller(ctx, path, live.description || ctx.pages[path]?.description),
     body,
     breadcrumbs: [{ name, url: path }],
     pageType: spec.pageType || 'WebPage',
