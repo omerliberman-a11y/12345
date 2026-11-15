@@ -429,6 +429,68 @@
     $$('details[data-pop][open]').forEach(function (p) { p.open = false; var s = $('summary', p); if (s) s.focus(); });
   });
 
+  // ------------------------------------------------------------------ score breakdown ("why this score?")
+  // Any element with data-score-pop="<categoryId>:<vendorId>" opens the breakdown: the weighted groups,
+  // how much is checked, and the exact checks that did not earn full points — from /data/cat-<id>.js.
+  var floatPop = null, floatFor = null;
+  function closeFloat() { if (floatPop) { floatPop.remove(); floatPop = null; } if (floatFor) { floatFor.setAttribute('aria-expanded', 'false'); floatFor = null; } }
+  function placeFloat(anchor) {
+    var r = anchor.getBoundingClientRect(), pw = floatPop.offsetWidth, ph = floatPop.offsetHeight;
+    var left = Math.max(12, Math.min(w.innerWidth - pw - 12, r.left));
+    var top = r.bottom + 8;
+    if (top + ph > w.innerHeight - 12 && r.top - ph - 8 > 12) top = r.top - ph - 8;
+    floatPop.style.left = left + w.scrollX + 'px';
+    floatPop.style.top = top + w.scrollY + 'px';
+  }
+  SC.float = { open: function (anchor, node) { closeFloat(); floatFor = anchor; anchor.setAttribute('aria-expanded', 'true'); floatPop = node; d.body.appendChild(node); placeFloat(anchor); return node; }, place: function () { if (floatPop && floatFor) placeFloat(floatFor); }, close: closeFloat };
+  function fmtDay(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + +m[3] + ', ' + m[1] : ''; }
+  SC.fmtDay = fmtDay;
+  on(d, 'click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-score-pop]');
+    if (!b) { if (floatPop && !floatPop.contains(e.target) && !(e.target.closest && e.target.closest('[data-float-anchor]'))) closeFloat(); return; }
+    e.preventDefault();
+    if (floatFor === b) return closeFloat();
+    var parts = b.getAttribute('data-score-pop').split(':'), cat = parts[0], vid = parts[1];
+    var box = SC.float.open(b, el('div.evpop.scorepop', { role: 'dialog', 'aria-label': 'Score breakdown' }, [el('p', { text: 'Loading…' })]));
+    SC.load('cat-' + cat).then(function (data) {
+      if (floatFor !== b) return;
+      var v = data.vendors.filter(function (x) { return x.id === vid; })[0];
+      if (!v) return closeFloat();
+      var groups = {}; data.groups.forEach(function (g) { groups[g[0]] = g[1]; });
+      box.textContent = '';
+      box.appendChild(el('p.evpop__who', { text: v.n + ' · ' + data.name }));
+      box.appendChild(el('p.scorepop__big', { text: v.pe ? 'Score pending' : v.sc + '/100' }));
+      box.appendChild(el('p.evpop__meta', { text: (v.pe ? '' : 'Documented-fit score · ') + v.ck + ' of ' + v.to + ' checks checked (' + v.cov + '% of checklist weight)' + (v.da ? ' · evidence from ' + fmtDay(v.da) : '') }));
+      if (v.pe) box.appendChild(el('p', { text: 'A score is published once 80% of the checklist weight has been checked. Pending is not a negative finding.' }));
+      var bars = el('div.breakdown');
+      (v.gr || []).forEach(function (g) {
+        var pct = g[2] ? Math.round((g[1] / g[2]) * 100) : 0;
+        var meter = el('span.meter', { 'aria-hidden': 'true' }, [el('i', { style: 'width:' + pct + '%' })]);
+        bars.appendChild(el('div.breakdown__row', null, [el('b', { text: groups[g[0]] || g[0] }), el('span', { text: (+g[1].toFixed(1)) + ' of ' + (+g[2].toFixed(1)) + ' pts' }), meter]));
+      });
+      box.appendChild(bars);
+      var STL = { p: 'limited', n: 'not supported', u: 'not verified' };
+      var lost = [];
+      data.features.forEach(function (f, i) { var c = (v.c[i] || ['u'])[0]; if (f[3] && c !== 'y') lost.push(f[1] + ' — ' + STL[c]); });
+      if (lost.length) {
+        box.appendChild(el('h4', { text: v.pe ? 'Checks without full credit so far' : 'Why not 100?' }));
+        var ul = el('ul.dots');
+        lost.slice(0, 8).forEach(function (t) { ul.appendChild(el('li', { text: t })); });
+        box.appendChild(ul);
+        if (lost.length > 8) box.appendChild(el('p.evpop__meta', { text: '+ ' + (lost.length - 8) + ' more on the profile' }));
+      } else if (!v.pe) box.appendChild(el('p', { text: 'Every scored check is documented as supported.' }));
+      var links = el('p');
+      links.appendChild(el('a', { href: SC.url('/software/' + vid + '/#capabilities'), text: 'All evidence and sources' }));
+      links.appendChild(d.createTextNode(' · '));
+      links.appendChild(el('a', { href: SC.url('/methodology/'), text: 'How we score' }));
+      box.appendChild(links);
+      box.appendChild(el('p.evpop__meta', { text: 'Research, not a user rating or hands-on test.' }));
+      SC.float.place();
+    }).catch(function () { if (floatPop) floatPop.textContent = 'The breakdown could not load. Open the product profile for the evidence.'; });
+  });
+  on(d, 'keydown', function (e) { if (e.key === 'Escape' && floatPop) { var f = floatFor; closeFloat(); if (f) f.focus(); } });
+  on(w, 'resize', closeFloat);
+
   // ------------------------------------------------------------------ section spy for sticky sub-navigation and "On this page"
   $$('[data-subnav], [data-toc]').forEach(function (nav) {
     var links = $$('a[href^="#"]', nav), map = [];

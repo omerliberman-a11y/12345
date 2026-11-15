@@ -191,7 +191,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
               </span>
             </a>
           </th>
-          <td class="ptable__c-score">${scoreToken(ctx, s)}</td>
+          <td class="ptable__c-score"><button type="button" class="scorebtn" data-score-pop="${categoryId}:${vendor.id}" aria-haspopup="dialog" aria-expanded="false" title="Why this score?">${scoreToken(ctx, s)}<span class="sr-only"> — open the score breakdown</span></button></td>
           <td class="ptable__c-price">${priceCell(ctx, p)}</td>
           ${ai ? html`<td class="ptable__c-ai">${aiTag(ctx, vendor)}</td>` : ''}
         </tr>`;

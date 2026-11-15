@@ -140,7 +140,9 @@ as the previous site) · `SC.toast(msg, actions)` · `SC.openSearch(q)` · `SC.e
 with `textContent` — never `innerHTML` with data) · `SC.$`, `SC.$$`, `SC.store`, `SC.save`.
 Events: `sc:shortlist-updated`, `sc:comparison-add`, `sc:cost-calculation`.
 Any element with `data-shortlist="<vendorId>" data-category="<categoryId>" data-name="…"` is a working
-shortlist toggle. `data-search-open`, `data-copy="url"`, `data-pop` (popover `<details>`), `data-tabs`,
+shortlist toggle. Any element with `data-score-pop="<categoryId>:<vendorId>"` opens the score breakdown
+("Why not 100?") — `ui.productTable` already does this for every score cell. `SC.float.open(anchor, node)` /
+`SC.float.close()` give you the same anchored popover (class `.evpop`) for your own evidence details. `data-search-open`, `data-copy="url"`, `data-pop` (popover `<details>`), `data-tabs`,
 `data-subnav`, `data-toc` are wired automatically.
 
 Per-category data chunk `/data/cat-<id>.js` (see `src/gen/category-data.mjs`): features, and for every vendor
