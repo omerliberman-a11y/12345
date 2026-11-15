@@ -1093,6 +1093,7 @@ html:not(.js) .tabs__list { display: none; }
   .ptable thead button { min-height: var(--tap); }
   .tray__item { height: var(--tap); }
   .tray__x { width: var(--tap); height: var(--tap); margin-right: -0.3rem; }
+  .toast > a, .toast > button { display: inline-flex; align-items: center; justify-content: center; min-height: var(--tap); min-width: var(--tap); }
   /* the check's name in the capability matrix: the whole label cell answers a tap; the focus ring stays on the words */
   .matrix__what { position: relative; }
   .matrix__what::before { content: ""; position: absolute; left: -0.75rem; right: -0.75rem; top: 50%; height: max(100% + 1.4rem, var(--tap)); transform: translateY(-50%); }

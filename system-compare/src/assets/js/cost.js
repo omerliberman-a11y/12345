@@ -358,7 +358,7 @@
       if (seq !== loadSeq) return;
       var byId = {};
       var products = raw.p.map(function (p) {
-        var out = { id: p.i, name: p.n, logo: p.l || '', dark: !!p.d, supplier: !!p.f, offers: p.o.map(expandOffer) };
+        var out = { id: p.i, name: p.n, logo: p.l || '', dark: !!p.d, wide: !!p.w, supplier: !!p.f, offers: p.o.map(expandOffer) };
         out.href = out.supplier ? '/categories/' + raw.id + '/#supplier-' + p.i : '/software/' + p.i + '/';
         byId[out.id] = out;
         return out;
@@ -384,7 +384,10 @@
   // ------------------------------------------------------------------ DOM builders
   function logoEl(p, small) {
     var cls = 'span.logo' + (small ? '.logo--sm' : '') + (p.dark ? '.logo--dark' : '');
-    if (p.logo) return el(cls, null, [el('img', { src: SC.url(p.logo), alt: '', width: 32, height: 32, loading: 'lazy', decoding: 'async' })]);
+    if (p.logo) {
+      var tile = el(cls, null, [el('img', { src: SC.url(p.logo), alt: '', width: 32, height: 32, loading: 'lazy', decoding: 'async' })]);
+      return small && p.wide && SC.monogram ? SC.monogram(tile, p.name) : tile; // a wide wordmark is unreadable in the small tile
+    }
     var initials = p.name.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (w) { return w.charAt(0); }).slice(0, 2).join('').toUpperCase();
     return el(cls, { 'aria-hidden': 'true' }, [el('span.logo__fallback', { text: initials })]);
   }

@@ -6,6 +6,8 @@
 // matches on every field (vendor, category, offer id, amount, plan, unit, billing, source URL, check date,
 // USD and — for researched plans — pricing.scenarioReady). Any edit to the price record disables it.
 
+import { WIDE_LOGO_RATIO } from './components.mjs';
+
 export const ADAPTERS = [
   { vendorId: 'pipedrive', categoryId: 'crm', id: 'entry', amount: 14, plan: 'Lite', unit: 'per seat/month', billing: 'annual', source: 'https://www.pipedrive.com/en/pricing', checkedAt: '2026-11-05', kind: 'seat', commitmentMonths: 12 },
   { vendorId: 'salesforce-sales', categoryId: 'crm', id: 'entry', amount: 25, plan: 'Starter Suite', unit: 'per user/month', billing: 'monthly', source: 'https://www.salesforce.com/sales/pricing/', checkedAt: '2026-11-05', kind: 'seat', commitmentMonths: 1 },
@@ -154,7 +156,8 @@ export function readyOffers(catalog) {
 
 // ---------------------------------------------------------------- compact client files
 // /data/cost-<id>.js    { id, n, p: [product] }      (one file per category; the category list itself is in the page HTML)
-//   product = { i: id, n: name, l?: logoPath, d?: 1 (dark logo surface), f?: 1 (documentary supplier → category anchor), o: [offer] }
+//   product = { i: id, n: name, l?: logoPath, d?: 1 (dark logo surface), w?: 1 (wide wordmark: small tiles show a monogram),
+//               f?: 1 (documentary supplier → category anchor), o: [offer] }
 //   offer   = { i: id, n: name, k?: kind (absent = unverified), a?: amount, pa?: publishedAmount, c?: currency (absent = USD),
 //               u: unit, b: billing, s: summary, src?: source, d?: checkedAt, x?: extras, cm?, mq?, me?, mc?,
 //               r?: 2 (supplier "not ready" sentence; absent on unverified offers = the standard sentence) }
@@ -214,7 +217,8 @@ export function compactCostCatalog(ctx, catalog = createCostCatalog(ctx)) {
         const vendor = p.href.startsWith('/software/') ? ctx.vendor(p.id) : null;
         const out = { i: p.id, n: p.name };
         if (vendor?.logo?.path) out.l = vendor.logo.path;
-        if (vendor?.logo?.surface === 'dark') out.d = 1;
+        if (vendor?.logo?.surface === 'dark' || vendor?.logo?.surface === 'brand-gradient') out.d = 1; // white artwork
+        if (vendor?.logo?.path && (vendor.logo.width || 64) / (vendor.logo.height || 64) >= WIDE_LOGO_RATIO) out.w = 1; // small tiles: monogram
         if (!vendor) out.f = 1;
         out.o = p.offers.map(compactOffer);
         return out;

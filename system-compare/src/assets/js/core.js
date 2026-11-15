@@ -281,6 +281,7 @@
         var v = data.vendors[id] || [id, '', 0];
         var logo = el('span.logo' + (v[2] ? '.logo--dark' : ''));
         if (v[1]) logo.appendChild(el('img', { src: SC.url(v[1]), alt: '', width: 28, height: 28, loading: 'lazy' }));
+        if (v[1] && v[4]) SC.monogram(logo, v[0]); // a wide wordmark would be unreadable in the small chip
         items.appendChild(el('span.tray__item', null, [logo, el('span', { text: v[0] }), el('button.tray__x', { type: 'button', 'aria-label': 'Remove ' + v[0] + ' from shortlist', text: '×', on: { click: function () { trayFocus = i; SC.shortlist.remove(id); announce(v[0], false); } } })]));
       });
       var canCompare = o2.ids.length >= 2;
@@ -414,7 +415,7 @@
     /** Result row. Built with textContent only — never innerHTML with user or index text. */
     hit: function (r, opts) {
       var icon = el('span.hit__icon');
-      if (r.logo) { icon.className = 'logo logo--sm' + (r.dark ? ' logo--dark' : ''); icon.appendChild(el('img', { src: SC.url(r.logo), alt: '', width: 32, height: 32, loading: 'lazy' })); }
+      if (r.logo) { icon.className = 'logo logo--sm' + (r.dark ? ' logo--dark' : ''); icon.appendChild(el('img', { src: SC.url(r.logo), alt: '', width: 32, height: 32, loading: 'lazy' })); if (r.wide) SC.monogram(icon, r.name); }
       else icon.appendChild(svg(r.type));
       var a = el('a.hit', { href: SC.url(r.url), role: 'option', id: opts && opts.id }, [
         icon,
@@ -888,6 +889,13 @@
   });
 
   SC.el = el; SC.$ = $; SC.$$ = $$; SC.store = store; SC.save = save; SC.syncButtons = syncButtons;
+
+  /** Small logo tiles: a wordmark much wider than tall shows the product's initials instead (CSS hides the image). */
+  SC.monogram = function (tile, name) {
+    tile.setAttribute('data-wide', '');
+    tile.appendChild(el('span.logo__mono', { 'aria-hidden': 'true', text: String(name || '').replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (x) { return x.charAt(0); }).slice(0, 2).join('').toUpperCase() }));
+    return tile;
+  };
   syncButtons();
   renderTray();
 })();

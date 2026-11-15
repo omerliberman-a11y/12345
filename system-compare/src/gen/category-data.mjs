@@ -3,10 +3,12 @@
 //
 // Shape: { id, name, asOf, groups: [[id,label,weight]], features: [[id,label,groupId,active,description,tier,demoQuestion]],
 //          vs: [[vendorA, vendorB, comparisonId]],
-//          vendors: [{ id, n, lg, dk, sc, pe, rk, pl, rec, ck, to, cov, da, gr, pr:{h,a,u,b,ph,bs,pl,s,d,src,x,m,go,aff,host}, bf, av,
+//          vendors: [{ id, n, lg, dk, wd, sc, pe, rk, pl, rec, ck, to, cov, da, gr, pr:{h,a,u,b,ph,bs,pl,s,d,src,x,m,go,aff,host}, bf, av,
 //                      ai, aiS, aiL, aiU, ig, rd, go, aff, host,
 //                      c: [[statusCode, note, verificationCode, date, source]] }] }
 // statusCode: y | p | n | u   verificationCode: d (official documentation) | v (vendor confirmed) | '' (not verified)
+
+import { WIDE_LOGO_RATIO } from '../lib/components.mjs';
 
 const ST = { yes: 'y', partial: 'p', no: 'n', unknown: 'u' };
 const VER = { 'public-documentation': 'd', 'vendor-confirmed': 'v' };
@@ -36,6 +38,7 @@ export function categoryData(ctx, category) {
         n: v.name,
         lg: v.logo?.path || '',
         dk: v.logo?.surface === 'dark' || v.logo?.surface === 'brand-gradient' ? 1 : 0,
+        wd: (v.logo?.width || 64) / (v.logo?.height || 64) >= WIDE_LOGO_RATIO ? 1 : 0, // wide wordmark: small tiles show a monogram
         sc: sc.value,
         pe: sc.pending ? 1 : 0,
         rk: sc.rank,

@@ -47,7 +47,10 @@
 
   function logo(v, size, lazy) {
     var node = el('span.logo' + (size ? '.logo--' + size : '') + (v.dk ? '.logo--dark' : ''));
-    if (v.lg) node.appendChild(el('img', { src: SC.url(v.lg), alt: '', width: 64, height: 64, loading: lazy ? 'lazy' : null, decoding: 'async' })); // every use prints the name next to it
+    if (v.lg) {
+      node.appendChild(el('img', { src: SC.url(v.lg), alt: '', width: 64, height: 64, loading: lazy ? 'lazy' : null, decoding: 'async' })); // every use prints the name next to it
+      if (size === 'sm' && v.wd && SC.monogram) SC.monogram(node, v.n); // a wide wordmark is unreadable in the small round tile
+    }
     else {
       node.setAttribute('aria-hidden', 'true');
       node.appendChild(el('span.logo__fallback', { text: v.n.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (x) { return x[0]; }).slice(0, 2).join('').toUpperCase() }));

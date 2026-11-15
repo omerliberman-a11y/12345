@@ -387,19 +387,13 @@ html:not(.js) .sw-tablist { display: none; }
 /* ---------------------------------------------------------------- touch: links that stand alone on a line get a 44px target
    (the padding widens the hit area, the negative margin keeps the layout) */
 @media (pointer: coarse) {
-  .sw-cite a,
-  .sw-rows dd > a,
-  .sw-plans-table th small a,
-  #ai .sw-prose > p > a,
-  .sw-kf td > a:only-child,
-  .sw-kf .commercial-link > a,
-  .sw-side__cat a,
-  .sw-plan > .fineprint a,
-  /* the shared touch rule pads these by 0.6rem, which leaves 36–41px with small text */
-  [data-page="software"] main .trustline a,
-  [data-page="software"] main .sources a,
-  [data-page="software"] main .fineprint a,
-  [data-page="software"] main .table-note a { display: inline-block; padding-block: 0.9rem; margin-block: -0.9rem; }
+  /* the category link next to the score-help button keeps its padded target (no text lines around it) */
+  .sw-side__cat a { display: inline-block; padding-block: 0.9rem; margin-block: -0.9rem; }
+  /* links inside running text get a 44px-tall ::before hit area under the words, like the shared rule
+     (components.css): the focus ring stays on the words and never crosses the neighbouring lines */
+  :where(.sw-cite, .sw-rows dd, .sw-plans-table th small, #ai .sw-prose > p, .sw-kf td) { isolation: isolate; }
+  :where(.sw-cite, .sw-rows dd, .sw-plans-table th small, #ai .sw-prose > p, .sw-kf td) a:not(.btn, .chip) { position: relative; }
+  :where(.sw-cite, .sw-rows dd, .sw-plans-table th small, #ai .sw-prose > p, .sw-kf td) a:not(.btn, .chip)::before { content: ""; position: absolute; inset: calc(0.6em - var(--tap) / 2) -0.25rem; z-index: -1; }
 }
 /* key facts: the affiliate label and its explainer sit under the link */
 .sw-kf .commercial-link--ad { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 0.5rem; }

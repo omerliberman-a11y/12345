@@ -242,7 +242,7 @@ html:not(.js) .tl-app { display: none; }
 html:not(.js) .tl-sl__status { display: none; }
 .tl-sl__status { margin-bottom: var(--s-5); max-width: 70ch; font-size: var(--fs-sm); color: var(--ink-2); }
 .tl-sl__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s-4) var(--s-6); margin-bottom: var(--s-4); }
-.tl-sl__head h2 { font-size: var(--fs-xl); }
+.tl-sl__head h2 { margin: 0; }
 .tl-sl__head p { margin-top: 0.3rem; font-size: var(--fs-sm); color: var(--ink-2); }
 .tl-sl__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .tl-savedtable .tl-c-note { width: 22rem; }
@@ -262,7 +262,7 @@ html:not(.js) .tl-sl__status { display: none; }
 .tl-sl__clear .btn--ghost { color: var(--ink); margin-left: 0.6rem; }
 
 .tl-sl__empty { max-width: 46rem; padding-bottom: var(--s-6); }
-.tl-sl__empty h2 { font-size: var(--fs-xl); margin-bottom: var(--s-3); }
+.tl-sl__empty h2 { margin-bottom: var(--s-3); }
 .tl-sl__empty > p { color: var(--ink-2); }
 .tl-sl .chip, .tl-empty .chip, .tl-next .chip { min-height: var(--tap); }
 /* scenario chips carry long names ("CRM & sales: Pipedrive and Salesforce Sales"): they wrap inside the column */
@@ -274,7 +274,7 @@ html:not(.js) .tl-sl__status { display: none; }
 .tl-sl__search { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); margin-top: var(--s-8); }
 
 .tl-sl__other { margin-top: var(--s-10); padding-top: var(--s-10); border-top: 1px solid var(--line); max-width: 46rem; }
-.tl-sl__other h2 { font-size: var(--fs-xl); }
+.tl-sl__other h2 { margin: 0; }
 .tl-sl__othersub { margin-top: var(--s-2); font-size: var(--fs-sm); color: var(--ink-2); }
 .tl-othernotes { margin-top: var(--s-4); border-top: 1px solid var(--line); }
 .tl-othernote { padding-block: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); }

@@ -6,6 +6,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { siteFaq } from '../lib/site-faq.mjs';
+import { WIDE_LOGO_RATIO } from '../lib/components.mjs';
 
 export async function loadEngine(root) {
   const src = await readFile(path.join(root, 'src/assets/js/search.js'), 'utf8');
@@ -77,6 +78,7 @@ export async function buildSearchIndex(ctx, root) {
       pf: 1,
       lg: v.logo?.path || '',
       dk: v.logo?.surface === 'dark' || v.logo?.surface === 'brand-gradient' ? 1 : 0, // white artwork: show on the dark logo surface
+      wd: (v.logo?.width || 64) / (v.logo?.height || 64) >= WIDE_LOGO_RATIO ? 1 : 0, // wordmark much wider than tall: small tiles show a monogram
       f: {
         n: field(v.name),
         a: field(aliasData.aliases[v.id] || []),
@@ -205,7 +207,7 @@ export async function buildSearchIndex(ctx, root) {
     for (const k of Object.keys(d.f)) if (!d.f[k]) delete d.f[k];
     for (const k of ['al', 'c']) if (Array.isArray(d[k]) && !d[k].length) delete d[k];
     for (const k of ['sc', 'am']) if (d[k] === null) delete d[k];
-    for (const k of ['fr', 'pu', 'lg', 'dk', 's']) if (!d[k]) delete d[k];
+    for (const k of ['fr', 'pu', 'lg', 'dk', 'wd', 's']) if (!d[k]) delete d[k];
   }
   return { v: 1, cats, phrase, docs };
 }
@@ -217,7 +219,8 @@ export async function generate(ctx, emit) {
   await emit('/data/search-index.js', `SC.define("search-index",${JSON.stringify(index)});`);
 
   const vendors = {};
-  for (const v of ctx.vendors) vendors[v.id] = [v.name, v.logo?.path || '', v.logo?.surface === 'dark' || v.logo?.surface === 'brand-gradient' ? 1 : 0, v.categories?.[0] || ''];
+  // [name, logoPath, darkSurface, primaryCategoryId, wideWordmark]
+  for (const v of ctx.vendors) vendors[v.id] = [v.name, v.logo?.path || '', v.logo?.surface === 'dark' || v.logo?.surface === 'brand-gradient' ? 1 : 0, v.categories?.[0] || '', (v.logo?.width || 64) / (v.logo?.height || 64) >= WIDE_LOGO_RATIO ? 1 : 0];
   const catNames = Object.fromEntries(ctx.categories.map((c) => [c.id, c.name]));
   await emit('/data/vendors.js', `SC.define("vendors",${JSON.stringify({ vendors, categories: catNames })});`);
 }

@@ -209,7 +209,7 @@ a.cmp-slot__name:hover { color: var(--brand); }
 /* ---------------------------------------------------------------- compare tool: picker (category → products) */
 .cmp-picker { padding-bottom: var(--s-10); }
 .cmp-picker__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3) var(--s-6); margin-bottom: var(--s-6); }
-.cmp-picker__head h2, .cmp-step h2 { display: flex; align-items: center; gap: 0.7rem; font-size: var(--fs-xl); }
+.cmp-picker__head h2, .cmp-step h2 { display: flex; align-items: center; gap: 0.7rem; }
 .cmp-stepno { display: inline-grid; place-items: center; flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); font-family: var(--font); font-size: var(--fs-sm); font-weight: 700; letter-spacing: 0; }
 .cmp-find { flex: 0 1 20rem; }
 .cmp-saved { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3) var(--s-6); margin-bottom: var(--s-8); padding: var(--s-4) var(--s-5); border-radius: var(--r-surface); background: var(--brand-softer); }
@@ -287,9 +287,7 @@ html.js .cmp-noscript { display: none; }
   /* table body text stays 14px on phones (evidence notes, check descriptions, score groups);
      only captions — source and date lines, points, the legend — are 12px */
   .cmp-table th > small, .cmp-table .breakdown { font-size: var(--fs-sm); }
-  .cmp-tools { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
-  .cmp-tools::-webkit-scrollbar { display: none; }
-  .cmp-tools > * { flex: none; }
+  .cmp-tools { flex-wrap: wrap; } /* the action row wraps instead of being cut at the screen edge */
   .cmp-tools .btn, .cmp-choose__links .btn { min-height: 2.75rem; }
   .cmp-viewbar .legend { font-size: var(--fs-xs); gap: var(--s-1) var(--s-4); }
   .cmp-view { width: 100%; flex-wrap: nowrap; }

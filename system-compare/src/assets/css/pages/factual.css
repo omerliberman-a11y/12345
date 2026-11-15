@@ -70,7 +70,7 @@
 .fx-supplier { padding-top: var(--s-6); }
 .fx-supplier + .fx-supplier { margin-top: var(--s-6); border-top: 1px solid var(--line); }
 .fx-supplier__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem var(--s-4); margin-bottom: var(--s-2); }
-.fx-supplier__head h3 { font-size: var(--fs-xl); }
+.fx-supplier__head h3 { margin: 0; }
 .fx-supplier__head p { color: var(--ink-3); font-size: var(--fs-sm); }
 .fx-offers tbody th { width: 17%; font-size: var(--fs-md); }
 .fx-offers td:nth-child(2) { width: 17%; }
@@ -294,7 +294,6 @@ html:not(.js) .fx-cmp .fx-row th, html:not(.js) .fx-cmp .fx-row td { border-bott
 .fx-hero img { width: 100%; border-radius: var(--r-surface); background: var(--bg-subtle); }
 .fx-sec { margin-top: var(--s-14); }
 .fx-sec--first { margin-top: 0; }
-.fx-sec > h2 { font-size: var(--fs-2xl); }
 .fx-sec > h2 + * { margin-top: var(--s-3); }
 .fx-sec__sub { color: var(--ink-2); }
 .fx-sec .sources { margin-top: var(--s-3); }
@@ -311,4 +310,4 @@ html:not(.js) .fx-cmp .fx-row th, html:not(.js) .fx-cmp .fx-row td { border-bott
 .fx-updated { margin-top: var(--s-14); font-size: var(--fs-sm); color: var(--ink-3); }
 /* shared reading layout and heading scale (layout.css, base.css): the guides' measure, and h2 steps down on phones */
 .fx-article { --fx-measure: var(--wrap-narrow); }
-@media (max-width: 39.99em) { .fx-sec > h2 { font-size: var(--fs-xl); } }
+

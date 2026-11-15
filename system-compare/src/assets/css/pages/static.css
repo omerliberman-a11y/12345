@@ -264,7 +264,7 @@ html:not(.js) .doc-jump { display: none; }
 @media (min-width: 40em) { .st-pg-apply__lang { margin-bottom: calc(-1 * var(--s-10)); } .st-pg-apply__lang + section > .eyebrow { margin-top: 0; padding-top: var(--s-3); max-width: 60%; } }
 .st-pg-apply .partner-workspace > * + * { margin-top: var(--s-4); }
 .st-pg-apply .partner-workspace > p { color: var(--ink-2); }
-.st-pg-apply .eyebrow { margin: var(--s-2) 0 0; letter-spacing: 0.06em; font-size: var(--fs-xs); font-weight: 700; }
+.st-pg-apply .eyebrow { margin: var(--s-2) 0 0; }
 .st-pg-apply h1 { margin-top: var(--s-2); }
 .st-pg-apply a:not(.btn) { text-decoration: underline; }
 .st-pg-apply .partner-card { padding: var(--s-3) var(--s-4); border-radius: var(--r-control); background: var(--bg-subtle); color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.5; }

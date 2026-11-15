@@ -166,10 +166,8 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
   .ix-table .score--pending .score__value { font-size: var(--fs-sm); } /* data, not a caption: 14px like the rest of the row */
   .ix-table .ix-in { display: none; }
   .ix-table .ix-of { display: inline; white-space: nowrap; }
-  /* quick filters stay on one line and scroll sideways */
-  .ix-dir .ix-chips { flex: 0 0 calc(100% + 2 * var(--gutter)); flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
-  .ix-dir .ix-chips::-webkit-scrollbar { display: none; }
-  .ix-dir .ix-chips .chip { flex: none; }
+  /* quick filters wrap onto a second line rather than being cut at the screen edge */
+  .ix-dir .ix-chips { flex: 1 1 100%; flex-wrap: wrap; }
 }
 
 /* documented suppliers: dense A–Z list */
