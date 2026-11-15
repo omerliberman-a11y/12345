@@ -102,8 +102,15 @@ by a fix round. The verifiers' working scripts are not part of the repository; `
   reflow at 320 px and 400 % zoom; the site's own text-size, contrast, spacing and motion preferences.
 - Journeys: the seven buyer jobs, 23 legacy URLs, every must-preserve anchor, old saved shortlists, private
   mode, no JavaScript, three link modes, failed data loads and 126 XSS probes.
-- Performance: Lighthouse accessibility and best practices 100 on every page tested; layout shift 0 on content
-  pages and the tools; real Slow-4G first paint about 0.5 s on the main page types.
+- Performance: Lighthouse 12.8 on 18 page types at phone and desktop size, served with gzip: performance
+  96–100, accessibility 100, best practices 100, SEO 100 on every indexable page (pages kept `noindex` by the
+  index policy score 66–69, because Lighthouse counts `noindex` itself). Largest paint is faster than on the live
+  site in all 18 desktop runs and 16 of 18 phone runs; layout shift is 0 everywhere (the live search, compare and
+  shortlist pages shifted by up to 0.59). On a real Slow-4G connection the first paint lands at 0.45–0.54 s, and
+  the web fonts arrive about 0.5 s later without moving anything. Lighthouse's *simulated* phone first paint
+  reads 1.3–1.7 s on some pages (live site: about 1.05 s). The simulation counts the two web fonts as
+  render-blocking whenever they happen to finish before the first paint of its unthrottled trace. They use
+  `font-display: swap` with size-matched fallback fonts, so they never delay a real paint.
 
 ## Decisions for the owner
 
