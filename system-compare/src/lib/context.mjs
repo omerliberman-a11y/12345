@@ -245,7 +245,8 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
     return {
       href,
       affiliate,
-      rel: affiliate ? 'sponsored nofollow noopener noreferrer' : 'nofollow noopener noreferrer',
+      // same rel values as the previous site: paid links are sponsored + nofollow, plain vendor links are not
+      rel: affiliate ? 'sponsored nofollow noopener noreferrer' : 'noopener noreferrer',
       attrs: {
         'data-vendor-id': vendor.id,
         'data-outbound-intent': intent,

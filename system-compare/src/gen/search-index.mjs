@@ -76,6 +76,7 @@ export async function buildSearchIndex(ctx, root) {
       ai: v.ai?.level || 'not-verified',
       pf: 1,
       lg: v.logo?.path || '',
+      dk: v.logo?.surface === 'dark' || v.logo?.surface === 'brand-gradient' ? 1 : 0, // white artwork: show on the dark logo surface
       f: {
         n: field(v.name),
         a: field(aliasData.aliases[v.id] || []),
@@ -204,7 +205,7 @@ export async function buildSearchIndex(ctx, root) {
     for (const k of Object.keys(d.f)) if (!d.f[k]) delete d.f[k];
     for (const k of ['al', 'c']) if (Array.isArray(d[k]) && !d[k].length) delete d[k];
     for (const k of ['sc', 'am']) if (d[k] === null) delete d[k];
-    for (const k of ['fr', 'pu', 'lg', 's']) if (!d[k]) delete d[k];
+    for (const k of ['fr', 'pu', 'lg', 'dk', 's']) if (!d[k]) delete d[k];
   }
   return { v: 1, cats, phrase, docs };
 }

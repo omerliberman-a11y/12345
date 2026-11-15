@@ -76,7 +76,7 @@
   /** Outbound vendor link through the /go/ contract, with the affiliate label when it applies. */
   function outLink(v) {
     var a = el('a.btn.btn--ghost.btn--sm.ext', {
-      href: SC.url(v.go), target: '_blank', rel: (v.aff ? 'sponsored ' : '') + 'nofollow noopener noreferrer', text: 'Visit ' + v.n,
+      href: SC.url(v.go), target: '_blank', rel: (v.aff ? 'sponsored nofollow ' : '') + 'noopener noreferrer', text: 'Visit ' + v.n,
       'data-vendor-id': v.id, 'data-outbound-intent': 'website', 'data-outbound-placement': 'comparison', 'data-outbound-affiliate': v.aff ? 'true' : 'false', 'data-destination-host': v.host || null,
     });
     var box = el('span.commercial-link' + (v.aff ? '.commercial-link--ad' : ''), null, [a]);

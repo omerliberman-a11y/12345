@@ -590,6 +590,10 @@ function render(ctx, vendor) {
       { name, url: path },
     ],
     pageType: 'WebPage',
+    // the publisher's per-product share card (30 products have one); everything else uses the site card
+    ogImage: vendor.researchSocialImage
+      ? { url: vendor.researchSocialImage, width: 1200, height: 630, alt: `${name} — US pricing and plan research; source dates and limits on the page` }
+      : undefined,
     pageExtra: { mainEntity: { '@id': softwareId } },
     dateModified: updated,
     accountable: true,

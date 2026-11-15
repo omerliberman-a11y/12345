@@ -277,7 +277,7 @@
     /** Result row. Built with textContent only — never innerHTML with user or index text. */
     hit: function (r, opts) {
       var icon = el('span.hit__icon');
-      if (r.logo) { icon.className = 'logo logo--sm'; icon.appendChild(el('img', { src: SC.url(r.logo), alt: '', width: 32, height: 32, loading: 'lazy' })); }
+      if (r.logo) { icon.className = 'logo logo--sm' + (r.dark ? ' logo--dark' : ''); icon.appendChild(el('img', { src: SC.url(r.logo), alt: '', width: 32, height: 32, loading: 'lazy' })); }
       else icon.appendChild(svg(r.type));
       var a = el('a.hit', { href: SC.url(r.url), role: 'option', id: opts && opts.id }, [
         icon,

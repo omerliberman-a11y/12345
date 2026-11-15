@@ -99,7 +99,7 @@
         type: d.t, id: d.id, name: d.n, url: d.u, sub: d.s || '', cats: d.c || [], f: f,
         al: d.al || [], nameNorm: words(d.n).join(' '), nameKey: key(d.n),
         best: d.sc == null ? null : d.sc, amount: d.am == null ? null : d.am, priceText: d.pu || '', free: !!d.fr,
-        ai: d.ai || null, profile: !!d.pf, logo: d.lg || '', pair: d.pr || null, mode: d.m || null, count: d.k || 0, cs: d.cs || null,
+        ai: d.ai || null, profile: !!d.pf, logo: d.lg || '', dark: !!d.dk, pair: d.pr || null, mode: d.m || null, count: d.k || 0, cs: d.cs || null,
       };
     });
     var cats = index.cats;
@@ -281,13 +281,13 @@
       // "X pricing" / "X score" → send the first product hit to the right section of its profile
       if (q.suffix && groups.product && groups.product.length && groups.product[0].profile && !top.length) {
         var p0 = groups.product[0];
-        top.push({ type: 'product', name: p0.name + (q.suffix === 'pricing' ? ' pricing' : ' score and evidence'), url: p0.url + (q.suffix === 'pricing' ? '#pricing' : '#capabilities'), sub: q.suffix === 'pricing' ? (p0.priceText || 'Pricing details and sources') : 'Documented-fit score and capability evidence', logo: p0.logo, why: q.suffix === 'pricing' ? 'Pricing' : 'Score' });
+        top.push({ type: 'product', name: p0.name + (q.suffix === 'pricing' ? ' pricing' : ' score and evidence'), url: p0.url + (q.suffix === 'pricing' ? '#pricing' : '#capabilities'), sub: q.suffix === 'pricing' ? (p0.priceText || 'Pricing details and sources') : 'Documented-fit score and capability evidence', logo: p0.logo, dark: p0.dark, why: q.suffix === 'pricing' ? 'Pricing' : 'Score' });
       }
       return { q: q, top: top, groups: groups, total: res.length + top.length, catHits: catHits.map(function (id) { return byId('category', id); }).filter(Boolean).map(function (x) { return ext(x); }) };
     }
 
     function ext(x, extra) {
-      var r = { type: x.type, id: x.id, name: x.name, url: x.url, sub: x.sub, cats: x.cats, best: x.best, amount: x.amount, priceText: x.priceText, free: x.free, ai: x.ai, profile: x.profile, logo: x.logo, mode: x.mode, count: x.count };
+      var r = { type: x.type, id: x.id, name: x.name, url: x.url, sub: x.sub, cats: x.cats, best: x.best, amount: x.amount, priceText: x.priceText, free: x.free, ai: x.ai, profile: x.profile, logo: x.logo, dark: x.dark, mode: x.mode, count: x.count };
       if (extra) for (var k in extra) r[k] = extra[k];
       return r;
     }
