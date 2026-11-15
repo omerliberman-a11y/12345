@@ -110,7 +110,7 @@ function render(ctx, vendor) {
   const chip = (c) => {
     const sc = scores.get(c.id);
     const total = ctx.summary(c.id).total;
-    return html`<li><a class="chip chip--link" href="${ctx.url.category(c.id)}">${sc.pending ? html`${c.name}<span class="n">score pending</span>` : html`<b>#${sc.rank} of ${total}</b> in ${c.name}`}</a>${sc.recommended ? html` ${ui.tag('Recommended', 'top')}` : ''}</li>`;
+    return html`<li><a class="chip chip--link" href="${ctx.url.category(c.id)}">${sc.pending ? html`${c.name} <span class="n">score pending</span>` : html`<b>#${sc.rank} of ${total}</b> in ${c.name}`}</a>${sc.recommended ? html` ${ui.tag('Recommended', 'top')}` : ''}</li>`;
   };
   const planLine = p.plan ? html`<span class="price__unit">Plan: ${p.plan}</span>` : '';
   const hero = html`<header class="wrap sw-hero">
@@ -241,8 +241,8 @@ function render(ctx, vendor) {
           <tbody>
             ${vendor.planOptions.map(
               (o) => html`<tr>
-                <th scope="row">${o.name}<small>${ui.sourceLink(o.source, 'Plan source')}</small></th>
-                <td>${o.price == null ? 'Confirm price' : html`<b class="num">${money(o.price, o.currency)}</b>`}<small>${PLAN_BILLING[o.billing] || o.billing} · ${o.unit || 'Confirm billing unit in source'}</small></td>
+                <th scope="row">${o.name} <small>${ui.sourceLink(o.source, 'Plan source')}</small></th>
+                <td>${o.price == null ? 'Confirm price' : html`<b class="num">${money(o.price, o.currency)}</b>`} <small>${PLAN_BILLING[o.billing] || o.billing} · ${o.unit || 'Confirm billing unit in source'}</small></td>
                 <td>${o.features?.length ? html`<ul class="sw-inline-list">${o.features.map((f) => html`<li>${f}</li>`)}</ul>` : ''}</td>
                 <td>${o.limits}</td>
               </tr>`,
@@ -256,7 +256,7 @@ function render(ctx, vendor) {
   const evidenceMeta = (ev, links) => {
     const label = L.verification[ev?.verification] || L.verification['not-verified'];
     const date = ev?.checkedAt && ctx.scoring.validScoreDate(ev.checkedAt) ? html` · ${ui.time(ctx, ev.checkedAt)}` : '';
-    return html`<small>${label}${date}${links.map((l) => html` · ${ui.sourceLink(l.url, l.label)}`)}</small>`;
+    return html` <small>${label}${date}${links.map((l) => html` · ${ui.sourceLink(l.url, l.label)}`)}</small>`;
   };
   const researchedPlans = researched.map(
     ({ category, plans }) => html`<div class="sw-sub" id="plans-${category.id}">
@@ -271,10 +271,10 @@ function render(ctx, vendor) {
             <h4>${plan.name}</h4>
             <div class="sw-plan__top">
               ${ui.scoreRing(ctx, vm, { size: 'sm' })}
-              <p class="sw-plan__score"><b>${ctx.scoring.scoreValueText(r)}</b>${r.score === null ? '' : ' plan-level documented-fit score'}<span>${ctx.scoring.scoreCoverageText(r)} · ${ctx.scoring.scoreCountText(r)}${
+              <p class="sw-plan__score"><b>${ctx.scoring.scoreValueText(r)}</b>${r.score === null ? '' : ' plan-level documented-fit score'} <span>${ctx.scoring.scoreCoverageText(r)} · ${ctx.scoring.scoreCountText(r)}${
                 r.checkedAt ? html` · Checked ${ui.time(ctx, r.checkedAt)}` : ''
-              }</span>${r.score === null ? html`<span>${L.scoreGate}</span>` : ''}</p>
-              <p class="price">${pp.amount == null ? html`<span class="price__main price__main--text">Price not verified</span>` : html`<span class="price__main num">${money(pp.amount, pp.currency)}</span>`}${
+              }</span>${r.score === null ? html` <span>${L.scoreGate}</span>` : ''}</p>
+              <p class="price">${pp.amount == null ? html`<span class="price__main price__main--text">Price not verified</span>` : html`<span class="price__main num">${money(pp.amount, pp.currency)}</span>`} ${
                 pp.unit ? html`<span class="price__unit">${pp.unit}</span>` : ''
               }</p>
             </div>
@@ -360,8 +360,8 @@ function render(ctx, vendor) {
   const evRow = (c, row) => {
     const ev = row.evidence;
     return html`<tr id="cap-${c.id}-${row.id}">
-      <th scope="row">${row.label}${row.description ? html`<small>${row.active && row.tier === 'advanced' ? `${L.tier.advanced} · ` : ''}${row.description}</small>` : ''}${
-        row.demoQuestion && row.demoQuestion !== row.description ? html`<details class="sw-demo"><summary>How to test this</summary><p>${row.demoQuestion}</p></details>` : ''
+      <th scope="row">${row.label}${row.description ? html` <small>${row.active && row.tier === 'advanced' ? `${L.tier.advanced} · ` : ''}${row.description}</small>` : ''}${
+        row.demoQuestion && row.demoQuestion !== row.description ? html` <details class="sw-demo"><summary>How to test this</summary><p>${row.demoQuestion}</p></details>` : ''
       }</th>
       <td>${ui.status(row.effectiveStatus)}</td>
       ${row.active ? html`<td class="num">${ctx.scoring.contributionText(row)}</td>` : html`<td class="num sw-ns">Not scored</td>`}
@@ -404,14 +404,14 @@ function render(ctx, vendor) {
         <tbody>
           ${groupsOf(active).map(({ gid, rows }) => {
             const g = sc.groups.find((x) => x.id === gid);
-            return html`<tr class="is-group"><th scope="colgroup" colspan="4">${groupMeta[gid].label}<span>${pt(g.earned)} of ${pt(g.weight)} pts · ${g.checkedCount}/${g.totalCount} checked</span></th></tr>${rows.map((row) => evRow(c, row))}`;
+            return html`<tr class="is-group"><th scope="colgroup" colspan="4">${groupMeta[gid].label} <span>${pt(g.earned)} of ${pt(g.weight)} pts · ${g.checkedCount}/${g.totalCount} checked</span></th></tr>${rows.map((row) => evRow(c, row))}`;
           })}
         </tbody>
       </table>
       ${
         inactive.length
           ? html`<details class="sw-more" id="deep-${c.id}">
-              <summary>${plural(inactive.length, 'deep check')} not scored yet<span>${statusCount(inactive)}</span></summary>
+              <summary>${plural(inactive.length, 'deep check')} not scored yet <span>${statusCount(inactive)}</span></summary>
               <p class="table-note">${L.inactiveCheck.replace('this deep check has', inactive.length === 1 ? 'this deep check has' : `these ${inactive.length} deep checks have`)} They stay listed so you can see what is already documented.</p>
               <table class="dtable sw-ev">
                 <caption class="sr-only">${name}: ${inactive.length} ${c.name} deep checks that are not scored yet</caption>
@@ -437,7 +437,7 @@ function render(ctx, vendor) {
           ? html`<div class="sw-tablist" role="tablist" aria-label="${name}: capability evidence by category" data-nosnippet>
               ${cats.map((c, i) => {
                 const sc = scores.get(c.id);
-                return html`<button type="button" role="tab" id="tab-${c.id}" aria-controls="caps-${c.id}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}">${c.name}<span class="${cx('sw-tab__score', sc.pending && 'is-pending')}">${
+                return html`<button type="button" role="tab" id="tab-${c.id}" aria-controls="caps-${c.id}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}">${c.name} <span class="${cx('sw-tab__score', sc.pending && 'is-pending')}"><span class="sr-only">score </span>${
                   sc.pending ? 'pending' : sc.value
                 }</span></button>`;
               })}
@@ -592,7 +592,7 @@ function render(ctx, vendor) {
       vendor.evidence?.length
         ? html`<h3 class="sw-h3">Evidence record</h3>
             <ul class="sw-claims">
-              ${vendor.evidence.map((e) => html`<li><span>${e.claim}</span>${ui.sourceLink(e.url, hostOf(e.url) || 'Source')}</li>`)}
+              ${vendor.evidence.map((e) => html`<li><span>${e.claim}</span> ${ui.sourceLink(e.url, hostOf(e.url) || 'Source')}</li>`)}
             </ul>`
         : ''
     }

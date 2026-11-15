@@ -11,10 +11,10 @@
 .cmp { --cmp-n: 2; --cmp-label: 17rem; --cmp-pad: 0.75rem; }
 .cmp--n3 { --cmp-n: 3; --cmp-label: 13rem; }
 .cmp--n4 { --cmp-n: 4; --cmp-label: 11.5rem; }
-[data-i="0"] { --cmp-c: var(--cmp-c1); }
-[data-i="1"] { --cmp-c: var(--cmp-c2); }
-[data-i="2"] { --cmp-c: var(--cmp-c3); }
-[data-i="3"] { --cmp-c: var(--cmp-c4); }
+.cmp [data-i="0"], .cmp-choose__col[data-i="0"] { --cmp-c: var(--cmp-c1); }
+.cmp [data-i="1"], .cmp-choose__col[data-i="1"] { --cmp-c: var(--cmp-c2); }
+.cmp [data-i="2"], .cmp-choose__col[data-i="2"] { --cmp-c: var(--cmp-c3); }
+.cmp [data-i="3"], .cmp-choose__col[data-i="3"] { --cmp-c: var(--cmp-c4); }
 .cmp-dot { display: inline-block; flex: none; width: 0.625rem; height: 0.625rem; border-radius: 50%; background: var(--cmp-c, var(--line-strong)); }
 .cmp [id], #choose, #demo, #method { scroll-margin-top: calc(var(--header-h) + 5.5rem); }
 
@@ -25,6 +25,9 @@
 .cmp-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); margin-top: var(--s-6); }
 .cmp-tools__more { margin-left: var(--s-2); font-size: var(--fs-sm); }
 html:not(.js) .cmp-tools button { display: none; }
+/* without JavaScript every check is readable: rows the view control would hide are shown, the control is not */
+html:not(.js) .cmp-table tr[hidden] { display: table-row !important; }
+html:not(.js) .cmp-viewbar .seg, html:not(.js) .cmp-viewcount { display: none; }
 
 /* ---------------------------------------------------------------- sticky product header */
 .cmp-bar {
@@ -96,7 +99,7 @@ a.cmp-slot__name:hover { color: var(--brand); }
 .cmp-table .cmp-group--off th > small { display: block; margin: 0.25rem 0 0; max-width: 80ch; }
 .cmp-table tbody tr.cmp-group:first-child > * { border-top: 0; padding-top: var(--s-2); }
 .cmp-cap { font-weight: 600; }
-tr[data-d="1"][data-a="1"] .cmp-cap::after {
+.cmp-table tr[data-d="1"] .cmp-cap::after {
   content: "Differs";
   display: inline-block;
   margin-left: 0.5rem;
@@ -133,6 +136,11 @@ tr[data-d="1"][data-a="1"] .cmp-cap::after {
 .cmp-ahead__st { display: flex; flex-wrap: wrap; gap: 0.2rem 1.25rem; margin-top: 0.3rem; font-size: var(--fs-xs); color: var(--ink-3); }
 .cmp-ahead__st > span { display: inline-flex; align-items: center; gap: 0.4rem; }
 .cmp-ahead .cmp-none { padding: 0.7rem 0; font-size: var(--fs-sm); }
+.cmp-count__off { display: block; margin-top: var(--s-1); font-size: var(--fs-md); color: var(--ink-2); }
+.cmp-ahead__off { padding-top: 0.7rem; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }
+.cmp-ahead__off b { font-weight: 600; color: var(--ink); }
+.cmp-ahead__off a, .cmp-sec > .fineprint a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
+.cmp-ahead__off a:hover, .cmp-sec > .fineprint a:hover { color: var(--brand); text-decoration-color: currentColor; }
 
 /* ---------------------------------------------------------------- when to choose, demo, method (server page only) */
 .cmp-choose { display: grid; gap: var(--s-10) var(--s-14); grid-template-columns: minmax(0, 1fr); }
@@ -146,8 +154,10 @@ tr[data-d="1"][data-a="1"] .cmp-cap::after {
 .cmp-choose__links .btn { white-space: normal; }
 .cmp-choose__links .commercial-link { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; }
 .cmp-choose__links .commercial-link .fineprint, .cmp-table .commercial-link .fineprint { flex-basis: 100%; font-size: var(--fs-xs); }
+.cmp-choose__note { margin-top: var(--s-8); }
 .cmp-demo { max-width: 70ch; }
-@media (min-width: 62em) { .cmp-demo { max-width: none; columns: 2; column-gap: var(--s-14); } .cmp-demo li { break-inside: avoid; } }
+/* a grid, not CSS columns: the numbered badge of .steps is clipped at a column break */
+@media (min-width: 62em) { .cmp-demo { max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4) var(--s-14); } .cmp-demo li + li { margin-top: 0; } }
 .cmp-scenarios { margin-top: var(--s-8); border-block: 1px solid var(--line); }
 .cmp-scenarios summary { display: flex; align-items: center; min-height: 3.25rem; font-weight: 600; color: var(--ink); }
 .cmp-scenarios summary:hover { color: var(--brand); }
@@ -245,6 +255,7 @@ html.js .cmp-noscript { display: none; }
   .cmp-table tr.cmp-group { padding-block: var(--s-5) 0.5rem; border-bottom-color: var(--line-strong); }
   .cmp-table tbody tr.cmp-group:first-child { border-top: 0; padding-top: var(--s-2); }
   .cmp-table .cmp-group th { padding: 0; }
+  html:not(.js) .cmp-table tr[hidden] { display: grid !important; }
   .cmp [id] { scroll-margin-top: calc(var(--header-h) + 4.5rem); }
 }
 
@@ -253,7 +264,18 @@ html.js .cmp-noscript { display: none; }
   .cmp { --cmp-cols: 2; }
   .cmp-slot .logo { width: 1.75rem; height: 1.75rem; border-radius: 7px; }
   .cmp-slot__name { font-size: var(--fs-sm); }
-  .cmp-slot__meta { font-size: var(--fs-xs); }
+  /* score and price on their own lines so neither is cut to "…" in a half-width slot */
+  .cmp-slot__meta { display: grid; font-size: var(--fs-xs); }
+  .cmp-slot__price { overflow: hidden; text-overflow: ellipsis; }
+  .cmp-slot__price::before { content: none; }
+  /* products are changed through "Change products" (first in the tools row) — no × squeezing the names */
+  .cmp-slot__x { display: none; }
+  .cmp-tools__change { order: -1; }
+  .cmp-table .btn { min-height: 2.75rem; }
+  .cmp-method__table { min-width: 0; font-size: var(--fs-sm); }
+  .cmp-method__table th, .cmp-method__table td { padding-inline: 0.35rem; }
+  .cmp-method__table thead th.num, .cmp-method__table thead th { white-space: normal; vertical-align: bottom; }
+  .cmp-method__table tbody th { padding-left: 0; }
   .cmp-table .cmp-group th > small { display: block; margin: 0.15rem 0 0; }
   .cmp-table .breakdown__row { grid-template-columns: minmax(0, 1fr); gap: 0.1rem; }
   .cmp-table--glance .score--lg .score__value { font-size: var(--fs-2xl); }
@@ -283,8 +305,30 @@ html.js .cmp-noscript { display: none; }
   .cmp-go__in { gap: var(--s-3); }
 }
 
+/* ---------------------------------------------------------------- print / save as PDF: the whole evidence record, no site chrome */
 @media print {
-  .cmp-bar { position: static; }
-  .cmp-tools, .cmp-viewbar, .cmp-viewcount, .cmp-slot__swap, .cmp-slot__x, .cmp-bar__add { display: none; }
+  body[data-page="vs"] .site-header, body[data-page="compare"] .site-header,
+  body[data-page="vs"] .site-footer, body[data-page="compare"] .site-footer,
+  body[data-page="vs"] .skip-link, body[data-page="compare"] .skip-link,
+  body[data-page="vs"] .tray, body[data-page="compare"] .tray,
+  body[data-page="vs"] .toast, body[data-page="compare"] .toast,
+  body[data-page="vs"] #related, body[data-page="vs"] .cmp-choose__links,
+  .cmp-tools, .cmp-viewbar, .cmp-viewcount, .cmp-slot__swap, .cmp-slot__x, .cmp-bar__add, .cmp-pair, .cmp-go, .cmp-back,
+  .cmp-sec__head .pop, [data-cmp-empty] { display: none !important; }
+  body[data-page="vs"], body[data-page="compare"] { padding-bottom: 0; font-size: 11pt; }
+  .cmp-bar { position: static; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .cmp--n3 .cmp-bar__grid, .cmp--n4 .cmp-bar__grid { display: grid; }
+  .cmp > .section, .cmp-sec--first { padding-block: var(--s-6); }
+  /* every check is printed, whatever the view on screen; all products, not only the pair shown on a phone */
+  .cmp-table[hidden] { display: table !important; }
   .cmp-table tr[hidden] { display: table-row !important; }
+  .cmp[data-hide] .cmp-table [data-i] { display: table-cell; }
+  .cmp-table tr { break-inside: avoid; }
+  .cmp-table .cmp-group, .cmp h2, .cmp h3 { break-after: avoid; }
+}
+@media print and (max-width: 63.99em) {
+  .cmp { --cmp-cols: var(--cmp-n); }
+  .cmp-table[hidden] { display: block !important; }
+  .cmp-table tr[hidden] { display: grid !important; }
+  .cmp[data-hide] .cmp-table [data-i] { display: block; }
 }

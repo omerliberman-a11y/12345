@@ -190,6 +190,9 @@ html:not(.js) .ix-alt .tabs__panel + .tabs__panel { padding-top: var(--s-10); bo
   .ix-c-vs { grid-area: vs; width: auto; padding-left: 3.2rem !important; }
   .ix-c-vs a { display: inline-flex; align-items: center; gap: 0.25rem; min-height: var(--tap); margin-block: -0.35rem -0.6rem; }
   .ix-alt .prod__text .tag { white-space: normal; }
+  /* touch targets: the score-help "i" and the score button of a pending row are under 44px in the shared styles */
+  .ix-panel__head .pop > summary { min-width: var(--tap); min-height: var(--tap); justify-content: center; margin-right: -0.6rem; }
+  .ix-alt .scorebtn { min-height: var(--tap); align-items: center; }
   .ix-alt thead .ix-c-vs { display: none; }
   .ix-ref .ptable tbody tr { border-top: 1px solid var(--line-strong); margin-inline: -0.6rem; padding-inline: 0.6rem; }
 }

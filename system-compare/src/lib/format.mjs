@@ -28,3 +28,15 @@ export function fmtMoney(amount, currency = 'USD', categoryId) {
 export const plural = (n, one, many = one + 's') => `${n} ${n === 1 ? one : many}`;
 export const listText = (items, conj = 'and') =>
   items.length <= 1 ? items.join('') : items.length === 2 ? items.join(` ${conj} `) : `${items.slice(0, -1).join(', ')} ${conj} ${items[items.length - 1]}`;
+
+/**
+ * "Plus" → "Plus plan"; names that already carry their noun ("Base plan", "Starter Suite", "Configured plan")
+ * are left alone; lists ("Free, Starter, Professional and Enterprise") become "… plans".
+ */
+export function planLabel(plan) {
+  const p = String(plan || '').trim();
+  if (!p) return '';
+  if (/\b(plan|plans|tier|tiers|edition|package|suite|bundle|subscription|offer)\b/i.test(p)) return p;
+  if (/,|\band\b|\bor\b|\//i.test(p)) return `${p} plans`;
+  return `${p} plan`;
+}

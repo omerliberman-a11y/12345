@@ -291,7 +291,8 @@ function render(ctx) {
     },
     firstDate && {
       q: 'How current are the modelled prices?',
-      // visible answer with <time> elements; text(a) below yields the identical plain sentence for the FAQ JSON-LD
+      // visible answer with <time> elements; `plain` is the identical sentence for the FAQ JSON-LD
+      plain: `Each modelled price is a dated research snapshot of a public list price with a link to its source. The current snapshots were checked between ${ctx.fmtDate(firstDate)} and ${ctx.fmtDate(lastDate)}. Reconfirm current terms with the supplier before buying.`,
       a: html`<p>Each modelled price is a dated research snapshot of a public list price with a link to its source. The current snapshots were checked between ${ui.time(ctx, firstDate)} and ${ui.time(ctx, lastDate)}. Reconfirm current terms with the supplier before buying.</p>`,
     },
   ].filter(Boolean);
@@ -334,7 +335,7 @@ function render(ctx) {
         publisher: { '@id': `${ctx.site.origin}/#publisher` },
       },
     ],
-    faq: faqItems.map((f) => ({ q: f.q, a: text(f.a) })),
+    faq: faqItems.map((f) => ({ q: f.q, a: f.plain || text(f.a) })),
     scripts: ['js/cost.js'],
     body: html`${head}${tool}${readyBlock}${how}${scope}${faq}${next}`,
   };

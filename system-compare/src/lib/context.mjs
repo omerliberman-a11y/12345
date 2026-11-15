@@ -9,8 +9,8 @@ import path from 'node:path';
 import * as sc from './scoring.mjs';
 import config from '../../site.config.mjs';
 
-export { fmtDate, isoDate, maxDate, fmtMoney, plural, listText } from './format.mjs';
-import { fmtDate, isoDate, maxDate, fmtMoney, plural, listText } from './format.mjs';
+export { fmtDate, isoDate, maxDate, fmtMoney, plural, listText, planLabel } from './format.mjs';
+import { fmtDate, isoDate, maxDate, fmtMoney, plural, listText, planLabel } from './format.mjs';
 import { createSeo } from './seo.mjs';
 import { createAnswers } from './answers.mjs';
 
@@ -136,8 +136,11 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
       currency: p.currency || null,
       headline,
       unit: hasAmount ? unit : '',
+      // the pricing basis as recorded, also when no amount is verified ("per sales seat/month, plus usage")
+      basis: p.smsUnverified ? '' : normUnit(p.unit),
       billingNote: annual ? 'billed annually' : '',
       plan: p.plan || '',
+      planLabel: planLabel(p.plan),
       model: p.model || null,
       modelLabel: PRICING_MODELS[p.model] || 'Not verified',
       summary: p.summary || '',
@@ -352,6 +355,7 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
     fmtMoney,
     plural,
     listText,
+    planLabel,
     year,
     today,
     vendorUpdated,

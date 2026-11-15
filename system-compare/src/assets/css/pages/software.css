@@ -333,11 +333,15 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-vs { width: 1%; white-space: nowrap; text-align: right; font-size: var(--fs-sm); font-weight: 600; }
 /* white wordmarks (logo.surface "brand-gradient") sit on the dark surface in product rows as well */
 .sw-alts tr[data-logo="inverse"] .logo { background: var(--bg-inverse); border-color: var(--bg-inverse); }
-/* narrow desktop: the product column keeps its room next to the extra "vs" column */
-@media (min-width: 62em) and (max-width: 74.99em) {
+/* tablet and narrow desktop: the product column keeps its room next to the extra "vs" column */
+@media (min-width: 48em) and (max-width: 74.99em) {
   .sw-alts .ptable__c-name { width: 44%; }
   .sw-alts .ptable__c-price { width: 10rem; }
   .sw-alts .ptable__c-ai { width: 1%; white-space: nowrap; }
+}
+@media (min-width: 48em) and (max-width: 61.99em) {
+  .sw-alts .ptable__c-price { width: 8.5rem; }
+  .sw-alts .sw-vs { width: 6rem; white-space: normal; }
 }
 .sw-vs a { display: inline-flex; align-items: center; min-height: var(--tap); }
 .sw-vs a::after { content: " →"; white-space: pre; }

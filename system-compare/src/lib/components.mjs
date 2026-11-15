@@ -12,7 +12,8 @@ export const tag = (label, kind) => html`<span class="${cx('tag', kind && `tag--
 /** Vendor logo in a neutral frame. Falls back to initials when a logo is missing. */
 export function logo(ctx, vendor, { size, wide = false, lazy = true } = {}) {
   const l = vendor.logo;
-  const cls = cx('logo', size && `logo--${size}`, l?.surface === 'dark' && 'logo--dark', wide && l?.kind === 'wordmark' && 'logo--wide');
+  // white/light artwork (surface 'dark' or 'brand-gradient') sits on the dark surface
+  const cls = cx('logo', size && `logo--${size}`, (l?.surface === 'dark' || l?.surface === 'brand-gradient') && 'logo--dark', wide && l?.kind === 'wordmark' && 'logo--wide');
   if (!l?.path) {
     const initials = vendor.name.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
     return html`<span class="${cls}" aria-hidden="true"><span class="logo__fallback">${initials}</span></span>`;
@@ -91,7 +92,7 @@ export function priceCell(ctx, p, { size, plan = false, checked = false } = {}) 
   return html`<span class="${cx('price', size && `price--${size}`)}">
     ${main}
     ${unit ? html`<span class="price__unit">${unit}</span>` : ''}
-    ${plan && p.plan ? html`<span class="price__unit">${p.plan} plan</span>` : ''}
+    ${plan && p.plan ? html`<span class="price__unit">${p.planLabel || p.plan}</span>` : ''}
     ${checked && p.checkedAt ? html`<span class="price__unit">Checked ${time(ctx, p.checkedAt)}</span>` : ''}
   </span>`;
 }
@@ -140,11 +141,12 @@ export const sourceLink = (url, label = 'Source') =>
 // ------------------------------------------------------------------ product table (the one row component)
 /**
  * Ranked product table. `rows` = [{ vendor, note? }], all scored in `categoryId`.
- * opts: { id, caption, rank: true, pickable: true, focalId, sortable: true, ai: true, showCategory: false }
+ * opts: { id, caption, rank: true, pickable: true, focalId, focalTag, sortable: true, ai: true, priceChecked: false,
+ *         action: (vendor) => Raw (adds a trailing column), actionLabel }
  * Each <tr> carries data-* used by js/table.js for instant sort + filter (never changes the score).
  */
 export function productTable(ctx, categoryId, rows, opts = {}) {
-  const { id = 'products', caption, rank = true, pickable = true, focalId, sortable = true, ai = true, featureIndex = null, lazyFrom = 6 } = opts;
+  const { id = 'products', caption, rank = true, pickable = true, focalId, sortable = true, ai = true, featureIndex = null, lazyFrom = 6, action = null, actionLabel = '', focalTag = 'You are comparing against this', priceChecked = false } = opts;
   const category = ctx.category(categoryId);
   const th = (key, label, cls, sortKey) =>
     sortable && sortKey
@@ -160,6 +162,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
         ${th('score', 'Score', 'ptable__c-score', 'score')}
         ${th('price', 'Starting price', 'ptable__c-price', 'price')}
         ${ai ? html`<th scope="col" class="ptable__c-ai">AI</th>` : ''}
+        ${action ? html`<th scope="col" class="ptable__c-go">${actionLabel ? actionLabel : html`<span class="sr-only">Actions</span>`}</th>` : ''}
       </tr>
     </thead>
     <tbody>
@@ -176,7 +179,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
           'data-score': s.pending ? -1 : s.value,
           'data-cov': s.coveragePct,
           'data-price': p.hasAmount && p.currency === 'USD' ? p.amount : '',
-          'data-pstate': p.state,
+          'data-pstate': p.state, // amount | quote | usage | unverified — "Public price" filters on amount (any currency)
           'data-ai': aiL.id,
           'data-feat': feat,
         })}>
@@ -186,14 +189,15 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
             <a class="prod" href="${ctx.url.software(vendor.id)}">
               ${logo(ctx, vendor, { lazy: i >= lazyFrom })}
               <span class="prod__text">
-                <span class="prod__name">${vendor.name}</span>${s.recommended ? tag('Recommended', 'top') : ''}${vendor.id === focalId ? tag('You are comparing against this') : ''}
+                <span class="prod__name">${vendor.name}</span>${s.recommended ? tag('Recommended', 'top') : ''}${vendor.id === focalId && focalTag ? tag(focalTag) : ''}
                 <span class="prod__fit">${note || vendor.bestFor}</span>
               </span>
             </a>
           </th>
           <td class="ptable__c-score"><button type="button" class="scorebtn" data-score-pop="${categoryId}:${vendor.id}" aria-haspopup="dialog" aria-expanded="false" title="Why this score?">${scoreToken(ctx, s)}<span class="sr-only"> — open the score breakdown</span></button></td>
-          <td class="ptable__c-price">${priceCell(ctx, p)}</td>
+          <td class="ptable__c-price">${priceCell(ctx, p, { checked: priceChecked })}</td>
           ${ai ? html`<td class="ptable__c-ai">${aiTag(ctx, vendor)}</td>` : ''}
+          ${action ? html`<td class="ptable__c-go">${action(vendor)}</td>` : ''}
         </tr>`;
       })}
     </tbody>
@@ -264,8 +268,8 @@ export const sources = (list, { cols = 2 } = {}) =>
   </ol>`;
 
 /** Sticky in-page section tabs. items: [{href:'#pricing', label}] */
-export const subnav = (items, { label = 'On this page' } = {}) =>
-  html`<nav class="subnav" aria-label="${label}" data-subnav data-nosnippet><div class="wrap"><ul>${items.map((it) => html`<li><a href="${it.href}">${it.label}</a></li>`)}</ul></div></nav>`;
+export const subnav = (items, { label = 'On this page', extra = '' } = {}) =>
+  html`<nav class="subnav" aria-label="${label}" data-subnav data-nosnippet><div class="wrap subnav__in"><ul>${items.map((it) => html`<li><a href="${it.href}">${it.label}</a></li>`)}</ul>${extra ? html`<div class="subnav__extra">${extra}</div>` : ''}</div></nav>`;
 
 /** "On this page" rail for long reading pages. */
 export const toc = (items, { title = 'On this page' } = {}) =>

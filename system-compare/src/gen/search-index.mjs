@@ -216,7 +216,7 @@ export async function generate(ctx, emit) {
   await emit('/data/search-index.js', `SC.define("search-index",${JSON.stringify(index)});`);
 
   const vendors = {};
-  for (const v of ctx.vendors) vendors[v.id] = [v.name, v.logo?.path || '', v.logo?.surface === 'dark' ? 1 : 0, v.categories?.[0] || ''];
+  for (const v of ctx.vendors) vendors[v.id] = [v.name, v.logo?.path || '', v.logo?.surface === 'dark' || v.logo?.surface === 'brand-gradient' ? 1 : 0, v.categories?.[0] || ''];
   const catNames = Object.fromEntries(ctx.categories.map((c) => [c.id, c.name]));
   await emit('/data/vendors.js', `SC.define("vendors",${JSON.stringify({ vendors, categories: catNames })});`);
 }

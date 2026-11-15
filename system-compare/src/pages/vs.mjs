@@ -187,7 +187,18 @@ function render(ctx, comparison) {
   const coverageCell = (it) => html`${it.s.coverageText}
     <small>${it.s.documentedText}</small>
     ${it.s.checkedAt ? html`<small>Evidence checked ${ui.time(ctx, it.s.checkedAt)}</small>` : ''}`;
-  const priceCell = (it) => html`${ui.priceCell(ctx, it.p, { plan: true, checked: true })}${it.p.checkedAt ? '' : html`<small>Price-check date not recorded</small>`}`;
+  // same markup as ui.priceCell, but the plan reads "Plan: …" (plan names such as "Configured plan" or
+  // "Free, Starter, Professional and Enterprise" do not take a trailing "plan")
+  const priceCell = (it) => {
+    const p = it.p;
+    const unit = [p.unit, p.billingNote].filter(Boolean).join(' · ');
+    return html`<span class="price">
+        <span class="${cx('price__main', p.hasAmount ? 'num' : 'price__main--text')}">${p.headline}</span>
+        ${unit ? html`<span class="price__unit">${unit}</span>` : ''}
+        ${p.plan ? html`<span class="price__unit">Plan: ${p.plan}</span>` : ''}
+        ${p.checkedAt ? html`<span class="price__unit">Checked ${ui.time(ctx, p.checkedAt)}</span>` : ''}
+      </span>${p.checkedAt ? '' : html`<small>Price-check date not recorded</small>`}`;
+  };
   const glance = html`<section class="wrap cmp-sec cmp-sec--first" id="glance" aria-labelledby="glance-h">
     <div class="cmp-sec__head">
       <h2 id="glance-h">At a glance</h2>
@@ -218,19 +229,24 @@ function render(ctx, comparison) {
       ${items.map((it) => html`<span data-i="${it.i}">${dot()}<span class="sr-only">${it.v.name}: </span>${ui.status(r.cells[it.i].effectiveStatus)}${srcLinks(r.cells[it.i])}</span>`)}
     </span>
   </li>`;
+  const offLinks = (list) => ui.join(list.map((r) => html`<a href="#cap-${r.f.id}">${r.f.label}</a>`), ', ');
   const differences = html`<section class="wrap section cmp-sec" id="differences" aria-labelledby="differences-h">
     <div class="section-head">
       <div>
         <h2 id="differences-h">Where they differ</h2>
         <p class="cmp-count">${
           diffRows.length
-            ? html`<b>${diffRows.length} of ${activeRows.length}</b> scored checks differ between ${a.name} and ${b.name}.`
+            ? html`<b>${diffRows.length} of ${activeRows.length}</b> scored checks ${differWord(diffRows.length)} between ${a.name} and ${b.name}.`
             : html`<b>None of the ${activeRows.length}</b> scored checks differ: ${a.name} and ${b.name} have the same documented status on every one. Equal statuses do not mean the products or prices are identical.`
+        }${
+          offDiffRows.length
+            ? html` <span class="cmp-count__off">${offDiffRows.length} of the ${inactiveRows.length} checks that are not scored yet also ${differWord(offDiffRows.length)}.</span>`
+            : ''
         }</p>
       </div>
     </div>
     ${
-      diffRows.length
+      allDiffRows.length
         ? html`<div class="cmp-ahead">
             ${items.map((it) => {
               const other = items.filter((o) => o !== it).map((o) => o.v.name).join(' or ');
@@ -240,6 +256,11 @@ function render(ctx, comparison) {
                   ahead[it.i].length
                     ? html`<ul class="cmp-ahead__list">${ahead[it.i].map(diffLine)}</ul>`
                     : html`<p class="cmp-none">No scored check is documented as supported for ${it.v.name} and not for ${other}.</p>`
+                }
+                ${
+                  aheadOff[it.i].length
+                    ? html`<p class="cmp-ahead__off"><b>Not scored yet, documented for ${it.v.name} only (${aheadOff[it.i].length}):</b> ${offLinks(aheadOff[it.i])}.</p>`
+                    : ''
                 }
               </div>`;
             })}
@@ -252,7 +273,7 @@ function render(ctx, comparison) {
                 : ''
             }
           </div>
-          <p class="fineprint">A product is ahead on a check when official documentation supports it there and not for the other product. Lines are ordered by the points each check carries. “Not verified” means no qualifying public evidence was found, not that the capability is missing.</p>`
+          <p class="fineprint">A product is ahead on a check when official documentation supports it there and not for the other product. Lines are ordered by the points each check carries. “Not verified” means no qualifying public evidence was found, not that the capability is missing. <a href="#capabilities" data-view="diff">See all ${allDiffRows.length} differing checks with their evidence</a>.</p>`
         : ''
     }
   </section>`;
@@ -285,12 +306,12 @@ function render(ctx, comparison) {
     <div class="section-head">
       <div>
         <h2 id="capabilities-h">All capability checks</h2>
-        <p>Every check with its documented status, the points it carries, the evidence note and the official source for ${a.name} and ${b.name}.</p>
+        <p>Every check with its documented status, the points it carries, the evidence note and the official source for ${a.name} and ${b.name}. Changing the view never changes a score.</p>
       </div>
     </div>
     <div class="toolbar cmp-viewbar" data-nosnippet>
       <div class="seg cmp-view" role="group" aria-label="Which checks to show" data-cmp-view>
-        <button type="button" data-view="diff" aria-pressed="false">Differences <span class="n">${diffRows.length}</span></button>
+        <button type="button" data-view="diff" aria-pressed="false">Differences <span class="n">${allDiffRows.length}</span></button>
         <button type="button" data-view="scored" aria-pressed="true">Scored checks <span class="n">${activeRows.length}</span></button>
         <button type="button" data-view="all" aria-pressed="false">All checks <span class="n">${rows.length}</span></button>
       </div>
@@ -317,14 +338,13 @@ function render(ctx, comparison) {
         }
       </tbody>
     </table>
-    <p class="empty" data-cmp-empty hidden><b>No scored check differs between these two products.</b>Equal statuses do not mean the products or prices are identical. <button type="button" class="btn btn--quiet btn--sm" data-view="scored">Show the scored checks</button></p>
-    <noscript><style>.cmp-table tr[hidden]{display:table-row!important}.cmp-viewbar .seg,.cmp-viewcount{display:none}</style></noscript>
+    <p class="empty" data-cmp-empty hidden><b>No check differs between these two products.</b>Equal statuses do not mean the products or prices are identical. <button type="button" class="btn btn--quiet btn--sm" data-view="scored">Show the scored checks</button></p>
   </section>`;
 
   // ---------------------------------------------------------------- prices
   const priceLine = (it) =>
     it.p.hasAmount
-      ? `${it.v.name} starts at ${it.p.headline}${it.p.unit ? ' ' + it.p.unit : ''}${it.p.billingNote ? `, ${it.p.billingNote}` : ''}${it.p.plan ? ` (${it.p.plan} plan)` : ''}`
+      ? `${it.v.name} starts at ${it.p.headline}${it.p.unit ? ' ' + it.p.unit : ''}${it.p.billingNote ? `, ${it.p.billingNote}` : ''}${it.p.plan ? ` (plan: ${it.p.plan})` : ''}`
       : `${it.v.name} has no verified public starting price${it.p.state === 'quote' ? ' (custom quote)' : it.p.state === 'usage' ? ' (usage-based pricing)' : ''}`;
   const priceDates = [...new Set(items.map((it) => it.p.checkedAt).filter(Boolean))].sort();
   const pricing = html`<section class="wrap section cmp-sec" id="pricing" aria-labelledby="pricing-h">
@@ -400,6 +420,7 @@ function render(ctx, comparison) {
         </div>`,
       )}
     </div>
+    <p class="fineprint cmp-choose__note">Confirm your required plan, limits and total price with the supplier before buying.</p>
   </section>`;
 
   // ---------------------------------------------------------------- demo questions
@@ -427,11 +448,14 @@ function render(ctx, comparison) {
       : '';
 
   // ---------------------------------------------------------------- method
-  const method = html`<section class="wrap section" id="method" aria-labelledby="method-h">
+  // the published method sentence (same text as ui.methodSentence) with its date as a <time>, not a raw ISO string
+  const [methodBefore, methodAfter = ''] = S.LABELS.methodSentence.split('<date>');
+  const methodSentence = html`${methodBefore}${ui.time(ctx, ctx.catalog.checkedAt)}${methodAfter}`;
+  const method =html`<section class="wrap section" id="method" aria-labelledby="method-h">
     ${ui.sectionHead('How these scores are calculated', { id: 'method-h', link: { href: '/methodology/', label: 'How scoring works' } })}
     <div class="cmp-method">
       <div class="prose">
-        <p>${ui.methodSentence(ctx)}</p>
+        <p>${methodSentence}</p>
         <p>Both products are assessed against the same ${category.name} checklist: ${activeRows.length} of its ${rows.length} checks are scored today${
           inactiveRows.length ? `, and the other ${inactiveRows.length} are deep checks that join the score once they have been checked for every listed product` : ''
         }. Product-wide research may span several plans; confirm the package you intend to buy.</p>
@@ -453,6 +477,7 @@ function render(ctx, comparison) {
 
   const others = ctx.comparisonsInCategory(category.id).filter((x) => x.id !== comparison.id);
   const vsMeta = (x) => {
+    if (ctx.comparisonKind(x) === 'editorial') return 'Buying brief';
     if (ctx.comparisonKind(x) !== 'scored') return '';
     const sc = ctx.comparisonNames(x).map((nm) => ctx.score(category.id, nm.id)).filter(Boolean);
     return sc.length === 2 ? sc.map((s) => (s.pending ? 'pending' : s.value)).join(' vs ') : '';
@@ -474,7 +499,7 @@ function render(ctx, comparison) {
       others.length
         ? html`<h3 class="cmp-related__h">Other ${category.name} head-to-heads</h3>
             ${ui.linkList(
-              others.map((x) => ({ href: ctx.url.vs(x.id), title: x.title || ctx.comparisonNames(x).map((nm) => nm.name).join(' vs '), meta: vsMeta(x) })),
+              others.map((x) => ({ href: ctx.url.vs(x.id), title: ctx.comparisonNames(x).map((nm) => nm.name).join(' vs ') || x.title, meta: vsMeta(x) })),
               { cols: 2 },
             )}`
         : ''

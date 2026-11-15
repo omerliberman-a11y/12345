@@ -39,7 +39,7 @@
     // products already in the shortlist stay visible while you filter for challengers
     if (tr.classList.contains('is-picked')) return true;
     if (state.f.scored && Number(tr.getAttribute('data-score')) < 0) return false;
-    if (state.f.priced && tr.getAttribute('data-price') === '') return false;
+    if (state.f.priced && tr.getAttribute('data-pstate') !== 'amount') return false;
     if (state.f.ai) { var ai = tr.getAttribute('data-ai'); if (ai !== 'native' && ai !== 'agent') return false; }
     var must = Object.keys(state.must);
     if (must.length) {
@@ -144,7 +144,7 @@
         var items = [];
         data.features.forEach(function (f, i) { if (f[2] === g[0] && !f[3]) items.push([f, i]); });
         if (!items.length) return;
-        body.appendChild(el('tr.is-group', { 'data-extra': '' }, [el('th', { scope: 'colgroup', colspan: heads.length + 1, text: g[1] + ' — not scored yet' })]));
+        body.appendChild(el('tr.is-group', { 'data-extra': '' }, [el('th', { scope: 'colgroup', colspan: heads.length + 1, text: g[1] + ' — inactive deep checks, not scored yet' })]));
         items.forEach(function (it) {
           var tr = el('tr.is-inactive', { 'data-extra': '', 'data-f': it[1] }, [el('th', { scope: 'row', text: it[0][1] })]);
           heads.forEach(function (vid) {
@@ -159,7 +159,7 @@
   function showAll(on) {
     state.all = on ? 1 : 0;
     var b = $('[data-matrix-all]');
-    if (b) { b.setAttribute('aria-pressed', on ? 'true' : 'false'); if (!b.getAttribute('data-label')) b.setAttribute('data-label', b.textContent); b.textContent = on ? 'Hide checks not scored yet' : b.getAttribute('data-label'); }
+    if (b) { b.setAttribute('aria-pressed', on ? 'true' : 'false'); if (!b.getAttribute('data-label')) b.setAttribute('data-label', b.textContent); b.textContent = on ? 'Hide inactive deep checks' : b.getAttribute('data-label'); }
     var toggle = function () { $$('tr[data-extra]', matrix).forEach(function (tr) { tr.hidden = !on; }); syncMatrixColumns(); };
     if (on && !extraBuilt) buildExtraRows().then(toggle).catch(function () { SC.toast('Those checks could not load. Each product profile lists them all.'); });
     else toggle();

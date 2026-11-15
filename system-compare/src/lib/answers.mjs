@@ -3,9 +3,22 @@
 // Wording rules: "highest documented-fit score" (never "best"); never a number for a pending score;
 // prices are "from $X <unit>" only when a numeric public price exists.
 
-import { fmtDate, listText, plural } from './format.mjs';
+import { fmtDate, listText, plural, planLabel } from './format.mjs';
 
-const lowerFirst = (s) => (s ? s[0].toLowerCase() + s.slice(1) : s);
+// Lower-cases the first letter so a data sentence can continue another sentence — but never touches
+// acronyms (SEO, US, AI, B2C), mixed-case brands (NordVPN, HubSpot) or known proper nouns.
+const PROPER_WORDS = new Set(
+  'I English American European British Microsoft Google Apple Amazon Meta Slack Zapier Stripe Shopify Salesforce Excel Outlook Gmail Android Windows Mac Linux Zoom Teams Notion Jira Monday January February March April May June July August September October November December'.split(' '),
+);
+let properNames = new Set();
+function lowerFirst(s) {
+  if (!s) return s;
+  // "Product-led" is judged by its first part; "Zoho-centered" stays because Zoho is a product name
+  const first = String(s).split(/[\s,;:]/)[0].replace(/['’]s$/, '').split('-')[0];
+  if (!/^[A-Z][a-z]+$/.test(first)) return s;
+  if (first !== 'Teams' && (PROPER_WORDS.has(first) || properNames.has(first))) return s;
+  return s[0].toLowerCase() + s.slice(1);
+}
 const stripDot = (s) => String(s || '').trim().replace(/[.\s]+$/, '');
 const sentence = (s) => (s ? stripDot(s) + '.' : '');
 const firstSentence = (s) => {
@@ -27,6 +40,15 @@ export function categoryThings(category) {
 }
 
 export function createAnswers(ctx) {
+  // product and supplier names (and their first words) keep their capital when a sentence starts with them
+  properNames = new Set();
+  const addName = (name) => {
+    const w = String(name || '').split(/[\s/()]+/)[0];
+    if (/^[A-Z][a-z]+$/.test(w)) properNames.add(w);
+  };
+  ctx.vendors.forEach((v) => addName(v.name));
+  ctx.factualCategories.forEach((c) => (c.factual?.suppliers || []).forEach((sup) => addName(sup.name)));
+  const onPlan = (plan) => (plan ? ` on the ${planLabel(plan)}` : '');
   const priceFrom = (vendor, categoryId) => {
     const p = ctx.price(vendor, categoryId);
     return p.hasAmount ? `from ${p.headline}${p.unit ? ' ' + p.unit : ''}` : null;
@@ -120,7 +142,7 @@ export function createAnswers(ctx) {
       ? `Its documented-fit score is pending: ${s.checked} of ${s.total} checklist items (${s.coveragePct}% of the weight) are checked, below the 80% gate.`
       : `It scores ${s.value}/100 for documented fit (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${fmtDate(s.checkedAt)}` : ''}).`;
     const priceText = p.hasAmount
-      ? `Published pricing starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}${p.plan ? ` on the ${p.plan} plan` : ''}${p.billingNote ? `, ${p.billingNote}` : ''}${p.checkedAt ? ` (price checked ${fmtDate(p.checkedAt)})` : ''}.`
+      ? `Published pricing starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}${onPlan(p.plan)}${p.billingNote ? `, ${p.billingNote}` : ''}${p.checkedAt ? ` (price checked ${fmtDate(p.checkedAt)})` : ''}.`
       : `No verified public starting price is recorded (${p.headline.toLowerCase()}).`;
     return `${vendor.name} is one of ${total} ${things} we researched. ${scoreText} ${priceText} Best for: ${lowerFirst(sentence(vendor.bestFor))}`;
   }
@@ -134,7 +156,7 @@ export function createAnswers(ctx) {
       p.hasAmount
         ? {
             q: `How much does ${vendor.name} cost?`,
-            a: `${vendor.name}’s published pricing starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}${p.plan ? ` on the ${p.plan} plan` : ''}${p.billingNote ? `, ${p.billingNote}` : ''}. ${sentence(p.summary)}${p.checkedAt ? ` Price checked ${fmtDate(p.checkedAt)}.` : ''}`.trim(),
+            a: `${vendor.name}’s published pricing starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}${onPlan(p.plan)}${p.billingNote ? `, ${p.billingNote}` : ''}. ${sentence(p.summary)}${p.checkedAt ? ` Price checked ${fmtDate(p.checkedAt)}.` : ''}`.trim(),
           }
         : {
             q: `How much does ${vendor.name} cost?`,
@@ -269,7 +291,7 @@ export function createAnswers(ctx) {
     const fs = ctx.score(category.id, vendor.id);
     const top = f.scored.slice(0, 3).map((v) => scoredName(v, category.id));
     const focalText = fs.pending ? `${vendor.name} itself is score-pending` : `${vendor.name} itself scores ${fs.value}/100`;
-    if (!top.length) return `We researched ${plural(f.others.length, 'alternative')} to ${vendor.name} in ${category.name}. None has a published documented-fit score yet; ${lowerFirst(focalText)}. Evidence checked ${asOf()}.`;
+    if (!top.length) return `We researched ${plural(f.others.length, 'alternative')} to ${vendor.name} in ${category.name}. None has a published documented-fit score yet; ${focalText}. Evidence checked ${asOf()}.`;
     return `The ${f.others.length === 1 ? 'one alternative' : `${f.others.length} alternatives`} to ${vendor.name} we researched in ${category.name} ${f.others.length === 1 ? 'is' : 'are'} led by ${listText(top)} on documented fit. ${focalText}. Scores reflect official documentation checked as of ${asOf()}, not user reviews.`;
   }
 

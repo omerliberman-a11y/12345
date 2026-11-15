@@ -113,7 +113,7 @@ export async function generate(ctx, emit) {
           ? `Documented-fit score in ${c.name}: pending (${s.checked} of ${s.total} checklist items checked, ${s.coveragePct}% of weight)`
           : `Documented-fit score in ${c.name}: ${s.value}/100 (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${d(s.checkedAt)}` : ''}; rank ${s.rank} of ${ctx.summary(c.id).total})`;
       }),
-      `Starting price: ${p.hasAmount ? `${p.headline}${p.unit ? ' ' + p.unit : ''}${p.plan ? ` (${p.plan} plan)` : ''}${p.billingNote ? `, ${p.billingNote}` : ''}` : `no verified public starting price (${p.headline.toLowerCase()})`}${p.checkedAt ? `; price checked ${d(p.checkedAt)}` : ''}`,
+      `Starting price: ${p.hasAmount ? `${p.headline}${p.unit ? ' ' + p.unit : ''}${p.planLabel ? ` (${p.planLabel})` : ''}${p.billingNote ? `, ${p.billingNote}` : ''}` : `no verified public starting price (${p.headline.toLowerCase()})`}${p.checkedAt ? `; price checked ${d(p.checkedAt)}` : ''}`,
       `AI: ${ctx.aiLevel(v).label}`,
       `Best for: ${v.bestFor}`,
       `Look closely when: ${v.avoidIf}`,

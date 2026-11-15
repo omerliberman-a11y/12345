@@ -34,7 +34,7 @@
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
 
 .link-arrow { font-weight: 600; white-space: nowrap; }
-.link-arrow::after { content: " →"; }
+.link-arrow::after { content: " →"; white-space: pre; }
 .ext::after { content: " ↗"; font-size: 0.85em; }
 
 /* ---------------------------------------------------------------- chips (interactive) and tags (static) */
@@ -395,7 +395,7 @@
 }
 .dtable tbody th { font-weight: 600; color: var(--ink); }
 .dtable td { color: var(--ink-2); }
-.dtable .num { text-align: right; white-space: nowrap; }
+.dtable td.num, .dtable th.num { text-align: right; white-space: nowrap; }
 .dtable tr.is-group th {
   padding-top: var(--s-6);
   border-bottom-color: var(--line-strong);
@@ -1016,3 +1016,27 @@ dialog::backdrop { background: rgba(17, 19, 31, 0.45); backdrop-filter: blur(2px
 .scorebtn:hover, .scorebtn[aria-expanded="true"] { background: var(--bg-muted); }
 .scorebtn:hover .score__value, .scorebtn[aria-expanded="true"] .score__value { color: var(--brand-ink); }
 html:not(.js) .scorebtn { pointer-events: none; }
+
+/* ---------------------------------------------------------------- outbound vendor link + its disclosure (ui.outLink) */
+.commercial-link { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.6rem; max-width: 100%; }
+.commercial-link .fineprint { flex-basis: 100%; font-size: var(--fs-xs); }
+
+/* ---------------------------------------------------------------- tabs (data-tabs) */
+.tabs__list { max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-bottom: var(--s-3); }
+.tabs__list::-webkit-scrollbar { display: none; }
+.tabs__more { margin-top: var(--s-4); }
+html:not(.js) .tabs__panel[hidden] { display: block !important; margin-top: var(--s-10); }
+html:not(.js) .tabs__list { display: none; }
+
+.subnav__in { display: flex; align-items: center; gap: var(--s-4); }
+.subnav__in > ul { flex: 1; min-width: 0; }
+.subnav__extra { flex: none; display: none; align-items: center; gap: var(--s-2); }
+@media (min-width: 62em) { .subnav__extra { display: flex; } }
+
+/* ---------------------------------------------------------------- touch: every control is at least 44px tall on touch screens */
+@media (pointer: coarse) {
+  .chip, .btn--sm, .select--sm, .seg button, .seg a { min-height: var(--tap); }
+  .section-head__link, .link-arrow { display: inline-flex; align-items: center; min-height: var(--tap); }
+  .pop > summary { min-width: var(--tap); min-height: var(--tap); justify-content: center; }
+  .trustline a, .sources a, .fineprint a, .table-note a { padding-block: 0.6rem; margin-block: -0.6rem; display: inline-block; }
+}

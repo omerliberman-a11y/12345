@@ -64,7 +64,7 @@
     var p = v.pr, unit = [p.u, p.b].filter(Boolean).join(' · ');
     var node = el('span.price', null, [el('span.price__main' + (hasAmount(v) ? '.num' : '.price__main--text'), { text: p.h })]);
     if (hasAmount(v) && unit) node.appendChild(el('span.price__unit', { text: unit }));
-    if (opts && opts.plan && p.pl) node.appendChild(el('span.price__unit', { text: p.pl + ' plan' }));
+    if (opts && opts.plan && p.pl) node.appendChild(el('span.price__unit', { text: 'Plan: ' + p.pl }));
     if (opts && opts.checked && p.d) node.appendChild(el('span.price__unit', null, ['Checked ', timeEl(p.d)]));
     return node;
   }
@@ -117,9 +117,14 @@
       it.documented = active.filter(function (r) { var s = r.cells[it.i].st; return s === 'y' || s === 'p'; }).length;
     });
     var diff = active.filter(function (r) { return r.diff; });
+    var inactive = rows.filter(function (r) { return !r.f.active; }), offDiff = inactive.filter(function (r) { return r.diff; });
     var byWeight = function (list) { return list.slice().sort(function (x, y) { return y.f.weight - x.f.weight; }); };
     return {
-      data: data, items: items, rows: rows, active: active, inactive: rows.filter(function (r) { return !r.f.active; }), diff: diff, groupLabel: groupLabel,
+      data: data, items: items, rows: rows, active: active, inactive: inactive, diff: diff, offDiff: offDiff, allDiff: rows.filter(function (r) { return r.diff; }), groupLabel: groupLabel,
+      // checks that are not scored yet and documented as supported for this product only (checklist order)
+      aheadOff: items.map(function (it) {
+        return offDiff.filter(function (r) { return r.cells[it.i].st === 'y' && r.cells.some(function (c, j) { return j !== it.i && c.st !== 'y'; }); });
+      }),
       ahead: items.map(function (it) {
         return byWeight(diff.filter(function (r) { return r.cells[it.i].st === 'y' && r.cells.some(function (c, j) { return j !== it.i && c.st !== 'y'; }); }));
       }),
@@ -177,21 +182,21 @@
     var table = $('[data-cmp-caps]', root);
     if (!table) return;
     if (!VIEWS[view]) view = 'scored';
-    var shown = 0, scored = 0, total = 0, group = null;
+    var shown = 0, shownScored = 0, scored = 0, total = 0, group = null;
     $$('tbody tr', table).forEach(function (tr) {
       if (tr.classList.contains('cmp-group')) { tr.hidden = true; group = tr; return; }
       var a = tr.getAttribute('data-a') === '1', differs = tr.getAttribute('data-d') === '1';
-      var show = view === 'all' || (a && (view === 'scored' || differs));
+      var show = view === 'all' || (view === 'scored' ? a : differs); // "diff" = every differing check, scored or not
       total++; if (a) scored++;
       tr.hidden = !show;
-      if (show) { shown++; if (group) group.hidden = false; }
+      if (show) { shown++; if (a) shownScored++; if (group) group.hidden = false; }
     });
     root.setAttribute('data-view', view);
     $$('[data-cmp-view] [data-view]', root).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-view') === view ? 'true' : 'false'); });
     var count = $('[data-cmp-count]', root);
     if (count) {
       count.textContent = '';
-      if (view === 'diff') add(count, ['Showing the ', el('b', { text: String(shown) }), ' scored ' + (shown === 1 ? 'check that differs.' : 'checks that differ.')]);
+      if (view === 'diff') add(count, ['Showing the ', el('b', { text: String(shown) }), (shown === 1 ? ' check that differs' : ' checks that differ') + (shown === shownScored ? (shown === 1 ? '; it is scored.' : ', all scored.') : ': ' + shownScored + ' scored and ' + (shown - shownScored) + ' not scored yet.')]);
       else if (view === 'all') add(count, ['Showing all ', el('b', { text: String(total) }), ' checks: ' + scored + ' scored and ' + (total - scored) + ' not scored yet.']);
       else add(count, ['Showing the ', el('b', { text: String(shown) }), ' checks that count toward the score.']);
       count.hidden = !shown;
@@ -206,11 +211,29 @@
     }
   }
   function viewFromUrl() { var v = query().get('diff'); return VIEWS[v] ? v : 'scored'; }
-  /** #cap-<feature> may point at a row the current view hides: switch to "All checks" and scroll to it. */
+  /** #cap-<feature> may point at a row the current view hides: switch to a view that shows it and scroll to it. */
   function revealHash() {
     if (!current || !/^#cap-/.test(w.location.hash)) return;
     var row = d.getElementById(decodeURIComponent(w.location.hash.slice(1)));
-    if (row && row.hidden && current.root.contains(row)) { applyView(current.root, 'all'); row.scrollIntoView(); }
+    if (row && row.hidden && current.root.contains(row)) { applyView(current.root, row.getAttribute('data-d') === '1' ? 'diff' : 'all'); row.scrollIntoView(); }
+  }
+
+  /**
+   * Below 1024px the rows are laid out as grids (two product columns under a full-width label), and browsers drop
+   * the native table semantics of elements whose display changes. Stating the roles keeps the tables announced as
+   * tables with row and column headers at every width.
+   */
+  function tableRoles(root) {
+    $$('.cmp-table', root).forEach(function (t) {
+      t.setAttribute('role', 'table');
+      $$('thead, tbody', t).forEach(function (x) { x.setAttribute('role', 'rowgroup'); });
+      $$('tr', t).forEach(function (x) { x.setAttribute('role', 'row'); });
+      $$('td', t).forEach(function (x) { x.setAttribute('role', 'cell'); });
+      $$('th', t).forEach(function (x) {
+        x.setAttribute('role', x.getAttribute('scope') === 'row' ? 'rowheader' : 'columnheader');
+        if (x.colSpan > 1) x.setAttribute('aria-colspan', String(x.colSpan));
+      });
+    });
   }
 
   // ------------------------------------------------------------------ tools (both pages)
@@ -270,6 +293,7 @@
     current = { root: serverRoot, category: serverRoot.getAttribute('data-category'), ids: (serverRoot.getAttribute('data-ids') || '').split(' ').filter(Boolean) };
     var v0 = viewFromUrl();
     if (v0 !== 'scored') applyView(serverRoot, v0, { url: false });
+    tableRoles(serverRoot);
     revealHash();
     syncSave();
     return;
@@ -290,11 +314,10 @@
   var token = 0; // guards against out-of-order data loads
 
   function readState() {
-    var q = query(), seen = {}, ids = [], plans = false, scope = q.get('scope') || '';
+    var q = query(), seen = {}, ids = [], plans = [], scope = q.get('scope') || '';
     SLOTS.forEach(function (k) {
       var id = q.get(k);
-      if (q.get('plan_' + k)) plans = true;
-      if (id && SLUG.test(id) && !seen[id]) { seen[id] = 1; ids.push(id); }
+      if (id && SLUG.test(id) && !seen[id]) { seen[id] = 1; ids.push(id); if (q.get('plan_' + k)) plans.push(id); }
     });
     return { scope: SLUG.test(scope) ? scope : '', rawScope: scope, ids: ids, plans: plans, pick: q.get('pick') === '1' };
   }
@@ -352,7 +375,17 @@
       writeState(s.scope, valid, false, picking);
       var notes = [];
       if (invalid.length) notes.push(notice((invalid.length === 1 ? '“' + invalid[0] + '” is' : invalid.map(function (x) { return '“' + x + '”'; }).join(', ') + ' are') + ' not in ' + data.name + ' and ' + (invalid.length === 1 ? 'was' : 'were') + ' left out.'));
-      if (s.plans && valid.length >= 2) notes.push(notice('This comparison uses product-wide evidence. Plan-level details are on each product profile.'));
+      var planned = s.plans.filter(function (id) { return known[id]; });
+      if (planned.length && valid.length >= 2) {
+        // legacy plan_a…plan_d links: the tool compares product-wide evidence; point to the plan options instead
+        var names = {}, kids = [];
+        data.vendors.forEach(function (v) { names[v.id] = v.n; });
+        planned.forEach(function (id, i) {
+          if (i) kids.push(i === planned.length - 1 ? ' and ' : ', ');
+          kids.push(el('a', { href: SC.url('/software/' + id + '/') + '#plan-options', text: names[id] }));
+        });
+        notes.push(notice('This comparison uses product-wide evidence, which may span several plans. The plan chosen in the link is not applied here; plan options are on the profile of ', kids.concat(['.'])));
+      }
       if (picking) showProducts(data, valid, notes, userAction);
       else renderComparison(data, valid, notes, userAction);
     }).catch(function () {
@@ -563,7 +596,7 @@
       el('button.btn.btn--ghost.btn--sm', { type: 'button', 'data-cmp-save': true, text: n === 2 ? 'Add both to shortlist' : 'Add all ' + n + ' to shortlist' }),
       el('button.btn.btn--ghost.btn--sm', { type: 'button', 'data-cmp-export': true, text: 'Export evidence (CSV)' }),
       el('button.btn.btn--ghost.btn--sm', { type: 'button', 'data-cmp-print': true, text: 'Print' }),
-      el('button.btn.btn--ghost.btn--sm', { type: 'button', text: 'Change products', on: { click: function () { writeState(data.id, ids, true, true); route(true); } } }),
+      el('button.btn.btn--ghost.btn--sm.cmp-tools__change', { type: 'button', text: 'Change products', on: { click: function () { writeState(data.id, ids, true, true); route(true); } } }),
       staticUrl ? el('a.link-arrow.cmp-tools__more', { href: staticUrl, text: 'Full ' + pairName + ' page' }) : null,
     ]);
     mount.appendChild(el('div.wrap.cmp-answer.cmp-answer--tool', null, [
@@ -684,21 +717,32 @@
       el('div.section-head', null, [el('div', null, [
         el('h2', { id: 'differences-h', text: 'Where they differ' }),
         el('p.cmp-count', null, m.diff.length
-          ? [el('b', { text: m.diff.length + ' of ' + m.active.length }), ' scored checks differ between ' + listText(m.items.map(function (it) { return it.v.n; })) + '.']
+          ? [el('b', { text: m.diff.length + ' of ' + m.active.length }), ' scored checks ' + (m.diff.length === 1 ? 'differs' : 'differ') + ' between ' + listText(m.items.map(function (it) { return it.v.n; })) + '.']
           : [el('b', { text: 'None of the ' + m.active.length }), ' scored checks differ: ' + listText(m.items.map(function (it) { return it.v.n; })) + ' have the same documented status on every one. Equal statuses do not mean the products or prices are identical.']),
       ])]),
     ]);
-    if (m.diff.length) {
+    if (m.offDiff.length) add($('.cmp-count', diffSec), [' ', el('span.cmp-count__off', { text: m.offDiff.length + ' of the ' + m.inactive.length + ' checks that are not scored yet also ' + (m.offDiff.length === 1 ? 'differs' : 'differ') + '.' })]);
+    var offLine = function (it) {
+      var list = m.aheadOff[it.i];
+      if (!list.length) return null;
+      var line = el('p.cmp-ahead__off', null, [el('b', { text: 'Not scored yet, documented for ' + it.v.n + ' only (' + list.length + '):' }), ' ']);
+      list.forEach(function (r, i) { if (i) line.appendChild(d.createTextNode(', ')); line.appendChild(el('a', { href: '#cap-' + r.f.id, text: r.f.label })); });
+      line.appendChild(d.createTextNode('.'));
+      return line;
+    };
+    if (m.allDiff.length) {
       var colsBox = el('div.cmp-ahead', null, m.items.map(function (it) {
         var rest = m.items.filter(function (o) { return o !== it; }).map(function (o) { return o.v.n; }).join(' or ');
         return el('div.cmp-ahead__col', { 'data-i': it.i }, [
           el('h3', null, [dot(), 'Where ' + it.v.n + ' is ahead (' + m.ahead[it.i].length + ')']),
           m.ahead[it.i].length ? el('ul.cmp-ahead__list', null, m.ahead[it.i].map(diffLine)) : el('p.cmp-none', { text: 'No scored check is documented as supported for ' + it.v.n + ' and not for ' + rest + '.' }),
+          offLine(it),
         ]);
       }));
       if (m.other.length) colsBox.appendChild(el('div.cmp-ahead__col.cmp-ahead__col--other', null, [el('h3', { text: 'Other differences (' + m.other.length + ')' }), el('ul.cmp-ahead__list', null, m.other.map(diffLine))]));
       diffSec.appendChild(colsBox);
-      diffSec.appendChild(el('p.fineprint', { text: 'A product is ahead on a check when official documentation supports it there and not for ' + (n === 2 ? 'the other product' : 'at least one other product') + '. Lines are ordered by the points each check carries. “Not verified” means no qualifying public evidence was found, not that the capability is missing.' }));
+      diffSec.appendChild(el('p.fineprint', null, ['A product is ahead on a check when official documentation supports it there and not for ' + (n === 2 ? 'the other product' : 'at least one other product') + '. Lines are ordered by the points each check carries. “Not verified” means no qualifying public evidence was found, not that the capability is missing. ',
+        el('a', { href: '#capabilities', 'data-view': 'diff', text: 'See all ' + m.allDiff.length + ' differing checks with their evidence' }), '.']));
     }
     root.appendChild(diffSec);
 
@@ -739,22 +783,22 @@
     root.appendChild(el('section.wrap.section.cmp-sec', { id: 'capabilities', 'aria-labelledby': 'capabilities-h' }, [
       el('div.section-head', null, [el('div', null, [
         el('h2', { id: 'capabilities-h', text: 'All capability checks' }),
-        el('p', { text: 'Every check with its documented status, the points it carries, the evidence note and the official source for ' + listText(m.items.map(function (it) { return it.v.n; })) + '.' }),
+        el('p', { text: 'Every check with its documented status, the points it carries, the evidence note and the official source for ' + listText(m.items.map(function (it) { return it.v.n; })) + '. Changing the view never changes a score. Evidence is product-wide and may span several plans; confirm the package you intend to buy.' }),
       ])]),
       el('div.toolbar.cmp-viewbar', null, [
-        el('div.seg.cmp-view', { role: 'group', 'aria-label': 'Which checks to show', 'data-cmp-view': true }, [segBtn('diff', 'Differences', m.diff.length), segBtn('scored', 'Scored checks', m.active.length), segBtn('all', 'All checks', m.rows.length)]),
+        el('div.seg.cmp-view', { role: 'group', 'aria-label': 'Which checks to show', 'data-cmp-view': true }, [segBtn('diff', 'Differences', m.allDiff.length), segBtn('scored', 'Scored checks', m.active.length), segBtn('all', 'All checks', m.rows.length)]),
         el('p.legend', { 'aria-label': 'Legend' }, ['y', 'p', 'n', 'u'].map(statusEl)),
       ]),
       el('p.toolbar__count.cmp-viewcount', { role: 'status', 'aria-live': 'polite', 'data-cmp-count': true }),
       tableEl(m, '.cmp-table--caps', data.name + ' checklist: documented status, points and evidence for ' + listText(m.items.map(function (it) { return it.v.n; })), 'Capability check', capRows, { 'data-cmp-caps': true }),
-      el('p.empty', { 'data-cmp-empty': true, hidden: true }, [el('b', { text: 'No scored check differs between these products.' }), 'Equal statuses do not mean the products or prices are identical. ', el('button.btn.btn--quiet.btn--sm', { type: 'button', 'data-view': 'scored', text: 'Show the scored checks' })]),
+      el('p.empty', { 'data-cmp-empty': true, hidden: true }, [el('b', { text: 'No check differs between these products.' }), 'Equal statuses do not mean the products or prices are identical. ', el('button.btn.btn--quiet.btn--sm', { type: 'button', 'data-view': 'scored', text: 'Show the scored checks' })]),
     ]));
 
     // ---- prices
     var priceLine = function (it) {
       var p = it.v.pr;
       return hasAmount(it.v)
-        ? it.v.n + ' starts at ' + p.h + (p.u ? ' ' + p.u : '') + (p.b ? ', ' + p.b : '') + (p.pl ? ' (' + p.pl + ' plan)' : '')
+        ? it.v.n + ' starts at ' + p.h + (p.u ? ' ' + p.u : '') + (p.b ? ', ' + p.b : '') + (p.pl ? ' (plan: ' + p.pl + ')' : '')
         : it.v.n + ' has no verified public starting price' + (p.h === 'Custom quote' ? ' (custom quote)' : p.h === 'Usage-based' ? ' (usage-based pricing)' : '');
     };
     var priceDates = [];
@@ -790,6 +834,7 @@
     mount.appendChild(root);
     current = { root: root, category: data.id, ids: ids.slice() };
     syncPair();
+    tableRoles(root);
     applyView(root, viewFromUrl(), { url: false });
     syncSave();
     if (userAction) { w.scrollTo(0, 0); if (titleEl) { titleEl.setAttribute('tabindex', '-1'); titleEl.focus({ preventScroll: true }); } }

@@ -242,6 +242,9 @@ ${hreflang ? hreflang.map((h) => html`<link rel="alternate" hreflang="${h.hrefla
 <meta property="og:image" content="${ctx.abs(ogImage.url)}">
 ${ogImage.width ? html`<meta property="og:image:width" content="${ogImage.width}"><meta property="og:image:height" content="${ogImage.height}">` : ''}
 ${ogImage.alt ? html`<meta property="og:image:alt" content="${ogImage.alt}">` : ''}
+${page.ogType === 'article' && page.datePublished ? html`<meta property="article:published_time" content="${page.datePublished}">` : ''}
+${page.ogType === 'article' && page.dateModified ? html`<meta property="article:modified_time" content="${page.dateModified}">` : ''}
+${page.ogType === 'article' && page.articleSection ? html`<meta property="article:section" content="${page.articleSection}">` : ''}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${ogTitle}">
 <meta name="twitter:description" content="${page.description}">

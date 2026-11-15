@@ -110,6 +110,9 @@ function render(ctx, vendor) {
       priceSpan ? html` Price sources were checked ${priceSpan}${priceDates.every(Boolean) ? '' : ', where a check date is recorded'}.` : ''
     }`;
 
+    // Quick filters (when the data offers any), the sort and the live count. Without quick filters the count
+    // shares the row with the sort instead of leaving the sort alone on a line.
+    const countLine = html`<p class="toolbar__count" role="status" aria-live="polite" data-ix-count data-noun="alternatives"><b>${n}</b> alternatives</p>`;
     const controls =
       n > 1
         ? html`<div class="toolbar ix-toolbar" data-ix-controls data-nosnippet>
@@ -119,7 +122,7 @@ function render(ctx, vendor) {
                     ${chips.map((c) => html`<button type="button" class="chip" data-f="${c.f}" aria-pressed="false">${c.label} <span class="n">${c.n}</span></button>`)}
                     <button type="button" class="chip chip--link" data-ix-reset hidden>Clear filters</button>
                   </div>`
-                : ''
+                : countLine
             }
             <label class="ix-select ix-bar__end"><span class="sr-only">Sort alternatives</span>
               <select class="select" data-ix-sort aria-label="Sort alternatives">
@@ -129,7 +132,7 @@ function render(ctx, vendor) {
               </select>
             </label>
           </div>
-          <p class="toolbar__count" role="status" aria-live="polite" data-ix-count data-noun="alternatives"><b>${n}</b> alternatives</p>`
+          ${chips.length ? countLine : ''}`
         : '';
 
     return html`<div${attrs({
@@ -146,7 +149,7 @@ function render(ctx, vendor) {
       ${ui.answer(ctx, quickAnswer(category))}
       <div class="ix-panel__head">
         <h2 id="alt-h-${category.id}">${ctx.plural(n, 'researched alternative')} in ${category.name}</h2>
-        ${ui.scoreHelp(ctx)}
+        ${/* the heading can be long: the help panel opens towards the left so it stays on a 768px screen */ ui.scoreHelp(ctx, { align: 'right' })}
       </div>
       ${controls}
       <div class="ix-ref">${refTable}</div>

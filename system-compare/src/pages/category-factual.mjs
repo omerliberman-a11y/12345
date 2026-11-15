@@ -161,7 +161,7 @@ function render(ctx, category) {
     { label: 'Suppliers documented', value: String(suppliers.length), sub: 'listed by buying approach, not ranked' },
     { label: 'Offers documented', value: String(nOffers), sub: [numericOffers.length && `${numericOffers.length} with a published price`, quoteOffers.length && `${quoteOffers.length} quote-only`, unverifiedOffers.length && `${unverifiedOffers.length} not verified`].filter(Boolean).join(' · ') },
     lowest
-      ? { label: 'Lowest published offer', value: html`<a href="#plans-${lowest.supplier.id}">${lowest.price.main}</a>`, sub: [lowest.price.currencyNote, `${lowest.supplier.name} ${lowest.plan.name}`, lowest.price.unit].filter(Boolean).join(' · ') }
+      ? { label: 'Lowest published amount', value: html`<a href="#plans-${lowest.supplier.id}">${lowest.price.main}</a>`, sub: [lowest.price.currencyNote, `${lowest.supplier.name} ${lowest.plan.name}`, lowest.price.unit].filter(Boolean).join(' · ') }
       : { label: 'Published prices', value: 'None', sub: quoteOffers.length ? 'ask each supplier for a quote' : 'not verified for these offers' },
     { label: 'Criteria compared', value: html`<a href="#factual-comparison">${criteria.length}</a>`, sub: `${F.sources.length} dated official sources` },
   ];

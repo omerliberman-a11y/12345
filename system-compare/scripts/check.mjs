@@ -37,7 +37,7 @@ const htmlFiles = files.filter((f) => f.endsWith('.html'));
 const fileSet = new Set(files);
 const errors = [];
 const warnings = [];
-const inScope = (file) => !only || only.split(',').some((pre) => sitePath(file).startsWith(pre));
+const inScope = (file) => !only || only.split(',').some((pre) => sitePath(file).startsWith(pre.replace(/index\.html$/, '')));
 const err = (file, msg) => inScope(file) && errors.push({ file: path.relative(dir, file), msg });
 const warn = (file, msg) => inScope(file) && warnings.push({ file: path.relative(dir, file), msg });
 

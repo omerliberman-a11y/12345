@@ -36,7 +36,7 @@ function render(ctx, category) {
   // ---- facet counts for the filter chips
   const prices = ranked.map((v) => ctx.price(v, category.id));
   const nScored = s.scored;
-  const nPriced = prices.filter((p) => p.hasAmount && p.currency === 'USD').length;
+  const nPriced = prices.filter((p) => p.hasAmount).length;
   const nAi = ranked.filter((v) => ['native', 'agent'].includes(v.ai?.level)).length;
 
   // ---- head
@@ -187,7 +187,7 @@ function render(ctx, category) {
       ${ui.statusLegend()}
       <div class="chips">
         <button type="button" class="chip" data-matrix-picked aria-pressed="false" hidden>Only my shortlist</button>
-        ${features.length > activeCount ? html`<button type="button" class="chip" data-matrix-all aria-pressed="false">Show ${features.length - activeCount} checks not scored yet</button>` : ''}
+        ${features.length > activeCount ? html`<button type="button" class="chip" data-matrix-all aria-pressed="false">Show ${features.length - activeCount} inactive deep checks</button>` : ''}
       </div>
     </div>
     <div class="scroller" id="feature-evidence">
@@ -235,7 +235,7 @@ function render(ctx, category) {
                 <thead><tr><th scope="col">Lowest verified starting prices</th><th scope="col" class="num">From</th></tr></thead>
                 <tbody>
                   ${cheapest.map(
-                    ({ v, p }) => html`<tr><th scope="row"><a href="${ctx.url.software(v.id)}#pricing">${v.name}</a><small>${[p.plan && `${p.plan} plan`, p.unit, p.billingNote].filter(Boolean).join(' · ')}</small></th><td class="num">${p.headline}</td></tr>`,
+                    ({ v, p }) => html`<tr><th scope="row"><a href="${ctx.url.software(v.id)}#pricing">${v.name}</a><small>${[p.planLabel, p.unit, p.billingNote].filter(Boolean).join(' · ')}</small></th><td class="num">${p.headline}</td></tr>`,
                   )}
                 </tbody>
               </table>

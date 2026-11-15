@@ -49,7 +49,7 @@
   }
   .fx-stack td.fx-empty { display: none; }
   .fx-stack tbody th { font-size: var(--fs-md); }
-  .fx-glance__go a { display: inline-flex; align-items: center; min-height: var(--tap); }
+  .fx-glance__go a { display: inline-block; padding-block: 0.7rem; }
   .fx-related .chip { min-height: var(--tap); }
 }
 
