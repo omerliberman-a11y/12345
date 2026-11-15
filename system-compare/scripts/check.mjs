@@ -107,6 +107,8 @@ for (const pg of pages) {
   }
   if (!/<main\b/i.test(noScript)) err(file, 'missing <main>');
   for (const id of dupIds) err(file, `duplicate id="${id}"`);
+  // Every <img> needs an alt attribute. alt="" is right for a decorative image — e.g. a vendor logo printed next to
+  // the product name (ui.logo's default) — so it passes; a link named only by such an image fails below.
   for (const m of noScript.matchAll(/<img\b[^>]*>/gi)) {
     if (!/\salt="/i.test(m[0])) err(file, `img without alt: ${m[0].slice(0, 90)}`);
     if (!/\swidth="/i.test(m[0]) || !/\sheight="/i.test(m[0])) warn(file, `img without width/height: ${m[0].slice(0, 90)}`);
@@ -123,6 +125,10 @@ for (const pg of pages) {
     const inner = m[2].replace(/<[^>]+>/g, '').trim();
     if (!inner && !/aria-label=|title=/.test(m[1]) && !/<img[^>]*alt="[^"]+"/.test(m[2]) && !/<svg[^>]*aria-label=/.test(m[2]))
       err(file, `link without accessible name: ${m[0].slice(0, 100)}`);
+    // an image whose text alternative repeats the link's own text makes screen readers say it twice
+    const alt = (m[2].match(/<img[^>]*\salt="([^"]+)"/) || [])[1];
+    if (alt && inner && decode(inner).toLowerCase().includes(decode(alt).replace(/ logo$/i, '').toLowerCase()))
+      warn(file, `img alt repeats the link text (use alt=""): "${decode(alt)}"`);
   }
   for (const m of noScript.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/gi)) {
     const inner = m[2].replace(/<[^>]+>/g, '').trim();

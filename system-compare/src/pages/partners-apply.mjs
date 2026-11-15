@@ -30,14 +30,20 @@ function render(ctx) {
   if (!section || !language) throw new Error('partners apply: captured markup not found in static-server-content.json');
 
   // Class names only — ids, names, data-* attributes and text nodes are untouched.
+  // The form controls get the site's standard .select / .input / .textarea classes (partners-ui.js never
+  // selects them by class); checkboxes keep the browser control.
   const restyled = section
     .replace('class="button secondary"', 'class="btn btn--ghost"')
     .replace('<button class="button" type="submit">', '<button class="btn btn--lg" type="submit">')
-    .replace(/class="muted"/g, 'class="fineprint"');
+    .replace(/class="muted"/g, 'class="fineprint"')
+    .replace(/<select (?![^>]*\bclass=)/g, '<select class="select" ')
+    .replace(/<textarea (?![^>]*\bclass=)/g, '<textarea class="textarea" ')
+    .replace(/<input (?![^>]*\bclass=)(?![^>]*type="(?:checkbox|radio|hidden)")/g, '<input class="input" ');
+  const languageSwitch = language.replace(/<select (?![^>]*\bclass=)/, '<select class="select select--sm" ');
   const h1 = text((section.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || 'Apply');
 
   const body = html`<div class="wrap wrap--narrow st-pg-apply">
-      <div class="st-pg-apply__lang" data-nosnippet>${raw(language)}</div>
+      <div class="st-pg-apply__lang" data-nosnippet>${raw(languageSwitch)}</div>
       ${raw(restyled)}
     </div>`;
 

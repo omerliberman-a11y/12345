@@ -189,6 +189,11 @@
       });
       blocks.forEach(function (b) { b.hidden = !$('[data-ix-row]:not([hidden])', b); });
       groups.forEach(function (g) { g.hidden = !$('[data-ix-row]:not([hidden])', g); });
+      // a category's folded pairs ("N more …") open while a filter is on, so every match shows; they fold again after
+      $$('details[data-ix-fold]', root).forEach(function (dt) {
+        if ((toks.length || cat) && !dt.open) { dt.open = true; dt.setAttribute('data-ix-auto', ''); }
+        else if (!toks.length && !cat && dt.hasAttribute('data-ix-auto')) { dt.open = false; dt.removeAttribute('data-ix-auto'); }
+      });
       syncJumpRow(groups);
       setCount(count, shown, rows.length, toks.length > 0 || !!cat, fuzzy && shown ? SIMILAR : related ? RELATED : '');
       setEmpty(empty, shown === 0, input.value.trim(), 'Try a shorter word, clear the filter, or build the comparison yourself in the compare tool.');

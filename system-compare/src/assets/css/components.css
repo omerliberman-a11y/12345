@@ -12,7 +12,7 @@
   border: 1px solid transparent;
   background: var(--brand);
   color: #fff;
-  font-size: 0.9375rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
@@ -33,8 +33,9 @@
 .btn[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-ink); }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
 
-.link-arrow { font-weight: 600; white-space: nowrap; }
-.link-arrow::after { content: " →"; white-space: pre; }
+/* wraps like text when the line is short (320px), the arrow stays with the last word */
+.link-arrow { font-weight: 600; max-width: 100%; }
+.link-arrow::after { content: "\00a0→"; }
 .ext::after { content: " ↗"; font-size: 0.85em; }
 
 /* ---------------------------------------------------------------- chips (interactive) and tags (static) */
@@ -50,7 +51,7 @@
   background: var(--bg);
   color: var(--ink-2);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.2;
   white-space: nowrap;
   transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
@@ -64,7 +65,7 @@
 .chip .n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .chip[aria-pressed="true"] .n { color: #c9ccdb; }
 .chip svg { width: 0.95rem; height: 0.95rem; }
-.chip--link { background: var(--bg-subtle); border-color: transparent; color: var(--ink); }
+.chip--link { max-width: 100%; white-space: normal; background: var(--bg-subtle); border-color: transparent; color: var(--ink); }
 .chip--link:hover { background: var(--brand-soft); color: var(--brand-ink); border-color: transparent; }
 
 .tag {
@@ -100,12 +101,23 @@
   overflow: hidden;
 }
 .logo img { width: 76%; height: 76%; object-fit: contain; }
-.logo--dark { background: #171a26; border-color: #171a26; }
+.logo--dark { background: var(--logo-dark); border-color: var(--logo-dark); }
 .logo--sm { width: 2rem; height: 2rem; border-radius: 8px; }
 .logo--lg { width: 4rem; height: 4rem; border-radius: var(--r-surface); }
 .logo--wide { width: auto; min-width: 4rem; max-width: 9rem; padding-inline: 0.6rem; }
 .logo--wide img { width: auto; max-width: 100%; height: 56%; }
-.logo__fallback { font-weight: 700; font-size: 0.95em; color: var(--ink-2); }
+.logo__fallback, .logo__mono { font-size: var(--fs-sm); font-weight: 700; line-height: 1; letter-spacing: 0.02em; color: var(--ink-2); }
+.logo__mono { display: none; }
+/* small tiles: a wordmark (data-wide, set at build time from the logo's size) would render under 12px tall,
+   so the tile shows the vendor's initials on the light surface instead */
+.logo--sm[data-wide], .tray__item .logo[data-wide] { background: var(--bg); border-color: var(--line); }
+.logo--sm[data-wide] img, .tray__item .logo[data-wide] img { display: none; }
+.logo--sm[data-wide] .logo__mono, .tray__item .logo[data-wide] .logo__mono { display: grid; place-items: center; width: 100%; height: 100%; }
+.tray__item .logo__mono { font-size: var(--fs-xs); }
+/* product rows: every vendor gets the same landscape plate, so names line up, wordmarks stay legible
+   and square marks sit centred in it (sizes in tokens.css) */
+.ptable .prod .logo { width: var(--plate-w); height: var(--plate-h); }
+.ptable .prod .logo img { width: calc(100% - 1rem); height: var(--plate-img); }
 
 /* ---------------------------------------------------------------- score */
 .score { display: inline-flex; flex-direction: column; gap: 0.1rem; line-height: 1.15; }
@@ -117,7 +129,7 @@
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
-.score__value small { font-family: var(--font); font-size: var(--fs-xs); font-weight: 500; color: var(--ink-3); letter-spacing: 0; margin-left: 0.1em; }
+.score__value small { font-family: var(--font); font-size: var(--fs-xs); font-weight: 400; color: var(--ink-3); letter-spacing: 0; margin-left: 0.1em; }
 .score__meta { font-size: var(--fs-xs); color: var(--ink-3); white-space: nowrap; }
 .score--pending .score__value {
   font-family: var(--font);
@@ -126,7 +138,7 @@
   letter-spacing: 0;
   color: var(--ink-2);
 }
-.score--lg .score__value { font-size: 3rem; line-height: 1; }
+.score--lg .score__value { font-size: var(--fs-3xl); line-height: 1; }
 .score--lg .score__value small { font-size: var(--fs-md); }
 .score--lg.score--pending .score__value { font-size: var(--fs-xl); font-family: var(--font-display); }
 
@@ -143,14 +155,14 @@
   display: grid;
   place-items: center;
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: var(--fs-2xl);
   font-weight: 700;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 .ring--pending .ring__num { font-family: var(--font); font-size: var(--fs-xs); font-weight: 600; color: var(--ink-2); letter-spacing: 0; text-align: center; line-height: 1.2; }
 .ring--sm { width: 3.5rem; height: 3.5rem; }
-.ring--sm .ring__num { font-size: 1.125rem; }
+.ring--sm .ring__num { font-size: var(--fs-lg); }
 /* a small pending ring has no room for words: the dashed ring is the sign, the label sits beside it */
 .ring--sm.ring--pending .ring__num { display: none; }
 
@@ -171,7 +183,7 @@
   align-items: center;
   gap: 0.4rem;
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
 }
 .st::before {
@@ -212,6 +224,8 @@
 
 .seg {
   display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   padding: 0.2rem;
   border-radius: var(--r-control);
   background: var(--bg-muted);
@@ -247,9 +261,10 @@
   white-space: nowrap;
   vertical-align: bottom;
 }
+/* the label sits at the bottom of the button, on the same line as the plain header cells ("#", "AI") */
 .ptable thead button {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 0.3rem;
   font: inherit;
   letter-spacing: inherit;
@@ -258,7 +273,7 @@
   min-height: 2rem;
 }
 .ptable thead button:hover { color: var(--ink); }
-.ptable thead button::after { content: "↕"; font-size: 0.9em; opacity: 0.45; }
+.ptable thead button::after { content: "↕"; opacity: 0.45; }
 .ptable thead [aria-sort="ascending"] button::after { content: "↑"; opacity: 1; color: var(--brand); }
 .ptable thead [aria-sort="descending"] button::after { content: "↓"; opacity: 1; color: var(--brand); }
 .ptable tbody tr { border-bottom: 1px solid var(--line); transition: background var(--dur) var(--ease); }
@@ -280,7 +295,7 @@
 .prod { display: flex; align-items: center; gap: 0.85rem; color: var(--ink); min-width: 0; }
 .prod:hover { text-decoration: none; color: var(--ink); }
 .prod__text { min-width: 0; display: block; }
-.prod__name { font-weight: 650; font-size: var(--fs-md); letter-spacing: -0.01em; margin-right: 0.4rem; }
+.prod__name { font-weight: 600; font-size: var(--fs-md); letter-spacing: -0.01em; margin-right: 0.4rem; }
 .prod:hover .prod__name { color: var(--brand); text-decoration: underline; text-underline-offset: 0.18em; }
 .prod__fit {
   display: -webkit-box;
@@ -296,8 +311,8 @@
 }
 
 .price { display: flex; flex-direction: column; gap: 0.1rem; line-height: 1.25; }
-.price__main { font-weight: 650; font-size: var(--fs-md); color: var(--ink); font-variant-numeric: tabular-nums; }
-.price__main--text { font-weight: 500; font-size: var(--fs-sm); color: var(--ink-2); }
+.price__main { font-weight: 600; font-size: var(--fs-md); color: var(--ink); font-variant-numeric: tabular-nums; }
+.price__main--text { font-weight: 600; font-size: var(--fs-sm); color: var(--ink-2); }
 .price__unit { font-size: var(--fs-xs); color: var(--ink-3); }
 .price--lg .price__main { font-family: var(--font-display); font-size: var(--fs-2xl); letter-spacing: -0.02em; }
 .price--lg .price__main--text { font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 600; color: var(--ink); }
@@ -317,7 +332,7 @@
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 6px;
-  border: 1.5px solid var(--line-strong);
+  border: 1.5px solid var(--line-control);
   background: var(--bg) no-repeat center / 0.85rem;
   transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
@@ -328,7 +343,8 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
-/* mobile: each row becomes a compact list item — name + score on top, price underneath */
+/* mobile: each row becomes a compact list item — logo plate + score on top, then name, fit line and price,
+   all starting at the same left edge */
 @media (max-width: 47.99em) {
   .ptable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
   .ptable, .ptable tbody { display: block; }
@@ -347,7 +363,7 @@
   .ptable__c-pick { grid-area: pick; width: auto; margin-left: -0.6rem; }
   .ptable__c-name { grid-area: name; }
   .ptable__c-score { grid-area: score; width: auto; text-align: right; padding-top: 0.1rem !important; }
-  .ptable__c-price { grid-area: price; width: auto; padding-left: 3.2rem !important; }
+  .ptable__c-price { grid-area: price; width: auto; }
   .ptable__c-rank, .ptable__c-ai, .ptable__c-go { display: none !important; }
   .ptable tbody tr:not(:has(.ptable__c-pick)) { grid-template-columns: 0 minmax(0, 1fr) auto; column-gap: 0; }
   .ptable .score { align-items: flex-end; }
@@ -355,9 +371,16 @@
   .ptable .score--pending .score__value { font-size: var(--fs-xs); }
   .ptable .price { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0.1rem 0.4rem; }
   .ptable .price__main { font-size: var(--fs-sm); }
-  .prod { align-items: flex-start; gap: 0.7rem; }
-  .prod .logo { width: 2.5rem; height: 2.5rem; }
+  .prod { flex-direction: column; align-items: flex-start; gap: 0.45rem; }
   .prod__name { display: inline; }
+  /* a reader text-size preference: the scaled score no longer fits beside the name, so every cell takes the
+     row's full width (shortlist box on the left) and names wrap by word, never letter by letter */
+  html[data-a11y-size] .ptable tbody tr { display: flex; flex-wrap: wrap; align-items: flex-start; position: relative; padding-left: 2.6rem; }
+  html[data-a11y-size] .ptable tbody tr:not(:has(.ptable__c-pick)) { padding-left: 0; }
+  html[data-a11y-size] .ptable tbody tr > * { flex: 1 1 100%; min-width: 0; }
+  html[data-a11y-size] .ptable td.ptable__c-pick { position: absolute; left: 0; top: 0.35rem; }
+  html[data-a11y-size] .ptable__c-score { text-align: left; }
+  html[data-a11y-size] .ptable .score { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 0.5rem; }
 }
 @media (max-width: 61.99em) {
   .ptable__c-ai { display: none; }
@@ -409,6 +432,11 @@
 }
 .dtable--zebra tbody tr:nth-child(even) { background: var(--bg-subtle); }
 .dtable small { display: block; margin-top: 0.15rem; color: var(--ink-3); font-size: var(--fs-xs); line-height: 1.4; }
+/* phones: column headers may wrap, so a small table fits a 320px screen instead of pushing the page sideways
+   (wide tables sit in a .scroller) */
+@media (max-width: 47.99em) {
+  .dtable thead th, .dtable thead th.num { white-space: normal; }
+}
 
 /* capability matrix: sticky first column, icon cells (the page scrolls vertically; only the table scrolls sideways) */
 .matrix { min-width: max-content; }
@@ -439,7 +467,7 @@
   white-space: normal;
 }
 .matrix thead th:first-child { vertical-align: bottom; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
-.matrix tbody th { font-weight: 500; line-height: 1.35; box-shadow: 1px 0 0 var(--line); }
+.matrix tbody th { font-weight: 400; line-height: 1.35; box-shadow: 1px 0 0 var(--line); }
 .matrix td { text-align: center; padding: 0.3rem 0.35rem; vertical-align: middle; }
 .matrix tbody tr:hover td, .matrix tbody tr:hover th { background: var(--bg-subtle); }
 .matrix tr.is-inactive th, .matrix tr.is-inactive td { color: var(--ink-3); }
@@ -489,15 +517,17 @@ html:not(.js) .matrix__what { text-decoration: none; cursor: default; pointer-ev
   font-size: var(--fs-sm);
   font-weight: 600;
 }
-.tray__item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tray__item span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tray__item .logo { width: 1.75rem; height: 1.75rem; border-radius: 50%; }
-.tray__x { display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: var(--ink-2); flex: none; font-size: 1.1rem; line-height: 1; }
+.tray__x { display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: var(--ink-2); flex: none; font-size: var(--fs-lg); line-height: 1; }
 .tray__x:hover { background: var(--line-strong); color: var(--ink); }
 .tray__actions { display: flex; align-items: center; gap: var(--s-2); flex: none; }
 .tray__clear { font-size: var(--fs-sm); color: var(--ink-2); padding: 0.5rem; min-height: var(--tap); }
 .tray__clear:hover { color: var(--ink); text-decoration: underline; }
 @media (min-width: 48em) {
   .tray__label { display: block; }
+  /* names are cut only when the bar is actually full */
+  .tray__item { flex: 0 1 auto; min-width: 7rem; max-width: 22rem; }
 }
 body.has-tray { padding-bottom: 4.5rem; }
 
@@ -524,17 +554,17 @@ body.has-tray { padding-bottom: 4.5rem; }
   font-weight: 400;
 }
 .pop--right .pop__panel { left: auto; right: 0; }
-.pop__panel h4, .pop__title { font-size: var(--fs-sm); font-weight: 650; color: var(--ink); margin-bottom: var(--s-2); }
+.pop__panel h4, .pop__title { font-size: var(--fs-sm); font-weight: 600; color: var(--ink); margin-bottom: var(--s-2); }
 .pop__panel p + p { margin-top: var(--s-2); }
 .info {
   display: inline-grid;
   place-items: center;
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: 50%;
   border: 1.5px solid var(--ink-3);
   color: var(--ink-3);
-  font-size: 0.7rem;
+  font-size: var(--fs-xs);
   font-weight: 700;
   font-style: normal;
   line-height: 1;
@@ -569,7 +599,11 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
   text-transform: uppercase;
   color: var(--brand-ink);
 }
-.answer strong { font-weight: 650; }
+.answer strong { font-weight: 600; }
+/* phones: body size, so the answer-first block stays short enough to leave room for the table or score below it */
+@media (max-width: 39.99em) {
+  .answer { font-size: var(--fs-md); line-height: 1.55; }
+}
 
 /* ---------------------------------------------------------------- key facts (label/value pairs, no boxes) */
 .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-6); }
@@ -590,7 +624,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 /* ---------------------------------------------------------------- pros / cons */
 .proscons { display: grid; gap: var(--s-8); grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 48em) { .proscons { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.proscons h3 { font-family: var(--font); font-size: var(--fs-md); font-weight: 650; letter-spacing: 0; margin-bottom: var(--s-3); }
+.proscons h3 { font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; margin-bottom: var(--s-3); }
 .ticks li, .crosses li, .dots li { position: relative; padding-left: 1.75rem; }
 .ticks li + li, .crosses li + li, .dots li + li { margin-top: 0.55rem; }
 .ticks li::before, .crosses li::before {
@@ -639,7 +673,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
   min-height: 3.25rem;
   padding: 0.6rem 0;
   color: var(--ink);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.35;
 }
 .linklist a:hover { color: var(--brand); text-decoration: none; }
@@ -657,7 +691,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
   transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 .tile:hover { background: var(--brand-soft); color: var(--ink); text-decoration: none; }
-.tile b { font-size: var(--fs-lg); font-weight: 650; letter-spacing: -0.01em; line-height: 1.25; }
+.tile b { font-size: var(--fs-lg); font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
 .tile span { font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.45; }
 .tile em { margin-top: auto; padding-top: var(--s-2); font-style: normal; font-size: var(--fs-sm); font-weight: 600; color: var(--brand); }
 
@@ -697,7 +731,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 /* ---------------------------------------------------------------- long-form text */
 .prose { max-width: 70ch; color: var(--ink-2); }
 .prose > * + * { margin-top: var(--s-4); }
-.prose h2 { margin-top: var(--s-14); font-size: var(--fs-2xl); }
+.prose h2 { margin-top: var(--s-14); }
 .prose h3 { margin-top: var(--s-8); }
 .prose h4 { margin-top: var(--s-6); }
 .prose h2 + *, .prose h3 + *, .prose h4 + * { margin-top: var(--s-3); }
@@ -716,7 +750,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 .prose th, .prose td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
 .prose thead th { border-bottom-color: var(--line-strong); color: var(--ink); }
 .prose blockquote { padding-left: var(--s-5); border-left: 3px solid var(--line-strong); color: var(--ink); }
-.prose code { font-size: 0.9em; padding: 0.1em 0.35em; border-radius: 4px; background: var(--bg-muted); }
+.prose code { font-size: var(--fs-sm); padding: 0.1em 0.35em; border-radius: 4px; background: var(--bg-muted); }
 .prose details { border-bottom: 1px solid var(--line); }
 .prose details summary { padding: var(--s-3) 0; font-weight: 600; color: var(--ink); }
 
@@ -761,6 +795,8 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 .subnav a {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--tap);
   height: 3rem;
   padding: 0 0.75rem;
   color: var(--ink-2);
@@ -771,8 +807,12 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 }
 .subnav a:hover { color: var(--ink); text-decoration: none; }
 .subnav a.is-active { color: var(--brand-ink); border-bottom-color: var(--brand); }
+/* the tab rows scroll sideways, which clips anything drawn outside them: the focus ring goes inside the tab */
+.subnav a:focus-visible, .tabs__list :focus-visible { outline-offset: -2px; }
 
-.toc h2 { font-family: var(--font); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: var(--s-2); }
+/* the one style for group labels above lists and menus ("CATEGORIES", "ON THIS PAGE"): use .overline on any element */
+.overline, .toc h2 { font-family: var(--font); font-size: var(--fs-xs); font-weight: 700; line-height: 1.4; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.toc h2 { margin-bottom: var(--s-2); }
 .toc a { display: block; padding: 0.35rem 0 0.35rem var(--s-3); border-left: 2px solid var(--line); color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.35; }
 .toc a:hover { color: var(--ink); text-decoration: none; border-left-color: var(--line-strong); }
 .toc a.is-active { color: var(--brand-ink); border-left-color: var(--brand); font-weight: 600; }
@@ -787,7 +827,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
   min-height: var(--tap);
   padding: 0.55rem 0.8rem;
   border-radius: var(--r-control);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line-control);
   background: var(--bg);
   color: var(--ink);
   font-size: var(--fs-md);
@@ -808,11 +848,11 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 }
 .select--sm { min-height: 2.5rem; padding-block: 0.35rem; font-size: var(--fs-sm); width: auto; }
 .textarea { min-height: 8rem; resize: vertical; }
-.check { display: flex; align-items: flex-start; gap: 0.6rem; min-height: var(--tap); padding: 0.55rem 0; font-size: 0.9375rem; line-height: 1.4; color: var(--ink); cursor: pointer; }
+.check { display: flex; align-items: flex-start; gap: 0.6rem; min-height: var(--tap); padding: 0.55rem 0; font-size: var(--fs-sm); line-height: 1.4; color: var(--ink); cursor: pointer; }
 .check input { flex: none; width: 1.15rem; height: 1.15rem; margin-top: 0.12rem; accent-color: var(--brand); }
 .check .n { margin-left: auto; padding-left: var(--s-3); color: var(--ink-3); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
 .check:has(input:disabled) { color: var(--ink-3); cursor: not-allowed; }
-.error { color: var(--bad); font-size: var(--fs-sm); font-weight: 500; }
+.error { color: var(--bad); font-size: var(--fs-sm); font-weight: 600; }
 
 /* big search field (home hero, search page) */
 .searchfield { position: relative; display: flex; align-items: center; }
@@ -822,7 +862,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
   height: 3.75rem;
   padding: 0 1.2rem 0 3.25rem;
   border-radius: var(--r-surface);
-  border: 1.5px solid var(--line-strong);
+  border: 1.5px solid var(--line-control);
   background: var(--bg);
   font-size: var(--fs-lg);
   color: var(--ink);
@@ -850,10 +890,10 @@ dialog::backdrop { background: rgba(17, 19, 31, 0.45); backdrop-filter: blur(2px
 }
 .dialog[open] { display: flex; flex-direction: column; }
 .dialog__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--line); }
-.dialog__head h2 { font-size: var(--fs-lg); font-family: var(--font); font-weight: 650; letter-spacing: -0.01em; }
+.dialog__head h2 { font-size: var(--fs-lg); font-family: var(--font); font-weight: 600; letter-spacing: -0.01em; }
 .dialog__body { padding: var(--s-5); overflow: auto; overscroll-behavior: contain; }
 .dialog__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-3) var(--s-5); border-top: 1px solid var(--line); background: var(--bg-subtle); }
-.xbtn { display: inline-grid; place-items: center; width: var(--tap); height: var(--tap); border-radius: var(--r-control); color: var(--ink-2); font-size: 1.4rem; line-height: 1; flex: none; }
+.xbtn { display: inline-grid; place-items: center; width: var(--tap); height: var(--tap); border-radius: var(--r-control); color: var(--ink-2); font-size: var(--fs-xl); line-height: 1; flex: none; }
 .xbtn:hover { background: var(--bg-muted); color: var(--ink); }
 
 /* sheet = full-height panel from the right (menu) or bottom sheet on phones (filters) */
@@ -888,7 +928,7 @@ dialog::backdrop { background: rgba(17, 19, 31, 0.45); backdrop-filter: blur(2px
   border-bottom: 1px solid var(--line);
 }
 .menu-list summary::-webkit-details-marker { display: none; }
-.menu-list summary::after { content: "+"; font-weight: 400; color: var(--ink-3); font-size: 1.4rem; }
+.menu-list summary::after { content: "+"; font-weight: 400; color: var(--ink-3); font-size: var(--fs-xl); }
 .menu-list details[open] > summary::after { content: "–"; }
 .menu-list details ul { padding: var(--s-2) 0 var(--s-3); }
 .menu-list details li a { min-height: 2.75rem; font-size: var(--fs-md); font-weight: 400; border-bottom: 0; padding-left: var(--s-3); }
@@ -944,13 +984,16 @@ dialog::backdrop { background: rgba(17, 19, 31, 0.45); backdrop-filter: blur(2px
   background: var(--bg-inverse);
   color: #fff;
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.4;
   box-shadow: var(--shadow-pop);
   pointer-events: auto;
   animation: toast-in 200ms var(--ease);
 }
 .toast button, .toast a { color: #c8c2ff; font-weight: 700; white-space: nowrap; text-decoration: underline; }
+.toast { flex-wrap: wrap; row-gap: var(--s-2); } /* narrow screens: the message keeps the line, its actions (+ Close) wrap below */
+.toast > span { flex: 1 1 auto; }
+.toast > a, .toast > button { white-space: normal; text-align: left; } /* a long action label wraps instead of running off a 320px screen */
 @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
 
 /* ---------------------------------------------------------------- consent banner */
@@ -969,7 +1012,7 @@ dialog::backdrop { background: rgba(17, 19, 31, 0.45); backdrop-filter: blur(2px
   font-size: var(--fs-sm);
   color: var(--ink-2);
 }
-.consent h2 { font-family: var(--font); font-size: var(--fs-md); font-weight: 650; letter-spacing: 0; margin-bottom: var(--s-2); }
+.consent h2 { font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; margin-bottom: var(--s-2); }
 .consent__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
 
 /* small-screen refinements */
@@ -1042,8 +1085,32 @@ html:not(.js) .tabs__list { display: none; }
 /* ---------------------------------------------------------------- touch: every control is at least 44px tall on touch screens */
 @media (pointer: coarse), (max-width: 47.99em) {
   .chip, .btn--sm, .select--sm, .seg button, .seg a { min-height: var(--tap); }
-  .section-head__link, .link-arrow { display: inline-flex; align-items: center; min-height: var(--tap); }
+  /* 44px tall, centred text; inline-block keeps the arrow on the last line when the label wraps */
+  .section-head__link, .link-arrow { display: inline-block; min-height: var(--tap); padding-block: max(0px, (var(--tap) - 1lh) / 2); }
   .pop > summary { min-width: var(--tap); min-height: var(--tap); justify-content: center; }
   .scorebtn { min-height: var(--tap); align-items: center; }
-  .trustline a, .sources a, .fineprint a, .table-note a { padding-block: 0.9rem; margin-block: -0.9rem; display: inline-block; }
+  .cellbtn { width: var(--tap); height: var(--tap); }
+  .ptable thead button { min-height: var(--tap); }
+  .tray__item { height: var(--tap); }
+  .tray__x { width: var(--tap); height: var(--tap); margin-right: -0.3rem; }
+  /* the check's name in the capability matrix: the whole label cell answers a tap; the focus ring stays on the words */
+  .matrix__what { position: relative; }
+  .matrix__what::before { content: ""; position: absolute; left: -0.75rem; right: -0.75rem; top: 50%; height: max(100% + 1.4rem, var(--tap)); transform: translateY(-50%); }
+  /* small text links get a 44px-tall hit area drawn as ::before, under the words of everything else in their block
+     (z-index -1 inside the block's own stacking context): the focus ring stays on the words, the text does not move,
+     and a tap on another link's words always reaches that link (the capability matrix has buttons, not links) */
+  :where(.trustline, .fineprint, .table-note, .sources li, .eyebrow, .facts dd, .dtable:not(.matrix) td, .dtable:not(.matrix) tbody th, .site-footer__about p) { isolation: isolate; }
+  :where(.trustline, .fineprint, .table-note, .sources li, .eyebrow, .facts dd, .dtable:not(.matrix) td, .dtable:not(.matrix) tbody th, .site-footer__about p) a:not(.btn, .chip, .prod) { position: relative; }
+  :where(.trustline, .fineprint, .table-note, .sources li, .eyebrow, .facts dd, .dtable:not(.matrix) td, .dtable:not(.matrix) tbody th, .site-footer__about p) a:not(.btn, .chip, .prod)::before {
+    content: "";
+    position: absolute;
+    inset: calc(0.6em - var(--tap) / 2) -0.25rem; /* the link's text box is ~1.2em tall: together 44px */
+    z-index: -1;
+  }
+  /* in the dense trust strip the plain items let taps through to the links' hit areas beneath them */
+  .trustline > * { pointer-events: none; }
+  .trustline a { pointer-events: auto; }
+  /* list rows of links are 44px apart, so their hit areas never overlap */
+  .sources li { padding-block: 0.75rem; }
+  .sources li::before { top: 0.8rem; }
 }

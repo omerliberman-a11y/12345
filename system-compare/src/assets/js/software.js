@@ -30,6 +30,9 @@
     });
   });
 
+  // ------------------------------------------------------------------ key facts: open on wide screens, closed on phones
+  if (w.matchMedia && w.matchMedia('(max-width: 47.99em)').matches) $$('details[data-sw-kf]').forEach(function (k) { k.open = false; });
+
   // ------------------------------------------------------------------ deep links into tabs / closed lists
   function reveal() {
     var id;

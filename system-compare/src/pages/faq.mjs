@@ -34,7 +34,6 @@ function render(ctx) {
       ${ui.answer(
         ctx,
         'The documented-fit score is a number from 0 to 100: the weighted share of a category’s checklist that official vendor documentation supports. It is research, not a customer rating or a hands-on test. A product shows “Score pending” until 80% of the checklist weight has been checked. No vendor pays for a score or for placement.',
-        { label: 'In short' },
       )}
     </div>
     ${ui.subnav(groups.map((g) => ({ href: `#${g.id}`, label: g.title })))}

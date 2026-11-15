@@ -65,17 +65,109 @@
   function save(key, val) { try { if (val == null) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { return false; } }
   var SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-  // ------------------------------------------------------------------ toasts
-  var toastBox;
-  /** SC.toast('Saved', [{label:'Undo', fn}]) */
-  SC.toast = function (msg, actions, ms) {
-    if (!toastBox) { toastBox = el('div.toasts', { role: 'status', 'aria-live': 'polite', 'data-nosnippet': true }); d.body.appendChild(toastBox); }
-    var t = el('div.toast', null, [el('span', { text: msg })]);
-    (actions || []).forEach(function (a) {
-      t.appendChild(a.href ? el('a', { href: a.href, text: a.label }) : el('button', { type: 'button', text: a.label, on: { click: function () { a.fn(); t.remove(); } } }));
+  // ------------------------------------------------------------------ focus helpers (popovers, toasts)
+  var TABBABLE = 'a[href], area[href], button, input, select, textarea, summary, iframe, [tabindex], [contenteditable]';
+  function tabbable(x) {
+    if (x.tabIndex < 0 || x.disabled || x.type === 'hidden' || (x.closest && x.closest('[inert]'))) return false;
+    return x.getClientRects().length > 0 && getComputedStyle(x).visibility !== 'hidden';
+  }
+  function tabbablesIn(scope) { return $$(TABBABLE, scope).filter(tabbable); }
+  /** Moves focus to the tab stop that follows ref (what Tab would do from ref), skipping anything inside skip. */
+  function focusAfter(ref, skip) {
+    var all = $$(TABBABLE);
+    for (var i = 0; i < all.length; i++) {
+      var x = all[i];
+      if (x === ref || ref.contains(x) || (skip && skip.contains(x)) || !(ref.compareDocumentPosition(x) & 4)) continue;
+      if (tabbable(x)) { x.focus(); return x; }
+    }
+    ref.focus();
+    return ref;
+  }
+  /** target: an element, or a function that finds it once the page has re-rendered. */
+  function giveFocus(target) {
+    var tries = 0;
+    (function go() {
+      var x = typeof target === 'function' ? target() : target;
+      if (x && x.isConnected && x.getClientRects().length) x.focus();
+      else if (typeof target === 'function' && tries++ < 3) setTimeout(go, 40);
+    })();
+  }
+  SC.focusAfter = focusAfter;
+
+  // ------------------------------------------------------------------ announcements and toasts
+  // One polite live region for short confirmations that need no action ("Pipedrive added to your shortlist").
+  var liveBox = el('p.sr-only', { role: 'status', 'aria-live': 'polite', 'data-nosnippet': true }), liveTimer;
+  d.body.appendChild(liveBox);
+  SC.announce = function (text) {
+    clearTimeout(liveTimer);
+    liveBox.textContent = '';
+    liveTimer = setTimeout(function () { liveBox.textContent = text; }, 80); // cleared first, so a repeat is read again
+  };
+  // At most one toast at a time: a new one replaces it. A toast with an action is a labelled group that takes
+  // focus (its first action), has a Close button, never times out while hovered or focused, and gives focus
+  // back (to opts.returnFocus or to what had focus) when it goes. Escape closes it; Tab out of it continues
+  // after the control that raised it. With { focus: false, after: element } it does not take focus: it is
+  // placed in the tab order right after that element instead and stays until it is closed or replaced.
+  var toastBox = el('div.toasts', { 'data-nosnippet': true }), toastNow = null, toastSeq = 0, actionBack = null;
+  d.body.appendChild(toastBox); // empty until a toast shows; a labelled region from then on
+  function dropToast(restore) {
+    var t = toastNow;
+    if (!t) return;
+    toastNow = null;
+    clearTimeout(t.timer);
+    t.node.remove();
+    syncBottomPad();
+    if (restore && t.back) giveFocus(t.back);
+  }
+  /** SC.toast('Saved', [{label:'Undo', fn} | {label, href}], { returnFocus, focus: false, after, say, ms }) */
+  SC.toast = function (msg, actions, opts) {
+    if (typeof opts === 'number') opts = { ms: opts };
+    opts = opts || {};
+    actions = (actions || []).filter(Boolean);
+    if (!toastBox.hasAttribute('role')) { toastBox.setAttribute('role', 'region'); toastBox.setAttribute('aria-label', 'Notifications'); }
+    var prev = toastNow, hadFocus = !!prev && prev.node.contains(d.activeElement);
+    var act = actions.length > 0, id = 'sc-toast-' + ++toastSeq;
+    var node = el('div.toast', act ? { role: 'group', 'aria-labelledby': id } : null, [el('span', { id: id, text: msg })]);
+    var cur = d.activeElement && d.activeElement !== d.body ? d.activeElement : null;
+    var t = { node: node, back: opts.returnFocus || (hadFocus ? prev.back : actionBack || cur), timer: 0 };
+    dropToast(hadFocus && !act);
+    // placed in the tab order after an element, or at the end of the page (never left inside a hidden section)
+    var inline = !!(opts.after && opts.after.parentNode && opts.focus === false);
+    if (inline) opts.after.parentNode.insertBefore(toastBox, opts.after.nextSibling);
+    else if (toastBox.parentNode !== d.body) d.body.appendChild(toastBox);
+    actions.forEach(function (a) {
+      node.appendChild(a.href ? el('a', { href: a.href, text: a.label }) : el('button', { type: 'button', text: a.label, on: { click: function () {
+        var back = t.back;
+        dropToast(false);
+        actionBack = back;
+        try { a.fn(); } finally { actionBack = null; }
+        if (back && !(toastNow && toastNow.node.contains(d.activeElement))) giveFocus(back); // unless the action raised a new toast that took focus
+      } } }));
     });
-    toastBox.appendChild(t);
-    setTimeout(function () { t.remove(); }, ms || (actions && actions.length ? 9000 : 4500));
+    if (act) node.appendChild(el('button', { type: 'button', text: 'Close', on: { click: function () { dropToast(true); } } }));
+    on(node, 'keydown', function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); dropToast(true); return; }
+      if (e.key !== 'Tab' || inline) return; // a toast placed in the tab order needs no help to be left
+      var items = tabbablesIn(node);
+      if (e.shiftKey ? d.activeElement !== items[0] : d.activeElement !== items[items.length - 1]) return;
+      e.preventDefault();
+      var back = typeof t.back === 'function' ? t.back() : t.back;
+      dropToast(false);
+      if (back && back.isConnected) { if (e.shiftKey) back.focus(); else focusAfter(back); }
+    });
+    toastBox.appendChild(node);
+    toastNow = t;
+    syncBottomPad(); // while it shows, focused controls are scrolled clear of it too
+    if (!(act && inline)) (function arm(ms) {
+      t.timer = setTimeout(function () {
+        if (toastNow !== t) return;
+        if (node.matches(':hover') || node.contains(d.activeElement)) return arm(2000);
+        dropToast(false);
+      }, ms);
+    })(opts.ms || (act ? 9000 : 4500));
+    if (act && opts.focus !== false) node.querySelector('a, button').focus({ preventScroll: true });
+    else if (opts.say !== '') SC.announce(opts.say || msg);
+    return node;
   };
 
   // ------------------------------------------------------------------ shortlist (compatible with the previous site's storage)
@@ -133,7 +225,15 @@
       return SC.url('/compare/?' + q.join('&'));
     },
   };
-  function announce(name, added) { if (name) SC.toast(added ? name + ' added to your shortlist.' : name + ' removed.'); }
+  // Where the tray shows the list (every page but /shortlist/ and /compare/), the tray itself confirms a change
+  // and the live region says it; a toast only appears where nothing else on screen changes.
+  function trayShows() { return PAGE !== 'shortlist' && PAGE !== 'compare'; }
+  function announce(name, added) {
+    if (!name) return;
+    var n = readList().ids.length;
+    if (trayShows() && n) SC.announce(name + (added ? ' added to' : ' removed from') + ' your shortlist (' + n + ' of ' + MAX + ').');
+    else SC.toast(added ? name + ' added to your shortlist.' : name + ' removed.');
+  }
 
   function syncButtons() {
     var o = readList();
@@ -147,10 +247,28 @@
     $$('[data-shortlist-count]').forEach(function (c) { c.textContent = o.ids.length; c.setAttribute('data-n', o.ids.length); });
   }
 
-  var tray;
+  // Fixed bars at the bottom of the screen (the tray, the privacy choices) must never hide the focused
+  // element: while they show, their height is reserved as scroll padding (WCAG 2.4.11).
+  function syncBottomPad() {
+    var h = 0, cp = d.getElementById('sc-privacy-panel');
+    if (tray && tray.classList.contains('is-open')) h = tray.offsetHeight;
+    if (cp && !cp.hidden && cp.getClientRects().length) h = Math.max(h, w.innerHeight - cp.getBoundingClientRect().top);
+    if (toastNow && toastNow.node.getClientRects().length) h = Math.max(h, w.innerHeight - toastNow.node.getBoundingClientRect().top);
+    root.style.scrollPaddingBottom = h > 0 ? Math.ceil(h + 12) + 'px' : '';
+  }
+  SC.syncBottomPad = syncBottomPad;
+  on(w, 'resize', syncBottomPad);
+
+  var tray, trayFocus = null; // trayFocus: index of the tray button that had focus before a re-render (-1: Clear)
   function renderTray() {
     var o = readList();
-    if (PAGE === 'shortlist' || PAGE === 'compare' || !o.ids.length) { if (tray) tray.classList.remove('is-open'); d.body.classList.remove('has-tray'); return; }
+    if (PAGE === 'shortlist' || PAGE === 'compare' || !o.ids.length) {
+      if (tray) tray.classList.remove('is-open');
+      d.body.classList.remove('has-tray');
+      syncBottomPad();
+      if (trayFocus != null) { trayFocus = null; giveFocus($('.shortlist-link')); }
+      return;
+    }
     if (!tray) {
       tray = el('div.tray', { role: 'region', 'aria-label': 'Shortlist', 'data-nosnippet': true });
       d.body.appendChild(tray);
@@ -159,11 +277,11 @@
       var o2 = readList();
       if (!o2.ids.length) return;
       var items = el('div.tray__items');
-      o2.ids.forEach(function (id) {
+      o2.ids.forEach(function (id, i) {
         var v = data.vendors[id] || [id, '', 0];
         var logo = el('span.logo' + (v[2] ? '.logo--dark' : ''));
         if (v[1]) logo.appendChild(el('img', { src: SC.url(v[1]), alt: '', width: 28, height: 28, loading: 'lazy' }));
-        items.appendChild(el('span.tray__item', null, [logo, el('span', { text: v[0] }), el('button.tray__x', { type: 'button', 'aria-label': 'Remove ' + v[0] + ' from shortlist', text: '×', on: { click: function () { SC.shortlist.remove(id); } } })]));
+        items.appendChild(el('span.tray__item', null, [logo, el('span', { text: v[0] }), el('button.tray__x', { type: 'button', 'aria-label': 'Remove ' + v[0] + ' from shortlist', text: '×', on: { click: function () { trayFocus = i; SC.shortlist.remove(id); announce(v[0], false); } } })]));
       });
       var canCompare = o2.ids.length >= 2;
       var cmp = el('a.btn.btn--sm', { href: canCompare ? SC.shortlist.compareUrl(o2) : SC.url('/shortlist/'), text: canCompare ? 'Compare ' + o2.ids.length : 'Add one more to compare' });
@@ -171,12 +289,18 @@
       var inner = el('div.wrap.tray__inner', null, [
         el('span.tray__label', { text: 'Shortlist' + (data.categories[o2.category] ? ' · ' + data.categories[o2.category] : '') }),
         items,
-        el('div.tray__actions', null, [el('button.tray__clear', { type: 'button', text: 'Clear', on: { click: function () { SC.shortlist.clear(); } } }), cmp]),
+        el('div.tray__actions', null, [el('button.tray__clear', { type: 'button', text: 'Clear', on: { click: function () { trayFocus = -1; SC.shortlist.clear(); SC.announce('Shortlist cleared.'); } } }), cmp]),
       ]);
       tray.textContent = '';
       tray.appendChild(inner);
       tray.classList.add('is-open');
       d.body.classList.add('has-tray');
+      syncBottomPad();
+      if (trayFocus != null) {
+        var xs = $$('.tray__x', tray), next = xs[Math.min(trayFocus, xs.length - 1)] || $('.tray__clear', tray);
+        trayFocus = null;
+        next.focus();
+      }
     }).catch(function () {});
   }
 
@@ -204,7 +328,18 @@
   if (mega) {
     on(d, 'click', function (e) { if (mega.open && !mega.contains(e.target)) mega.open = false; });
     on(d, 'keydown', function (e) { if (e.key === 'Escape' && mega.open) { mega.open = false; $('summary', mega).focus(); } });
+    // an open panel must not stay over the page once focus has moved on (WCAG 2.4.11)
+    on(mega, 'focusout', function (e) { if (mega.open && e.relatedTarget && !mega.contains(e.relatedTarget)) mega.open = false; });
   }
+  // Triggers of the search palette and the menu sheet say what they open, and whether it is open.
+  function setExpanded(sel, open) { $$(sel).forEach(function (t) { t.setAttribute('aria-expanded', open ? 'true' : 'false'); }); }
+  $$('[data-search-open], [data-menu-open]').forEach(function (t) { t.setAttribute('aria-haspopup', 'dialog'); t.setAttribute('aria-expanded', 'false'); });
+  // Links that act as buttons (search, menu) also respond to Space, as the accessibility statement promises.
+  on(d, 'keydown', function (e) {
+    if ((e.key !== ' ' && e.key !== 'Spacebar') || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+    var t = e.target;
+    if (t.matches && t.matches('a[role="button"]')) { e.preventDefault(); if (!e.repeat) t.click(); }
+  });
   var menuDlg;
   function openMenu() {
     if (!menuDlg) {
@@ -223,8 +358,10 @@
       cats.appendChild(el('a', { href: SC.url('/software/'), text: 'All software A–Z' }));
       menuDlg.appendChild(el('div.dialog__head', null, [el('h2', { text: 'Menu' }), closeBtn(menuDlg)]));
       menuDlg.appendChild(el('div.dialog__body', null, [el('p.palette__group', { text: 'Categories' }), cats, el('p.palette__group', { text: 'Tools' }), list]));
+      on(menuDlg, 'close', function () { setExpanded('[data-menu-open]', false); });
     }
     menuDlg.showModal();
+    setExpanded('[data-menu-open]', true);
   }
   on(d, 'click', function (e) {
     var t = e.target.closest && e.target.closest('[data-menu-open]');
@@ -288,14 +425,21 @@
     },
   };
 
-  var pal, palInput, palResults, palIndex = -1, palTimer;
+  var pal, palInput, palResults, palEmpty, palStatus, palIndex = -1, palTimer, palFrom = null;
   function buildPalette() {
     pal = dialog('dialog.dialog--top.palette', 'Search');
     palInput = el('input', { type: 'search', name: 'q', maxlength: 120, autocomplete: 'off', spellcheck: 'false', placeholder: 'Search software, categories, comparisons…', 'aria-label': 'Search', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': 'palette-results', 'aria-autocomplete': 'list' });
     var form = el('form.palette__input', { action: SC.url('/search/'), method: 'get', role: 'search' }, [svg('search'), palInput, closeBtn(pal)]);
     palResults = el('div.palette__results', { id: 'palette-results', role: 'listbox', 'aria-label': 'Search results' });
+    palEmpty = el('div.palette__empty', { hidden: true }); // the "no results" note sits outside the listbox
+    palStatus = el('p.sr-only', { role: 'status', 'aria-live': 'polite' }); // "7 results", "No results for …"
     var foot = el('div.palette__foot', null, [el('span', { text: '↑↓ to move' }), el('span', { text: 'Enter to open' }), el('span', { text: 'Esc to close' }), el('span', { text: 'Searches stay in your browser' })]);
-    pal.appendChild(form); pal.appendChild(palResults); pal.appendChild(foot);
+    pal.appendChild(form); pal.appendChild(palEmpty); pal.appendChild(palResults); pal.appendChild(palStatus); pal.appendChild(foot);
+    on(pal, 'close', function () {
+      setExpanded('[data-search-open]', false);
+      // opened from the page's own search field: keep what was typed there (focus returns to it)
+      if (palFrom) { if (palFrom.isConnected) palFrom.value = palInput.value; palFrom = null; }
+    });
     on(palInput, 'input', function () { clearTimeout(palTimer); palTimer = setTimeout(renderPalette, 60); });
     on(palInput, 'keydown', function (e) {
       if (e.isComposing) return;
@@ -323,6 +467,7 @@
     on(palResults, 'click', function (e) { if (e.target.closest('.hit')) SC.search.remember(palInput.value); });
   }
   function group(title) { return el('div.palette__group', { text: title, role: 'presentation' }); }
+  function setPalStatus(text) { if (palStatus.textContent !== text) palStatus.textContent = text; }
   function renderPalette() {
     var q = palInput.value.trim();
     palIndex = -1;
@@ -332,27 +477,44 @@
       if (palInput.value.trim() !== q) return;
       var r = engine.query(q), n = 0, frag = d.createDocumentFragment();
       function add(item, opts) { var h = SC.search.hit(item, { id: 'hit-' + n++, meta: opts && opts.meta }); if (opts && opts.top) h.setAttribute('data-top', ''); frag.appendChild(h); }
-      if (r.top.length) { frag.appendChild(group('Best match')); r.top.forEach(function (t, i) { add(t, { top: i === 0, meta: t.why || '' }); }); }
+      // data-top: Enter opens the first best match directly ("X vs Y", "X alternatives", "X pricing")
+      if (r.top.length) { frag.appendChild(group('Best match')); r.top.forEach(function (t, i) { add(t, { top: i === 0 && r.direct !== false, meta: t.why || '' }); }); }
       var shown = {}; r.top.forEach(function (t) { shown[t.type + ':' + t.id] = 1; });
+      // products that only list the named product as an integration: their own small, labelled group
+      var via = r.via && r.via.items.length ? r.via : null;
       GROUPS.forEach(function (g) {
-        var list = (r.groups[g[0]] || []).filter(function (x) { return !shown[x.type + ':' + x.id]; });
-        if (!list.length) return;
-        frag.appendChild(group(g[1]));
-        list.slice(0, r.top.length ? Math.min(3, g[2]) : g[2]).forEach(function (x) { add(x); });
+        var list = (r.groups[g[0]] || []).filter(function (x) { return !shown[x.type + ':' + x.id] && !(via && x.via); });
+        if (list.length) {
+          frag.appendChild(group(g[1]));
+          list.slice(0, r.top.length ? Math.min(3, g[2]) : g[2]).forEach(function (x) { add(x); });
+        }
+        if (g[0] === 'product' && via) {
+          var more = via.items.filter(function (x) { return !shown[x.type + ':' + x.id]; }).slice(0, 3);
+          if (more.length) { frag.appendChild(group(via.label)); more.forEach(function (x) { add(x); }); }
+        }
       });
-      if (!n) {
-        frag.appendChild(el('div.palette__empty', null, [el('p', null, [el('strong', { text: 'No results for “' + q + '”.' })]), el('p', { text: 'Check the spelling, or start from a category.' })]));
+      var found = n;
+      palEmpty.textContent = '';
+      palEmpty.hidden = !!found;
+      if (!found) {
+        palEmpty.appendChild(el('p', null, [el('strong', { text: 'No results for “' + q + '”.' })]));
+        palEmpty.appendChild(el('p', { text: 'Check the spelling, or start from a category.' }));
         frag.appendChild(group('Popular categories'));
         popularCategories(engine).forEach(function (x) { add(x); });
+        setPalStatus('No results for “' + q + '”. Popular categories are listed instead.');
       } else {
         var all = el('a.hit', { href: SC.url('/search/?q=' + encodeURIComponent(q)), role: 'option', id: 'hit-' + n++ }, [el('span.hit__icon', null, [svg('search')]), el('span.hit__text', null, [el('span.hit__title', { text: 'See all ' + r.total + ' results for “' + q + '”' })])]);
         frag.appendChild(all);
+        setPalStatus(found + (found === 1 ? ' result' : ' results') + (r.total > found ? ', ' + r.total + ' in all' : ''));
       }
       palResults.textContent = '';
       palResults.appendChild(frag);
     }).catch(function () {
       palResults.textContent = '';
-      palResults.appendChild(el('div.palette__empty', null, [el('p', { text: 'Search could not load. Press Enter to open the search page.' })]));
+      palEmpty.textContent = '';
+      palEmpty.appendChild(el('p', { text: 'Search could not load. Press Enter to open the search page.' }));
+      palEmpty.hidden = false;
+      setPalStatus('Search could not load. Press Enter to open the search page.');
     });
   }
   function popularCategories(engine) {
@@ -361,6 +523,8 @@
   }
   function renderPaletteEmpty() {
     var frag = d.createDocumentFragment(), n = 0, recent = SC.search.recent();
+    palEmpty.hidden = true;
+    setPalStatus('');
     if (recent.length) {
       frag.appendChild(group('Recent searches'));
       recent.forEach(function (q) {
@@ -384,7 +548,7 @@
   SC.openSearch = function (q) {
     if (!pal) buildPalette();
     palInput.value = q || '';
-    if (!pal.open) pal.showModal();
+    if (!pal.open) { pal.showModal(); setExpanded('[data-search-open]', true); }
     renderPalette();
     palInput.focus();
     if (q) palInput.select && palInput.setSelectionRange(q.length, q.length);
@@ -395,9 +559,20 @@
     e.preventDefault();
     SC.openSearch(t.getAttribute('data-query') || '');
   });
-  // The hero / page search field opens the palette too (one search experience); Enter without JS still submits.
-  on(d, 'focusin', function (e) {
-    if (e.target.matches && e.target.matches('[data-search-input]') && !(pal && pal.open)) { var v = e.target.value; e.target.blur(); SC.openSearch(v); }
+  // The hero / page search field opens the palette too (one search experience) — on a click or tap, on the
+  // first typed character, on Enter or ArrowDown, and on "/" in an empty field; never on focus alone, so Tab
+  // and Shift+Tab pass through it. Closing the palette returns focus to the field, with what was typed.
+  function fromField(f) { if (pal && pal.open) return; SC.openSearch(f.value); palFrom = f; }
+  on(d, 'click', function (e) {
+    var box = e.target.closest && e.target.closest('[data-search-form]'), f = box && $('[data-search-input]', box);
+    if (f && !(e.target.closest('button, a'))) fromField(f);
+  });
+  on(d, 'input', function (e) { if (!e.isComposing && e.target.matches && e.target.matches('[data-search-input]')) fromField(e.target); });
+  on(d, 'compositionend', function (e) { if (e.target.matches && e.target.matches('[data-search-input]')) fromField(e.target); });
+  on(d, 'keydown', function (e) {
+    var f = e.target;
+    if (e.isComposing || e.altKey || e.ctrlKey || e.metaKey || !f.matches || !f.matches('[data-search-input]')) return;
+    if (e.key === 'Enter' || e.key === 'ArrowDown' || (e.key === '/' && !f.value)) { e.preventDefault(); fromField(f); }
   });
   on(d, 'keydown', function (e) {
     if (e.defaultPrevented || e.isComposing) return;
@@ -440,6 +615,11 @@
     if (e.key !== 'Escape') return;
     $$('details[data-pop][open]').forEach(function (p) { p.open = false; var s = $('summary', p); if (s) s.focus(); });
   });
+  // ... and when focus moves on, so an open panel never covers the next focused control
+  on(d, 'focusout', function (e) {
+    var p = e.target.closest && e.target.closest('details[data-pop][open]');
+    if (p && e.relatedTarget && !p.contains(e.relatedTarget)) p.open = false;
+  });
   // keep an opened panel inside the viewport: at tablet widths its trigger can sit near either edge
   d.addEventListener('toggle', function (e) {
     var p = e.target;
@@ -456,22 +636,64 @@
   // ------------------------------------------------------------------ score breakdown ("why this score?")
   // Any element with data-score-pop="<categoryId>:<vendorId>" opens the breakdown: the weighted groups,
   // how much is checked, and the exact checks that did not earn full points — from /data/cat-<id>.js.
-  var floatPop = null, floatFor = null;
-  function closeFloat() { if (floatPop) { floatPop.remove(); floatPop = null; } if (floatFor) { floatFor.setAttribute('aria-expanded', 'false'); floatFor = null; } }
+  //
+  // SC.float is the one anchored popover (score breakdown, capability evidence, "what this check covers").
+  // It is a labelled dialog (tabindex=-1): once its content is in place (SC.float.ready) focus moves into it;
+  // Tab past its last link or Shift+Tab before its first closes it and continues from the trigger, as if it
+  // sat right after it; Escape closes it and returns focus to the trigger; focus or a click elsewhere closes it.
+  var floatPop = null, floatFor = null, floatAlign = '';
+  function closeFloat() {
+    if (floatPop) { floatPop.remove(); floatPop = null; }
+    if (floatFor) { floatFor.setAttribute('aria-expanded', 'false'); floatFor.removeAttribute('aria-controls'); floatFor = null; }
+  }
   function placeFloat(anchor) {
     var r = anchor.getBoundingClientRect(), pw = floatPop.offsetWidth, ph = floatPop.offsetHeight;
-    var left = Math.max(12, Math.min(w.innerWidth - pw - 12, r.left));
+    var left = Math.max(12, Math.min(w.innerWidth - pw - 12, floatAlign === 'center' ? r.left + r.width / 2 - pw / 2 : r.left));
     var top = r.bottom + 8;
     if (top + ph > w.innerHeight - 12 && r.top - ph - 8 > 12) top = r.top - ph - 8;
     floatPop.style.left = left + w.scrollX + 'px';
     floatPop.style.top = top + w.scrollY + 'px';
   }
-  SC.float = { open: function (anchor, node) { closeFloat(); floatFor = anchor; anchor.setAttribute('aria-expanded', 'true'); floatPop = node; d.body.appendChild(node); placeFloat(anchor); return node; }, place: function () { if (floatPop && floatFor) placeFloat(floatFor); }, close: closeFloat };
+  function floatKeys(e) {
+    if (e.key !== 'Tab' || !floatPop) return;
+    var items = tabbablesIn(floatPop), a = d.activeElement, anchor = floatFor;
+    if (e.shiftKey ? a !== floatPop && a !== items[0] : items.length && a !== items[items.length - 1]) return;
+    e.preventDefault();
+    closeFloat();
+    if (e.shiftKey) anchor.focus(); else focusAfter(anchor);
+  }
+  SC.float = {
+    /** opts.align: 'center' centres the popover under the anchor (matrix cells). */
+    open: function (anchor, node, opts) {
+      closeFloat();
+      floatFor = anchor; floatPop = node; floatAlign = (opts && opts.align) || '';
+      if (!node.id) node.id = 'sc-float';
+      node.tabIndex = -1;
+      anchor.setAttribute('aria-expanded', 'true');
+      anchor.setAttribute('aria-controls', node.id);
+      on(node, 'keydown', floatKeys);
+      d.body.appendChild(node);
+      placeFloat(anchor);
+      return node;
+    },
+    /** The content is in place: re-anchor, and move focus into the popover unless focus is already elsewhere. */
+    ready: function (node) {
+      if (!node || node !== floatPop) return;
+      placeFloat(floatFor);
+      var a = d.activeElement;
+      if (!a || a === d.body || a === floatFor) node.focus({ preventScroll: true });
+    },
+    anchor: function () { return floatFor; },
+    place: function () { if (floatPop && floatFor) placeFloat(floatFor); },
+    close: closeFloat,
+  };
+  on(d, 'focusin', function (e) { if (floatPop && !floatPop.contains(e.target) && e.target !== floatFor) closeFloat(); });
+  $$('[data-score-pop]').forEach(function (b) { if (!b.hasAttribute('aria-haspopup')) b.setAttribute('aria-haspopup', 'dialog'); if (!b.hasAttribute('aria-expanded')) b.setAttribute('aria-expanded', 'false'); });
   function fmtDay(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + +m[3] + ', ' + m[1] : ''; }
   SC.fmtDay = fmtDay;
   on(d, 'click', function (e) {
     var b = e.target.closest && e.target.closest('[data-score-pop]');
-    if (!b) { if (floatPop && !floatPop.contains(e.target) && !(e.target.closest && e.target.closest('[data-float-anchor]'))) closeFloat(); return; }
+    if (!b) { if (floatPop && !floatPop.contains(e.target) && !(floatFor && floatFor.contains(e.target)) && !(e.target.closest && e.target.closest('[data-float-anchor]'))) closeFloat(); return; }
     e.preventDefault();
     if (floatFor === b) return closeFloat();
     var parts = b.getAttribute('data-score-pop').split(':'), cat = parts[0], vid = parts[1];
@@ -482,7 +704,9 @@
       if (!v) return closeFloat();
       var groups = {}; data.groups.forEach(function (g) { groups[g[0]] = g[1]; });
       box.textContent = '';
-      box.appendChild(el('p.evpop__who', { text: v.n + ' · ' + data.name }));
+      box.appendChild(el('p.evpop__who', { id: 'sc-float-title', text: v.n + ' · ' + data.name }));
+      box.removeAttribute('aria-label');
+      box.setAttribute('aria-labelledby', 'sc-float-title');
       box.appendChild(el('p.scorepop__big', { text: v.pe ? 'Score pending' : v.sc + '/100' }));
       box.appendChild(el('p.evpop__meta', { text: (v.pe ? '' : 'Documented-fit score · ') + v.ck + ' of ' + v.to + ' checks checked (' + v.cov + '% of checklist weight)' + (v.da ? ' · evidence from ' + fmtDay(v.da) : '') }));
       if (v.pe) box.appendChild(el('p', { text: 'A score is published once 80% of the checklist weight has been checked. Pending is not a negative finding.' }));
@@ -497,7 +721,7 @@
       var lost = [];
       data.features.forEach(function (f, i) { var c = (v.c[i] || ['u'])[0]; if (f[3] && c !== 'y') lost.push(f[1] + ' — ' + STL[c]); });
       if (lost.length) {
-        box.appendChild(el('h4', { text: v.pe ? 'Checks without full credit so far' : 'Why not 100?' }));
+        box.appendChild(el('p.evpop__who.evpop__title', { text: v.pe ? 'Checks without full credit so far' : 'Why not 100?' })); // a label, not a heading: the popover sits outside the page outline
         var ul = el('ul.dots');
         lost.slice(0, 8).forEach(function (t) { ul.appendChild(el('li', { text: t })); });
         box.appendChild(ul);
@@ -509,8 +733,8 @@
       links.appendChild(el('a', { href: SC.url('/methodology/'), text: 'How we score' }));
       box.appendChild(links);
       box.appendChild(el('p.evpop__meta', { text: 'Research, not a customer rating or hands-on test.' }));
-      SC.float.place();
-    }).catch(function () { if (floatPop) floatPop.textContent = 'The breakdown could not load. Open the product profile for the evidence.'; });
+      SC.float.ready(box);
+    }).catch(function () { if (floatPop === box) { box.textContent = 'The breakdown could not load. Open the product profile for the evidence.'; SC.float.ready(box); } });
   });
   on(d, 'keydown', function (e) { if (e.key === 'Escape' && floatPop) { var f = floatFor; closeFloat(); if (f) f.focus(); } });
   on(w, 'resize', closeFloat);

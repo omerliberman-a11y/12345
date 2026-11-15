@@ -82,8 +82,8 @@
     return t && !isNaN(t.getTime()) ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear() : '';
   }
   function logo(v) {
-    var box = el('span.logo' + (v.dk ? '.logo--dark' : ''));
-    if (v.lg) box.appendChild(el('img', { src: SC.url(v.lg), alt: v.n + ' logo', width: 44, height: 44, loading: 'lazy', decoding: 'async' }));
+    var box = el('span.logo' + (v.dk ? '.logo--dark' : ''), { 'aria-hidden': 'true' });
+    if (v.lg) box.appendChild(el('img', { src: SC.url(v.lg), alt: '', width: 44, height: 44, loading: 'lazy', decoding: 'async' })); // the name is printed next to it
     else box.appendChild(el('span.logo__fallback', { text: v.n.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (x) { return x.charAt(0); }).slice(0, 2).join('').toUpperCase() }));
     return box;
   }
@@ -133,11 +133,27 @@
   d.addEventListener('visibilitychange', function () { if (d.visibilityState === 'hidden') flushNotes(); });
 
   // ------------------------------------------------------------------ render
-  function setState(state, message) {
+  // The status line (a live region) shows problems, and says what an action did ("… removed from your
+  // shortlist") — the latter read out only (quiet), because the toast with Undo shows it. A changed message
+  // is written into a region that is already rendered, so screen readers announce it.
+  var statusNow = null;
+  function setState(state, message, quiet) {
     app.setAttribute('data-state', state);
-    statusEl.textContent = message || '';
-    statusEl.hidden = !message;
+    message = message || '';
+    if (message === statusNow) return;
+    statusNow = message;
+    statusEl.classList.toggle('sr-only', !!quiet);
+    if (!message) { statusEl.textContent = ''; statusEl.hidden = true; return; }
+    var wasHidden = statusEl.hidden;
+    statusEl.hidden = false;
+    if (!wasHidden && !quiet) { statusEl.textContent = message; return; }
+    statusEl.textContent = '';
+    setTimeout(function () { if (statusNow === message) statusEl.textContent = message; }, 60);
   }
+  /** After a re-render: the next row's Remove button, else the list heading, else the empty-state heading. */
+  function heading(sel) { var h = $(sel, app); if (!h || !h.getClientRects().length) return null; h.setAttribute('tabindex', '-1'); return h; }
+  function rowFocus(id) { return function () { return (id && $('[data-remove="' + id + '"]', app)) || heading('#sl-h') || heading('#sl-empty-h'); }; }
+  function noteFocus(id) { return function () { return (id && $('[data-delete-note="' + id + '"]', app)) || heading('#sl-other-h') || heading('#sl-h') || heading('#sl-empty-h'); }; }
   function render() {
     flushNotes();
     var active = d.activeElement && d.activeElement.id && app.contains(d.activeElement) ? { id: d.activeElement.id, a: d.activeElement.selectionStart, b: d.activeElement.selectionEnd } : null;
@@ -146,6 +162,8 @@
       if (my !== seq) return;
       draw(notes, problem);
       if (active) { var again = d.getElementById(active.id); if (again && again !== d.activeElement) { again.focus(); if (again.setSelectionRange && active.a != null) { try { again.setSelectionRange(active.a, active.b); } catch (e) { /* not a text field */ } } } }
+      // the control that had focus was rebuilt or removed: move focus to where the action leaves the visitor
+      if (view.focusTo) { var to = view.focusTo(); view.focusTo = null; if (to && (!d.activeElement || d.activeElement === d.body || !d.activeElement.isConnected)) to.focus(); }
     }
     function done(data, ids, problem) {
       if (my !== seq) return;
@@ -246,7 +264,8 @@
     if (problem === 'load') msg = 'Your saved products are still in this browser, but their details could not be loaded. Refresh to try again.';
     else if (problem === 'category') msg = 'A saved list from an earlier version of this site could not be shown here. Use “Clear saved list” to start a new one.';
     else if (problem && problem.indexOf('dropped:') === 0) msg = problem.slice(8) === '1' ? 'One saved product is no longer listed in this category and was removed from the shortlist.' : problem.slice(8) + ' saved products are no longer listed in this category and were removed from the shortlist.';
-    setState(n ? 'list' : 'empty', msg);
+    if (msg) setState(n ? 'list' : 'empty', msg);
+    else setState(n ? 'list' : 'empty', view.said || '', true); // what the last action did (shown by its toast)
     var stale = $('[data-sl-stale]', app);
     if (stale) stale.remove();
     if (problem === 'category') statusEl.parentNode.insertBefore(el('p.tl-sl__clear', { 'data-sl-stale': '' }, [el('button.btn.btn--ghost', { type: 'button', 'data-sl-clear': '', text: 'Clear saved list' })]), statusEl.nextSibling);
@@ -280,30 +299,39 @@
   app.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target.closest('button, a') : null;
     if (!t || !app.contains(t)) return;
-    var snap, id, name;
+    var snap, id, name, listTop = function () { return heading('#sl-h') || heading('#sl-empty-h'); };
+    if (!t.hasAttribute('data-sl-share') && !t.hasAttribute('data-sl-csv') && !t.hasAttribute('data-sl-print')) view.said = '';
     if (t.hasAttribute('data-remove')) {
+      // Focus stays in the list (the next row's Remove button); the status line says what happened, and the
+      // Undo message sits in the tab order right after the list until it is closed or replaced.
       id = t.getAttribute('data-remove'); name = t.getAttribute('aria-label').replace(/^Remove | from shortlist$/g, '');
       flushNotes(); snap = snapshot();
+      var at = view.ids.indexOf(id), next = view.ids[at + 1] || view.ids[at - 1] || '';
+      var kept = readNotes()[id] ? ' Its note is kept under “Other notes”.' : '';
+      view.said = name + ' removed from your shortlist.' + kept + ' An Undo button follows the list.';
+      view.focusTo = rowFocus(next);
       SC.shortlist.remove(id);
-      SC.toast(name + ' removed from your shortlist.' + (readNotes()[id] ? ' Its note is kept under “Other notes”.' : ''), [{ label: 'Undo', fn: function () { restore(snap, 'list'); } }]);
+      SC.toast(name + ' removed from your shortlist.' + kept, [{ label: 'Undo', fn: function () { view.said = name + ' is back in your shortlist.'; view.focusTo = rowFocus(id); restore(snap, 'list'); } }],
+        { focus: false, after: next ? tableBox : listEl, say: '', returnFocus: rowFocus(next) });
     } else if (t.hasAttribute('data-delete-note')) {
       id = t.getAttribute('data-delete-note');
+      var others = view.other.slice(), k = others.indexOf(id), nextNote = others[k + 1] || others[k - 1] || '';
       clearTimeout(timers[id]); delete timers[id];
       snap = snapshot();
       if (!writeNote(id, '')) return SC.toast('This browser could not remove the note.');
       render();
-      SC.toast('Note deleted.', [{ label: 'Undo', fn: function () { restore(snap, 'notes'); } }]);
+      SC.toast('Note deleted.', [{ label: 'Undo', fn: function () { view.focusTo = function () { return d.getElementById('sl-note-' + id); }; restore(snap, 'notes'); } }], { returnFocus: noteFocus(nextNote) });
     } else if (t.hasAttribute('data-sl-clear')) {
       flushNotes(); snap = snapshot();
       SC.shortlist.clear();
-      SC.toast('Shortlist cleared. Your notes are kept.', [{ label: 'Undo', fn: function () { restore(snap, 'list'); } }]);
+      SC.toast('Shortlist cleared. Your notes are kept.', [{ label: 'Undo', fn: function () { view.focusTo = listTop; restore(snap, 'list'); } }], { returnFocus: listTop });
     } else if (t.hasAttribute('data-sl-clear-all') || t.hasAttribute('data-sl-clear-notes')) {
-      Object.keys(timers).forEach(function (k) { clearTimeout(timers[k]); delete timers[k]; });
+      Object.keys(timers).forEach(function (k2) { clearTimeout(timers[k2]); delete timers[k2]; });
       snap = snapshot();
       var all = t.hasAttribute('data-sl-clear-all');
       if (!SC.save(NOTES, null)) return SC.toast('Some notes could not be removed. Clear site data in your browser settings.');
       if (all) SC.shortlist.clear(); else render();
-      SC.toast(all ? 'Shortlist and notes cleared from this browser.' : 'Notes deleted.', [{ label: 'Undo', fn: function () { restore(snap, all ? 'both' : 'notes'); } }]);
+      SC.toast(all ? 'Shortlist and notes cleared from this browser.' : 'Notes deleted.', [{ label: 'Undo', fn: function () { view.focusTo = listTop; restore(snap, all ? 'both' : 'notes'); } }], { returnFocus: listTop });
     } else if (t.hasAttribute('data-sl-share')) {
       var url = new URL(SC.shortlist.compareUrl({ ids: view.ids, category: view.data.id, plans: view.list.plans }), location.href).href;
       (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(

@@ -13,7 +13,7 @@
 .sw-cats { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); margin-top: var(--s-5); }
 .sw-cats li { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.4rem; max-width: 100%; }
 .sw-cats .chip { min-height: var(--tap); max-width: 100%; white-space: normal; }
-.sw-cats .chip b { font-weight: 650; margin-right: 0.1rem; }
+.sw-cats .chip b { font-weight: 600; margin-right: 0.1rem; }
 
 .sw-hero__side { display: grid; gap: var(--s-5); padding-top: var(--s-6); border-top: 1px solid var(--line); }
 .sw-side__score { display: flex; align-items: center; gap: var(--s-4); }
@@ -50,12 +50,17 @@
 .sw-side__cta .commercial-link > a { flex: 1 1 100%; }
 .sw-side__cta .commercial-link .fineprint { font-size: var(--fs-xs); }
 .sw-hero .link-arrow, .sw-score__links .link-arrow, .sw-price-actions .link-arrow, .sw-notes .link-arrow { white-space: normal; }
-.sw-side__alts { align-self: flex-start; display: inline-flex; align-items: center; min-height: var(--tap); font-size: 0.9375rem; }
+.sw-side__alts { align-self: flex-start; display: inline-flex; align-items: center; min-height: var(--tap); font-size: var(--fs-sm); }
 
 /* 48–62em: the score block sits at the left edge, so a right-aligned help panel would leave the viewport
    (below 48em the shared popover is a bottom sheet) */
 @media (min-width: 48em) and (max-width: 61.99em) {
   .sw-side__label .pop--right .pop__panel { left: -8rem; right: auto; }
+}
+/* narrow phones (320px): the label next to the ring wraps instead of pushing the score block out */
+@media (max-width: 47.99em) {
+  .sw-side__score > div { min-width: 0; }
+  .sw-side__label { flex-wrap: wrap; white-space: normal; }
 }
 @media (min-width: 40em) and (max-width: 61.99em) {
   .sw-hero__side { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-8); }
@@ -72,29 +77,37 @@
   .sw-hero__main { grid-area: 1 / 1; }
   .sw-hero__foot { grid-area: 2 / 1; }
   .sw-hero__side { grid-area: 1 / 2 / 3 / 3; padding: 0 0 0 var(--s-10); border-top: 0; border-left: 1px solid var(--line); gap: var(--s-6); }
+  .sw-glance { display: none; }
+}
+/* below 62em the decision block (score, price, actions) follows the answer, so a one-line summary of the score
+   and the starting price stands under the name. It is presentational (aria-hidden, no links) and the only item
+   placed out of source order: the links and buttons keep their source order, so focus follows what you see. */
+@media (max-width: 61.99em) {
+  .sw-hero { row-gap: 0; }
+  .sw-hero__main { display: contents; }
+  .sw-hero__id { order: 1; }
+  .sw-glance { order: 2; margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
+  .sw-hero .lede { order: 3; }
+  .sw-cats { order: 4; }
+  .sw-hero__foot { order: 5; margin-top: var(--s-6); }
+  .sw-hero__side { order: 6; margin-top: var(--s-6); }
+  .sw-glance .score, .sw-glance .price { display: inline; }
+  .sw-glance b { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
 }
 
-/* ---------------------------------------------------------------- quick answer + key facts table */
+/* ---------------------------------------------------------------- key facts: a disclosure (open on wide screens) */
 .sw-brief { padding-bottom: var(--s-10); }
+.sw-kfbox.sw-more { margin-top: 0; }
+.sw-kfbox[open] > summary { border-bottom: 1px solid var(--line-strong); }
 .sw-kf { font-size: var(--fs-sm); line-height: 1.45; }
-.sw-kf caption {
-  padding-bottom: var(--s-2);
-  border-bottom: 1px solid var(--line-strong);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
 .sw-kf th, .sw-kf td { padding: 0.6rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
-.sw-kf th { width: 9.5rem; padding-right: var(--s-4); font-weight: 500; color: var(--ink-3); }
+.sw-kf th { width: 9.5rem; padding-right: var(--s-4); font-weight: 400; color: var(--ink-3); }
 .sw-kf td { color: var(--ink); }
 .sw-kf td a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .sw-kf td a:hover { color: var(--brand); }
 @media (min-width: 62em) {
   /* two facts per line; long sentences span the full width */
   .sw-kf { display: block; }
-  .sw-kf caption { display: block; }
   .sw-kf tbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-14); }
   .sw-kf tr { display: grid; grid-template-columns: 13.5rem minmax(0, 1fr); border-bottom: 1px solid var(--line); }
   .sw-kf tr.sw-kf__wide { grid-column: 1 / -1; }
@@ -109,7 +122,7 @@
 @media (min-width: 62em) { .sw-two { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-14); } }
 .sw-prose { color: var(--ink-2); max-width: 70ch; }
 .sw-prose > * + * { margin-top: var(--s-4); }
-.sw-prose h3, .sw-ai-lists h3, .sw-h3 { font-family: var(--font); font-size: var(--fs-md); font-weight: 650; letter-spacing: 0; }
+.sw-prose h3, .sw-ai-lists h3, .sw-h3 { font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; }
 .sw-prose h3 { margin-top: var(--s-6); }
 .sw-prose h3 + * { margin-top: var(--s-3); }
 .sw-h3 { margin: var(--s-8) 0 var(--s-3); }
@@ -127,7 +140,7 @@
 /* label/value rows (no boxes) */
 .sw-rows > div { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: var(--s-1) var(--s-4); padding: 0.65rem 0; border-bottom: 1px solid var(--line); font-size: var(--fs-sm); line-height: 1.5; }
 .sw-rows > div:first-child { border-top: 1px solid var(--line); }
-.sw-rows dt { color: var(--ink-3); font-weight: 500; }
+.sw-rows dt { color: var(--ink-3); font-weight: 400; }
 .sw-rows dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
 .sw-rows--wide { max-width: 62rem; }
 .sw-rows--wide > div { font-size: var(--fs-md); padding: var(--s-4) 0; }
@@ -171,9 +184,9 @@
 /* researched plans (plan-level evidence) */
 .sw-plans { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-10) var(--s-14); }
 @media (min-width: 62em) { .sw-plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.sw-plan { min-width: 0; padding-top: var(--s-5); border-top: 1px solid var(--line-strong); color: var(--ink-2); font-size: 0.9375rem; }
+.sw-plan { min-width: 0; padding-top: var(--s-5); border-top: 1px solid var(--line-strong); color: var(--ink-2); font-size: var(--fs-md); }
 .sw-plan > * + * { margin-top: var(--s-4); }
-.sw-plan h4 { font-family: var(--font-display); font-size: var(--fs-xl); color: var(--ink); }
+.sw-plan h4 { font-family: var(--font-display); font-size: var(--fs-lg); color: var(--ink); }
 .sw-plan__top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s-3) var(--s-4); align-items: center; }
 .sw-plan__top .price { grid-column: 1 / -1; }
 .sw-plan__top .price__main { font-family: var(--font-display); font-size: var(--fs-2xl); letter-spacing: -0.02em; }
@@ -244,12 +257,12 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-ev thead th:nth-child(1) { width: 34%; }
 .sw-ev thead th:nth-child(2) { width: 9.5rem; }
 .sw-ev thead th:nth-child(3) { width: 7rem; }
-.sw-ev tbody th[scope="row"] { font-size: 0.9375rem; line-height: 1.4; }
+.sw-ev tbody th[scope="row"] { font-size: var(--fs-md); line-height: 1.4; }
 .sw-ev td { line-height: 1.5; }
 .sw-ev td.num { color: var(--ink); font-weight: 600; }
 .sw-ev td.sw-ns { color: var(--ink-3); font-weight: 400; }
 .sw-ev tr.is-group th { padding-top: var(--s-5); }
-.sw-ev tr.is-group th span { float: right; margin-left: var(--s-4); font-weight: 500; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums; }
+.sw-ev tr.is-group th span { float: right; margin-left: var(--s-4); font-weight: 400; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums; }
 .sw-ev tr:target th, .sw-ev tr:target td { background: var(--brand-softer); }
 .sw-ev td small a, .sw-claims a, .sw-cite a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .sw-ev td small a:hover, .sw-claims a:hover, .sw-cite a:hover { color: var(--brand); }
@@ -362,7 +375,7 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-notes .link-arrow { display: inline-flex; align-items: center; min-height: var(--tap); }
 
 /* ---------------------------------------------------------------- evidence record */
-.sw-claims { border-top: 1px solid var(--line); font-size: 0.9375rem; }
+.sw-claims { border-top: 1px solid var(--line); font-size: var(--fs-md); }
 .sw-claims li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.1rem var(--s-8); padding: 0.65rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); line-height: 1.5; }
 .sw-claims a { display: inline-flex; align-items: center; justify-self: start; min-height: var(--tap); font-size: var(--fs-sm); overflow-wrap: anywhere; }
 @media (min-width: 48em) {
@@ -391,3 +404,14 @@ html:not(.js) .sw-tablist { display: none; }
 /* key facts: the affiliate label and its explainer sit under the link */
 .sw-kf .commercial-link--ad { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 0.5rem; }
 .sw-kf .commercial-link--ad .fineprint { flex-basis: 100%; font-size: var(--fs-xs); }
+/* shared product rows on phones: the logo plate sits above the name, so the comparison link starts at the name's edge */
+@media (max-width: 47.99em) {
+  .sw-alts .ptable td.ptable__c-go { padding-left: 0 !important; }
+}
+/* touch: the score-help "i" keeps its 44×44 box to itself (axe target-size: it was partly covered by the category
+   link's padded box under it): the label row is a full 44px row and the link grows downward only */
+@media (pointer: coarse), (max-width: 47.99em) {
+  .sw-side__label { min-height: var(--tap); }
+  .sw-side__label .pop > summary { margin-block: 0; }
+  .sw-side__cat a { padding-top: 0; margin-top: 0; }
+}

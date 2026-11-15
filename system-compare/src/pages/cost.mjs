@@ -91,7 +91,6 @@ function render(ctx) {
       ${ui.answer(
         ctx,
         html`Compare what up to three products in one category cost over the months you choose. The totals are <strong>partial cost models from dated public prices or your own quote</strong> — not supplier quotes, and not a cheapest-product ranking.`,
-        { label: 'In short' },
       )}
     </div>`;
 

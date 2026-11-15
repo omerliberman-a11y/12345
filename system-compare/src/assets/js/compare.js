@@ -47,7 +47,7 @@
 
   function logo(v, size, lazy) {
     var node = el('span.logo' + (size ? '.logo--' + size : '') + (v.dk ? '.logo--dark' : ''));
-    if (v.lg) node.appendChild(el('img', { src: SC.url(v.lg), alt: v.n + ' logo', width: 64, height: 64, loading: lazy ? 'lazy' : null, decoding: 'async' }));
+    if (v.lg) node.appendChild(el('img', { src: SC.url(v.lg), alt: '', width: 64, height: 64, loading: lazy ? 'lazy' : null, decoding: 'async' })); // every use prints the name next to it
     else {
       node.setAttribute('aria-hidden', 'true');
       node.appendChild(el('span.logo__fallback', { text: v.n.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (x) { return x[0]; }).slice(0, 2).join('').toUpperCase() }));
@@ -255,7 +255,12 @@
     var o = SC.shortlist.get(), ids = current.ids.slice(0, MAX), category = current.category;
     if (sameList(o)) { SC.toast('These products are already in your shortlist.', [{ label: 'Open shortlist', href: SC.url('/shortlist/') }]); return; }
     var merged = o.category === category ? o.ids.concat(ids.filter(function (id) { return o.ids.indexOf(id) < 0; })) : ids;
-    var replace = function () { SC.shortlist.replace(ids, category); SC.toast('Shortlist saved in this browser.', [{ label: 'Open shortlist', href: SC.url('/shortlist/') }]); };
+    // where the shortlist tray shows the result (/vs/), it is confirmation enough: no toast, just an announcement
+    var saved = function (msg) {
+      if (d.body.getAttribute('data-page') !== 'compare' && SC.announce) SC.announce(msg);
+      else SC.toast(msg, [{ label: 'Open shortlist', href: SC.url('/shortlist/') }]);
+    };
+    var replace = function () { SC.shortlist.replace(ids, category); saved('Shortlist saved in this browser.'); };
     if (!o.ids.length) return replace();
     if (o.category !== category) {
       SC.toast('Your shortlist holds ' + plural(o.ids.length, 'product') + ' from another category.', [{ label: 'Replace it with this comparison', fn: replace }]);
@@ -266,7 +271,7 @@
       return;
     }
     SC.shortlist.replace(merged, category);
-    SC.toast('Added to your shortlist.', [{ label: 'Open shortlist', href: SC.url('/shortlist/') }]);
+    saved('Added to your shortlist.');
   }
   function exportCsv() {
     if (!current) return;
@@ -425,19 +430,31 @@
   }
   d.addEventListener('sc:shortlist-updated', function () { if (!picker.hidden) renderSaved(); });
   // category filter + category links
-  var filter = $('[data-cmp-filter]', picker);
+  var filter = $('[data-cmp-filter]', picker), filterTimer, filterSaid = null;
+  if (filter) {
+    // the count of matching categories is announced from a status line next to the field
+    filterSaid = el('p.sr-only', { role: 'status', 'aria-live': 'polite' });
+    filter.parentNode.insertBefore(filterSaid, filter.nextSibling);
+  }
   if (filter) filter.addEventListener('input', function () {
-    var terms = filter.value.toLowerCase().split(/\s+/).filter(Boolean), any = false;
+    var terms = filter.value.toLowerCase().split(/\s+/).filter(Boolean), any = false, count = 0, all = 0;
     $$('[data-group]', picker).forEach(function (g) {
       var groupText = $('h3', g).textContent.toLowerCase(), shown = 0;
       $$('li', g).forEach(function (li) {
         var text = li.textContent.toLowerCase() + ' ' + groupText;
         var ok = terms.every(function (t) { return text.indexOf(t) >= 0; });
         li.hidden = !ok; if (ok) shown++;
+        all++;
       });
       g.hidden = !shown; if (shown) any = true;
+      count += shown;
     });
     $('[data-cmp-nocat]', picker).hidden = any;
+    // say how many categories are left once typing pauses
+    clearTimeout(filterTimer);
+    filterTimer = setTimeout(function () {
+      filterSaid.textContent = !terms.length ? all + ' categories' : any ? count + (count === 1 ? ' category matches' : ' categories match') + ' “' + filter.value.trim() + '”' : 'No category matches “' + filter.value.trim() + '”';
+    }, 200);
   });
   picker.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[data-scope]');

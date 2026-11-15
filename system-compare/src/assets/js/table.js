@@ -14,13 +14,15 @@
   var matrix = $('[data-matrix]');
 
   // ------------------------------------------------------------------ ranked table
-  var state = { sort: 'score', f: {}, must: {} };
+  // a category where nothing is scored yet sorts by the share of the checklist checked by default (data-sort-default="cov")
+  var SORT0 = (controls && controls.getAttribute('data-sort-default')) || 'score';
+  var state = { sort: SORT0, f: {}, must: {} };
   var rows = table ? $$('tbody tr', table) : [];
   var tbody = table ? $('tbody', table) : null;
 
   function readUrl() {
     var q = new URLSearchParams(location.search);
-    var s = q.get('sort'); if (s === 'price' || s === 'name' || s === 'score') state.sort = s;
+    var s = q.get('sort'); if (s === 'price' || s === 'name' || s === 'score' || s === 'cov') state.sort = s;
     (q.get('f') || '').split(',').forEach(function (k) { if (k === 'scored' || k === 'priced' || k === 'ai') state.f[k] = 1; });
     (q.get('must') || '').split(',').forEach(function (k) { if (/^\d+$/.test(k)) state.must[k] = 1; });
     if (q.get('all') === '1') state.all = 1;
@@ -28,7 +30,7 @@
   function writeUrl() {
     var q = new URLSearchParams(location.search);
     ['sort', 'f', 'must', 'all'].forEach(function (k) { q.delete(k); });
-    if (state.sort !== 'score') q.set('sort', state.sort);
+    if (state.sort !== SORT0) q.set('sort', state.sort);
     var f = Object.keys(state.f); if (f.length) q.set('f', f.join(','));
     var m = Object.keys(state.must); if (m.length) q.set('must', m.join(','));
     if (state.all) q.set('all', '1');
@@ -60,6 +62,7 @@
         if (pa === '') return 1; if (pb === '') return -1;
         return Number(pa) - Number(pb) || Number(a.getAttribute('data-rank')) - Number(b.getAttribute('data-rank'));
       }
+      if (state.sort === 'cov') return Number(b.getAttribute('data-cov')) - Number(a.getAttribute('data-cov')) || Number(a.getAttribute('data-rank')) - Number(b.getAttribute('data-rank'));
       return Number(a.getAttribute('data-rank')) - Number(b.getAttribute('data-rank'));
     });
     sorted.forEach(function (tr) { tbody.appendChild(tr); });
@@ -131,6 +134,23 @@
   }
   var STC = { y: 'yes', p: 'partial', n: 'no', u: 'unknown' };
   var STL = { y: 'Supported', p: 'Limited', n: 'Not supported', u: 'Not verified' };
+  /** The text a cell shows, without the logo (its monogram) or anything hidden from assistive technology. */
+  function textOf(node) {
+    var out = '';
+    (function walk(n) {
+      for (var c = n.firstChild; c; c = c.nextSibling) {
+        if (c.nodeType === 3) out += c.nodeValue;
+        else if (c.nodeType === 1 && !c.classList.contains('logo') && c.getAttribute('aria-hidden') !== 'true') walk(c);
+      }
+    })(node);
+    return out.replace(/\s+/g, ' ').trim();
+  }
+  var colNames = null;
+  /** "Pipedrive, Contacts and relationship records: Supported" (column k of the matrix). */
+  function cellName(k, check, status) {
+    if (!colNames) colNames = $$('thead th[data-v]', matrix).map(textOf);
+    return (colNames[k] ? colNames[k] + ', ' : '') + check + ': ' + status;
+  }
   var extraBuilt = false;
   /** Adds the deep checks that are not scored yet (loaded on demand; they are not in the HTML). */
   function buildExtraRows() {
@@ -147,9 +167,9 @@
         body.appendChild(el('tr.is-group', { 'data-extra': '' }, [el('th', { scope: 'colgroup', colspan: heads.length + 1, text: g[1] + ' — inactive deep checks, not scored yet' })]));
         items.forEach(function (it) {
           var tr = el('tr.is-inactive', { 'data-extra': '', 'data-f': it[1] }, [el('th', { scope: 'row' }, [el('button.matrix__what', { type: 'button', 'data-what': it[1], 'aria-haspopup': 'dialog', 'aria-expanded': 'false', text: it[0][1] })])]);
-          heads.forEach(function (vid) {
+          heads.forEach(function (vid, k) {
             var c = (byId[vid] && byId[vid].c[it[1]]) || ['u'];
-            tr.appendChild(el('td', null, [el('button.cellbtn.st.st--' + STC[c[0]] + '.st--icon', { type: 'button', 'data-c': it[1] }, [el('span', { text: STL[c[0]] })])]));
+            tr.appendChild(el('td', null, [el('button.cellbtn.st.st--' + STC[c[0]] + '.st--icon', { type: 'button', 'data-c': it[1], 'aria-haspopup': 'dialog', 'aria-expanded': 'false', 'aria-label': cellName(k, it[0][1], STL[c[0]]) }, [el('span', { text: STL[c[0]] })])]));
           });
           body.appendChild(tr);
         });
@@ -172,64 +192,62 @@
     d.addEventListener('sc:shortlist-updated', syncMatrixColumns);
     syncMatrixColumns();
 
-    // evidence popover for a cell (data is loaded once per category, on first use)
-    var pop = null, popFor = null;
-    function closePop() { if (pop) { pop.remove(); pop = null; if (popFor) popFor.setAttribute('aria-expanded', 'false'); popFor = null; } }
+    // Evidence popover for a cell, and "what this check covers" for a row (data is loaded once per category,
+    // on first use). Both use the shared SC.float popover, which moves focus into it once the content is in
+    // place and closes when focus leaves it.
     var VER = { d: 'Official documentation', v: 'Vendor confirmed', '': 'Not verified' };
     function fmtDate(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + +m[3] + ', ' + m[1] : ''; }
     var TIER = { foundation: 'Foundation check', advanced: 'Shared deep check' };
+    /** Opens the popover for trigger b; fill(data, box) builds its content and returns false when there is none. */
+    function openPop(b, label, loading, fill, failText) {
+      if (SC.float.anchor() === b) { SC.float.close(); return; }
+      var box = SC.float.open(b, el('div.evpop', { role: 'dialog', 'aria-label': label }, [el('p', { text: loading })]), { align: 'center' });
+      SC.load('cat-' + matrix.getAttribute('data-category')).then(function (data) {
+        if (SC.float.anchor() !== b) return;
+        box.textContent = '';
+        if (fill(data, box) === false) return SC.float.close();
+        SC.float.ready(box);
+      }).catch(function () { if (SC.float.anchor() === b) { box.textContent = failText; SC.float.ready(box); } });
+    }
+    /** The dialog is named by its title line(s) (paragraphs, not headings: the popover sits outside the page outline). */
+    function nameBy(box, ids) { box.removeAttribute('aria-label'); box.setAttribute('aria-labelledby', ids); }
     /** What a check covers: description, tier, score group, the points it carries and the demo question. */
     function openWhat(b) {
-      if (popFor === b) { closePop(); return; }
-      closePop();
       var fi = Number(b.getAttribute('data-what'));
-      popFor = b; b.setAttribute('aria-expanded', 'true');
-      pop = el('div.evpop', { role: 'dialog', 'aria-label': 'About this check' }, [el('p', { text: 'Loading…' })]);
-      d.body.appendChild(pop);
-      place(b);
-      SC.load('cat-' + matrix.getAttribute('data-category')).then(function (data) {
-        if (popFor !== b || !pop) return;
+      openPop(b, 'About this check', 'Loading…', function (data, pop) {
         var f = data.features[fi];
-        if (!f) return closePop();
+        if (!f) return false;
         // points: the group's share of the active groups, split evenly over its scored checks
         var counts = {}, base = {}, activeBase = 0, groupLabel = '';
         data.groups.forEach(function (g) { base[g[0]] = g[2]; if (g[0] === f[2]) groupLabel = g[1]; });
         data.features.forEach(function (x) { if (x[3]) counts[x[2]] = (counts[x[2]] || 0) + 1; });
         Object.keys(counts).forEach(function (g) { activeBase += base[g] || 0; });
         var pts = f[3] && activeBase && counts[f[2]] ? Math.round((((base[f[2]] / activeBase) * 100) / counts[f[2]]) * 10) / 10 : 0;
-        pop.textContent = '';
-        pop.appendChild(el('h4', { text: f[1] }));
+        pop.appendChild(el('p.evpop__who.evpop__title', { id: 'sc-float-title', text: f[1] }));
+        nameBy(pop, 'sc-float-title');
         pop.appendChild(el('p', { text: f[4] || 'No description is recorded for this check.' }));
         pop.appendChild(el('p.evpop__meta', { text: [TIER[f[5]] || '', groupLabel, f[3] ? pts + ' of 100 points' : 'not included in the score yet'].filter(Boolean).join(' · ') }));
         if (f[6]) pop.appendChild(el('p', null, [el('b', { text: 'Ask in a demo: ' }), f[6]]));
-        place(b);
-      }).catch(function () { if (pop) pop.textContent = 'This could not load. The product profiles describe every check.'; });
+      }, 'This could not load. The product profiles describe every check.');
     }
     matrix.addEventListener('click', function (e) {
       var w = e.target.closest('[data-what]');
       if (w) { openWhat(w); return; }
       var b = e.target.closest('[data-c]');
       if (!b) return;
-      if (popFor === b) { closePop(); return; }
-      closePop();
       var td = b.parentNode, col = Array.prototype.indexOf.call(td.parentNode.children, td) - 1;
       var headCell = $$('thead th[data-v]', matrix)[col];
       if (!headCell) return;
       var vid = headCell.getAttribute('data-v'), fi = Number(b.getAttribute('data-c'));
-      popFor = b; b.setAttribute('aria-expanded', 'true');
-      pop = el('div.evpop', { role: 'dialog', 'aria-label': 'Evidence' }, [el('p', { text: 'Loading evidence…' })]);
-      d.body.appendChild(pop);
-      place(b);
-      SC.load('cat-' + matrix.getAttribute('data-category')).then(function (data) {
-        if (popFor !== b || !pop) return;
+      openPop(b, 'Evidence', 'Loading evidence…', function (data, pop) {
         var v = data.vendors.filter(function (x) { return x.id === vid; })[0], f = data.features[fi];
-        if (!v || !f) return closePop();
+        if (!v || !f) return false;
         var c = v.c[fi] || ['u'];
-        pop.textContent = '';
-        pop.appendChild(el('span.st.st--' + STC[c[0]], { text: STL[c[0]] }));
-        pop.appendChild(el('h4', { text: f[1] }));
+        pop.appendChild(el('p', null, [el('span.st.st--' + STC[c[0]], { text: STL[c[0]] })]));
+        pop.appendChild(el('p.evpop__who.evpop__title', { id: 'sc-float-title', text: f[1] }));
         if (f[4]) pop.appendChild(el('p.evpop__meta', { text: f[4] }));
-        pop.appendChild(el('p.evpop__who', { text: v.n }));
+        pop.appendChild(el('p.evpop__who', { id: 'sc-float-who', text: v.n }));
+        nameBy(pop, 'sc-float-who sc-float-title'); // "Pipedrive Contacts and relationship records"
         pop.appendChild(el('p', { text: c[1] || (c[0] === 'u' ? 'We have not verified this in official documentation. Not verified does not mean the product lacks it.' : 'No note recorded.') }));
         var meta = VER[c[2] || ''] + (c[3] ? ' · ' + fmtDate(c[3]) : '') + (f[3] ? '' : ' · not included in the score yet');
         pop.appendChild(el('p.evpop__meta', { text: meta }));
@@ -237,19 +255,34 @@
         if (c[4]) { links.appendChild(el('a.ext', { href: c[4], target: '_blank', rel: 'noopener noreferrer', text: c[2] === 'v' ? 'Related documentation' : 'Source' })); links.appendChild(d.createTextNode(' · ')); }
         links.appendChild(el('a', { href: SC.url('/software/' + vid + '/#capabilities'), text: 'All evidence for ' + v.n }));
         pop.appendChild(links);
-        place(b);
-      }).catch(function () { if (pop) pop.textContent = 'Evidence could not load. Open the product profile for sources.'; });
+      }, 'Evidence could not load. Open the product profile for sources.');
     });
-    function place(b) {
-      var r = b.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
-      var left = Math.max(12, Math.min(window.innerWidth - pw - 12, r.left + r.width / 2 - pw / 2));
-      var top = r.bottom + 8;
-      if (top + ph > window.innerHeight - 12 && r.top - ph - 8 > 12) top = r.top - ph - 8;
-      pop.style.left = left + window.scrollX + 'px';
-      pop.style.top = top + window.scrollY + 'px';
-    }
-    d.addEventListener('click', function (e) { if (pop && !pop.contains(e.target) && !e.target.closest('[data-c]') && !e.target.closest('[data-what]')) closePop(); });
-    d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && pop) { var f = popFor; closePop(); if (f) f.focus(); } });
-    window.addEventListener('resize', closePop);
+    // A cell button names its product and check, not only its status, and says it opens a dialog.
+    $$('tbody tr', matrix).forEach(function (tr) {
+      var what = $('[data-what]', tr);
+      if (!what) return;
+      var check = textOf(what);
+      $$('td', tr).forEach(function (td, k) {
+        var b = $('[data-c]', td);
+        if (!b) return;
+        b.setAttribute('aria-haspopup', 'dialog');
+        if (!b.hasAttribute('aria-expanded')) b.setAttribute('aria-expanded', 'false');
+        b.setAttribute('aria-label', cellName(k, check, textOf(b)));
+      });
+    });
+  }
+
+  // ------------------------------------------------------------------ sort buttons of a stacked table
+  // While the ranked table is stacked (phones, large text) its header row is clipped out of sight, so the sort
+  // buttons in it must not be tab stops (the toolbar's Sort select does the same job); restored when wide.
+  var thead = table && $('thead', table), sortBtns = thead ? $$('button', thead) : [];
+  function syncSortStops() {
+    var r = thead.getBoundingClientRect(), stacked = getComputedStyle(thead).position === 'absolute' || r.width < 2 || r.height < 2;
+    sortBtns.forEach(function (b) { if (stacked) b.setAttribute('tabindex', '-1'); else b.removeAttribute('tabindex'); });
+  }
+  if (sortBtns.length) {
+    syncSortStops();
+    if ('ResizeObserver' in window) new ResizeObserver(syncSortStops).observe(table);
+    else window.addEventListener('resize', syncSortStops);
   }
 })();

@@ -23,6 +23,7 @@
   --bg-subtle: #f7f7fb;
   --bg-muted: #eeeff6;
   --bg-inverse: #11131f;
+  --logo-dark: #171a26;  /* surface for white logo artwork */
 
   /* colour — text */
   --ink: #11131f;
@@ -33,6 +34,7 @@
   /* colour — lines */
   --line: #e3e4ee;
   --line-strong: #c9ccdb;
+  --line-control: #80869a;  /* boundary of form fields and the shortlist checkbox: ≥ 3:1 on every surface */
 
   /* colour — brand (indigo) and accent (orange, decorative only) */
   --brand: #4a3aff;
@@ -67,6 +69,7 @@
   --fs-2xl: 1.75rem;  /* 28 */
   --fs-3xl: clamp(2rem, 1.35rem + 2.6vw, 2.75rem);    /* 32 → 44 */
   --fs-hero: clamp(2.375rem, 1.3rem + 4.6vw, 4rem);   /* 38 → 64 */
+  --fs-brand: clamp(0.875rem, 11.6vw - 1.65rem, 1.1875rem); /* header word-mark: 14 → 19, gives way on narrow phones */
   --lh-tight: 1.12;
   --lh-snug: 1.3;
   --lh-body: 1.6;
@@ -97,6 +100,10 @@
   --gutter: 1.25rem;
   --header-h: 3.5rem;
   --tap: 2.75rem;        /* 44px minimum target */
+  /* vendor logo plate in product rows: landscape, so a wordmark up to ~7:1 still renders ≥ 12px tall */
+  --plate-w: 7rem;
+  --plate-h: 2.75rem;
+  --plate-img: 1.75rem;  /* tallest the artwork may render */
 
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --dur: 160ms;
@@ -108,6 +115,20 @@
     --header-h: 4rem;
   }
 }
+@media (min-width: 48em) and (max-width: 61.99em) {
+  :root {
+    --plate-w: 5.75rem;
+    --plate-h: 2.5rem;
+    --plate-img: 1.5rem;
+  }
+}
+@media (max-width: 47.99em) {
+  :root {
+    --plate-w: 6.5rem;
+    --plate-h: 2.25rem;
+    --plate-img: 1.5rem;
+  }
+}
 
 /* Reader preferences (set from the Accessibility options dialog; stored in sc-accessibility-v1). */
 html[data-a11y-size="125"] { font-size: 125%; }
@@ -117,6 +138,7 @@ html[data-a11y-contrast="1"] {
   --ink-3: #2a2d3a;
   --line: #8a8fa3;
   --line-strong: #4b5065;
+  --line-control: #4b5065;
   --brand: #2c20b4;
   --brand-strong: #1e158a;
   --brand-ink: #1e158a;
@@ -136,6 +158,7 @@ html[data-a11y-links="1"] main a,
 html[data-a11y-links="1"] footer a {
   text-decoration: underline;
 }
+html[data-a11y-motion="1"],
 html[data-a11y-motion="1"] *,
 html[data-a11y-motion="1"] *::before,
 html[data-a11y-motion="1"] *::after {

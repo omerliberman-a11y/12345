@@ -116,7 +116,7 @@ function render(ctx) {
         popular.slice(0, 12).map((x) => ({
           href: ctx.url.vs(x.id),
           title: ctx.comparisonNames(x).map((n) => n.name).join(' vs '),
-          meta: ctx.category(x.categoryId).name,
+          sub: ctx.category(x.categoryId).name,
         })),
         { cols: 3 },
       )}
@@ -152,12 +152,13 @@ function render(ctx) {
     </div>
   </section>`;
 
-  const faq = html`<section class="section" aria-label="Frequently asked questions">
+  // a plain wrapper: the FAQ inside is already a section labelled by its own heading (one landmark, one name)
+  const faq = html`<div class="section">
     <div class="wrap wrap--narrow">
       ${ui.faq(ctx, homeFaq, { heading: 'Frequently asked questions', open: 1 })}
       <p class="home__cta"><a class="link-arrow" href="/faq/">All questions and answers</a></p>
     </div>
-  </section>`;
+  </div>`;
 
   const leaders = spotlights.map((c) => ({ name: c.name, url: ctx.url.category(c.id) }));
 

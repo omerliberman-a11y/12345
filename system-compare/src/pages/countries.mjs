@@ -83,7 +83,6 @@ function render(ctx) {
           html`System Compare has <strong>${editions.length} country editions</strong> in ${langCount} languages.${
             here ? html` You are on the ${here.name} edition (${(here.languages || []).join(', ')}, ${here.currency}).` : ''
           } There is no automatic redirect: you choose which edition to visit.`,
-          { label: 'In short' },
         )}
       </div>`,
     },

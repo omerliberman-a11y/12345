@@ -274,7 +274,6 @@ function renderPolicy(ctx, path) {
       ${ui.answer(
         ctx,
         html`Some supplier links are affiliate links. Each one is labelled <strong>“Ad · affiliate link”</strong>, and we may receive a commission when a purchase is attributed to it. Suppliers can also buy a research and onboarding service through the <a href="/partners/">Partners program</a>. Neither changes a score or a ranking: no vendor pays for placement.`,
-        { label: 'In short' },
       )}
     </div>`;
   }

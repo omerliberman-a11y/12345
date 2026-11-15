@@ -99,6 +99,13 @@ function render(ctx, vendor) {
     return html`<li><a class="chip chip--link" href="${ctx.url.category(c.id)}">${sc.pending ? html`${c.name} <span class="n">score pending</span>` : html`<b>${sc.placeLabel}</b> in ${c.name}`}</a>${sc.recommended ? html` ${ui.tag('Recommended', 'top')}` : ''}</li>`;
   };
   const planLine = p.plan ? html`<span class="price__unit">Plan: ${p.plan}</span>` : '';
+  // Phones and tablets: score and starting price in one line under the name. It repeats the decision block
+  // (which follows the answer there), so it is presentational only: aria-hidden, no links, and it sits AFTER
+  // the answer in the source so the answer passage keeps its place near the top of <main>; CSS shows it under
+  // the H1 (software.css). Wide screens show the decision block itself next to the title, and hide this line.
+  const glanceLine = html`<p class="sw-glance" aria-hidden="true">${
+    s.pending ? html`<span class="score">Score pending</span> in ${primary.name}` : html`<span class="score"><b>${s.value}</b>/100</span> documented fit in ${primary.name}`
+  }<span class="sw-glance__sep"> · </span><span class="price">${p.hasAmount ? html`from <b>${p.headline}</b>${p.unit ? ` ${p.unit}` : ''}` : p.headline}</span></p>`;
   const hero = html`<header class="wrap sw-hero">
     <div class="sw-hero__main">
       <div class="sw-hero__id">
@@ -119,6 +126,7 @@ function render(ctx, vendor) {
         meta: html`The documented-fit score is the share of the category checklist documented in official sources. It is not a customer rating or a hands-on test. <a href="/methodology/">How we score</a>`,
       })}
     </div>
+    ${glanceLine}
     <div class="sw-hero__side">
       <div class="sw-side__score">
         <a class="sw-side__ring" href="#capabilities" title="See the capability evidence">${ui.scoreRing(ctx, s)}</a>
@@ -147,18 +155,12 @@ function render(ctx, vendor) {
     </div>
   </header>`;
 
-  // ---------------------------------------------------------------- quick answer + key facts
-  const scoreFact = (c) => {
-    const sc = scores.get(c.id);
-    return {
-      label: cats.length > 1 ? `Score in ${c.name}` : 'Documented-fit score',
-      value: html`<b>${sc.valueText}</b> · ${sc.coverageText}${cats.length > 1 && sc.checkedAt ? html` · evidence from ${ui.time(ctx, sc.checkedAt)}` : ''}`,
-      wide: cats.length > 1,
-    };
-  };
+  // ---------------------------------------------------------------- key facts
+  // Each fact is said once on the page: the scores are in the hero (ring + category chips) and in the
+  // capability tabs, "Best for" / "Look closely when" open the Fit section right below — so Key facts keeps
+  // the rest. Open on wide screens; software.js closes it on phones, where it would be a screen and more.
   const facts = [
     { label: cats.length > 1 ? 'Categories' : 'Category', value: cats.map((c, i) => html`${i ? ', ' : ''}<a href="${ctx.url.category(c.id)}">${c.name}</a>`), wide: cats.length > 1 },
-    ...cats.map(scoreFact),
     {
       label: 'Starting price',
       value: p.hasAmount
@@ -173,16 +175,17 @@ function render(ctx, vendor) {
     { label: 'AI', value: html`${aiLevel.label}` },
     { label: 'Official sources', value: html`<a href="#evidence">${plural(vendor.sources.length, 'source')} and ${plural(vendor.evidence.length, 'evidence item')}</a>` },
     { label: 'Official website', value: ui.outLink(ctx, vendor, { intent: 'website', from: 'profile-facts', cls: '', label: hostOf(vendor.url) || name }) },
-    { label: 'Best for', value: vendor.bestFor, wide: true },
-    { label: 'Look closely when', value: vendor.avoidIf, wide: true },
   ].filter(Boolean);
   const brief = html`<div class="wrap sw-brief">
-    <table class="sw-kf">
-      <caption>Key facts: ${name}</caption>
-      <tbody>
-        ${facts.map((f) => html`<tr${attrs({ class: f.wide ? 'sw-kf__wide' : null })}><th scope="row">${f.label}</th><td>${f.value}</td></tr>`)}
-      </tbody>
-    </table>
+    <details class="sw-more sw-kfbox" open data-sw-kf>
+      <summary>Key facts: ${name}</summary>
+      <table class="sw-kf">
+        <caption class="sr-only">Key facts: ${name}</caption>
+        <tbody>
+          ${facts.map((f) => html`<tr${attrs({ class: f.wide ? 'sw-kf__wide' : null })}><th scope="row">${f.label}</th><td>${f.value}</td></tr>`)}
+        </tbody>
+      </table>
+    </details>
   </div>`;
 
   const researched = cats.map((c) => ({ category: c, plans: ctx.scoring.researchedPlans(vendor, c.id) })).filter((x) => x.plans.length);

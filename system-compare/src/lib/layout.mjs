@@ -86,12 +86,12 @@ function header(ctx, page) {
         <a class="nav__link" href="/guides/"${attrs(cur('guides'))}>Guides</a>
         <a class="nav__link" href="/methodology/"${attrs(cur('methodology'))}>How we score</a>
       </nav>
-      <a class="searchbtn" href="/search/" data-search-open role="button" aria-label="Search software, categories and comparisons" aria-keyshortcuts="/ Control+K Meta+K">
-        ${icon('search')}<span class="searchbtn__label">Search software, categories, comparisons…</span><kbd>/</kbd>
+      <a class="searchbtn" href="/search/" data-search-open role="button" aria-keyshortcuts="/ Control+K Meta+K">
+        ${icon('search')}<span class="searchbtn__label">Search software, categories, comparisons…</span><kbd aria-hidden="true">/</kbd>
       </a>
       <a class="shortlist-link" href="/shortlist/"${attrs(cur('shortlist'))}>
         ${icon('bookmark')}<span class="shortlist-link__text">Shortlist</span>
-        <span class="count" data-shortlist-count data-n="0" aria-label="products saved">0</span>
+        <span class="count" data-shortlist-count data-n="0">0</span><span class="sr-only"> saved</span>
       </a>
       <a class="menu-btn" href="/categories/" data-menu-open role="button" aria-label="Menu">${icon('menu')}</a>
     </div>

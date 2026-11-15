@@ -51,12 +51,28 @@
     a.addEventListener('click', function () { SC.search.remember(state.q); });
     return el('li', null, [a]);
   }
+  /** Type chips are updated in place (never rebuilt), so the chip that was just pressed keeps focus. */
+  function syncChips(counts) {
+    var have = {};
+    $$('[data-type]', typeChips).forEach(function (b) { have[b.getAttribute('data-type')] = b; });
+    var after = null;
+    TYPES.forEach(function (t) {
+      var n = counts[t[0]] || 0, b = have[t[0]];
+      if (t[0] && !n) { if (b) b.remove(); return; }
+      if (!b) b = el('button.chip', { type: 'button', 'data-type': t[0] }, [t[1] + ' ', el('span.n')]);
+      $('.n', b).textContent = String(n);
+      b.setAttribute('aria-pressed', state.type === t[0] ? 'true' : 'false');
+      if (after ? after.nextSibling !== b : typeChips.firstChild !== b) typeChips.insertBefore(b, after ? after.nextSibling : typeChips.firstChild);
+      after = b;
+    });
+  }
+  var focusResults = false; // after "Show all …", focus moves to the first heading of the new list
   function render() {
     var q = state.q.trim();
     if (input && input.value !== state.q) input.value = state.q;
     d.title = (q ? '“' + q + '” — ' : '') + 'Search | System Compare';
     if (!q) {
-      results.textContent = ''; status.textContent = ''; controls.hidden = true; facetsBox.hidden = true; start.hidden = false;
+      results.textContent = ''; status.textContent = ''; status.classList.remove('sr-only'); controls.hidden = true; facetsBox.hidden = true; start.hidden = false;
       var recent = SC.search.recent();
       if (recent.length) {
         results.appendChild(el('h2', { text: 'Recent searches' }));
@@ -69,7 +85,7 @@
     SC.search.engine().then(function (engine) {
       if (state.q.trim() !== q) return;
       var r = engine.query(q), frag = d.createDocumentFragment();
-      var groups = {}, total = r.top.length;
+      var groups = {}, counts = {};
       Object.keys(r.groups).forEach(function (k) {
         var list = r.groups[k];
         if (k === 'product') {
@@ -77,15 +93,13 @@
           if (state.sort === 'score') list = list.slice().sort(function (a, b) { return (b.best == null ? -1 : b.best) - (a.best == null ? -1 : a.best) || b.score - a.score; });
           if (state.sort === 'price') list = list.slice().sort(function (a, b) { return (a.amount == null ? 1e9 : a.amount) - (b.amount == null ? 1e9 : b.amount) || b.score - a.score; });
         }
-        groups[k] = list; total += list.length;
+        groups[k] = list; counts[k] = list.length;
       });
-      // type chips with counts
-      typeChips.textContent = '';
-      TYPES.forEach(function (t) {
-        var n = t[0] ? (groups[t[0]] || []).length : total;
-        if (t[0] && !n) return;
-        typeChips.appendChild(el('button.chip', { type: 'button', 'data-type': t[0], 'aria-pressed': state.type === t[0] ? 'true' : 'false' }, [t[1] + ' ', el('span.n', { text: String(n) })]));
-      });
+      // every result counts once (a best match is usually also in its own group)
+      var seen = {}, total = 0;
+      Object.keys(groups).reduce(function (all, k) { return all.concat(groups[k]); }, r.top.slice()).forEach(function (x) { var key = x.type + ':' + (x.id || x.url); if (!seen[key]) { seen[key] = 1; total++; } });
+      counts[''] = total;
+      syncChips(counts);
       controls.hidden = false;
       facetsBox.hidden = !((r.groups.product || []).length) || (state.type && state.type !== 'product');
       $$('[data-facet]', facetsBox).forEach(function (b) { b.setAttribute('aria-pressed', state.f[b.getAttribute('data-facet')] ? 'true' : 'false'); });
@@ -97,7 +111,10 @@
       if (r.q.filters.maxPrice != null) notes.push('starting price up to $' + r.q.filters.maxPrice);
       if (r.q.sort === 'price') notes.push('lowest price first');
       if (r.q.sort === 'score') notes.push('highest score first');
-      status.textContent = total ? total + ' result' + (total === 1 ? '' : 's') + ' for “' + q + '”' + (notes.length ? ' · read as: ' + notes.join(', ') : '') : '';
+      // the status line is the live region: it says how many results there are, or that there are none (the
+      // visible "No results" note below already shows that, so the line itself is then read out only)
+      status.classList.toggle('sr-only', !total);
+      status.textContent = total ? total + ' result' + (total === 1 ? '' : 's') + ' for “' + q + '”' + (notes.length ? ' · read as: ' + notes.join(', ') : '') : 'No results for “' + q + '”.';
 
       if (r.top.length && !state.type) {
         frag.appendChild(el('h2', { text: 'Best match' }));
@@ -106,16 +123,30 @@
         frag.appendChild(ul0);
       }
       var shown = {}; r.top.forEach(function (t) { shown[t.type + ':' + t.id] = 1; });
+      // products that only list the named product as an integration ("Works with HubSpot"): their own short
+      // list in the overview; in the Products view they stay in the list, with the reason on their second line
+      var via = r.via ? r.via : null, why = function (x) { return x.via && via ? Object.assign({}, x, { sub: (x.sub ? x.sub + ' · ' : '') + via.label }) : x; };
       ['category', 'product', 'comparison', 'guide', 'faq', 'page'].forEach(function (k) {
         if (state.type && state.type !== k) return;
-        var list = (groups[k] || []).filter(function (x) { return state.type || !shown[x.type + ':' + x.id]; });
-        if (!list.length) return;
+        var list = (groups[k] || []).filter(function (x) { return state.type || (!shown[x.type + ':' + x.id] && !(via && x.via)); });
         var limit = state.type ? 200 : k === 'product' ? 12 : 6;
-        frag.appendChild(el('h2', { text: HEAD[k] + (list.length > limit ? ' (' + list.length + ')' : '') }));
-        var ul = el('ul.srch__list');
-        list.slice(0, limit).forEach(function (x) { ul.appendChild(row(x)); });
-        frag.appendChild(ul);
-        if (list.length > limit) frag.appendChild(el('p', null, [el('button.btn.btn--quiet.btn--sm', { type: 'button', 'data-type': k, text: 'Show all ' + list.length + ' ' + HEAD[k].toLowerCase() })]));
+        if (list.length) {
+          frag.appendChild(el('h2', { text: HEAD[k] + (list.length > limit ? ' (' + list.length + ')' : '') }));
+          var ul = el('ul.srch__list');
+          list.slice(0, limit).forEach(function (x) { ul.appendChild(row(why(x))); });
+          frag.appendChild(ul);
+          if (list.length > limit) frag.appendChild(el('p', null, [el('button.btn.btn--quiet.btn--sm', { type: 'button', 'data-type': k, text: 'Show all ' + list.length + ' ' + HEAD[k].toLowerCase() })]));
+        }
+        if (k === 'product' && via && !state.type) {
+          var more = (groups.product || []).filter(function (x) { return x.via && !shown[x.type + ':' + x.id]; });
+          if (more.length) {
+            frag.appendChild(el('h2', { text: via.label }));
+            var ulv = el('ul.srch__list');
+            more.slice(0, 3).forEach(function (x) { ulv.appendChild(row(x)); });
+            frag.appendChild(ulv);
+            if (more.length > 3) frag.appendChild(el('p', null, [el('button.btn.btn--quiet.btn--sm', { type: 'button', 'data-type': 'product', text: 'Show all ' + (groups.product || []).length + ' products' })]));
+          }
+        }
       });
       if (!total) {
         frag.appendChild(el('div.empty', null, [el('b', { text: 'No results for “' + q + '”.' }), d.createTextNode('Check the spelling, try a category name such as “CRM” or “payroll”, or start from a category below.')]));
@@ -125,7 +156,13 @@
       }
       results.textContent = '';
       results.appendChild(frag);
+      if (focusResults) {
+        focusResults = false;
+        var h = $('h2', results);
+        if (h) { h.setAttribute('tabindex', '-1'); h.focus(); }
+      }
     }).catch(function () {
+      status.classList.remove('sr-only');
       status.textContent = 'Search could not load. Browse the categories below.';
       start.hidden = false;
     });
@@ -141,7 +178,12 @@
   }
   page.addEventListener('click', function (e) {
     var t = e.target.closest('[data-type]');
-    if (t) { state.type = t.getAttribute('data-type'); writeUrl(false); render(); window.scrollTo({ top: 0 }); return; }
+    if (t) {
+      // a type chip keeps focus (chips are updated in place); "Show all …" is replaced, so focus goes to the new list
+      focusResults = !typeChips.contains(t);
+      state.type = t.getAttribute('data-type'); writeUrl(false); render(); window.scrollTo({ top: 0 });
+      return;
+    }
     var f = e.target.closest('[data-facet]');
     if (f) { var k = f.getAttribute('data-facet'); if (state.f[k]) delete state.f[k]; else state.f[k] = 1; writeUrl(false); render(); }
   });

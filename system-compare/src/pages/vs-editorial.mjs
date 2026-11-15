@@ -68,7 +68,6 @@ function render(ctx, X) {
     ${ui.answer(
       ctx,
       html`${X.decision} This brief ${X.rows?.length ? html`compares ${ctx.plural(X.rows.length, 'decision point')} for ${shortTitle} using` : html`covers ${shortTitle} using`} ${ctx.plural((X.sources || []).length, 'official source')} checked ${ui.time(ctx, checked)}.`,
-      { label: 'In short' },
     )}
     ${
       X.choices?.length

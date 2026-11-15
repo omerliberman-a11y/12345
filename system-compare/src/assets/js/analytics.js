@@ -21,9 +21,11 @@
   try { const saved = JSON.parse(localStorage.getItem(key)); if (saved && typeof saved.allowed === 'boolean' && saved.until > Date.now()) consent = saved.allowed; } catch {}
   if (gpc) consent = false;
 
+  // The panel comes first in <body> (it still shows fixed at the bottom of the screen), so keyboard and
+  // screen-reader users meet it before the page; it is a labelled region, announced once when it first shows.
   const panel = document.createElement('section');
   panel.className = 'consent'; panel.id = 'sc-privacy-panel'; panel.hidden = true;
-  panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-labelledby', 'sc-privacy-title'); panel.setAttribute('data-nosnippet', '');
+  panel.setAttribute('role', 'region'); panel.setAttribute('aria-label', 'Your privacy choices'); panel.setAttribute('data-nosnippet', '');
   const h = document.createElement('h2'); h.id = 'sc-privacy-title'; h.textContent = 'Your privacy choices';
   const p = document.createElement('p');
   p.textContent = gpc
@@ -33,9 +35,18 @@
   const actions = document.createElement('div'); actions.className = 'consent__actions';
   const no = document.createElement('button'); no.type = 'button'; no.className = 'btn btn--ghost btn--sm'; no.textContent = 'Reject analytics';
   const yes = document.createElement('button'); yes.type = 'button'; yes.className = 'btn btn--sm'; yes.textContent = 'Allow analytics'; yes.disabled = gpc;
-  actions.append(no, yes); panel.append(h, p, actions); document.body.append(panel);
+  const said = document.createElement('p'); said.className = 'sr-only'; said.setAttribute('role', 'status');
+  actions.append(no, yes); panel.append(h, p, actions, said);
+  // first in <body> — after the skip link only, which stays the first tab stop
+  const skip = document.body.firstElementChild;
+  if (skip && skip.matches('.skip-link')) skip.after(panel); else document.body.prepend(panel);
 
-  const show = (open) => { panel.hidden = !open; };
+  const show = (open, announce) => {
+    panel.hidden = !open;
+    if (window.SC && SC.syncBottomPad) SC.syncBottomPad(); // focused controls are never left under the panel
+    // shown by itself on a first visit: say so once (when it is opened on request, focus moves into it instead)
+    if (open && announce) setTimeout(() => { said.textContent = 'Your privacy choices are the first items on this page: Reject analytics or Allow analytics. Analytics stays off until you agree.'; }, 600);
+  };
   function clearCookies() { for (const item of document.cookie.split(';')) { const name = item.split('=')[0].trim(); if (/^_ga(?:_|$)/.test(name)) document.cookie = name + '=; Max-Age=0; path=/; SameSite=Lax; Secure'; } }
   function send(name, params = {}) { if (consent === true && loaded) window.gtag('event', name, params); }
   function loadAnalytics() {
@@ -75,6 +86,6 @@
   });
   document.addEventListener('sc:comparison-add', (event) => { const vid = event.detail && event.detail.vendorId; if (/^[a-z0-9-]{1,80}$/.test(vid || '')) send('comparison_add', { vendor_id: vid }); });
   document.addEventListener('sc:cost-calculation', () => send('cost_calculation'));
-  show(consent === null && !gpc);
+  show(consent === null && !gpc, true);
   if (consent === true) loadAnalytics(); else { window['ga-disable-' + id] = true; clearCookies(); }
 })();

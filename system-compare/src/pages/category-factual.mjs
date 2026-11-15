@@ -20,7 +20,8 @@ export const FX_STATUS = { yes: 'Documented', partial: 'Conditional', no: 'Not i
 const stKey = (st) => (FX_STATUS[st] && st !== 'unknown' ? st : 'unknown');
 
 /** Status mark: icon + label (the label collapses to the icon in narrow matrix cells via CSS). */
-export const fxMark = (st) => html`<span class="st st--${stKey(st)}">${FX_STATUS[stKey(st)]}</span>`;
+// the label sits in its own span so a dense table can hide it visually (the icon stays) without hiding it from assistive tech
+export const fxMark = (st) => html`<span class="st st--${stKey(st)}"><span>${FX_STATUS[stKey(st)]}</span></span>`;
 export const fxLegend = () => html`<p class="legend" aria-label="Legend">${['yes', 'partial', 'no', 'unknown'].map((s) => html`<span class="st st--${s}">${FX_STATUS[s]}</span>`)}</p>`;
 
 /**
@@ -199,7 +200,6 @@ function render(ctx, category) {
   </header>
   <div class="wrap cat-answer">
     ${ui.answer(ctx, quick, { meta: lowest ? 'Units and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.' : null })}
-    ${ui.facts(glance)}
   </div>`;
 
   const hasAid = Boolean(F.decisionAid?.rows?.length);
@@ -223,7 +223,6 @@ function render(ctx, category) {
   const suppliersBlock = html`<section class="wrap fx-suppliers" id="suppliers" aria-labelledby="suppliers-h">
     <div class="fx-head">
       <h2 id="suppliers-h">Suppliers at a glance</h2>
-      <p>${F.intro}</p>
     </div>
     <table class="dtable fx-stack fx-glance">
       <caption class="sr-only">${category.name}: ${suppliers.length} documented suppliers by buying approach, with their lowest published offer</caption>
@@ -252,7 +251,10 @@ function render(ctx, category) {
         })}
       </tbody>
     </table>
+    ${/* the scope of the comparison follows the table it describes, so the table starts right under its heading */ ''}
+    <p class="fx-scope">${F.intro}</p>
     <p class="table-note">A documented selection, not a complete market list and not a ranking. No /100 score has been assigned in this category; prices are dated observations of public pages, not quotes.</p>
+    <div class="cat-glance">${ui.facts(glance)}</div>
   </section>`;
 
   // ---------------------------------------------------------------- plans and prices

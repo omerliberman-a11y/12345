@@ -237,7 +237,8 @@ function render(ctx, record) {
       moreVs.length
         ? html`<h3 class="fx-also">More documented comparisons</h3>
             ${ui.linkList(
-              moreVs.map((k) => ({ href: ctx.url.vs(k.id), title: ctx.comparisonNames(k).map((n) => n.name).join(' vs '), meta: ctx.category(k.categoryId).name })),
+              // the category goes on the second line: long names do not fit beside the pair on a phone
+              moreVs.map((k) => ({ href: ctx.url.vs(k.id), title: ctx.comparisonNames(k).map((n) => n.name).join(' vs '), sub: ctx.category(k.categoryId).name })),
               { cols: 2 },
             )}`
         : ''

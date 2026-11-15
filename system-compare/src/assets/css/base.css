@@ -44,11 +44,16 @@ h1, h2, h3, h4, h5 {
   color: var(--ink);
   text-wrap: balance;
 }
+/* One heading scale for every template: h1 32→44, h2 28 (22 on phones, always under h1), h3 18, h4 16 —
+   each level smaller than the one above it. Components restyle a heading only for a different role (overline labels). */
 h1 { font-size: var(--fs-3xl); letter-spacing: -0.025em; }
 h2 { font-size: var(--fs-2xl); letter-spacing: -0.02em; }
-h3 { font-size: var(--fs-xl); line-height: var(--lh-snug); }
-h4 { font-size: var(--fs-lg); line-height: var(--lh-snug); font-family: var(--font); font-weight: 650; letter-spacing: -0.01em; }
-h5 { font-size: var(--fs-md); line-height: var(--lh-snug); font-family: var(--font); font-weight: 650; letter-spacing: 0; }
+h3 { font-size: var(--fs-lg); line-height: var(--lh-snug); }
+h4 { font-size: var(--fs-md); line-height: var(--lh-snug); font-family: var(--font); letter-spacing: -0.01em; }
+h5 { font-size: var(--fs-sm); line-height: var(--lh-snug); font-family: var(--font); letter-spacing: 0; }
+@media (max-width: 39.99em) {
+  h2 { font-size: var(--fs-xl); }
+}
 
 p, ul, ol, dl, figure, blockquote, table, pre { margin: 0; }
 p { text-wrap: pretty; }
@@ -65,8 +70,9 @@ a {
 }
 a:hover { color: var(--brand-strong); text-decoration: underline; }
 
-strong, b { font-weight: 650; }
+strong, b { font-weight: 600; }
 small { font-size: var(--fs-sm); }
+sub, sup { font-size: var(--fs-xs); line-height: 0; } /* never under the 12px floor */
 hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-8) 0; }
 
 button, input, select, textarea {

@@ -12,7 +12,7 @@ html:not(.js) .tl-app { display: none; }
   margin: var(--s-10) 0 var(--s-4);
   font-family: var(--font);
   font-size: var(--fs-md);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: 0;
   line-height: var(--lh-snug);
 }
@@ -55,12 +55,12 @@ html:not(.js) .tl-app { display: none; }
 .tl-totals th, .tl-totals td { padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-2); }
 .tl-totals thead th, .tl-totals thead td { vertical-align: middle; }
 .tl-totals tr > :first-child { width: 11rem; padding-left: 0; color: var(--ink-3); font-weight: 600; }
-.tl-totals__prod { display: flex; align-items: center; gap: 0.6rem; min-width: 0; font-size: var(--fs-md); font-weight: 650; line-height: 1.25; color: var(--ink); }
+.tl-totals__prod { display: flex; align-items: center; gap: 0.6rem; min-width: 0; font-size: var(--fs-md); font-weight: 600; line-height: 1.25; color: var(--ink); }
 .tl-totals__prod > span:last-child { min-width: 0; overflow-wrap: anywhere; }
 .tl-totals__hint { font-size: var(--fs-sm); font-weight: 400; color: var(--ink-3); }
 .tl-total { display: block; font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: var(--ink); white-space: nowrap; }
-.tl-totals__prod .tl-remove { margin-left: auto; font-weight: 500; }
-.tl-totals [data-row="avg"] .num { font-size: var(--fs-md); font-weight: 650; color: var(--ink); }
+.tl-totals__prod .tl-remove { margin-left: auto; font-weight: 400; }
+.tl-totals [data-row="avg"] .num { font-size: var(--fs-md); font-weight: 600; color: var(--ink); }
 .tl-totals [data-row="total"] > th { vertical-align: middle; color: var(--ink); }
 .tl-cap { display: none; font-size: var(--fs-xs); color: var(--ink-3); }
 .tl-pending { display: block; padding-block: 0.2rem; font-size: var(--fs-md); font-weight: 600; color: var(--ink-2); }
@@ -189,7 +189,7 @@ html:not(.js) .tl-app { display: none; }
 .tl-bar.is-stuck { opacity: 1; visibility: visible; }
 .tl-bar__item { flex: 0 0 calc(100% / 3); min-width: 0; display: grid; padding-right: var(--s-2); line-height: 1.2; }
 .tl-bar__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-xs); color: var(--ink-3); }
-.tl-bar b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-sm); font-weight: 650; color: var(--ink); }
+.tl-bar b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-sm); font-weight: 600; color: var(--ink); }
 .tl-bar__short { display: none; }
 @media (max-width: 47.99em) {
   .tl-bar__full { display: none; }
@@ -203,7 +203,7 @@ html:not(.js) .tl-app { display: none; }
 }
 
 .tl-actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-8); padding-top: var(--s-6); border-top: 1px solid var(--line); }
-.tl-status { margin-top: var(--s-6); font-size: var(--fs-sm); font-weight: 500; color: var(--ink-2); }
+.tl-status { margin-top: var(--s-6); font-size: var(--fs-sm); font-weight: 400; color: var(--ink-2); }
 .tl-app > .fineprint { margin-top: var(--s-2); }
 
 /* ---- static explanation below the tool */
@@ -229,10 +229,10 @@ html:not(.js) .tl-app { display: none; }
 @media (min-width: 62em) { .tl-two { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-14); } }
 .tl-how, .tl-scope { max-width: 70ch; color: var(--ink-2); }
 .tl-how b { color: var(--ink); }
-.tl-how sup { font-size: 0.7em; }
+.tl-how sup { font-size: var(--fs-xs); }
 .tl-worked { margin-top: var(--s-6); padding-left: var(--s-5); border-left: 3px solid var(--line-strong); max-width: 70ch; color: var(--ink-2); }
 .tl-worked b, .tl-worked strong { color: var(--ink); }
-.tl-aside h3 { font-family: var(--font); font-size: var(--fs-md); font-weight: 650; letter-spacing: 0; margin-bottom: var(--s-3); }
+.tl-aside h3 { font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; margin-bottom: var(--s-3); }
 .tl-aside h3:not(:first-child) { margin-top: var(--s-8); }
 .tl-aside ul { color: var(--ink-2); }
 
@@ -257,7 +257,7 @@ html:not(.js) .tl-sl__status { display: none; }
 .tl-saved.is-error { color: var(--bad); font-weight: 600; }
 .tl-printnote { display: none; white-space: pre-wrap; font-size: var(--fs-sm); color: var(--ink-2); }
 .tl-sl__clear { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-5); margin-left: -0.6rem; }
-.tl-sl__clear .btn { color: var(--ink-2); font-weight: 500; }
+.tl-sl__clear .btn { color: var(--ink-2); font-weight: 400; }
 .tl-sl__clear .btn:hover { color: var(--bad); background: var(--bad-soft); }
 .tl-sl__clear .btn--ghost { color: var(--ink); margin-left: 0.6rem; }
 
@@ -265,6 +265,8 @@ html:not(.js) .tl-sl__status { display: none; }
 .tl-sl__empty h2 { font-size: var(--fs-xl); margin-bottom: var(--s-3); }
 .tl-sl__empty > p { color: var(--ink-2); }
 .tl-sl .chip, .tl-empty .chip, .tl-next .chip { min-height: var(--tap); }
+/* scenario chips carry long names ("CRM & sales: Pipedrive and Salesforce Sales"): they wrap inside the column */
+.tl-sl .chip, .tl-empty .chip, .tl-next .chip { max-width: 100%; white-space: normal; }
 .tl-sl__clear[data-sl-stale] { margin-top: 0; margin-bottom: var(--s-8); }
 .tl-plan { display: block; margin-top: 0.2rem; font-size: var(--fs-xs); line-height: 1.4; color: var(--ink-2); }
 .tl-plan b { font-weight: 600; color: var(--ink); }

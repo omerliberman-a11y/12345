@@ -240,7 +240,8 @@ function render(ctx) {
         ? html`<h3 class="gd-subhead" id="ai-comparisons">AI tools head to head</h3>
             <p class="gd-sub">${ctx.plural(aiVs.length, 'documented comparison')} of named AI offers: prices, limits and criteria side by side, with no score assigned.</p>
             ${ui.linkList(
-              aiVs.map((k) => ({ href: ctx.url.vs(k.id), title: ctx.comparisonNames(k).map((n) => n.name).join(' vs '), meta: ctx.category(k.categoryId).name })),
+              // the category goes on the second line: long names ("AI runtime security and guardrails") do not fit beside the pair on a phone
+              aiVs.map((k) => ({ href: ctx.url.vs(k.id), title: ctx.comparisonNames(k).map((n) => n.name).join(' vs '), sub: ctx.category(k.categoryId).name })),
               { cols: 2 },
             )}`
         : ''

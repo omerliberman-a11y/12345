@@ -210,12 +210,13 @@ function render(ctx) {
       a: `From each vendor’s official pricing page, read on a stated date. ${nPriced} of the ${total} products have a public starting price; the others are quote-only, usage-based or not verified. Prices are dated observations of public list prices, not quotes, and units differ between vendors.`,
     },
   ];
-  const faq = html`<section class="section ix-faq" aria-label="Questions about the directory">
+  // a plain wrapper: the FAQ inside is already a section labelled by its own heading (one landmark, one name)
+  const faq = html`<div class="section ix-faq">
     <div class="wrap wrap--narrow">
       ${ui.faq(ctx, faqItems, { heading: 'Questions about the directory', open: 0 })}
       <p class="ix-after"><a class="link-arrow" href="/faq/">All questions and answers</a></p>
     </div>
-  </section>`;
+  </div>`;
 
   return {
     title: seoTitle(`Software directory: ${total} products researched`),

@@ -14,12 +14,12 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 .ix-find svg { position: absolute; left: 0.8rem; width: 1.1rem; height: 1.1rem; color: var(--ink-3); pointer-events: none; }
 .ix-find .input { padding-left: 2.5rem; }
 .ix-select { display: block; flex: 0 1 auto; min-width: 0; max-width: 100%; }
-.ix-select .select { width: auto; max-width: 100%; font-size: 0.9375rem; }
+.ix-select .select { width: auto; max-width: 100%; font-size: var(--fs-md); }
 .ix-bar__end { margin-left: auto; }
 .ix-bar .toolbar__count { margin: 0 0 0 auto; }
 .ix-chips { flex: 1 1 100%; }
 .ix-chips .chip { min-height: var(--tap); }
-.ix-cta { margin-top: var(--s-4); font-size: 0.9375rem; color: var(--ink-2); }
+.ix-cta { margin-top: var(--s-4); font-size: var(--fs-sm); color: var(--ink-2); }
 .ix-after { margin-top: var(--s-4); }
 .ix-after .link-arrow, .ix-cta .link-arrow { display: inline-block; padding-block: 0.7rem; }
 .ix-more { margin-top: var(--s-5); text-align: center; }
@@ -41,7 +41,6 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 /* a divider only between two groups that are both shown (a filter hides groups) */
 .ix-group:not([hidden]) ~ .ix-group { border-top: 1px solid var(--line); }
 .ix-group__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-1) var(--s-4); margin-bottom: var(--s-3); }
-.ix-group__head h2 { font-size: var(--fs-xl); }
 .ix-group__head p { font-size: var(--fs-sm); color: var(--ink-3); }
 .ix-groups > .table-note { margin-top: var(--s-8); }
 
@@ -61,6 +60,7 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 .ix-cmp__cols { columns: 1; column-gap: var(--s-10); }
 @media (min-width: 44em) { .ix-cmp__cols { columns: 2; } }
 @media (min-width: 68em) { .ix-cmp__cols { columns: 3; } }
+@media (min-width: 75em) { .ix-cmp__cols { columns: 4; column-gap: var(--s-8); } .ix-cmp .ix-group { padding-block: var(--s-8) var(--s-4); } }
 .ix-cmp__cat { break-inside: avoid; padding-top: var(--s-4); }
 .ix-cmp__cat h3 { font-family: var(--font); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.4; }
 .ix-cmp__cat h3 a { display: inline-flex; align-items: center; min-height: 2rem; color: var(--ink-3); }
@@ -69,6 +69,29 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 .ix-cmp .linklist a { gap: var(--s-3); }
 .ix-cmp .linklist a > span:first-child { min-width: 0; }
 .ix-cmp .linklist small { line-height: 1.35; }
+/* a category's further pairs fold into "N more …" (the filter opens these while it is on and hides the toggle) */
+.ix-cmp__more > summary { display: flex; align-items: center; gap: 0.5rem; min-height: var(--tap); padding: 0.2rem 0; list-style: none; font-size: var(--fs-sm); font-weight: 600; color: var(--brand); cursor: pointer; }
+.ix-cmp__more > summary::-webkit-details-marker { display: none; }
+.ix-cmp__more > summary::before {
+  content: "";
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--brand-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3.5v9M3.5 8h9' fill='none' stroke='%232c20b4' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / 0.7rem;
+  transition: transform var(--dur) var(--ease);
+}
+.ix-cmp__more[open] > summary::before { transform: rotate(45deg); }
+.ix-cmp__more > summary:hover { text-decoration: underline; }
+.ix-cmp__more > .linklist { border-top: 0; }
+.ix-cmp__more[open] > summary { border-bottom: 1px solid var(--line); }
+.ix-cmp:has([data-ix-row][hidden]) .ix-cmp__more > summary { display: none; }
+/* mouse and trackpad on wide screens: denser lines (touch keeps the 44px targets) */
+@media (min-width: 48em) and (pointer: fine) {
+  .ix-cmp .linklist a { min-height: 2.75rem; padding-block: 0.45rem; }
+  .ix-cmp__more > summary { min-height: 2.25rem; }
+  .ix-cmp__cat { padding-top: var(--s-3); }
+}
 .ix-vsmeta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.05rem; line-height: 1.3; text-align: right; }
 .ix-vsmeta b { font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .ix-vsmeta time { font-size: var(--fs-xs); color: var(--ink-3); }
@@ -92,12 +115,18 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 /* vendor-site link under the categories (commercial-link categories only) */
 .ix-visit { display: block; margin-top: 0.2rem; }
 .ix-visit .commercial-link { gap: 0.2rem 0.5rem; }
-.ix-table td.ix-c-cats .ix-visit a { color: var(--brand-ink); font-weight: 550; }
+.ix-table td.ix-c-cats .ix-visit a { color: var(--brand-ink); font-weight: 600; }
 .ix-table .ptable__c-score { width: 10rem; }
 .ix-table .ptable__c-price { width: 12.5rem; }
 .ix-table .score__meta { white-space: normal; }
 .ix-table .score:not(.score--pending) .score__value { font-size: var(--fs-lg); }
 .ix-of { display: none; }
+/* wide screens: dense rows (about 76px) — less padding, the name and the two-line description on tighter lines */
+@media (min-width: 48em) {
+  .ix-table tbody th, .ix-table td { padding-block: 0.5rem; }
+  .ix-table .prod__text { line-height: 1.3; }
+  .ix-table .prod__fit { line-height: 1.35; }
+}
 @media (min-width: 48em) and (max-width: 61.99em) {
   .ix-table .ix-c-cats { width: 11rem; }
   .ix-table .ptable__c-score { width: 7.5rem; }
@@ -123,15 +152,18 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
   .ix-table .prod::after { content: ""; position: absolute; inset: 0; }
   .ix-table .prod__fit { display: none; }
   .ix-table .prod__name { margin-right: 0; }
-  .ix-table td.ix-c-cats { display: block; grid-area: cats; width: auto; font-size: var(--fs-xs); line-height: 1.5; }
-  .ix-table .ix-catlist { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ix-table td.ix-c-cats a { color: var(--ink-3); text-decoration: none; }
+  .ix-table td.ix-c-cats { display: block; grid-area: cats; width: auto; font-size: var(--fs-sm); line-height: 1.5; }
+  .ix-table .ix-catlist { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.6rem; }
+  /* the category links sit above the row-wide profile link (.prod::after) and are at least 24px tall:
+     inline padding grows the target without growing the line */
+  .ix-table td.ix-c-cats a { position: relative; z-index: 1; padding-block: 0.25rem; color: var(--ink-3); text-decoration: none; }
   /* the whole row opens the profile; the vendor link sits above that overlay and is a full touch target */
   .ix-visit { position: relative; z-index: 1; margin-top: 0; }
   .ix-table td.ix-c-cats .ix-visit a { display: inline-flex; align-items: center; min-height: var(--tap); font-size: var(--fs-sm); text-decoration: underline; }
   .ix-table .ptable__c-price { width: auto; padding-left: 0 !important; }
   .ix-table .ptable__c-score { width: auto; padding-top: 0 !important; }
   .ix-table .score { flex-direction: row-reverse; align-items: baseline; gap: 0.4rem; }
+  .ix-table .score--pending .score__value { font-size: var(--fs-sm); } /* data, not a caption: 14px like the rest of the row */
   .ix-table .ix-in { display: none; }
   .ix-table .ix-of { display: inline; white-space: nowrap; }
   /* quick filters stay on one line and scroll sideways */
@@ -156,7 +188,6 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 .ix-alt .seg button { min-height: var(--tap); }
 .ix-alt .answer { margin-bottom: var(--s-8); }
 .ix-panel__head { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-2); }
-.ix-panel__head h2 { font-size: var(--fs-xl); }
 .ix-toolbar { padding-bottom: var(--s-2); }
 .ix-toolbar .ix-chips { flex: 0 1 auto; min-width: 0; }
 .ix-toolbar .chip { max-width: 100%; white-space: normal; text-align: left; }
@@ -169,15 +200,19 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
   .ix-toolbar .ix-chips { flex: 1 1 100%; }
 }
 .ix-c-vs { width: 9.5rem; font-size: var(--fs-sm); line-height: 1.35; }
-.ix-c-vs a { color: var(--ink-2); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-strong); }
+.ix-c-vs a { color: var(--ink-2); font-weight: 400; text-decoration: underline; text-decoration-color: var(--line-strong); }
 .ix-c-vs a:hover { color: var(--brand); text-decoration-color: currentColor; }
 .ix-c-vs a.link-arrow { font-weight: 600; text-decoration: none; }
+/* the action column has a fixed width: every link in it wraps inside it, the focal row's "<Product> profile" too */
+.ix-c-vs a, .ix-c-vs a.link-arrow { white-space: normal; }
+/* long product names in the onward chips ("Microsoft Dynamics 365 Business Central alternatives") wrap in the column */
+.ix-onward .chip { max-width: 100%; white-space: normal; }
 /* the product itself sits on top of the ranking like a pinned row: one header, identical columns */
 @media (min-width: 48em) {
   .ix-alt .ptable { table-layout: fixed; }
   .ix-alt .ptable__c-rank { width: 3.25rem; white-space: nowrap; }
   /* the ranking keeps its header row for assistive tech and column widths, at zero height */
-  .ix-alts .ptable thead th { height: 0; padding-block: 0; border: 0; font-size: 0; line-height: 0; color: transparent; }
+  .ix-alts .ptable thead th { height: 0; padding-block: 0; border: 0; line-height: 0; color: transparent; overflow: hidden; }
 }
 @media (min-width: 48em) and (max-width: 74.99em) {
   .ix-alt .ptable__c-price { width: 11rem; }
@@ -185,15 +220,14 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 }
 @media (min-width: 48em) and (max-width: 61.99em) {
   .ix-alt .ptable__c-price { width: 9rem; }
-  .ix-c-vs { width: 6.5rem; }
+  .ix-c-vs { width: 8rem; }
 }
 .ix-ref .ptable tbody tr { border-bottom-color: var(--line-strong); }
 .ix-panel__note { margin-top: var(--s-4); }
 .ix-panel__links { margin-top: var(--s-4); gap: var(--s-3) var(--s-6); }
 .ix-panel__links .link-arrow, .ix-panel__links .btn { white-space: normal; }
 .ix-panel__links .btn { max-width: 100%; }
-.ix-alt > .table-note { margin-top: var(--s-8); }
-.ix-subhead { margin: var(--s-8) 0 var(--s-2); font-family: var(--font); font-size: var(--fs-md); font-weight: 650; letter-spacing: 0; }
+.ix-subhead { margin: var(--s-8) 0 var(--s-2); font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; }
 html:not(.js) .ix-alt .tabs__panel + .tabs__panel { padding-top: var(--s-10); border-top: 1px solid var(--line); }
 @media (max-width: 47.99em) {
   .ix-alt .ptable tbody tr {
@@ -215,4 +249,14 @@ html:not(.js) .ix-alt .tabs__panel + .tabs__panel { padding-top: var(--s-10); bo
 /* the short FAQ that closes an index page */
 @media (max-width: 47.99em) {
   .ix-faq.section { padding-block: var(--s-8); }
+}
+
+/* shared landscape logo plate (components.css): in the directory's phone rows it stays on the left and the text
+   starts after it; the score stacks ("100/100" over "highest of 5") so the name keeps its width. In the ranked rows
+   the plate sits above the name, so the comparison link starts at the name's edge. */
+@media (max-width: 47.99em) {
+  .ptable.ix-table tbody tr { padding-left: calc(var(--plate-w) + var(--s-3)); }
+  .ix-table .prod .logo { top: 0.45rem; }
+  .ix-table .score { flex-direction: column; align-items: flex-end; gap: 0; }
+  .ix-c-vs { padding-left: 0 !important; }
 }

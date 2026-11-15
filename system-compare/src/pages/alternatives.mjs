@@ -54,7 +54,8 @@ function render(ctx, vendor) {
       sortable: false,
       lazyFrom: isDefault ? 1 : 0,
       caption: `${vendor.name} in ${category.name}: the product the alternatives are compared with`,
-      action: () => html`<a class="link-arrow" href="${profile}">${vendor.name} profile</a>`,
+      // the name is already in this row: the narrow action column says "Profile" (the full name stays in the link text)
+      action: () => html`<a class="link-arrow" href="${profile}">Profile<span class="sr-only"> of ${vendor.name}</span></a>`,
       actionLabel: html`<span class="sr-only">Links</span>`,
       actionClass: 'ix-c-vs',
     });
@@ -126,7 +127,8 @@ function render(ctx, vendor) {
       <div class="ix-ref">${refTable}</div>
       <div class="ix-alts">${altTable}</div>
       <p class="empty" data-ix-empty hidden><b>No alternative matches these filters.</b> <button type="button" class="btn btn--quiet btn--sm" data-ix-reset>Clear filters</button></p>
-      <p class="fineprint ix-panel__note">Ranked on the ${category.name} checklist, highest documented-fit score first; “#” is the place by published score in the category; “=” marks a place shared by products with the same score. Product-wide evidence can span multiple plans. Check the price, usage limits and exact plan before choosing.${datesLine}</p>
+      ${/* ONE note under the tables: what the ranking is (the shared table note) plus what is specific to this list */ ''}
+      <p class="table-note ix-panel__note">Ranked on the ${category.name} checklist, highest <a href="/methodology/">documented-fit score</a> first: a score out of 100 from official documentation checked as of ${ui.time(ctx, ctx.catalog.checkedAt)} — not a customer rating or a hands-on test. “#” is the place by published score in the category; products with the same score share a place (=). “Score pending” means less than 80% of the checklist weight has been checked, so no score or place is shown. Product-wide evidence can span multiple plans. Prices are dated observations of public list prices, not quotes: check the price, usage limits and exact plan before choosing. No vendor pays for placement.${datesLine}</p>
       <p class="cluster ix-panel__links">
         <a class="btn btn--ghost" href="${ctx.url.compare({ scope: category.id, ids: [vendor.id] })}">Compare with ${vendor.name}</a>
         <a class="link-arrow" href="${ctx.url.category(category.id)}">See the full ${category.name} ranking and sources</a>
@@ -169,7 +171,6 @@ function render(ctx, vendor) {
 
   const body = html`<div class="wrap ix-alt" data-ix="alternatives" data-default="${main.id}">
     ${panels}
-    ${ui.tableNote(ctx)}
   </div>`;
 
   // ---------------------------------------------------------------- FAQ + onward links
@@ -177,7 +178,7 @@ function render(ctx, vendor) {
   const faq = faqItems.length ? html`<div class="wrap wrap--narrow section">${ui.faq(ctx, faqItems, { heading: `${vendor.name} alternatives: questions buyers ask` })}</div>` : '';
 
   const vsPages = ctx.comparisonsFor(vendor.id);
-  const onward = html`<section class="wrap section" aria-labelledby="alt-more-h">
+  const onward = html`<section class="wrap section ix-onward" aria-labelledby="alt-more-h">
     ${ui.sectionHead(`Keep researching ${vendor.name}`, { id: 'alt-more-h' })}
     ${ui.linkList(
       [
@@ -190,7 +191,7 @@ function render(ctx, vendor) {
       vsPages.length
         ? html`<h3 class="ix-subhead">Published comparisons with ${vendor.name}</h3>
             ${ui.linkList(
-              vsPages.map((x) => ({ href: ctx.url.vs(x.id), title: ctx.comparisonNames(x).map((nm) => nm.name).join(' vs '), meta: ctx.category(x.categoryId).name })),
+              vsPages.map((x) => ({ href: ctx.url.vs(x.id), title: ctx.comparisonNames(x).map((nm) => nm.name).join(' vs '), sub: ctx.category(x.categoryId).name })),
               { cols: 2 },
             )}`
         : ''

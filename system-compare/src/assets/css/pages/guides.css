@@ -4,28 +4,15 @@
 .gd-head { padding-bottom: var(--s-6); }
 .gd-head h1 { max-width: 26ch; }
 .gd-cats { display: flex; flex-wrap: wrap; gap: 0 0.6rem; margin-bottom: var(--s-1); }
-.gd-cats a { display: inline-flex; align-items: center; min-height: var(--tap); white-space: nowrap; }
+/* related categories wrap onto further lines on phones rather than being cut at the screen edge; the lines stay
+   compact and each link gets the shared 44px touch hit area (components.css, .eyebrow a) */
+.gd-cats { row-gap: 0.35rem; }
+.gd-cats a { display: inline-flex; align-items: center; min-height: 1.75rem; }
 .gd-cats span[aria-hidden] { color: var(--line-strong); }
-@media (max-width: 47.99em) {
-  /* several related categories stay on one swipeable line instead of stacking above the title */
-  .gd-cats {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin-inline: calc(-1 * var(--gutter));
-    padding-inline: var(--gutter);
-  }
-  .gd-cats::-webkit-scrollbar { display: none; }
-}
 
-/* ---------------------------------------------------------------- guide: reading column + rail */
+/* ---------------------------------------------------------------- guide: reading column + rail (the shared .with-rail) */
 .gd-layout { padding-bottom: var(--s-18); }
-.gd-article { --gd-measure: 43rem; } /* about 72 characters of body text per line */
-.gd-main { min-width: 0; max-width: var(--gd-measure); }
 .gd-main .prose { max-width: none; }
-@media (min-width: 68em) {
-  .gd-layout.with-rail { grid-template-columns: minmax(0, var(--gd-measure)) 15rem; gap: var(--s-18); }
-}
 
 /* "On this page" for small screens (the rail takes over from 68em) */
 .gd-toc-m { margin-bottom: var(--s-6); border-block: 1px solid var(--line); }
@@ -97,27 +84,24 @@
   border-radius: 50%;
   background: var(--brand);
 }
-.gd-take__jump { display: block; width: fit-content; margin-top: 0.1rem; font-size: var(--fs-sm); color: var(--ink-3); }
+.gd-take__jump { position: relative; display: block; width: fit-content; margin-top: 0.1rem; font-size: var(--fs-sm); color: var(--ink-3); }
 .gd-take__jump::before { content: "↓ "; }
 .gd-take__jump:hover { color: var(--brand); }
-@media (pointer: coarse) { .gd-take__jump { padding-block: 0.8rem; margin-block: -0.7rem; } }
+/* touch: a 44px hit area under the words (the focus ring stays on them) */
+@media (pointer: coarse), (max-width: 47.99em) {
+  .gd-take { isolation: isolate; }
+  .gd-take__jump::after { content: ""; position: absolute; inset: -0.75rem -0.25rem; z-index: -1; }
+}
 
 .gd-hero { margin-top: var(--s-8); }
 .gd-hero img { width: 100%; border-radius: var(--r-surface); background: var(--bg-subtle); }
 
 /* sections of the article */
 .gd-sec { margin-top: var(--s-14); }
-.gd-sec > h2 { font-size: var(--fs-2xl); }
 .gd-sec > h2 + * { margin-top: var(--s-3); }
 .gd-sec__sub { color: var(--ink-2); }
 .gd-sec .sources, .gd-sec .linklist { margin-top: var(--s-3); }
-.gd-sec .sources a { padding-block: 0.45rem; } /* larger hit area; inline padding does not move the rows */
-@media (pointer: coarse) {
-  /* touch: rows are 44px apart and every link fills its row */
-  .gd-sec .sources li { padding-block: 0.75rem; }
-  .gd-sec .sources li::before { top: 0.8rem; }
-  .gd-sec .sources a { padding-block: 0.85rem; }
-}
+/* touch: the shared .sources rule makes the rows 44px apart and gives each link a hit area as tall as its row */
 .gd-sec .linklist a > span:last-child:not(:first-child) { font-size: var(--fs-xs); letter-spacing: 0.04em; text-transform: uppercase; }
 .gd-host { margin-left: 0.35rem; font-size: var(--fs-xs); color: var(--ink-3); white-space: nowrap; }
 .gd-more { margin-top: var(--s-3); }
@@ -143,21 +127,12 @@
 
 /* ---------------------------------------------------------------- guides index + research updates: filter and rows */
 .gd-filter { display: grid; gap: var(--s-3); }
-@media (max-width: 47.99em) {
-  .gd-filter .chips {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin-inline: calc(-1 * var(--gutter));
-    padding: 2px var(--gutter);
-  }
-  .gd-filter .chips::-webkit-scrollbar { display: none; }
-  .gd-filter .chip { min-height: var(--tap); flex: none; }
-}
+/* phones: the filter chips wrap (the shared .chips) instead of scrolling past the screen edge, so every chip and its
+   focus ring stay in view */
 .gd-filter .toolbar__count { margin: 0; }
 .gd-index { padding-bottom: var(--s-14); }
 .gd-group { padding-top: var(--s-8); }
-.gd-group > h2 { font-size: var(--fs-xl); padding-bottom: var(--s-2); border-bottom: 1px solid var(--line-strong); }
+.gd-group > h2 { padding-bottom: var(--s-2); border-bottom: 1px solid var(--line-strong); }
 .gd-group > h2 small { margin-left: 0.5rem; font-family: var(--font); font-size: var(--fs-sm); font-weight: 400; letter-spacing: 0; color: var(--ink-3); }
 
 /* fixed layout: the category and date columns start at the same x in every group table */
@@ -185,16 +160,11 @@
   .gd-list tr { padding-block: var(--s-3) var(--s-2); border-bottom: 1px solid var(--line); }
   .gd-list tbody th { display: block; padding: 0 0 var(--s-1); border: 0; }
   .gd-list td { display: inline; width: auto; padding: 0; border: 0; font-size: var(--fs-sm); line-height: 2; white-space: normal; text-align: left; }
-  .gd-list td a { padding-block: 0.85rem; } /* 44px hit area; inline padding does not move the line */
   .gd-list td.gd-list__cat { margin-right: 0.6rem; }
   .gd-list td.gd-list__date { white-space: nowrap; }
 }
 
 /* ---------------------------------------------------------------- shared by the AI hub and research updates */
-@media (pointer: coarse) {
-  /* inline padding enlarges the hit area of the small trust-strip links without moving the lines */
-  .gd-head .trustline a, .gd-hub .trustline a { padding-block: 0.85rem; }
-}
 .gd-answer { padding-bottom: var(--s-8); }
 .gd-answer .facts { margin-top: var(--s-8); max-width: 62rem; }
 .gd-prod { display: inline-flex; align-items: center; gap: 0.6rem; min-height: var(--tap); color: var(--ink); font-weight: 600; }
@@ -204,7 +174,7 @@
 .gd-limits li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 0.3rem; height: 0.3rem; border-radius: 50%; background: var(--ink-3); }
 .gd-two { display: grid; gap: var(--s-10); grid-template-columns: minmax(0, 1fr); align-items: start; }
 @media (min-width: 62em) { .gd-two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-14); } }
-.gd-subhead { margin-top: var(--s-10); font-family: var(--font); font-size: var(--fs-lg); font-weight: 650; letter-spacing: -0.01em; }
+.gd-subhead { margin-top: var(--s-10); font-family: var(--font); font-size: var(--fs-lg); font-weight: 600; letter-spacing: -0.01em; }
 .gd-subhead--flush { margin-top: 0; margin-bottom: var(--s-4); }
 .gd-sub { margin: var(--s-2) 0 var(--s-3); max-width: 70ch; color: var(--ink-2); }
 .gd-disclaimer { margin-top: var(--s-8); }
@@ -217,7 +187,6 @@
 @media (min-width: 48em) { .gd-kinds { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .gd-kinds li { padding-top: var(--s-4); border-top: 2px solid var(--ink); }
 .gd-kinds__n { display: block; margin-bottom: var(--s-2); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand-ink); }
-.gd-kinds h3 { font-size: var(--fs-xl); }
 .gd-kinds p { margin-top: var(--s-2); color: var(--ink-2); }
 
 .gd-aitable th, .gd-aitable td { padding-block: 0.5rem; }
@@ -227,7 +196,7 @@
 .gd-aitable tbody th a:hover { color: var(--brand); }
 .gd-aitable tr.is-group th { padding-top: var(--s-5); }
 .gd-aitable tbody tr:not(.is-group):hover > * { background: var(--bg-subtle); }
-.gd-aitable tfoot th, .gd-aitable tfoot td { border-top: 1px solid var(--line-strong); border-bottom: 0; font-weight: 650; color: var(--ink); }
+.gd-aitable tfoot th, .gd-aitable tfoot td { border-top: 1px solid var(--line-strong); border-bottom: 0; font-weight: 600; color: var(--ink); }
 .gd-aitable td.num { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 .gd-aitable td.gd-zero { color: var(--ink-3); font-weight: 400; }
 @media (max-width: 47.99em) {
@@ -250,6 +219,8 @@
 
 .gd-agents th:first-child { width: 15rem; }
 .gd-agents td:last-child { width: 34%; }
+/* the small source links are at least 24px tall at every width (WCAG 2.5.8); more on phones and touch below */
+.gd-agents tbody th small a, .gd-agents td small a { display: inline-block; padding-block: 0.3rem; }
 @media (max-width: 61.99em) {
   .gd-agents, .gd-agents tbody { display: block; }
   .gd-agents thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
@@ -258,7 +229,8 @@
   .gd-agents td { margin-top: var(--s-2); }
   .gd-agents td:last-child { width: auto; }
   .gd-agents td[data-l]::before { content: attr(data-l); display: block; margin: var(--s-3) 0 0.3rem; font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
-  .gd-agents tbody th small a, .gd-agents td small a { display: inline-block; padding-block: 0.4rem; }
+  /* each source link is on its own line: inline-block padding spreads the lines, so the boxes never overlap */
+  .gd-agents tbody th small a, .gd-agents td small a { padding-block: 0.4rem; }
   @media (pointer: coarse) {
     .gd-agents tbody th small a, .gd-agents td small a { padding-block: 0.85rem; }
     .gd-agents tbody th small { margin-top: 0; }
@@ -282,7 +254,7 @@
 
 .gd-doccols { display: grid; gap: var(--s-8) var(--s-10); grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 62em) { .gd-doccols { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.gd-doccols h3 { font-family: var(--font); font-size: var(--fs-lg); font-weight: 650; letter-spacing: -0.01em; }
+.gd-doccols h3 { font-family: var(--font); font-size: var(--fs-lg); font-weight: 600; letter-spacing: -0.01em; }
 .gd-doccols p { margin: var(--s-1) 0 var(--s-2); font-size: var(--fs-sm); color: var(--ink-3); }
 
 /* ---------------------------------------------------------------- research updates */

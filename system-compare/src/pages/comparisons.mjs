@@ -13,6 +13,10 @@ export function routes(ctx) {
   return [{ path: ctx.url.comparisons(), render }];
 }
 
+// Pairs listed per category before the rest folds into "N more …" (every link stays in the HTML; the filter
+// opens the folded lists while it is on — js/directory.js).
+const SHOWN = 1;
+
 function render(ctx) {
   const path = ctx.url.comparisons();
   const live = ctx.liveHead(path) || {};
@@ -88,7 +92,15 @@ function render(ctx) {
           ${categories.map(
             ({ category: c, items }) => html`<div class="ix-cmp__cat" data-ix-cat="${c.id}">
               <h3><a href="${ctx.url.category(c.id)}">${c.name}</a></h3>
-              <ul class="linklist">${items.map(row)}</ul>
+              <ul class="linklist">${items.slice(0, SHOWN).map(row)}</ul>
+              ${
+                items.length > SHOWN
+                  ? html`<details class="ix-cmp__more" data-ix-fold>
+                      <summary>${items.length - SHOWN} more ${items.length - SHOWN === 1 ? 'comparison' : 'comparisons'}<span class="sr-only"> in ${c.name}</span></summary>
+                      <ul class="linklist">${items.slice(SHOWN).map(row)}</ul>
+                    </details>`
+                  : ''
+              }
             </div>`,
           )}
         </div>
@@ -112,12 +124,13 @@ function render(ctx) {
       a: 'Yes. The compare tool puts up to four products from the same category side by side on that category’s checklist, with scores, prices and sources.',
     },
   ];
-  const faq = html`<section class="section ix-faq" aria-label="Questions about the comparisons">
+  // a plain wrapper: the FAQ inside is already a section labelled by its own heading (one landmark, one name)
+  const faq = html`<div class="section ix-faq">
     <div class="wrap wrap--narrow">
       ${ui.faq(ctx, faqItems, { heading: 'Questions about the comparisons', open: 0 })}
       <p class="ix-after"><a class="btn btn--ghost" href="/compare/">Compare any two products</a></p>
     </div>
-  </section>`;
+  </div>`;
 
   const indexable = all.filter((x) => ctx.isIndexable(ctx.url.vs(x.id)));
   const categoryIds = groups.flatMap((g) => g.categories.map((c) => c.category.id));

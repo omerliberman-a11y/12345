@@ -38,6 +38,9 @@ function render(ctx, category) {
   const nScored = s.scored;
   const nPriced = prices.filter((p) => p.hasAmount).length;
   const nAi = ranked.filter((v) => ['native', 'agent'].includes(v.ai?.level)).length;
+  // Nothing scored yet (every product is under the 80% gate): the list is not a ranking. It is titled
+  // "{things}", has no place column, offers no zero-count filter and sorts by the share checked (js/table.js).
+  const unscored = nScored === 0;
 
   // ---- head
   const scoredList = ranked.filter((v) => !ctx.fit(category.id, v.id).isPending);
@@ -101,12 +104,11 @@ function render(ctx, category) {
   </header>
   <div class="wrap cat-answer">
     ${ui.answer(ctx, quick)}
-    ${ui.facts(glance)}
   </div>`;
 
   const nav = ui.subnav(
     [
-      { href: '#products', label: 'Ranking' },
+      { href: '#products', label: unscored ? 'Products' : 'Ranking' },
       { href: '#features', label: 'Capabilities' },
       { href: '#costs', label: 'Costs' },
       { href: '#buying-guide', label: 'How to choose' },
@@ -118,10 +120,11 @@ function render(ctx, category) {
 
   // ---------------------------------------------------------------- ranking table + filters
   const mustGroups = GROUP_ORDER.map((gid) => ({ gid, label: groupMeta[gid].label, items: features.filter((f) => f.group === gid) })).filter((g) => g.items.length);
-  const controls = html`<div class="toolbar" data-table-controls="products" data-nosnippet>
+  // one row on wide screens: filters, then the live count and the sort; a filter that would match nothing is not offered
+  const controls = html`<div class="toolbar cat-toolbar" data-table-controls="products"${attrs({ 'data-sort-default': unscored ? 'cov' : null })} data-nosnippet>
     <div class="chips" role="group" aria-label="Filter products">
-      <button type="button" class="chip" data-filter="scored" aria-pressed="false">Scored only <span class="n">${nScored}</span></button>
-      <button type="button" class="chip" data-filter="priced" aria-pressed="false">Public price <span class="n">${nPriced}</span></button>
+      ${nScored ? html`<button type="button" class="chip" data-filter="scored" aria-pressed="false">Scored only <span class="n">${nScored}</span></button>` : ''}
+      ${nPriced ? html`<button type="button" class="chip" data-filter="priced" aria-pressed="false">Public price <span class="n">${nPriced}</span></button>` : ''}
       ${nAi ? html`<button type="button" class="chip" data-filter="ai" aria-pressed="false">Native AI or agents <span class="n">${nAi}</span></button>` : ''}
       <details class="pop mustpop" data-pop>
         <summary class="chip">${ui.icon('filter')} Must-have capabilities <span class="n" data-must-count hidden></span></summary>
@@ -139,33 +142,44 @@ function render(ctx, category) {
       </details>
       <button type="button" class="chip chip--link" data-filter-reset hidden>Clear filters</button>
     </div>
-    <label class="toolbar__sort"><span class="sr-only">Sort products</span>
-      <select class="select select--sm" data-sort-select aria-label="Sort products">
-        <option value="score">Sort: score</option>
-        <option value="price">Sort: price, low to high</option>
-        <option value="name">Sort: name A–Z</option>
-      </select>
-    </label>
-  </div>
-  <p class="toolbar__count" role="status" aria-live="polite" data-count data-total="${s.total}"><b>${s.total}</b> ${things}</p>`;
+    <div class="cat-toolbar__end">
+      <p class="toolbar__count" role="status" aria-live="polite" data-count data-total="${s.total}"><b>${s.total}</b> ${things}</p>
+      <label class="toolbar__sort"><span class="sr-only">Sort products</span>
+        <select class="select select--sm" data-sort-select aria-label="Sort products">
+          ${unscored ? html`<option value="cov">Sort: share checked</option>` : html`<option value="score">Sort: score</option>`}
+          <option value="price">Sort: price, low to high</option>
+          <option value="name">Sort: name A–Z</option>
+        </select>
+      </label>
+    </div>
+  </div>`;
 
   const table = ui.productTable(
     ctx,
     category.id,
     ranked.map((vendor) => ({ vendor })),
-    // every price carries the date it was read (the source link is on the profile's pricing section)
-    { featureIndex: yesIndex, priceChecked: true, caption: `${category.name}: ${s.total} products ranked by documented-fit score` },
+    // every price carries the date it was read (the source link is on the profile's pricing section);
+    // with nothing scored there is no place to show and no score column to sort by
+    {
+      featureIndex: yesIndex,
+      priceChecked: true,
+      rank: !unscored,
+      sortable: !unscored,
+      caption: unscored ? `${category.name}: ${s.total} products, all score-pending` : `${category.name}: ${s.total} products ranked by documented-fit score`,
+    },
   );
 
+  // the "at a glance" figures follow the ranking (the answer above already names the leader and the pending count)
   const products = html`<section class="wrap cat-products" aria-labelledby="products-h">
     <div class="cat-products__head">
-      <h2 id="products-h">${category.name} ranking</h2>
+      <h2 id="products-h">${unscored ? things[0].toUpperCase() + things.slice(1) : `${category.name} ranking`}</h2>
       ${ui.scoreHelp(ctx)}
     </div>
     ${controls}
     ${table}
     <p class="empty" data-empty hidden><b>No product matches these filters.</b>Unverified support does not mean a product lacks a feature. <button type="button" class="btn btn--quiet btn--sm" data-filter-reset>Clear filters</button></p>
     ${ui.tableNote(ctx)}
+    <div class="cat-glance">${ui.facts(glance)}</div>
   </section>`;
 
   // ---------------------------------------------------------------- capability matrix

@@ -9,18 +9,35 @@ export const time = (ctx, iso, opts) => (iso ? html`<time datetime="${ctx.isoDat
 
 export const tag = (label, kind) => html`<span class="${cx('tag', kind && `tag--${kind}`)}">${label}</span>`;
 
-/** Vendor logo in a neutral frame. Falls back to initials when a logo is missing. */
-export function logo(ctx, vendor, { size, wide = false, lazy = true } = {}) {
+/** Aspect ratio from which a logo counts as "much wider than tall" (a long wordmark): in the small square tiles
+ *  (.logo--sm: tray chips, palette, sticky compare bar) it would render under ~10px tall, so the tile shows a
+ *  monogram instead. In product rows every logo sits on the landscape plate (.ptable .prod .logo). */
+export const WIDE_LOGO_RATIO = 2.5;
+const initialsOf = (name) => name.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+
+/**
+ * Vendor logo in a neutral frame. Falls back to initials when a logo is missing.
+ * Decorative by default (alt=""): every use prints the product name next to the logo, so a text alternative would
+ * make screen readers say the name twice. Pass { alt: true } (or a string) for a logo that stands alone.
+ * In the small tiles (size 'sm'), logos much wider than tall carry data-wide and a monogram shown instead.
+ */
+export function logo(ctx, vendor, { size, wide = false, lazy = true, alt = false } = {}) {
   const l = vendor.logo;
+  const altText = alt ? (typeof alt === 'string' ? alt : `${vendor.name} logo`) : '';
   // white/light artwork (surface 'dark' or 'brand-gradient') sits on the dark surface
   const cls = cx('logo', size && `logo--${size}`, (l?.surface === 'dark' || l?.surface === 'brand-gradient') && 'logo--dark', wide && l?.kind === 'wordmark' && 'logo--wide');
   if (!l?.path) {
-    const initials = vendor.name.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
-    return html`<span class="${cls}" aria-hidden="true"><span class="logo__fallback">${initials}</span></span>`;
+    return altText
+      ? html`<span class="${cls}" role="img" aria-label="${altText}"><span class="logo__fallback" aria-hidden="true">${initialsOf(vendor.name)}</span></span>`
+      : html`<span class="${cls}" aria-hidden="true"><span class="logo__fallback">${initialsOf(vendor.name)}</span></span>`;
   }
   const w = Math.round(l.width || 64);
   const h = Math.round(l.height || 64);
-  return html`<span class="${cls}"><img src="${l.path}" alt="${vendor.name} logo" width="${w}" height="${h}"${attrs({ loading: lazy ? 'lazy' : null, decoding: 'async' })}></span>`;
+  // only the small square tiles need the flag and the monogram (product rows use the landscape plate)
+  const isWide = size === 'sm' && (l.width || 64) / (l.height || 64) >= WIDE_LOGO_RATIO;
+  return html`<span class="${cls}"${attrs({ 'data-wide': isWide || null })}><img src="${l.path}" alt="${altText}" width="${w}" height="${h}"${attrs({ loading: lazy ? 'lazy' : null, decoding: 'async' })}>${
+    isWide ? html`<span class="logo__mono" aria-hidden="true">${initialsOf(vendor.name)}</span>` : ''
+  }</span>`;
 }
 
 // ------------------------------------------------------------------ score

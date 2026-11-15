@@ -145,12 +145,13 @@ function render(ctx) {
       a: 'It names the product with the highest documented-fit score in that category. Every product that shares the highest score counts, so a category can show several products tied. The score describes how much of the category checklist is documented in official sources; it is not a customer rating and no vendor pays for placement.',
     },
   ];
-  const faq = html`<section class="section ix-faq" aria-label="Questions about the categories">
+  // a plain wrapper: the FAQ inside is already a section labelled by its own heading (one landmark, one name)
+  const faq = html`<div class="section ix-faq">
     <div class="wrap wrap--narrow">
       ${ui.faq(ctx, faqItems, { heading: 'Questions about the categories', open: 0 })}
       <p class="ix-after"><a class="link-arrow" href="/faq/">All questions and answers</a></p>
     </div>
-  </section>`;
+  </div>`;
 
   const more = html`<section class="section" aria-labelledby="ix-more-h">
     <div class="wrap">

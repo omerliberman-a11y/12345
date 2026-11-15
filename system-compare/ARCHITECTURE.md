@@ -145,14 +145,35 @@ CSS building blocks: `.wrap`, `.wrap--narrow`, `.section`, `.section--tint`, `.s
 
 `SC.url(path)` · `SC.load(name)` → data from `/data/<name>.js` (e.g. `cat-crm`, `vendors`, `search-index`) ·
 `SC.shortlist.{get,has,toggle,remove,clear,replace,setPlan,compareUrl}` (localStorage `sc-us-shortlist`, same shape
-as the previous site) · `SC.toast(msg, actions)` · `SC.openSearch(q)` · `SC.el(spec, props, kids)` (build DOM
-with `textContent` — never `innerHTML` with data) · `SC.$`, `SC.$$`, `SC.store`, `SC.save`.
+as the previous site) · `SC.openSearch(q)` · `SC.el(spec, props, kids)` (build DOM with `textContent` — never
+`innerHTML` with data) · `SC.$`, `SC.$$`, `SC.store`, `SC.save`.
 Events: `sc:shortlist-updated`, `sc:comparison-add`, `sc:cost-calculation`.
+
+Messages and focus (keyboard and screen-reader users must be able to reach everything):
+- `SC.announce(text)` — one polite live region for status messages; use it instead of a toast for confirmations.
+- `SC.toast(msg, actions, { returnFocus, focus, after, say, ms })` — one toast at a time (a new one replaces the
+  old). A toast with actions takes focus on its first action, has a Close button, closes on Escape and never times
+  out while it has focus or hover; focus then returns to `returnFocus` (or the trigger). With `focus: false` and
+  `after: element` it sits in the tab order right after that element and stays until closed (the shortlist Undo).
+  No "added to your shortlist" toast is shown while the tray is visible: the tray and `SC.announce` confirm it.
+- `SC.float.open(anchor, node, { align: 'center' })` / `SC.float.ready(node)` (call once its content is in place:
+  focus moves into the popover) / `SC.float.close()` / `SC.float.anchor()` — the anchored, focus-managed popover
+  (class `.evpop`, role dialog). Tab past its last link continues after the trigger; Shift+Tab before its first
+  link closes it and returns to the trigger. Title it with `<p class="evpop__title">`, not a heading.
+- `SC.syncBottomPad()` keeps `scroll-padding-bottom` on `<html>` equal to the tray, consent panel or toast that is
+  showing, so a focused control is never hidden under them. `SC.focusAfter(el)` moves focus to the next focusable
+  element after `el`.
+- The hero search field opens the palette on click, typing, Enter, ArrowDown or `/` — never on focus — so Tab
+  passes through it. `a[role=button]` triggers (`data-search-open`, `data-menu-open`) answer to Space and carry
+  `aria-haspopup="dialog"` + `aria-expanded`.
+
 Any element with `data-shortlist="<vendorId>" data-category="<categoryId>" data-name="…"` is a working
 shortlist toggle. Any element with `data-score-pop="<categoryId>:<vendorId>"` opens the score breakdown
-("Why not 100?") — `ui.productTable` already does this for every score cell. `SC.float.open(anchor, node)` /
-`SC.float.close()` give you the same anchored popover (class `.evpop`) for your own evidence details. `data-search-open`, `data-copy="url"`, `data-pop` (popover `<details>`), `data-tabs`,
-`data-subnav`, `data-toc` are wired automatically.
+("Why not 100?") — `ui.productTable` already does this for every score cell. `data-search-open`,
+`data-copy="url"`, `data-pop` (popover `<details>`, closes when focus leaves it), `data-tabs`, `data-subnav`,
+`data-toc` and `data-mega` (closes when focus leaves it) are wired automatically. On category pages every
+capability-matrix cell button gets an accessible name built from its row and column headers
+("Pipedrive, Contacts and relationship records: Supported").
 
 Per-category data chunk `/data/cat-<id>.js` (see `src/gen/category-data.mjs`): features, and for every vendor
 its score, price, fit text and one evidence cell per feature `[status, note, verification, date, source]`.
