@@ -1,7 +1,7 @@
 // Shared HTML components. Every function takes ctx first and returns a Raw fragment (see html.mjs).
 // Styles live in src/assets/css/components.css — class names here and there must stay in sync.
 
-import { html, raw, attrs, cx, join } from './html.mjs';
+import { html, raw, attrs, cx, join, Raw } from './html.mjs';
 import { icon } from './layout.mjs';
 
 // ------------------------------------------------------------------ small pieces
@@ -13,13 +13,20 @@ export const tag = (label, kind) => html`<span class="${cx('tag', kind && `tag--
  *  (.logo--sm: tray chips, palette, sticky compare bar) it would render under ~10px tall, so the tile shows a
  *  monogram instead. In product rows every logo sits on the landscape plate (.ptable .prod .logo). */
 export const WIDE_LOGO_RATIO = 2.5;
+/** Product rows on phones use a compact plate beside the name (components.css: artwork box 3.5rem × 1.25rem, i.e.
+ *  56 × 20px). A wordmark this much wider than tall would render under 10px tall in it (56 / 5.6 = 10px; the margin
+ *  covers artwork whose file differs slightly from its recorded size), so on phones that row shows a monogram.
+ *  From XXWIDE_LOGO_RATIO even the tablet plate (artwork box about 82px wide) is too small: data-xwide="2". */
+export const XWIDE_LOGO_RATIO = 5.5;
+export const XXWIDE_LOGO_RATIO = 8;
 const initialsOf = (name) => name.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
 /**
  * Vendor logo in a neutral frame. Falls back to initials when a logo is missing.
  * Decorative by default (alt=""): every use prints the product name next to the logo, so a text alternative would
  * make screen readers say the name twice. Pass { alt: true } (or a string) for a logo that stands alone.
- * In the small tiles (size 'sm'), logos much wider than tall carry data-wide and a monogram shown instead.
+ * In the small tiles (size 'sm'), logos much wider than tall carry data-wide and a monogram shown instead; on the
+ * row plate (no size), very long wordmarks carry data-xwide and a monogram that phones show (data-xwide="2": tablets too).
  */
 export function logo(ctx, vendor, { size, wide = false, lazy = true, alt = false } = {}) {
   const l = vendor.logo;
@@ -33,10 +40,12 @@ export function logo(ctx, vendor, { size, wide = false, lazy = true, alt = false
   }
   const w = Math.round(l.width || 64);
   const h = Math.round(l.height || 64);
-  // only the small square tiles need the flag and the monogram (product rows use the landscape plate)
-  const isWide = size === 'sm' && (l.width || 64) / (l.height || 64) >= WIDE_LOGO_RATIO;
-  return html`<span class="${cls}"${attrs({ 'data-wide': isWide || null })}><img src="${l.path}" alt="${altText}" width="${w}" height="${h}"${attrs({ loading: lazy ? 'lazy' : null, decoding: 'async' })}>${
-    isWide ? html`<span class="logo__mono" aria-hidden="true">${initialsOf(vendor.name)}</span>` : ''
+  // the small square tiles flag every wordmark; the row plate (no size) only the very long ones, for phones
+  const ratio = (l.width || 64) / (l.height || 64);
+  const isWide = size === 'sm' && ratio >= WIDE_LOGO_RATIO;
+  const isXWide = !size && ratio >= XWIDE_LOGO_RATIO;
+  return html`<span class="${cls}"${attrs({ 'data-wide': isWide || null, 'data-xwide': isXWide ? (ratio >= XXWIDE_LOGO_RATIO ? '2' : true) : null })}><img src="${l.path}" alt="${altText}" width="${w}" height="${h}"${attrs({ loading: lazy ? 'lazy' : null, decoding: 'async' })}>${
+    isWide || isXWide ? html`<span class="logo__mono" aria-hidden="true">${initialsOf(vendor.name)}</span>` : ''
   }</span>`;
 }
 
@@ -166,7 +175,10 @@ export const sourceLink = (url, label = 'Source') =>
  * Each <tr> carries data-* used by js/table.js for instant sort + filter (never changes the score).
  */
 export function productTable(ctx, categoryId, rows, opts = {}) {
-  const { id = 'products', caption, rank = true, pickable = true, focalId, sortable = true, ai = true, featureIndex = null, lazyFrom = 6, action = null, actionLabel = '', actionClass = 'ptable__c-go', focalTag = 'You are comparing against this', priceChecked = false } = opts;
+  // lazyFrom: row logos from this row on load lazily — the default covers the rows a category page shows in its
+  // first 1440×900 screen (no lazy image in view) while a phone loads only what is within about 1.5 screens
+  // eagerIds (a Set): load exactly these rows' logos eagerly instead — for a table the script shows in another order
+  const { id = 'products', caption, rank = true, pickable = true, focalId, sortable = true, ai = true, featureIndex = null, lazyFrom = 4, eagerIds = null, action = null, actionLabel = '', actionClass = 'ptable__c-go', focalTag = 'You are comparing against this', priceChecked = false } = opts;
   const category = ctx.category(categoryId);
   const th = (key, label, cls, sortKey) =>
     sortable && sortKey
@@ -207,7 +219,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
           ${rank ? html`<td class="ptable__c-rank num">${s.place ? html`${s.tied ? html`<span class="sr-only">Tied </span>` : ''}${s.placeText}` : html`<span aria-hidden="true">–</span><span class="sr-only">Not ranked: score pending</span>`}</td>` : ''}
           <th scope="row" class="ptable__c-name">
             <a class="prod" href="${ctx.url.software(vendor.id)}">
-              ${logo(ctx, vendor, { lazy: i >= lazyFrom })}
+              ${logo(ctx, vendor, { lazy: eagerIds ? !eagerIds.has(vendor.id) : i >= lazyFrom })}
               <span class="prod__text">
                 <span class="prod__name">${vendor.name}</span>${s.recommended ? tag('Recommended', 'top') : ''}${vendor.id === focalId && focalTag ? tag(focalTag) : ''}
                 <span class="prod__fit">${note || vendor.bestFor}</span>
@@ -241,12 +253,22 @@ export function dated(value) {
     String(html`${value}`).replace(DATE_RE, (m, mon, day, year) => `<time datetime="${year}-${String(MON.indexOf(mon) + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}">${m}</time>`),
   );
 }
-/** Answer-first summary. `text` may be a Raw fragment with <strong>. */
-export const answer = (ctx, text, { label = 'Quick answer', meta } = {}) =>
-  html`<div class="answer"><span class="answer__label">${label}</span><p>${dated(text)}</p>${meta ? html`<p class="fineprint">${meta}</p>` : ''}</div>`;
+/** Answer-first summary. `text` may be a Raw fragment with <strong>.
+ *  { more: true }: on phones the passage is clamped to three lines with a "Show the full answer" disclosure under it
+ *  (CSS only, components.css). The whole text stays in the HTML and in the accessibility tree; without :has() support
+ *  nothing is clamped. */
+export const answer = (ctx, text, { label = 'Quick answer', meta, more = false } = {}) =>
+  html`<div class="${cx('answer', more && 'answer--more')}"><span class="answer__label">${label}</span><p>${dated(text)}</p>${meta ? html`<p class="fineprint">${meta}</p>` : ''}${
+    more ? html`<details class="answer__more"><summary><span class="answer__more-open">Show the full answer</span><span class="answer__more-close">Show less</span></summary></details>` : ''
+  }</div>`;
 
-/** Trust strip under a title. items: array of strings / Raw fragments. */
-export const trustline = (items) => html`<p class="trustline">${items.filter(Boolean).map((i) => html`<span>${i}</span>`)}</p>`;
+/** Trust strip under a title. items: array of strings / Raw fragments; an item given as { more: content } is part of
+ *  the strip on wide screens and visually collapsed on phones when the strip carries the class trustline--compact
+ *  (screen readers still read it). */
+export const trustline = (items, { compact = false } = {}) =>
+  html`<p class="${cx('trustline', compact && 'trustline--compact')}">${items
+    .filter(Boolean)
+    .map((i) => (i && !(i instanceof Raw) && typeof i === 'object' && 'more' in i ? html`<span class="trustline__more">${i.more}</span>` : html`<span>${i}</span>`))}</p>`;
 
 export const sectionHead = (title, { id, sub, link, level = 2 } = {}) => {
   const h = raw(`h${level}`);

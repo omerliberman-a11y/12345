@@ -74,7 +74,7 @@ function render(ctx, vendor) {
   const nameWords = name.split(/[^A-Za-z0-9.]+/).filter((w) => w.length >= 3);
   const named = nameWords.some((w) => lead.slice(0, 40).includes(w)) ? lead : `${name}: ${A.lowerFirst(lead)}`;
   const fact = s.pending ? `Score pending in ${primary.name}` : `${s.value}/100 documented fit in ${primary.name}`;
-  const factPrice = p.hasAmount ? `, from ${p.phrase}` : '';
+  const factPrice = p.hasAmount ? `, from ${A.pricePhrase(p)}` : '';
   const checkedMon = monYear(ctx.maxDate(vendor.checkedAt, pricing.verifiedAt));
   const description = describe([
     `${named}. ${fact}${factPrice}. Checked ${checkedMon}.`,
@@ -105,7 +105,7 @@ function render(ctx, vendor) {
   // the H1 (software.css). Wide screens show the decision block itself next to the title, and hide this line.
   const glanceLine = html`<p class="sw-glance" aria-hidden="true">${
     s.pending ? html`<span class="score">Score pending</span> in ${primary.name}` : html`<span class="score"><b>${s.value}</b>/100</span> documented fit in ${primary.name}`
-  }<span class="sw-glance__sep"> · </span><span class="price">${p.hasAmount ? html`from <b>${p.headline}</b>${p.unit ? ` ${p.unit}` : ''}` : p.headline}</span></p>`;
+  }<span class="sw-glance__sep"> · </span><span class="price">${p.hasAmount ? html`from <b>${p.headline}</b>${p.unitPhrase ? ` ${A.proseUnit(p.unitPhrase)}` : ''}` : p.headline}</span></p>`;
   const hero = html`<header class="wrap sw-hero">
     <div class="sw-hero__main">
       <div class="sw-hero__id">
@@ -116,14 +116,19 @@ function render(ctx, vendor) {
       <ul class="sw-cats" aria-label="Categories and published rank">${cats.map(chip)}</ul>
     </div>
     <div class="sw-hero__foot">
-      ${ui.trustline([
-        html`Checked ${ui.time(ctx, vendor.checkedAt)}`,
-        html`<a href="#evidence">${plural(vendor.sources.length, 'official source')}</a>`,
-        'Desk research, not a hands-on test',
-        html`<a href="/methodology/">How we score</a>`,
-      ])}
+      ${ui.trustline(
+        [
+          html`Checked ${ui.time(ctx, vendor.checkedAt)}`,
+          html`<a href="#evidence">${plural(vendor.sources.length, 'official source')}</a>`,
+          // phones: said in the answer's note, which the "Show the full answer" disclosure opens
+          { more: 'Desk research, not a hands-on test' },
+          html`<a href="/methodology/">How we score</a>`,
+        ],
+        { compact: true },
+      )}
       ${ui.answer(ctx, quick, {
         meta: html`The documented-fit score is the share of the category checklist documented in official sources. It is not a customer rating or a hands-on test. <a href="/methodology/">How we score</a>`,
+        more: true,
       })}
     </div>
     ${glanceLine}

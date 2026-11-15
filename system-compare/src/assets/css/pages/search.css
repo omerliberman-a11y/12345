@@ -2,6 +2,10 @@
 .srch__field { margin-top: var(--s-5); max-width: 44rem; }
 .srch__field .searchfield kbd { display: none; }
 .srch { padding-bottom: var(--s-14); }
+/* no layout shift when results arrive: the block keeps its own top edge (a new formatting context, so the first
+   section's margin never moves it) and reaches below the fold (it starts at least 21rem down: header, title, field),
+   so the footer is never painted in view and then pushed away */
+.js .srch { display: flow-root; min-height: calc(100svh - 21rem); }
 .srch h2 { font-family: var(--font); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin: var(--s-8) 0 var(--s-2); }
 .srch__list { max-width: 52rem; }
 .srch__list li { border-bottom: 1px solid var(--line); }

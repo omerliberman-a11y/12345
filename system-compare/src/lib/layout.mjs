@@ -273,11 +273,8 @@ ${raw(site.verificationMetaHtml)}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-latin.woff2" crossorigin>
-<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/rubik-latin.woff2" crossorigin>
 ${(page.preload || []).map((p) => html`<link rel="preload"${attrs(p)}>`)}
-<link rel="stylesheet" href="${ctx.asset('site.css')}">
-${(ctx.stylesFor ? ctx.stylesFor(route.module, bodyStr, page.styles) : []).map((u) => html`<link rel="stylesheet" href="${u}">`)}
+${(ctx.stylesFor ? ctx.stylesFor(route.module, bodyStr, page.styles) : [ctx.asset('site.css')]).map((u) => html`<link rel="stylesheet" href="${u}">`)}
 <link rel="prefetch" as="script" href="${ctx.asset('js/search.js')}" id="sc-search-engine">
 <script>${raw(EARLY_JS)}</script>
 <script type="application/ld+json">${jsonForScript({ '@context': 'https://schema.org', '@graph': graph })}</script>

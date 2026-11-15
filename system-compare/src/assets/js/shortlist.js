@@ -186,7 +186,12 @@
       if (waits.length) Promise.all(waits).then(ready, ready); else ready();
     }
     if (!list.ids.length) return done(null, [], '');
-    if (!list.category || scored.indexOf(list.category) < 0) return done(null, [], 'category');
+    if (!list.category || scored.indexOf(list.category) < 0) {
+      // every page repairs such a list (core.js: it drops it, or finds the category of a list saved without one);
+      // the first time, wait for that check so that this page shows its outcome
+      if (!view.waited && SC.shortlist.ready) { view.waited = true; SC.shortlist.ready().then(render, render); return; }
+      return done(null, [], 'category');
+    }
     SC.load('cat-' + list.category).then(function (data) {
       if (my !== seq) return;
       var known = {};
@@ -199,6 +204,13 @@
   }
 
   function nameOf(id, byId) { return (byId[id] && byId[id].n) || (view.names && view.names[id] && view.names[id][0]) || id; }
+  function droppedText(k) { return k === 1 ? 'One saved product is no longer listed in this category and was removed from the shortlist.' : k + ' saved products are no longer listed in this category and were removed from the shortlist.'; }
+  var works = null;
+  /** Can this browser keep data for this site? (Asked once, with a key written and removed at once.) */
+  function storageWorks() {
+    if (works === null) works = SC.save('sc-us-storage-check', 1) && SC.save('sc-us-storage-check', null);
+    return works;
+  }
   function draw(notes, problem) {
     var data = view.data, ids = view.ids, n = ids.length, byId = {};
     if (data) data.vendors.forEach(function (v) { byId[v.id] = v; });
@@ -216,6 +228,10 @@
       if (n >= 2) { compareBtn.textContent = 'Compare (' + n + ')'; compareBtn.setAttribute('href', SC.shortlist.compareUrl(o)); compareBtn.className = 'btn'; }
       else { compareBtn.textContent = 'Add one more to compare'; compareBtn.setAttribute('href', SC.url('/categories/' + data.id + '/')); compareBtn.className = 'btn btn--ghost'; }
       costBtn.setAttribute('href', SC.url('/tools/cost/?scope=' + data.id + ids.slice(0, 3).map(function (id, i) { return '&' + 'abc'[i] + '=' + id + (view.plans[id] ? '&offer_' + 'abc'[i] + '=' + encodeURIComponent(view.list.plans[id]) : ''); }).join('')));
+      // the calculator compares up to three products: it says so when it opens with the first three of four
+      // (cost.js); the button's name says it too (the visible label stays short enough for a 320px screen)
+      if (n > 3) costBtn.setAttribute('aria-label', 'Compare costs of the first three products (the calculator compares up to three)');
+      else costBtn.removeAttribute('aria-label');
       $('[data-sl-share]', app).disabled = n < 2;
 
       var rows = ids.map(function (id) {
@@ -263,7 +279,12 @@
     var msg = '';
     if (problem === 'load') msg = 'Your saved products are still in this browser, but their details could not be loaded. Refresh to try again.';
     else if (problem === 'category') msg = 'A saved list from an earlier version of this site could not be shown here. Use “Clear saved list” to start a new one.';
-    else if (problem && problem.indexOf('dropped:') === 0) msg = problem.slice(8) === '1' ? 'One saved product is no longer listed in this category and was removed from the shortlist.' : problem.slice(8) + ' saved products are no longer listed in this category and were removed from the shortlist.';
+    else if (problem && problem.indexOf('dropped:') === 0) msg = droppedText(Number(problem.slice(8)));
+    // what the repair on an earlier page removed (core.js); it stays explained here until the next action
+    var note = SC.shortlist.repairNote ? SC.shortlist.repairNote() : null;
+    if (note) view.repaired = note;
+    if (!msg && view.repaired) msg = view.repaired.all ? 'A saved list from an earlier version of this site could not be shown here and was removed.' : droppedText(view.repaired.n);
+    if (!msg && !n && !storageWorks()) msg = 'This browser is blocking saved data, so a shortlist and notes cannot be kept here. Allow this site to store data to keep them.';
     if (msg) setState(n ? 'list' : 'empty', msg);
     else setState(n ? 'list' : 'empty', view.said || '', true); // what the last action did (shown by its toast)
     var stale = $('[data-sl-stale]', app);
@@ -300,7 +321,7 @@
     var t = e.target.closest ? e.target.closest('button, a') : null;
     if (!t || !app.contains(t)) return;
     var snap, id, name, listTop = function () { return heading('#sl-h') || heading('#sl-empty-h'); };
-    if (!t.hasAttribute('data-sl-share') && !t.hasAttribute('data-sl-csv') && !t.hasAttribute('data-sl-print')) view.said = '';
+    if (!t.hasAttribute('data-sl-share') && !t.hasAttribute('data-sl-csv') && !t.hasAttribute('data-sl-print')) { view.said = ''; view.repaired = null; }
     if (t.hasAttribute('data-remove')) {
       // Focus stays in the list (the next row's Remove button); the status line says what happened, and the
       // Undo message sits in the tab order right after the list until it is closed or replaced.

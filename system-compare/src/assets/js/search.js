@@ -12,7 +12,13 @@
  *   "cheap crm" / "best crm"     → sort by price / by score
  *   "hubspt", "mailchmp"         → typo tolerance (product and category names only)
  *   "helpdesk", "newsletter"     → synonyms → category
+ *   "a vs b vs c", "compare a and b", "a or b", "a, b and c"
+ *                                → the published head-to-head (two products) or the compare tool (2–4)
+ *   "how we score", "corrections", "how do you make money"
+ *                                → the site's own page or FAQ answer as the best match
  *
+ * The index comes in two parts (src/gen/search-index.mjs): names, aliases and categories first, so the first
+ * results show quickly; descriptions, features and integrations second (extend()), which refines them.
  * Everything runs in the browser: search terms are never sent anywhere.
  */
 (function (root, factory) {
@@ -22,10 +28,27 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var STOP = toSet('a an the of in on to with and or for from by at is are be my our your that this it i we need want looking find get me can do does what which who how vs versus');
+  var STOP = toSet('a an the of in on to with and or for from by at is are be my our your you that this it i we need want looking find get me can do does what which who how why often much vs versus');
   var GENERIC = toSet('software tool tools app apps platform platforms system systems solution solutions program programs service services product products provider providers vendor vendors company companies business small online us usa');
-  // field weights: name, alias, category, feature, integration, best-for, description, AI capability, heading
-  var W = { n: 10, a: 9, c: 5, f: 3, i: 3, b: 2.5, d: 2, ai: 2, h: 1.5 };
+  // field weights: name, alias, the site's own question words (pages and FAQ answers; not used for typo
+  // matching), category, feature, integration, best-for, description, AI capability, heading
+  var W = { n: 10, a: 9, q: 9, c: 5, f: 3, i: 3, b: 2.5, d: 2, ai: 2, h: 1.5 };
+  // the previous site's limits: a query is read up to 120 characters and 20 words (the interfaces say so)
+  var MAX_CHARS = 120, MAX_WORDS = 20;
+  function capped(raw) {
+    return String(raw == null ? '' : raw).slice(0, MAX_CHARS).split(/\s+/).filter(Boolean).slice(0, MAX_WORDS).join(' ');
+  }
+  /** The address of an index entry from its type and id (the index stores an address only where it differs). */
+  function urlOf(t, id, c, pf) {
+    var c0 = c && c[0];
+    if (t === 'category') return '/categories/' + id + '/';
+    if (t === 'product') return pf ? '/software/' + id + '/' : c0 ? '/categories/' + c0 + '/#supplier-' + id : '';
+    if (t === 'comparison') return '/vs/' + id + '/';
+    if (t === 'guide') return '/guides/' + id + '/';
+    if (t === 'page') return id;
+    if (t === 'faq') return c0 ? '/categories/' + c0 + '/#faq' : '/faq/#' + String(id).replace(/^faq-/, '');
+    return '';
+  }
 
   function toSet(s) {
     var o = Object.create(null);
@@ -86,24 +109,38 @@
    * index = {
    *   cats: { id: [name, mode, count] },
    *   phrase: { "stem stem": [categoryId…] },
-   *   docs: [ { t: type, id, n: name, u: url, s: sub-line, c: [categoryIds], f: { n,a,c,f,i,b,d,ai,h: "tok tok" },
-   *             al: [normalised alias strings], sc: bestScore|null, am: amount|null, pu: price text, fr: 1 if free,
-   *             ai: level, pf: 1 if full profile, lg: logo path, pr: [idA, idB] for comparisons } ]
+   *   own: { "words as typed": categoryId } — for a phrase shared by several categories, the one whose own name
+   *        or synonym it is ("help desk" → customer-service), so that typing it exactly can open that category
+   *   key: fingerprint of the docs list (the second part of the index applies only to the same list),
+   *   docs: [ { t: type, id, n: name, u: url (only when urlOf() would differ), s: sub-line, c: [categoryIds],
+   *             f: { n,a,c,f,i,b,d,ai,h: "tok tok" }, al: [normalised alias strings], sc: bestScore|null,
+   *             am: amount|null, pu: price text, fr: 1 if free, ai: level, pf: 1 if full profile, lg: logo path,
+   *             pr: [idA, idB] for comparisons } ]
    * }
+   * part 2 (extend) = { key, x: [ { d, f, i, b, ai, h: "tok tok" } | 0 — one entry per doc, in the same order ] }
    */
   function create(index) {
     var docs = index.docs.map(function (d) {
       var f = {};
       Object.keys(d.f || {}).forEach(function (k) { f[k] = toSet(d.f[k]); });
       return {
-        type: d.t, id: d.id, name: d.n, url: d.u, sub: d.s || '', cats: d.c || [], f: f,
-        al: d.al || [], nameNorm: words(d.n).join(' '), nameKey: key(d.n),
+        type: d.t, id: d.id, name: d.n, url: d.u || urlOf(d.t, d.id, d.c, d.pf), sub: d.s || '', cats: d.c || [], f: f,
+        al: d.al || [], aq: d.aq || null, nameNorm: words(d.n).join(' '), nameKey: key(d.n),
         best: d.sc == null ? null : d.sc, amount: d.am == null ? null : d.am, priceText: d.pu || '', free: !!d.fr,
         ai: d.ai || null, profile: !!d.pf, logo: d.lg || '', dark: !!d.dk, wide: !!d.wd, pair: d.pr || null, mode: d.m || null, count: d.k || 0, cs: d.cs || null,
       };
     });
     var cats = index.cats;
     var phrase = index.phrase;
+    var own = index.own || {};
+    var api = { full: !index.key }; // an index without a key is complete (one file, as the build uses it)
+    /** Adds the second part of the index (descriptions, features, integrations). False when it does not belong. */
+    function extend(more) {
+      if (api.full || !more || more.key !== index.key || !more.x || more.x.length !== docs.length) return false;
+      more.x.forEach(function (f, i) { if (f) for (var k in f) docs[i].f[k] = toSet(f[k]); });
+      api.full = true;
+      return true;
+    }
 
     // fuzzy vocabulary: tokens of names and aliases only (never free prose), 4+ letters
     var vocab = Object.create(null);
@@ -170,6 +207,71 @@
       if (hits.some(function (h) { return h !== top && h.inName; })) return null;
       return top.x;
     }
+    /** Is the text exactly this product's name or one of its aliases ("hubspot", not "contact" for Constant Contact)? */
+    function isExactName(x, text) {
+      var q = words(text).join(' ');
+      return !!q && (x.nameNorm === q || x.al.indexOf(q) >= 0);
+    }
+    /** Do these words name a product or contain a category phrase ("attio", "crm", "email marketing",
+     *  "hubspot vs salesforce")? */
+    function namesSomething(text) {
+      var ws = words(text).filter(function (w) { return !STOP[w] && !GENERIC[w]; }), seq = ws.map(stem), n, i;
+      if (!seq.length) return false;
+      for (n = Math.min(4, seq.length); n >= 1; n--) for (i = 0; i + n <= seq.length; i++) if (phrase[seq.slice(i, i + n).join(' ')]) return true;
+      return !!resolveProduct(text) || ws.some(function (w) { return !!strictProduct(w); });
+    }
+    /** The one product these words name exactly (name or alias) or uniquely; never a category's own words ("email"). */
+    function strictProduct(text) {
+      var q = words(text).join(' '), exact = [];
+      if (!q) return null;
+      docs.forEach(function (x) { if (x.type === 'product' && (x.nameNorm === q || x.al.indexOf(q) >= 0)) exact.push(x); });
+      if (exact.length > 1) exact = exact.filter(function (x) { return x.profile; });
+      if (exact.length) return exact.length === 1 ? exact[0] : null;
+      var k = key(text);
+      return k && q.length >= 4 ? namedProduct(text, !!phrase[k]) : null; // "fin" is no product's start
+    }
+    var SEP = /(\s*,\s*|\s+(?:vs\.?|versus|v\.?|or|and|&|\/|compared (?:to|with)|against)\s+)/;
+    var SEP_AFTER_COMPARE = /(\s*,\s*|\s+(?:vs\.?|versus|v\.?|or|and|&|\/|with|to|compared (?:to|with)|against)\s+)/;
+    /**
+     * "a vs b vs c", "compare a and b", "a or b", "a, b and c" → two to four different products, or null. Around
+     * "vs" a name may be typed loosely (as in "a vs b"); around "and", "or" and commas each part must name one
+     * product exactly, so "email or sms" stays a search. A name that contains a separator ("Intercom and Fin")
+     * is kept whole.
+     */
+    function productList(s) {
+      var t = s.trim(), lead = /^compare\s+/.test(t);
+      if (lead) t = t.replace(/^compare\s+/, '');
+      var bits = t.split(lead ? SEP_AFTER_COMPARE : SEP), pieces = [], seps = [], loose = false, i;
+      if (bits.length < 3 || bits.length > 15) return null;
+      for (i = 0; i < bits.length; i++) {
+        if (i % 2) { seps.push(bits[i]); if (/\b(?:vs|versus|v|compared|against)\b/.test(bits[i])) loose = true; }
+        else if (!bits[i].trim()) return null;
+        else pieces.push(bits[i]);
+      }
+      var memo = {};
+      function named(a, b) {
+        var k = a + ':' + b;
+        if (!(k in memo)) {
+          var text = pieces[a];
+          for (var j = a + 1; j <= b; j++) text += seps[j - 1] + pieces[j];
+          memo[k] = loose && text.trim().length >= 4 ? resolveProduct(text) : strictProduct(text);
+        }
+        return memo[k];
+      }
+      // the longest name first, so that a whole name is never split at its own "and"
+      function from(a, used) {
+        if (a === pieces.length) return [];
+        for (var b = pieces.length - 1; b >= a; b--) {
+          var p = named(a, b);
+          if (!p || used.indexOf(p) >= 0) continue;
+          var rest = from(b + 1, used.concat([p]));
+          if (rest) return [p].concat(rest);
+        }
+        return null;
+      }
+      var list = from(0, []);
+      return list && list.length >= 2 && list.length <= 4 ? list : null;
+    }
     /** Is token t (or a word starting with it) in this token set? */
     function hasTok(set, t) {
       if (!set) return false;
@@ -212,8 +314,14 @@
     function parse(raw) {
       var q = { raw: raw, filters: {}, sort: null, intent: null, boost: {}, integration: null, suffix: null };
       var s = ' ' + fold(raw).toLowerCase().replace(/\s+/g, ' ').trim() + ' ';
-      var m, a, b;
-      if ((m = s.match(/^(.+?)\s+(?:vs\.?|versus|v\.?|compared (?:to|with)|against)\s+(.+)$/))) {
+      var m, a, b, typedAll = words(s).join(' ');
+      // the exact title of a published head-to-head ("Intercom and Fin vs Freshdesk") is that comparison
+      docs.forEach(function (x) {
+        if (q.intent || x.type !== 'comparison' || !x.pair || x.nameNorm !== typedAll) return;
+        var pa = byId('product', x.pair[0]), pb = byId('product', x.pair[1]);
+        if (pa && pb) q.intent = { kind: 'vs', a: pa, b: pb, cmp: x };
+      });
+      if (!q.intent && (m = s.match(/^(.+?)\s+(?:vs\.?|versus|v\.?|compared (?:to|with)|against)\s+(.+)$/))) {
         a = resolveProduct(m[1]); b = resolveProduct(m[2]);
         // one or two letters after "vs" are the start of a name ("pipedrive vs s"): unless they already point
         // at a product that can be compared with the first one, list the first product's comparisons instead
@@ -232,6 +340,12 @@
         a = resolveProduct(m[1]);
         if (a) { q.vsOf = a; s = ' ' + m[1] + ' '; }
       }
+      // "a vs b vs c", "compare a and b", "a or b", "a, b and c": two products are a head-to-head, more go to the tool
+      if (!q.intent && !q.vsOf) {
+        var many = productList(s);
+        if (many && many.length === 2) q.intent = { kind: 'vs', a: many[0], b: many[1] };
+        else if (many) q.intent = { kind: 'multi', items: many };
+      }
       if ((m = s.match(/(?:under|below|less than|up to|max(?:imum)?|<)\s*\$?\s*(\d+(?:\.\d+)?)|\$\s*(\d+(?:\.\d+)?)\s*(?:or less|max)/))) {
         q.filters.maxPrice = Number(m[1] || m[2]); s = s.replace(m[0], ' ');
       }
@@ -244,8 +358,13 @@
       }
       if ((m = s.match(/\b(?:integrat\w*|works|connects?|sync\w*) with\s+([a-z0-9 .]+?)\s*$/)) || (m = s.match(/^\s*([a-z0-9 .]+?)\s+(?:integrations?|connectors?|plugins?)\s*$/))) q.integration = m[1].trim();
       if (/\b(how to|guide|checklist|choose|buying|migrate|migration)\b/.test(s)) q.boost.guide = 3;
-      if (/\b(pricing|price|cost|plans?)\s*$/.test(s)) { q.suffix = 'pricing'; s = s.replace(/\b(pricing|price|cost|plans?)\s*$/, ' '); }
-      if (/\b(reviews?|rating|score)\s*$/.test(s)) { q.suffix = 'score'; s = s.replace(/\b(reviews?|rating|score)\s*$/, ' '); }
+      // "attio pricing", "crm score": only when a product or category is left to apply it to — "score", "how we
+      // score" and "pricing" on their own are questions about the site, answered by its pages
+      [['pricing', /\b(pricing|price|cost|plans?)\s*$/], ['score', /\b(reviews?|rating|score)\s*$/]].forEach(function (x) {
+        if (!x[1].test(s)) return;
+        var rest = s.replace(x[1], ' ');
+        if (namesSomething(rest)) { q.suffix = x[0]; s = rest; }
+      });
       var all = words(s).filter(function (w) { return !STOP[w]; });
       q.soft = all.filter(function (w) { return GENERIC[w]; }).map(stem);
       q.terms = all.filter(function (w) { return !GENERIC[w]; }).map(stem);
@@ -271,11 +390,25 @@
       return null;
     }
 
+    /** Field weight of the best exact or prefix match of token t in doc x (0: none). */
+    function fieldScore(x, t) {
+      var best = 0, fk, set, w, u;
+      for (fk in x.f) {
+        set = x.f[fk]; w = W[fk] || 1;
+        if (set[t]) { if (w > best) best = w; }
+        else if (t.length >= 3 && w * 0.8 > best) { for (u in set) { if (u.indexOf(t) === 0) { best = w * 0.8; break; } } }
+      }
+      return best;
+    }
+    /** The site's own pages and site-wide FAQ answers (method, money, corrections …), not category FAQs. */
+    function isSite(x) { return x.type === 'page' || (x.type === 'faq' && !(x.cats && x.cats.length)); }
+    function listText(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
+
     function query(raw) {
-      raw = String(raw || '').slice(0, 120);
+      raw = capped(raw);
       var q = parse(raw), res = [], top = [];
       if (q.intent && q.intent.kind === 'vs') {
-        var a = q.intent.a, b = q.intent.b, published = null;
+        var a = q.intent.a, b = q.intent.b, published = q.intent.cmp || null;
         docs.forEach(function (x) { if (!published && x.type === 'comparison' && x.pair && x.pair.indexOf(a.id) >= 0 && x.pair.indexOf(b.id) >= 0) published = x; });
         if (published) top.push(ext(published, { why: 'Head-to-head comparison' }));
         else {
@@ -284,6 +417,16 @@
           else top.push({ type: 'notice', name: a.name + ' and ' + b.name + ' are researched in different categories', url: a.url, sub: 'Open each profile to compare them yourself' });
         }
         top.push(ext(a), ext(b));
+      }
+      if (q.intent && q.intent.kind === 'multi') {
+        // three or four products: the compare tool in the scored category they all share
+        var its = q.intent.items, nms = its.map(function (x) { return x.name; });
+        var common = its.every(function (x) { return x.profile; }) ? its[0].cats.filter(function (id) {
+          return cats[id] && cats[id][1] === 's' && its.every(function (x) { return x.cats.indexOf(id) >= 0; });
+        }) : [];
+        if (common.length) top.push({ type: 'compare', id: 'compare:' + its.map(function (x) { return x.id; }).join('+'), name: nms.join(' vs '), url: '/compare/?scope=' + common[0] + its.map(function (x, i) { return '&' + 'abcd'[i] + '=' + x.id; }).join(''), sub: 'Side-by-side comparison in ' + cats[common[0]][0], why: 'Live comparison' });
+        else top.push({ type: 'notice', name: listText(nms) + ' are not researched in one category', url: its[0].url, sub: 'Open each profile to compare them yourself' });
+        its.forEach(function (x) { top.push(ext(x)); });
       }
       if (q.intent && q.intent.kind === 'alternatives') {
         var f = q.intent.a;
@@ -303,13 +446,17 @@
       // The whole query names one product ("hubspot", "pipedrive v"): it, its published comparisons and its
       // alternatives page lead the results.
       var plain = !q.intent && !q.suffix && !q.sort && !q.integration && q.filters.maxPrice == null && !q.filters.free && req.length > 0;
+      var typed = words(raw).join(' ');
       var focus = q.vsOf || (plain ? namedProduct(q.termWords.join(' '), strongCat) : null);
+      // ... unless the words are exactly the title of one of the site's own pages: "contact" is the Contact page,
+      // not a part of "Constant Contact"
+      if (focus && !q.vsOf && !isExactName(focus, q.termWords.join(' ')) && docs.some(function (x) { return isSite(x) && (x.nameKey === qn || (x.aq && x.aq.indexOf(typed) >= 0)); })) focus = null;
       // Products that match only because they list the named product or service as an integration go into
       // their own small group ("Works with HubSpot"), unless the query is a category's own name ("crm").
       var topCatDoc = strongCat ? byId('category', strongCat) : null;
       var viaOk = !q.integration && req.length > 0 && !(topCatDoc && req.every(function (t) { return hasTok(topCatDoc.f.n, t); }));
       docs.forEach(function (x) {
-        var s = 0, matched = 0, kinds = {}, t, best, kind, fk, set, w, u, i, fz;
+        var s = 0, matched = 0, titled = 0, kinds = {}, t, best, kind, fk, set, w, u, i, fz;
         for (var ti = 0; ti < req.length; ti++) {
           t = req[ti]; best = 0; kind = '';
           for (fk in x.f) {
@@ -317,6 +464,7 @@
             if (set[t]) { if (w > best) { best = w; kind = 'exact'; } }
             else if (t.length >= 3 && w * 0.8 > best) { for (u in set) { if (u.indexOf(t) === 0) { best = w * 0.8; kind = 'prefix'; break; } } }
           }
+          if (best >= W.a * 0.8) titled++; // in the name or the keywords (nothing else weighs as much)
           if (!best && x.type !== 'category') { for (i = 0; i < catHits.length; i++) if (x.cats.indexOf(catHits[i]) >= 0) { best = W.c * 0.7; kind = 'synonym'; break; } }
           if (!best && x.type === 'category' && q.cats[x.id] != null) { best = W.a * 0.9; kind = 'synonym'; }
           if (!best) { fz = fuzzy(t); for (i = 0; i < fz.length; i++) if (x.f.n[fz[i][0]] || (x.f.a && x.f.a[fz[i][0]])) { best = W.n * (fz[i][1] === 1 ? 0.5 : 0.35); kind = 'fuzzy'; break; } }
@@ -334,7 +482,9 @@
         }
         if (!passes(x)) return;
         if (x.type === 'category' && q.cats[x.id] != null) s += 40 * q.cats[x.id] + (x.mode === 's' ? 4 : 0);
-        if (qn && x.nameKey === qn) s += 100; else if (qn && x.nameKey.indexOf(qn) === 0) s += 30;
+        if (qn && x.nameKey === qn) s += 100;
+        else if (x.aq && x.aq.indexOf(typed) >= 0) s += 100; // one of the site's own phrases, typed exactly ("why not 100")
+        else if (qn && x.nameKey.indexOf(qn) === 0) s += 30;
         q.soft.forEach(function (sf) { for (var k2 in x.f) if (x.f[k2][sf]) { s += 0.5; break; } });
         if (x.type === 'product') s += ((x.best || 0) / 100) * 3 + (x.profile ? 1.5 : 0);
         // The whole query names a category ("crm", "help desk"): list that category's products in
@@ -343,11 +493,33 @@
         if (x.type === 'guide') s += q.boost.guide || 0;
         if (q.integration && x.type === 'product' && x.f.i) { if (toks(q.integration).every(function (it) { return x.f.i[it]; })) s += 6; }
         var r = ext(x); r.score = s; r.kinds = Object.keys(kinds).join('+');
+        if (titled === req.length && isSite(x)) r.titled = 1;
         if (viaOk && x.type === 'product' && x !== focus && matched === req.length && x.f.i &&
             !catHits.some(function (id) { return x.cats.indexOf(id) >= 0; }) &&
             req.every(function (t2) { return hasTok(x.f.i, t2) && !NOT_INTEGRATION.some(function (k) { return hasTok(x.f[k], t2); }); })) r.via = 1;
         res.push(r);
       });
+      // Nothing has every word: rank the site's pages and FAQ answers by the words they do have (at least half)
+      // instead of answering "No results" ("how often do you update your prices", a word typed wrongly)
+      if (!res.length && !top.length && req.length > 1) {
+        docs.forEach(function (x) {
+          if (x.type !== 'page' && x.type !== 'faq') return;
+          var s = 0, hit = 0;
+          req.forEach(function (t) { var b = fieldScore(x, t); if (b) { s += b; hit++; } });
+          if (hit * 2 >= req.length) { var r = ext(x); r.score = hit * 100 + s; r.kinds = 'some'; res.push(r); }
+        });
+      }
+      // A question about the site itself ("how we score", "corrections", "how do you make money"): a page or
+      // site-wide FAQ answer that has every word in its title or keywords and outscores every category, product,
+      // comparison and guide is the best match (Enter opens it). One word alone must be the title, start it or be
+      // one of the page's own phrases — "list" is not a question about "How can a vendor be listed?"
+      if (plain && !focus && !strongCat) {
+        var bestOther = 0, floor = req.length > 1 ? W.n : W.n + 30;
+        res.forEach(function (r) { if (r.type !== 'page' && r.type !== 'faq' && r.score > bestOther) bestOther = r.score; });
+        res.filter(function (r) { return r.titled && r.score >= floor && r.score > bestOther; })
+          .sort(function (x, y) { return y.score - x.score || (x.type === 'page' ? 0 : 1) - (y.type === 'page' ? 0 : 1) || x.name.localeCompare(y.name); })
+          .slice(0, 2).forEach(function (r) { top.push(r); });
+      }
       var bothProducts = function (x, y) { return x.type === 'product' && y.type === 'product'; };
       res.sort(q.sort === 'price'
         ? function (x, y) { return (bothProducts(x, y) ? (x.amount == null ? 1e9 : x.amount) - (y.amount == null ? 1e9 : y.amount) : 0) || y.score - x.score; }
@@ -384,19 +556,27 @@
           top.push(ext(focus));
           mine.slice(0, 3).forEach(function (c) { top.push(ext(c, { why: 'Head-to-head comparison' })); });
           if (focus.profile) top.push(alternativesRow(focus));
+          direct = true; // the query is that product's name: Enter opens its profile
         }
+      }
+      // The whole query is one category's own name or synonym ("crm", "email marketing", "help desk") and that
+      // category leads the results: Enter opens it (r.exact; "See all results" stays one row further down)
+      var exact = null;
+      if (plain && !focus && !top.length && strongCat && groups.category && groups.category.length) {
+        var owners = phrase[qn], ownId = owners ? (owners.length === 1 ? owners[0] : own[typed]) : null;
+        if (ownId && groups.category[0].id === ownId) exact = { type: 'category', id: ownId };
       }
       // a named product makes typo matches noise ("stripe" is not a misspelt "CrowdStrike")
       if (focus) Object.keys(groups).forEach(function (k) { groups[k] = groups[k].filter(function (r) { return r.kinds !== 'fuzzy'; }); });
       var via = null, viaItems = (groups.product || []).filter(function (r) { return r.via; });
       if (viaItems.length) {
         var vs = q.intent && q.intent.kind === 'vs' ? q.intent : null, first = function (x) { return String(x.name).split(/\s+/)[0]; };
-        var named = focus ? brandOf(focus, req) : vs ? first(vs.a) + ' and ' + first(vs.b) : q.intent ? brandOf(q.intent.a, req) : q.termWords.map(spell).join(' ');
+        var named = focus ? brandOf(focus, req) : vs ? first(vs.a) + ' and ' + first(vs.b) : q.intent && q.intent.kind === 'multi' ? listText(q.intent.items.map(first)) : q.intent ? brandOf(q.intent.a, req) : q.termWords.map(spell).join(' ');
         via = { label: 'Works with ' + named, items: viaItems };
       }
       var seen = {}, total = 0;
       Object.keys(groups).reduce(function (all, k) { return all.concat(groups[k]); }, top.slice()).forEach(function (r) { var k = r.type + ':' + (r.id || r.url); if (!seen[k]) { seen[k] = 1; total++; } });
-      return { q: q, top: top, direct: direct, groups: groups, via: via, total: total, catHits: catHits.map(function (id) { return byId('category', id); }).filter(Boolean).map(function (x) { return ext(x); }) };
+      return { q: q, top: top, direct: direct, exact: exact, groups: groups, via: via, total: total, catHits: catHits.map(function (id) { return byId('category', id); }).filter(Boolean).map(function (x) { return ext(x); }) };
     }
 
     function ext(x, extra) {
@@ -405,8 +585,9 @@
       return r;
     }
 
-    return { query: query, parse: parse, resolveProduct: resolveProduct, docs: docs, cats: cats, size: docs.length };
+    api.query = query; api.parse = parse; api.resolveProduct = resolveProduct; api.docs = docs; api.cats = cats; api.size = docs.length; api.extend = extend;
+    return api;
   }
 
-  return { create: create, words: words, toks: toks, stem: stem, key: key, fold: fold };
+  return { create: create, words: words, toks: toks, stem: stem, key: key, fold: fold, urlOf: urlOf, capped: capped, MAX_CHARS: MAX_CHARS, MAX_WORDS: MAX_WORDS };
 });

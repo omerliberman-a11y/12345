@@ -823,6 +823,9 @@
       return slot;
     });
     startedFromShortlist = list.ids.length;
+  } else if (S.slots.length && list.ids.length > MAX && list.category === S.scope && S.slots.every(function (slot, i) { return slot.id === list.ids[i]; })) {
+    // the shortlist's "Compare costs" link carries its first three of four products: say that the fourth is left out
+    startedFromShortlist = list.ids.length;
   }
   app.setAttribute('data-ready', '');
   if (!S.scope && S.slots.length) {

@@ -30,10 +30,21 @@ src/lib/
   indexing.mjs           which URLs are indexable (parity with the live site; optional gated mode)
 src/pages/<module>.mjs   export function routes(ctx) → [{ path, render(ctx) → page }]
 src/gen/<name>.mjs       export async function generate(ctx, emit) → writes non-page files (data, sitemaps …)
-src/assets/css/          tokens.css, base.css, layout.css, components.css, pages/<module>.css  → one bundle
-src/assets/js/           core.js (every page), search.js (engine), table.js, <module>.js   (copied, hashed)
-src/assets/static/       copied verbatim to the site root (logos, fonts, brand, favicon)
+src/assets/css/          tokens.css, base.css, layout.css, components.css → /assets/css/site.<hash>.css;
+                         pages/<type>.css → /assets/css/p-<type>[-plus-<other>].<hash>.css (a page that uses
+                         another page file's rules gets only those rules folded in: at most two stylesheets)
+src/assets/js/           core.js (every page), search.js (engine), compare-base.js (/vs/ + /compare/),
+                         table.js, <module>.js → /assets/js/<name>.<hash>.js (minified when esbuild is installed)
+src/assets/static/       copied to the site root (logos, brand, favicon, article images, research cards);
+                         fonts and assets/articles/sized/ get a content hash in their name
+scripts/                 check.mjs, seo-audit.mjs (QA) · serve.mjs (preview) · fetch-catalog.mjs (data) ·
+                         make-article-social.py, make-hero-variants.py (article images) ·
+                         optimize-logos.py, optimize-svg-logos.mjs (vendor logos; names stay as in the catalog)
+HOSTING.md               cache policy, example headers file, the backend services the site expects
 ```
+
+Every `/data/*.js` file is requested with `?v=<hash of all generated data files>` (`ctx.dataVersion`, filled in by
+build.mjs), so a data change always reaches visitors; hashed assets can be cached forever (see HOSTING.md).
 
 ## Writing a page module
 
@@ -86,6 +97,9 @@ Rules that keep every page consistent:
   never `score.rank` (that is only the listing order, alphabetical inside a tie). Sentences about who leads
   come from `ctx.answers.leaders(categoryId, vendors)`, which names or counts a whole tie group; a "top 5"
   list is cut with `ctx.topWithTies(categoryId, list, 5)` so a tie is never split.
+- **Images**: article images with sized variants (`assets/articles/sized/`, made by `scripts/make-hero-variants.py`)
+  get `srcset`/`sizes` from `ctx.imageSet(src, sizes)` (spread it with `attrs()`); only images that are the LCP on
+  desktop are preloaded, with a desktop media query.
 - **Prices**: use `ctx.price(vendor, categoryId)` (`headline`, `unit`, `billingNote`, `plan`, `checkedAt`,
   `sourceUrl`, `summary`, `extras`, `hasAmount`, `state`, `basis`). Render with `ui.priceCell` (it prints the
   recorded pricing basis under "Custom quote" / "Usage-based" / "Price not verified"). In the `sms-marketing`
@@ -112,8 +126,15 @@ Rules that keep every page consistent:
   unlike things on index pages.
 - **Products are rows.** Anything comparable is a table (`ui.productTable`, `.dtable`, `.matrix`), never a
   card grid. One row component is reused everywhere.
-- Type: `--fs-xs` (captions only) … `--fs-3xl`; body 16px. Headings use `--font-display`. Use the tokens in
-  `tokens.css` — never raw colours, sizes or radii in page CSS.
+- Type: `--fs-xs` (12px, captions only) … `--fs-3xl`; body 16px; weights 400/600/700 (the word-mark keeps its
+  own). One heading scale in base.css (h2 28px → 22px on phones, h3 18px, h4 16px). Headings use
+  `--font-display`. Use the tokens in `tokens.css` — never raw colours, sizes or radii in page CSS. The fonts are
+  not preloaded: `--font` and `--font-display` start with metric-matched fallback faces (Inter local, Inter
+  fallback, SC Rubik fallback in tokens.css) so nothing moves when the web fonts arrive — if the fonts or their
+  weights change, re-measure `size-adjust` as the tokens.css comment describes (including the digits faces that
+  keep `ch` widths stable).
+- Text-size preference (`html[data-a11y-size]`): the compact header is used at every width and stacked table rows
+  wrap by word. Reduce-motion preference: no smooth scrolling, no animation.
 - Plain words in the interface: "Score", "checked", "Score pending", "Shortlist", "Source", "How we score".
 - Every interactive target ≥ 44px tall on touch; visible focus; no horizontal page scroll at 390px (wide
   tables go inside `<div class="scroller">`); no nested vertical scrolling ever.
@@ -143,11 +164,31 @@ CSS building blocks: `.wrap`, `.wrap--narrow`, `.section`, `.section--tint`, `.s
 
 ## Client runtime (`SC`, from core.js)
 
-`SC.url(path)` · `SC.load(name)` → data from `/data/<name>.js` (e.g. `cat-crm`, `vendors`, `search-index`) ·
+`SC.url(path)` · `SC.load(name)` → data from `/data/<name>.js?v=<data version>` (e.g. `cat-crm`, `vendors`,
+`search-index-1`, `search-index-2`) ·
 `SC.shortlist.{get,has,toggle,remove,clear,replace,setPlan,compareUrl}` (localStorage `sc-us-shortlist`, same shape
 as the previous site) · `SC.openSearch(q)` · `SC.el(spec, props, kids)` (build DOM with `textContent` — never
 `innerHTML` with data) · `SC.$`, `SC.$$`, `SC.store`, `SC.save`.
 Events: `sc:shortlist-updated`, `sc:comparison-add`, `sc:cost-calculation`.
+
+Search: `SC.search.engine()` resolves with the engine and part 1 of the index (names, aliases, categories,
+prices, logos — about 35 KB gzip, loaded after the palette has painted); `SC.search.engine({ full: true })`
+resolves after part 2 (descriptions, features, integrations, best-for, AI capabilities, guide headings) is merged.
+Entries carry no URL when `urlOf(type, id, …)` in search.js can rebuild it. The palette's Enter opens the Best
+match (`data-top`): "X vs Y", "A vs B vs C", "compare A and B", "X alternatives", "X pricing", a product's name, a
+category's exact name or synonym, or the site's own page / FAQ answer for questions about the site; Shift+Enter
+opens /search/. `SC.searchLimit` (120 characters, 20 words) and its message are shared by the palette, /search/
+and the directory filters. The site's own vocabulary lives in `data/content/search-aliases.json` under `pages`
+(by URL) and `faq` (by /faq/ item id); avoid words that also name software.
+
+Shortlist storage: `replace`, `remove`, `clear` and `setPlan` return `true` once saved and `false` when the
+browser refused (private mode, blocked storage); the list is then kept in memory for the page view,
+`SC.shortlist.saved()` is `false`, and nothing says "saved". Every page repairs the saved list against
+`vendors.js` (rows `[name, logo, darkSurface, primaryCategoryId, wideWordmark, [indexes into scored]]`): unknown
+products and products from another category are dropped, a list with an unknown or documentary category is
+dropped, a missing category is inferred, and the list is written back in the old shape. `SC.shortlist.ready()`
+resolves after that check; `SC.shortlist.repairNote()` returns what was removed (shown once on /shortlist/).
+Tabs on the home page and on product profiles keep the chosen category in `?scope=<categoryId>`.
 
 Messages and focus (keyboard and screen-reader users must be able to reach everything):
 - `SC.announce(text)` — one polite live region for status messages; use it instead of a toast for confirmations.

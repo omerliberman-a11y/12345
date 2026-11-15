@@ -69,7 +69,7 @@ function render(ctx) {
     nav: 'compare',
     breadcrumbs: [{ name: 'Compare', url: '/compare/' }],
     pageType: 'WebPage',
-    scripts: ['js/compare.js'],
+    scripts: ['js/compare-base.js', 'js/compare.js'],
     body,
   };
 }

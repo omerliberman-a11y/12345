@@ -62,7 +62,8 @@ function render(ctx, vendor) {
     const altTable = ui.productTable(ctx, category.id, f.others.map((v) => ({ vendor: v })), {
       id: `alts-${category.id}`,
       sortable: false,
-      lazyFrom: isDefault ? 5 : 0,
+      // at most two alternatives show in the first 1440×900 screen; on phones the first two are within 1.5 screens
+      lazyFrom: isDefault ? 2 : 0,
       caption: `Alternatives to ${vendor.name} in ${category.name}, ranked by documented-fit score`,
       action: vsLink,
       actionLabel: 'Head-to-head',
@@ -118,7 +119,7 @@ function render(ctx, vendor) {
       'data-fscore': fs.pending ? '' : fs.value,
       'data-fprice': usd(fp) ? fp.amount : '',
     })}>
-      ${ui.answer(ctx, quickAnswer(category))}
+      ${ui.answer(ctx, quickAnswer(category), { more: true })}
       <div class="ix-panel__head">
         <h2 id="alt-h-${category.id}">${ctx.plural(n, 'researched alternative')} in ${category.name}</h2>
         ${/* the heading can be long: the help panel opens towards the left so it stays on a 768px screen */ ui.scoreHelp(ctx, { align: 'right' })}
@@ -149,12 +150,16 @@ function render(ctx, vendor) {
   const head = html`<header class="wrap page-head page-head--wide">
     <h1>${vendor.name} alternatives</h1>
     <p class="lede">${lede} This view uses the current category evidence, not a separate ranking or an exhaustive market list.</p>
-    ${ui.trustline([
-      html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
-      `${mf.scored.length} of ${ctx.plural(n, 'alternative')} scored${multi ? ` in ${main.name}` : ''}`,
-      'Desk research, not hands-on testing',
-      html`<a href="/methodology/">How we score</a>`,
-    ])}
+    ${ui.trustline(
+      [
+        html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
+        // phones: every row below says whether it is scored; the desk-research note is in the answer
+        { more: `${mf.scored.length} of ${ctx.plural(n, 'alternative')} scored${multi ? ` in ${main.name}` : ''}` },
+        { more: 'Desk research, not hands-on testing' },
+        html`<a href="/methodology/">How we score</a>`,
+      ],
+      { compact: true },
+    )}
   </header>`;
 
   const panels = multi

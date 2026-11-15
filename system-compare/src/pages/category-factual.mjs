@@ -190,16 +190,20 @@ function render(ctx, category) {
     <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
     <h1>${F.heading || category.name}</h1>
     <p class="lede">${category.description}</p>
-    ${ui.trustline([
-      html`Evidence checked ${ui.time(ctx, checked)}`,
-      `${ctx.plural(suppliers.length, 'supplier')} · ${ctx.plural(nOffers, 'offer')}`,
-      NO_SCORE_LABEL,
-      approver && `${approver.name}, ${String(approver.role || '').toLowerCase()}`,
-      html`<a href="/methodology/">How we score</a>`,
-    ])}
+    ${ui.trustline(
+      [
+        html`Evidence checked ${ui.time(ctx, checked)}`,
+        // phones: the counts are in the answer and the facts below; the approver is named again further down the page
+        { more: `${ctx.plural(suppliers.length, 'supplier')} · ${ctx.plural(nOffers, 'offer')}` },
+        NO_SCORE_LABEL,
+        approver && { more: `${approver.name}, ${String(approver.role || '').toLowerCase()}` },
+        html`<a href="/methodology/">How we score</a>`,
+      ],
+      { compact: true },
+    )}
   </header>
   <div class="wrap cat-answer">
-    ${ui.answer(ctx, quick, { meta: lowest ? 'Units and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.' : null })}
+    ${ui.answer(ctx, quick, { meta: lowest ? 'Units and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.' : null, more: true })}
   </div>`;
 
   const hasAid = Boolean(F.decisionAid?.rows?.length);

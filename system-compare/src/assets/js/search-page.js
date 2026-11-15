@@ -14,8 +14,11 @@
   var state = { q: '', type: '', sort: '', f: {} };
   var timer;
 
+  // the previous site's limits: a query is read up to 120 characters and 20 words, and the page says so
+  var limit = SC.searchLimit || { over: function () { return false; }, message: '' };
   function readUrl() {
     var p = new URLSearchParams(location.search);
+    state.over = limit.over(p.get('q') || '');
     state.q = (p.get('q') || '').slice(0, 120);
     state.type = TYPES.some(function (t) { return t[0] === p.get('type'); }) ? p.get('type') : '';
     state.sort = p.get('sort') === 'score' || p.get('sort') === 'price' ? p.get('sort') : '';
@@ -82,7 +85,8 @@
       }
       return;
     }
-    SC.search.engine().then(function (engine) {
+    // the results page waits for the whole index (descriptions, features, integrations): one complete render
+    SC.search.engine({ full: true }).then(function (engine) {
       if (state.q.trim() !== q) return;
       var r = engine.query(q), frag = d.createDocumentFragment();
       var groups = {}, counts = {};
@@ -113,13 +117,15 @@
       if (r.q.sort === 'score') notes.push('highest score first');
       // the status line is the live region: it says how many results there are, or that there are none (the
       // visible "No results" note below already shows that, so the line itself is then read out only)
+      var cut = state.over ? limit.message + ' ' : '';
       status.classList.toggle('sr-only', !total);
-      status.textContent = total ? total + ' result' + (total === 1 ? '' : 's') + ' for “' + q + '”' + (notes.length ? ' · read as: ' + notes.join(', ') : '') : 'No results for “' + q + '”.';
+      status.textContent = cut + (total ? total + ' result' + (total === 1 ? '' : 's') + ' for “' + q + '”' + (notes.length ? ' · read as: ' + notes.join(', ') : '') : 'No results for “' + q + '”.');
 
       if (r.top.length && !state.type) {
         frag.appendChild(el('h2', { text: 'Best match' }));
         var ul0 = el('ul.srch__list');
-        r.top.forEach(function (t) { ul0.appendChild(row(t, t.why || meta(t))); });
+        // a comparison, alternatives or tool row names its kind on its second line: no right-hand label
+        r.top.forEach(function (t) { ul0.appendChild(row(t)); });
         frag.appendChild(ul0);
       }
       var shown = {}; r.top.forEach(function (t) { shown[t.type + ':' + t.id] = 1; });
@@ -149,7 +155,7 @@
         }
       });
       if (!total) {
-        frag.appendChild(el('div.empty', null, [el('b', { text: 'No results for “' + q + '”.' }), d.createTextNode('Check the spelling, try a category name such as “CRM” or “payroll”, or start from a category below.')]));
+        frag.appendChild(el('div.empty', null, [el('b', { text: 'No results for “' + q + '”.' }), d.createTextNode(state.over ? limit.message : 'Check the spelling, try a category name such as “CRM” or “payroll”, or start from a category below.')]));
         if (r.catHits && r.catHits.length) {
           var ulc = el('ul.srch__list'); r.catHits.slice(0, 4).forEach(function (x) { ulc.appendChild(row(x)); }); frag.appendChild(ulc);
         }
@@ -172,9 +178,9 @@
   if (input) {
     input.addEventListener('input', function () {
       clearTimeout(timer);
-      timer = setTimeout(function () { state.q = input.value.slice(0, 120); state.type = ''; writeUrl(false); render(); }, 90);
+      timer = setTimeout(function () { state.over = limit.over(input.value); state.q = input.value.slice(0, 120); state.type = ''; writeUrl(false); render(); }, 90);
     });
-    form.addEventListener('submit', function (e) { e.preventDefault(); state.q = input.value.slice(0, 120); SC.search.remember(state.q); writeUrl(true); render(); });
+    form.addEventListener('submit', function (e) { e.preventDefault(); state.over = limit.over(input.value); state.q = input.value.slice(0, 120); SC.search.remember(state.q); writeUrl(true); render(); });
   }
   page.addEventListener('click', function (e) {
     var t = e.target.closest('[data-type]');

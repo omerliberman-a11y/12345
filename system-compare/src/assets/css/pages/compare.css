@@ -50,9 +50,10 @@ html:not(.js) .cmp-viewbar .seg, html:not(.js) .cmp-viewcount { display: none; }
 .cmp-bar__ctx a:hover { color: var(--brand); }
 .cmp-slot { display: flex; align-items: center; gap: 0.6rem; min-width: 0; padding: 0.6rem var(--cmp-pad); }
 .cmp-slot__text { display: grid; min-width: 0; line-height: 1.3; }
-.cmp-slot__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+/* names wrap to a second line and prices wrap under the score, so neither is cut to "…" in a narrow slot */
+.cmp-slot__name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
 a.cmp-slot__name:hover { color: var(--brand); }
-.cmp-slot__meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-sm); color: var(--ink-3); }
+.cmp-slot__meta { font-size: var(--fs-sm); color: var(--ink-3); }
 .cmp-slot__score { color: var(--ink-2); }
 .cmp-slot__score b { color: var(--ink); }
 .cmp-slot__price::before { content: " · "; }
@@ -193,7 +194,7 @@ a.cmp-slot__name:hover { color: var(--brand); }
 .cmp-slot__x:hover { background: var(--bg-muted); color: var(--ink); }
 .cmp--n3 .cmp-slot, .cmp--n4 .cmp-slot { gap: 0.4rem; }
 .cmp--n3 .cmp-slot__meta, .cmp--n4 .cmp-slot__meta { display: grid; }
-.cmp--n3 .cmp-slot__price, .cmp--n4 .cmp-slot__price { overflow: hidden; text-overflow: ellipsis; }
+.cmp--n3 .cmp-slot__price, .cmp--n4 .cmp-slot__price { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
 .cmp--n3 .cmp-slot__price::before, .cmp--n4 .cmp-slot__price::before { content: none; }
 .cmp--n3 .cmp-slot__swap, .cmp--n4 .cmp-slot__swap, .cmp--n3 .cmp-slot__x, .cmp--n4 .cmp-slot__x { width: 1.5rem; height: 1.5rem; }
 .cmp-bar__add { margin-top: 0.25rem; }
@@ -205,6 +206,13 @@ a.cmp-slot__name:hover { color: var(--brand); }
 .cmp-answer--tool .trustline { margin-top: 0; }
 .cmp-answer--tool .cmp-verdict { padding-left: 0; }
 .cmp-loading { padding-block: var(--s-14); color: var(--ink-3); }
+/* no layout shift while the tool starts: until the script has put the comparison or a product list in the mount, or
+   shown the category picker, the mount keeps a screen of room — so the footer is never painted under an empty page
+   and then pushed away (also when the script arrives late) */
+.js [data-cmp-mount]:is(:empty, :has(> .wrap > .cmp-loading:only-child)):has(~ [data-cmp-picker][hidden]) { min-height: 100svh; }
+/* a slow load shows "Loading …": the intro paragraph (which the comparison replaces with its title) goes at the same
+   moment, so the loading line is drawn where the comparison will start and nothing moves when it arrives */
+.js .page-head:has(~ [data-cmp-mount] .cmp-loading) [data-cmp-lede] { display: none; }
 
 /* ---------------------------------------------------------------- compare tool: picker (category → products) */
 .cmp-picker { padding-bottom: var(--s-10); }
@@ -270,7 +278,7 @@ html.js .cmp-noscript { display: none; }
   .cmp-slot__name { font-size: var(--fs-sm); }
   /* score and price on their own lines so neither is cut to "…" in a half-width slot */
   .cmp-slot__meta { display: grid; font-size: var(--fs-xs); }
-  .cmp-slot__price { overflow: hidden; text-overflow: ellipsis; }
+  .cmp-slot__price { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
   .cmp-slot__price::before { content: none; }
   /* products are changed through "Change products" (first in the tools row) — no × squeezing the names */
   .cmp-slot__x { display: none; }
@@ -310,6 +318,14 @@ html.js .cmp-noscript { display: none; }
   .cmp-find { flex-basis: 100%; }
   .cmp-go__in { gap: var(--s-3); }
 }
+
+/* ---------------------------------------------------------------- a reader text-size preference (125% / 150%) */
+/* the scaled names and prices no longer fit side by side: one product per line in the header, which then scrolls with
+   the page (a sticky stack would cover most of the screen); each product keeps its colour dot to match the columns */
+html[data-a11y-size] .cmp-bar { position: static; }
+html[data-a11y-size] .cmp-bar__grid { grid-template-columns: minmax(0, 1fr); }
+html[data-a11y-size] .cmp-bar__ctx { padding: 0.6rem 0 0; }
+html[data-a11y-size] .cmp-slot { padding-inline: 0; }
 
 /* ---------------------------------------------------------------- target sizes: 24px at least, 44px on touch where a link stands alone */
 /* the product name in the sticky bar: the whole slot is its target (the slot's own controls stay above it) */

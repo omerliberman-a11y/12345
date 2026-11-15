@@ -238,7 +238,10 @@ html:not(.js) .tl-app { display: none; }
 
 /* ================================================================ shortlist */
 .tl-sl { padding-bottom: var(--s-10); }
-.js .tl-sl[data-state="loading"] [data-sl-empty] { display: none; }
+/* no layout shift while the saved list loads: only the status line is painted until the script has chosen between
+   the list and the empty state, and the page's footer waits too, so nothing visible moves when they appear */
+.js .tl-sl[data-state="loading"] > :not([data-sl-status]) { visibility: hidden; }
+.js body:has(.tl-sl[data-state="loading"]) .site-footer { visibility: hidden; }
 html:not(.js) .tl-sl__status { display: none; }
 .tl-sl__status { margin-bottom: var(--s-5); max-width: 70ch; font-size: var(--fs-sm); color: var(--ink-2); }
 .tl-sl__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s-4) var(--s-6); margin-bottom: var(--s-4); }

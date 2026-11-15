@@ -224,5 +224,38 @@
    "time-attendance",
    "recruiting"
   ]
+ },
+ "_about_pages": "Questions and words visitors use for the site's own pages (by address) and site-wide FAQ answers (by id on /faq/), so that 'how we score' or 'how do you make money' finds them. A phrase typed exactly makes that page or answer the best match, so avoid words that also name software (points, tracking, revenue, testing, list). Editable.",
+ "pages": {
+  "/methodology/": ["methodology", "how we score", "how do you score", "scoring", "scores", "scored", "why not 100", "weighting", "weighted", "calculated", "calculation", "rating method", "ties", "80% gate"],
+  "/how-we-make-money/": ["make money", "making money", "paid", "paid by vendors", "commissions", "affiliates", "affiliate links", "sponsored", "sponsorship", "funding", "independence", "independent", "conflict of interest"],
+  "/research-updates/": ["update", "updated", "last updated", "how often", "change log", "what's new", "new research", "recheck"],
+  "/corrections/": ["corrections", "correct", "errors", "report an error", "report a mistake", "outdated", "out of date", "incorrect", "inaccurate"],
+  "/partners/": ["get listed", "get my product listed", "list my product", "add my software", "submit my software", "vendor application", "for vendors"],
+  "/contact/": ["contact us", "get in touch", "email us"],
+  "/editorial-policy/": ["editorial standards", "who approves", "review process"],
+  "/privacy/": ["privacy policy", "cookie policy"],
+  "/terms/": ["terms of use", "terms of service", "terms and conditions", "disclaimer"],
+  "/about/": ["about us", "who we are", "who is behind"],
+  "/faq/": ["faq", "faqs", "frequently asked questions", "help center"],
+  "/categories/": ["categories", "all categories"],
+  "/software/": ["software directory", "all software", "all products", "a-z"],
+  "/accessibility/": ["screen reader", "high contrast", "wcag"],
+  "/tools/cost/": ["total cost", "price calculator", "estimate cost"]
+ },
+ "faq": {
+  "score-meaning": ["score", "the score", "what does the score mean", "score meaning", "what is the score", "documented fit score"],
+  "score-calculation": ["how do you score", "how we score", "scoring", "why not 100", "weights"],
+  "score-pending": ["pending", "no score", "why no score"],
+  "not-reviews": ["reviews", "user reviews", "star ratings", "rating", "ratings", "rated"],
+  "testing": ["do you test", "hands on", "try the products"],
+  "business-model": ["how do you make money", "make money", "commission", "affiliate"],
+  "pay-to-rank": ["are you paid by vendors", "paid", "paid by vendors", "pay to rank", "paid placement", "sponsored", "biased", "independent"],
+  "report-error": ["corrections", "correction", "mistake", "wrong", "outdated"],
+  "get-listed": ["get my product listed", "get listed", "list my product", "add my product", "submit my software"],
+  "update-frequency": ["how often do you update", "update", "updates", "last updated", "how current"],
+  "price-sources": ["where do prices come from", "pricing source"],
+  "publisher": ["who publishes", "who owns"],
+  "ordering": ["ranking order", "tied", "ties"]
  }
 }

@@ -15,7 +15,8 @@ function render(ctx) {
 
   // Category previews follow the published method (/methodology/, "Category previews …"): catalogue order,
   // only categories with at least two scored products, and a later category is skipped when one of its tied
-  // leaders already leads an earlier preview. Rows are scored products only and a tie is never cut apart.
+  // leaders already leads an earlier preview. Each preview shows the top two scored products, extended only by the
+  // products tied with the second one, so a tie is never cut apart.
   const leadersSeen = new Set();
   const spotlights = [];
   for (const c of ctx.scoredCategories) {
@@ -70,7 +71,7 @@ function render(ctx) {
     <div class="wrap">
       ${ui.sectionHead('Highest documented fit, by category', {
         id: 'top-h',
-        sub: 'The highest scores in each category; products with the same score are shown together. A score is the share of the category checklist documented in official sources.',
+        sub: 'The two highest-scoring products in each category, and every product tied with them. A score is the share of the category checklist documented in official sources.',
       })}
       <div class="tabs" data-tabs>
         <div class="seg tabs__list" role="tablist" aria-label="Category">
@@ -81,9 +82,11 @@ function render(ctx) {
         ${spotlights.map((c, i) => {
           const s = ctx.summary(c.id);
           const scored = s.ranked.filter((v) => !s.results.get(v.id).isPending);
-          const rows = ctx.topWithTies(c.id, scored, 5).map((vendor) => ({ vendor }));
+          // the published rule: the top two scored products, and every product tied with the second one
+          const rows = ctx.topWithTies(c.id, scored, 2, 8).map((vendor) => ({ vendor }));
+          const caption = `${c.name}: the top two products by documented-fit score${rows.length > 2 ? `, and ${rows.length - 2} more tied with the second` : ''}`;
           return html`<div class="tabs__panel" role="tabpanel" id="panel-${c.id}" aria-labelledby="tab-${c.id}"${raw(i === 0 ? '' : ' hidden')}>
-            ${ui.productTable(ctx, c.id, rows, { id: `top-${c.id}`, sortable: false, lazyFrom: i === 0 ? 5 : 0, caption: `${c.name}: the ${rows.length} highest documented-fit scores` })}
+            ${/* the previews start below the first screen at every width: every logo loads lazily */ ui.productTable(ctx, c.id, rows, { id: `top-${c.id}`, sortable: false, lazyFrom: 0, caption })}
             <p class="tabs__more"><a class="link-arrow" href="${ctx.url.category(c.id)}">See all ${s.total} ${A.categoryThings(c)}</a></p>
           </div>`;
         })}

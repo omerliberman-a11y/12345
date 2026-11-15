@@ -115,9 +115,18 @@
 .logo--sm[data-wide] .logo__mono, .tray__item .logo[data-wide] .logo__mono { display: grid; place-items: center; width: 100%; height: 100%; }
 .tray__item .logo__mono { font-size: var(--fs-xs); }
 /* product rows: every vendor gets the same landscape plate, so names line up, wordmarks stay legible
-   and square marks sit centred in it (sizes in tokens.css) */
+   and square marks sit centred in it (sizes in tokens.css; a compact plate on phones, below) */
 .ptable .prod .logo { width: var(--plate-w); height: var(--plate-h); }
-.ptable .prod .logo img { width: calc(100% - 1rem); height: var(--plate-img); }
+.ptable .prod .logo img { width: calc(100% - 0.5rem); height: var(--plate-img); }
+/* a wordmark too long for the plate (data-xwide, set at build time from the logo's size) would render under 10px
+   tall: the plate shows the vendor's initials on the light surface instead — on phones for every data-xwide logo,
+   on tablets for data-xwide="2" */
+.ptable .prod .logo[data-xwide] .logo__mono { place-items: center; width: 100%; height: 100%; }
+@media (min-width: 48em) and (max-width: 61.99em) {
+  .ptable .prod .logo[data-xwide="2"] { background: var(--bg); border-color: var(--line); }
+  .ptable .prod .logo[data-xwide="2"] img { display: none; }
+  .ptable .prod .logo[data-xwide="2"] .logo__mono { display: grid; }
+}
 
 /* ---------------------------------------------------------------- score */
 .score { display: inline-flex; flex-direction: column; gap: 0.1rem; line-height: 1.15; }
@@ -343,8 +352,8 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
-/* mobile: each row becomes a compact list item — logo plate + score on top, then name, fit line and price,
-   all starting at the same left edge */
+/* mobile: each row becomes a compact list item — a compact logo plate beside the name with the score on the
+   right, then the fit line and the price, both starting at the plate's left edge (full width) */
 @media (max-width: 47.99em) {
   .ptable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
   .ptable, .ptable tbody { display: block; }
@@ -356,7 +365,7 @@
       "pick price price";
     column-gap: 0.35rem;
     row-gap: 0.3rem;
-    padding: 0.85rem 0;
+    padding: 0.75rem 0;
     align-items: start;
   }
   .ptable td, .ptable tbody th { padding: 0; display: block; }
@@ -371,8 +380,19 @@
   .ptable .score--pending .score__value { font-size: var(--fs-xs); }
   .ptable .price { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0.1rem 0.4rem; }
   .ptable .price__main { font-size: var(--fs-sm); }
-  .prod { flex-direction: column; align-items: flex-start; gap: 0.45rem; }
+  /* compact plate (64 × 28px, artwork box 56 × 20px) floated beside the name: the name's line is as tall as the
+     plate, a second name line stays beside it, and the fit line clears it to use the row's full width. A one-word
+     name too long for the space beside the plate moves below it whole (never broken letter by letter). */
+  .ptable { --plate-w: 4rem; --plate-h: 1.75rem; --plate-img: 1.25rem; }
+  .ptable:not(.ix-table) .prod { display: block; }
+  .ptable:not(.ix-table) .prod .logo { float: left; margin: 0 0.5rem 0.2rem 0; }
+  .ptable:not(.ix-table) .prod__name { line-height: 1.75rem; overflow-wrap: normal; }
+  .ptable:not(.ix-table) .prod__fit { clear: left; }
   .prod__name { display: inline; }
+  /* every data-xwide wordmark would render under 10px tall in the compact plate: initials instead (see above) */
+  .ptable .prod .logo[data-xwide] { background: var(--bg); border-color: var(--line); }
+  .ptable .prod .logo[data-xwide] img { display: none; }
+  .ptable .prod .logo[data-xwide] .logo__mono { display: grid; }
   /* a reader text-size preference: the scaled score no longer fits beside the name, so every cell takes the
      row's full width (shortlist box on the left) and names wrap by word, never letter by letter */
   html[data-a11y-size] .ptable tbody tr { display: flex; flex-wrap: wrap; align-items: flex-start; position: relative; padding-left: 2.6rem; }
@@ -600,9 +620,49 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
   color: var(--brand-ink);
 }
 .answer strong { font-weight: 600; }
+/* wide screens: the label runs into the answer's first line (its line box is the answer's 1.6 × 18px, so the two
+   baselines meet), which saves a line before the content that follows */
+@media (min-width: 48em) {
+  .answer__label { float: left; position: relative; top: 0.125rem; margin: 0 0.75rem 0 0; line-height: 1.8rem; }
+}
 /* phones: body size, so the answer-first block stays short enough to leave room for the table or score below it */
 @media (max-width: 39.99em) {
   .answer { font-size: var(--fs-md); line-height: 1.55; }
+}
+/* ui.answer({ more: true }): on phones three lines and a "Show the full answer" disclosure (a native <details>, no
+   script). Only the look is clamped: the text is whole in the HTML and for screen readers. */
+.answer__more { display: none; }
+@supports selector(:has(*)) {
+  @media (max-width: 47.99em) {
+    .answer--more > p:first-of-type { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+    .answer--more:has(> .answer__more[open]) > p:first-of-type { display: block; -webkit-line-clamp: unset; line-clamp: none; overflow: visible; }
+    /* the answer's note (ui.answer meta) opens with the rest of the answer */
+    .answer--more:not(:has(> .answer__more[open])) > .fineprint { display: none; }
+    .answer__more { display: block; }
+    /* a 44px-tall box around the short line: the padding is taken back by the margin, so the words do not move */
+    .answer__more > summary {
+      position: relative;
+      display: inline-block;
+      padding-block: 0.75rem;
+      margin-block: -0.75rem;
+      list-style: none;
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--brand-ink);
+      text-decoration: underline;
+      text-decoration-color: var(--line-strong);
+      text-underline-offset: 0.2em;
+      cursor: pointer;
+    }
+    .answer__more > summary::-webkit-details-marker { display: none; }
+    .answer__more[open] .answer__more-open, .answer__more:not([open]) .answer__more-close { display: none; }
+  }
+}
+/* trustline--compact: on phones the strip keeps its plain items to one line; the .trustline__more items are read by
+   screen readers only (their facts are repeated in the answer and under the table) */
+@media (max-width: 47.99em) {
+  .trustline--compact > .trustline__more { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 }
 
 /* ---------------------------------------------------------------- key facts (label/value pairs, no boxes) */

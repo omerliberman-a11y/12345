@@ -84,26 +84,32 @@ function render(ctx, category) {
     pf.min && {
       label: 'Lowest verified starting price',
       value: pf.minGroup.length === 1 ? link(pf.min.v) : pf.minGroup.length <= 2 ? ui.join(pf.minGroup.map((x) => link(x.v)), ', ') : `${pf.minGroup.length} products`,
-      sub: pf.minGroup.every((x) => x.p.phrase === pf.min.p.phrase) ? pf.min.p.phrase : `${pf.min.p.headline} each; units differ`,
+      sub: pf.minGroup.every((x) => x.p.phrase === pf.min.p.phrase) ? A.pricePhrase(pf.min.p) : `${pf.min.p.headline} each; units differ`,
     },
     { label: 'Scored so far', value: `${nScored} of ${s.total}`, sub: s.pending ? `${s.pending} pending under the 80% evidence gate` : 'every product has a published score' },
     { label: 'Native AI or AI agents', value: `${nAi} of ${s.total}`, sub: 'documented in official sources' },
   ];
 
   // ---------------------------------------------------------------- page head
-  const head = html`<header class="wrap page-head page-head--wide">
+  // The first screen leads to the ranking: on phones the trust strip keeps the date and the method link on one line
+  // (the counts and the desk-research note are in the answer and under the table) and the answer shows three lines
+  // with a "Show the full answer" disclosure; every word stays in the HTML.
+  const head = html`<header class="wrap page-head page-head--wide cat-head">
     <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
     <h1>${noun}: ${s.total} tools compared</h1>
     ${category.buyerQuestion ? html`<p class="lede">${category.buyerQuestion}</p>` : ''}
-    ${ui.trustline([
-      html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
-      `${nScored} scored · ${s.pending} pending`,
-      'Desk research, not hands-on testing',
-      html`<a href="/methodology/">How we score</a>`,
-    ])}
+    ${ui.trustline(
+      [
+        html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
+        { more: `${nScored} scored · ${s.pending} pending` },
+        { more: 'Desk research, not hands-on testing' },
+        html`<a href="/methodology/">How we score</a>`,
+      ],
+      { compact: true },
+    )}
   </header>
   <div class="wrap cat-answer">
-    ${ui.answer(ctx, quick)}
+    ${ui.answer(ctx, quick, { more: true })}
   </div>`;
 
   const nav = ui.subnav(
@@ -120,9 +126,10 @@ function render(ctx, category) {
 
   // ---------------------------------------------------------------- ranking table + filters
   const mustGroups = GROUP_ORDER.map((gid) => ({ gid, label: groupMeta[gid].label, items: features.filter((f) => f.group === gid) })).filter((g) => g.items.length);
-  // one row on wide screens: filters, then the live count and the sort; a filter that would match nothing is not offered
+  // one row on wide screens: filters, then the live count, the score help and the sort; a filter that would match
+  // nothing is not offered. On phones the filters are one row that scrolls sideways.
   const controls = html`<div class="toolbar cat-toolbar" data-table-controls="products"${attrs({ 'data-sort-default': unscored ? 'cov' : null })} data-nosnippet>
-    <div class="chips" role="group" aria-label="Filter products">
+    <div class="cat-chips"><div class="chips" role="group" aria-label="Filter products">
       ${nScored ? html`<button type="button" class="chip" data-filter="scored" aria-pressed="false">Scored only <span class="n">${nScored}</span></button>` : ''}
       ${nPriced ? html`<button type="button" class="chip" data-filter="priced" aria-pressed="false">Public price <span class="n">${nPriced}</span></button>` : ''}
       ${nAi ? html`<button type="button" class="chip" data-filter="ai" aria-pressed="false">Native AI or agents <span class="n">${nAi}</span></button>` : ''}
@@ -141,9 +148,10 @@ function render(ctx, category) {
         </div>
       </details>
       <button type="button" class="chip chip--link" data-filter-reset hidden>Clear filters</button>
-    </div>
+    </div></div>
     <div class="cat-toolbar__end">
       <p class="toolbar__count" role="status" aria-live="polite" data-count data-total="${s.total}"><b>${s.total}</b> ${things}</p>
+      ${ui.scoreHelp(ctx, { align: 'right' })}
       <label class="toolbar__sort"><span class="sr-only">Sort products</span>
         <select class="select select--sm" data-sort-select aria-label="Sort products">
           ${unscored ? html`<option value="cov">Sort: share checked</option>` : html`<option value="score">Sort: score</option>`}
@@ -154,6 +162,11 @@ function render(ctx, category) {
     </div>
   </div>`;
 
+  // with nothing scored the script lists the rows by the share checked (js/table.js "cov": share, then listing order),
+  // so the logos that load eagerly are those of the first rows in THAT order
+  const covOrder = unscored
+    ? [...ranked].sort((a, b) => ctx.score(category.id, b.id).coveragePct - ctx.score(category.id, a.id).coveragePct || ctx.score(category.id, a.id).rank - ctx.score(category.id, b.id).rank)
+    : null;
   const table = ui.productTable(
     ctx,
     category.id,
@@ -165,16 +178,16 @@ function render(ctx, category) {
       priceChecked: true,
       rank: !unscored,
       sortable: !unscored,
+      eagerIds: covOrder ? new Set(covOrder.slice(0, 4).map((v) => v.id)) : null,
       caption: unscored ? `${category.name}: ${s.total} products, all score-pending` : `${category.name}: ${s.total} products ranked by documented-fit score`,
     },
   );
 
-  // the "at a glance" figures follow the ranking (the answer above already names the leader and the pending count)
+  // the "at a glance" figures follow the ranking (the answer above already names the leader and the pending count).
+  // The section heading is for screen readers and the outline: on screen the section menu ("Ranking") and the table
+  // header already label it, so the filters follow the menu directly.
   const products = html`<section class="wrap cat-products" aria-labelledby="products-h">
-    <div class="cat-products__head">
-      <h2 id="products-h">${unscored ? things[0].toUpperCase() + things.slice(1) : `${category.name} ranking`}</h2>
-      ${ui.scoreHelp(ctx)}
-    </div>
+    <h2 id="products-h" class="sr-only">${unscored ? things[0].toUpperCase() + things.slice(1) : `${category.name} ranking`}</h2>
     ${controls}
     ${table}
     <p class="empty" data-empty hidden><b>No product matches these filters.</b>Unverified support does not mean a product lacks a feature. <button type="button" class="btn btn--quiet btn--sm" data-filter-reset>Clear filters</button></p>
@@ -240,8 +253,8 @@ function render(ctx, category) {
   // "<strong>$0 per workspace</strong> (Agile CRM and EngageBay)": every product that shares an amount is named
   const priceGroup = (g) =>
     g.every((x) => x.p.phrase === g[0].p.phrase)
-      ? html`<strong>${g[0].p.phrase}</strong> (${ctx.listText(g.map((x) => x.v.name))})`
-      : ui.join(g.map((x) => html`<strong>${x.p.phrase}</strong> (${x.v.name})`), ' and ');
+      ? html`<strong>${A.pricePhrase(g[0].p)}</strong> (${ctx.listText(g.map((x) => x.v.name))})`
+      : ui.join(g.map((x) => html`<strong>${A.pricePhrase(x.p)}</strong> (${x.v.name})`), ' and ');
   const costs = html`<section class="wrap section" id="costs" aria-labelledby="costs-h">
     ${ui.sectionHead(`How much does ${noun} cost?`, { id: 'costs-h' })}
     <div class="cat-two">

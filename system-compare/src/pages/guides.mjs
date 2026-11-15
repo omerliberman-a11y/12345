@@ -2,7 +2,7 @@
 // Every word of a guide comes from catalog.guides[]; only the short <title> lives in
 // data/content/guide-seo-titles.json. "Key takeaways" and "Next steps" are derived from the same data.
 
-import { html, raw, text } from '../lib/html.mjs';
+import { html, raw, text, attrs } from '../lib/html.mjs';
 import * as ui from '../lib/components.mjs';
 import { title as seoTitle, describe } from '../lib/seo.mjs';
 
@@ -59,6 +59,18 @@ const imageSrc = (src) => (REENCODED.has(src) ? src.replace(/\.png$/, '.webp') :
 /** 1200×630 JPEG share card of a hero image (scripts/make-article-social.py): social platforms do not read WebP. */
 const socialImage = (image) => ({ url: `/assets/articles/social/${image.src.split('/').pop().replace(/\.\w+$/, '')}.jpg`, width: 1200, height: 630, alt: image.alt });
 const imageType = (src) => (/\.webp$/.test(src) ? 'image/webp' : /\.png$/.test(src) ? 'image/png' : 'image/jpeg');
+/**
+ * The hero is full width on phones (below the first screen there) and 736px in the reading column from 776px up;
+ * the browser picks one of the sized WebP files (scripts/make-hero-variants.py). It is the largest paint only on
+ * desktop, so only desktop preloads it.
+ */
+export const HERO_SIZES = '(min-width: 776px) 736px, calc(100vw - 40px)';
+const HERO_PRELOAD_MEDIA = '(min-width: 62em)';
+const heroPreload = (ctx, image) => {
+  const set = ctx.imageSet ? ctx.imageSet(image.src, HERO_SIZES) : null;
+  const where = { as: 'image', type: imageType(image.src), media: HERO_PRELOAD_MEDIA, fetchpriority: 'high' };
+  return set ? { ...where, imagesrcset: set.srcset, imagesizes: set.sizes } : { href: image.src, ...where };
+};
 
 /** Numbered sources. A source on this site is a normal internal link; every other one opens in a new tab. */
 const hostOf = (url) => {
@@ -161,7 +173,7 @@ function renderGuide(ctx, guide) {
   </section>`;
 
   const hero = image
-    ? html`<figure class="gd-hero"><img src="${image.src}" alt="${image.alt}" width="${image.width}" height="${image.height}" loading="eager" decoding="async" fetchpriority="high"></figure>`
+    ? html`<figure class="gd-hero"><img src="${image.src}"${attrs(ctx.imageSet ? ctx.imageSet(image.src, HERO_SIZES) : null)} alt="${image.alt}" width="${image.width}" height="${image.height}" decoding="async"></figure>`
     : '';
 
   const body = sections.map(
@@ -264,7 +276,7 @@ function renderGuide(ctx, guide) {
     ogTitle: shortTitle,
     ogType: 'article',
     ogImage: image ? socialImage(image) : undefined,
-    preload: image ? [{ href: image.src, as: 'image', type: imageType(image.src), fetchpriority: 'high' }] : undefined,
+    preload: image ? [heroPreload(ctx, image)] : undefined,
     nav: 'guides',
     breadcrumbs: [
       { name: 'Guides', url: ctx.url.guides() },

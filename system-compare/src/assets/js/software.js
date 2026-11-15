@@ -90,12 +90,14 @@
 
   // ------------------------------------------------------------------ researched plan → shortlist
   var planButtons = $$('[data-sw-plan]');
+  // "saved" only when this browser saved it: with saved data blocked the shortlist lasts for this page only
+  var kept = function () { return !SC.shortlist.saved || SC.shortlist.saved(); };
   function syncPlans() {
     var o = SC.shortlist.get();
     planButtons.forEach(function (b) {
       var id = b.getAttribute('data-vendor'), isOn = o.ids.indexOf(id) >= 0 && o.plans[id] === b.getAttribute('data-sw-plan');
       b.setAttribute('aria-pressed', isOn ? 'true' : 'false');
-      b.textContent = isOn ? b.getAttribute('data-plan-name') + ' saved in your shortlist ✓' : 'Save ' + b.getAttribute('data-plan-name') + ' to shortlist';
+      b.textContent = isOn ? b.getAttribute('data-plan-name') + (kept() ? ' saved in your shortlist ✓' : ' in your shortlist for this page ✓') : 'Save ' + b.getAttribute('data-plan-name') + ' to shortlist';
     });
   }
   if (planButtons.length) {
@@ -113,7 +115,10 @@
         return;
       }
       var removing = o.plans[id] === plan;
-      if (!SC.shortlist.setPlan(id, removing ? '' : plan)) { SC.toast('This browser could not save your shortlist.'); return; }
+      if (!SC.shortlist.setPlan(id, removing ? '' : plan)) {
+        SC.toast(kept() ? 'This browser could not save your shortlist.' : 'This browser is blocking saved data, so ' + (removing ? name + ' uses product-wide evidence' : 'the ' + planName + ' plan is in your shortlist') + ' only until you leave this page.');
+        return;
+      }
       SC.toast(removing ? name + ' now uses product-wide evidence in your shortlist.' : name + ' ' + planName + ' plan saved to your shortlist.');
     });
     d.addEventListener('sc:shortlist-updated', syncPlans);

@@ -65,6 +65,13 @@ for (const file of htmlFiles) {
     url: decode(m[3]),
   }));
   for (const m of src.matchAll(/<script\b[^>]*\ssrc="([^"]*)"/gi)) links.push({ tag: 'script', url: decode(m[1]) });
+  // responsive images: every candidate of srcset (img/source) and imagesrcset (preload links) must exist
+  for (const m of noScript.matchAll(/<(img|source|link)\b[^>]*?\s(srcset|imagesrcset)="([^"]*)"/gi)) {
+    for (const cand of decode(m[3]).split(',')) {
+      const u = cand.trim().split(/\s+/)[0];
+      if (u) links.push({ tag: m[1].toLowerCase(), url: u });
+    }
+  }
   pages.push({ file, src, noScript, links, dupIds });
 }
 

@@ -285,6 +285,12 @@ kbd {
   grid-template-columns: 1fr;
 }
 .site-footer__about p { max-width: 24rem; margin-top: var(--s-3); color: var(--ink-3); }
+/* touch: the edition link ("United States · English · USD") is a 44px-tall box around its words — the padding is
+   taken back by the margin, so the text does not move — and needs no drawn hit area of its own */
+@media (pointer: coarse), (max-width: 47.99em) {
+  .site-footer__about p a { display: inline-block; padding-block: 0.85rem; margin-block: -0.85rem; }
+  .site-footer__about p a::before { content: none; }
+}
 .site-footer nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-8); }
 .site-footer__title {
   font-family: var(--font);

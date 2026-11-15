@@ -172,31 +172,44 @@
 
   // ------------------------------------------------------------------ shortlist (compatible with the previous site's storage)
   var KEY = 'sc-us-shortlist', NOTES = 'sc-us-research-notes', MAX = 4, TTL = 180 * 864e5;
+  // When this browser refuses to store the list (private browsing, blocked site data, a full quota), the list is
+  // kept in memory for this page view instead: buttons, count, tray and the compare link keep working, nothing
+  // claims that it was saved, and the visitor is told once (announce()).
+  var memList = null, blockedTold = false;
+  var BLOCKED = 'This browser is blocking saved data, so your shortlist lasts only until you leave this page.';
+  function copy(o) { return JSON.parse(JSON.stringify(o)); }
+  function rawList() { return memList ? copy(memList) : store(KEY, null); }
   function readList() {
-    var o = store(KEY, null), empty = { ids: [], category: '', plans: {}, weights: {} };
+    var o = rawList(), empty = { ids: [], category: '', plans: {}, weights: {} };
     if (!o || !Array.isArray(o.ids)) return empty;
-    if (o.at && Date.now() - new Date(o.at).getTime() > TTL) { save(KEY, null); return empty; }
+    if (o.at && Date.now() - new Date(o.at).getTime() > TTL) { if (!memList) save(KEY, null); return empty; }
     var seen = {}, ids = o.ids.filter(function (id) { return typeof id === 'string' && SLUG.test(id) && !seen[id] && (seen[id] = 1); }).slice(0, MAX);
     return { ids: ids, category: typeof o.category === 'string' && SLUG.test(o.category) ? o.category : '', plans: o.plans && typeof o.plans === 'object' ? o.plans : {}, weights: o.weights && typeof o.weights === 'object' ? o.weights : {}, at: o.at };
   }
+  /** Stores the list. Returns false when the browser would not save it: it is then kept for this page view only. */
   function writeList(o) {
-    if (!o.ids.length) save(KEY, null);
-    else { o.at = Date.now(); save(KEY, o); } // a number, as the previous site wrote it (readers accept a number or an ISO string)
+    var ok;
+    if (!o.ids.length) ok = save(KEY, null);
+    else { o.at = Date.now(); ok = save(KEY, o); } // a number, as the previous site wrote it (readers accept a number or an ISO string)
+    memList = ok ? null : copy(o);
     d.dispatchEvent(new CustomEvent('sc:shortlist-updated', { detail: readList() }));
+    return ok;
   }
   SC.shortlist = {
     get: readList,
+    /** False while this browser refuses to store the list (it is kept for this page view only). */
+    saved: function () { return !memList; },
     has: function (id) { return readList().ids.indexOf(id) >= 0; },
-    remove: function (id) { var o = readList(); o.ids = o.ids.filter(function (x) { return x !== id; }); if (o.plans) delete o.plans[id]; writeList(o); },
-    clear: function () { writeList({ ids: [], category: '', plans: {}, weights: {} }); },
-    replace: function (ids, category) { writeList({ ids: ids.slice(0, MAX), category: category, plans: {}, weights: {} }); },
+    // each change returns true once it is saved in this browser, false when it lasts for this page view only
+    remove: function (id) { var o = readList(); o.ids = o.ids.filter(function (x) { return x !== id; }); if (o.plans) delete o.plans[id]; return writeList(o); },
+    clear: function () { return writeList({ ids: [], category: '', plans: {}, weights: {} }); },
+    replace: function (ids, category) { return writeList({ ids: ids.slice(0, MAX), category: category, plans: {}, weights: {} }); },
     /** Remember a researched plan for a shortlisted product ('' clears it). Returns false when it could not be saved. */
     setPlan: function (id, plan) {
       var o = readList();
       if (o.ids.indexOf(id) < 0) return false;
       if (plan) o.plans[id] = String(plan); else delete o.plans[id];
-      writeList(o);
-      return (readList().plans[id] || '') === (plan || '');
+      return writeList(o) && (readList().plans[id] || '') === (plan || '');
     },
     /** Returns 'added' | 'removed' | 'full' | 'other-category'. */
     toggle: function (id, category, name) {
@@ -204,18 +217,18 @@
       if (o.ids.indexOf(id) >= 0) { SC.shortlist.remove(id); return 'removed'; }
       if (o.ids.length && o.category && category && o.category !== category) {
         SC.toast('Your shortlist compares products in one category at a time.', [
-          { label: 'Start a new shortlist with ' + (name || 'this product'), fn: function () { SC.shortlist.replace([id], category); announce(name, true); } },
+          { label: 'Start a new shortlist with ' + (name || 'this product'), fn: function () { announce(name, true, SC.shortlist.replace([id], category)); } },
         ]);
         return 'other-category';
       }
       if (o.ids.length >= MAX) {
-        SC.toast('A shortlist holds up to ' + MAX + ' products. Remove one to add ' + (name || 'another') + '.', [{ label: 'Open shortlist', href: SC.url('/shortlist/') }]);
+        SC.toast('A shortlist holds up to ' + MAX + ' products. Remove one to add ' + (name || 'another') + '.', [SC.shortlist.saved() ? { label: 'Open shortlist', href: SC.url('/shortlist/') } : null]);
         return 'full';
       }
       o.ids.push(id); o.category = category || o.category;
-      writeList(o);
+      var ok = writeList(o);
       d.dispatchEvent(new CustomEvent('sc:comparison-add', { detail: { vendorId: id } }));
-      announce(name, true);
+      announce(name, true, ok);
       return 'added';
     },
     compareUrl: function (o) {
@@ -228,9 +241,18 @@
   // Where the tray shows the list (every page but /shortlist/ and /compare/), the tray itself confirms a change
   // and the live region says it; a toast only appears where nothing else on screen changes.
   function trayShows() { return PAGE !== 'shortlist' && PAGE !== 'compare'; }
-  function announce(name, added) {
+  /** ok === false: the browser saved nothing. Then it never says "added to your shortlist", and once per page
+   *  view it shows why (the list keeps working on this page; tray, count and compare link included). */
+  function announce(name, added, ok) {
     if (!name) return;
     var n = readList().ids.length;
+    if (added && ok === false) {
+      var only = name + ' added for this page only';
+      if (!blockedTold) { blockedTold = true; SC.toast(BLOCKED, null, { say: only + '. ' + BLOCKED }); }
+      else if (trayShows() && n) SC.announce(only + ' (' + n + ' of ' + MAX + ').');
+      else SC.toast(only + '.');
+      return;
+    }
     if (trayShows() && n) SC.announce(name + (added ? ' added to' : ' removed from') + ' your shortlist (' + n + ' of ' + MAX + ').');
     else SC.toast(added ? name + ' added to your shortlist.' : name + ' removed.');
   }
@@ -259,6 +281,64 @@
   SC.syncBottomPad = syncBottomPad;
   on(w, 'resize', syncBottomPad);
 
+  // ------------------------------------------------------------------ an old or broken saved list is repaired on every page
+  // A list saved by an earlier version of the site may name products that are gone, products of another category,
+  // or a category that does not exist or has no scored ranking. With the vendors file (which the tray loads
+  // anyway) those products are dropped — the whole list when its category is unknown or documentary; a list with
+  // no category takes the scored category its products share — and the repaired list is written back in the same
+  // shape, expiry date unchanged, so the header count, the buttons and the tray agree on every page and no raw id
+  // is ever shown. /shortlist/ is the one place that explains a removal (SC.shortlist.repairNote()).
+  var REPAIR = 'sc-us-shortlist-repaired', repairMem = null, checking = null;
+  function noteRepair(n, all) {
+    var o = SC.shortlist.repairNote(true) || { n: 0, all: 0 };
+    o.n += n; if (all) o.all = 1;
+    repairMem = o;
+    try { sessionStorage.setItem(REPAIR, JSON.stringify(o)); } catch (e) { /* kept in memory for this page */ }
+  }
+  /** What repairs removed in this tab and was not explained yet: { n: products, all: whole list } or null. */
+  SC.shortlist.repairNote = function (keep) {
+    var o = repairMem;
+    try { o = JSON.parse(sessionStorage.getItem(REPAIR)) || o; if (!keep) sessionStorage.removeItem(REPAIR); } catch (e) { /* in memory only */ }
+    if (!keep) repairMem = null;
+    return o && typeof o.n === 'number' ? o : null;
+  };
+  function repair(V) {
+    var raw = rawList();
+    if (!raw || !Array.isArray(raw.ids) || !raw.ids.length || !V || !V.vendors || !Array.isArray(V.scored)) return false; // an older vendors file: no check
+    if (raw.at && Date.now() - new Date(raw.at).getTime() > TTL) return false; // expired: readList() empties it
+    var seen = {}, ids = raw.ids.filter(function (id) { return typeof id === 'string' && SLUG.test(id) && !seen[id] && (seen[id] = 1); });
+    var lists = function (id, c) { var v = V.vendors[id]; return !!v && (v[5] || []).some(function (i) { return V.scored[i] === c; }); };
+    var cat = typeof raw.category === 'string' && SLUG.test(raw.category) ? raw.category : '';
+    if (raw.category == null || raw.category === '') {
+      // no category at all: the scored category (of the first known product) that lists most of them
+      var first = ids.filter(function (id) { return V.vendors[id]; })[0], best = -1;
+      ((first && V.vendors[first][5]) || []).forEach(function (i) {
+        var c = V.scored[i], k = ids.filter(function (id) { return lists(id, c); }).length;
+        if (k > best) { best = k; cat = c; }
+      });
+    }
+    var whole = !cat || !V.categories[cat] || V.scored.indexOf(cat) < 0;
+    var keep = whole ? [] : ids.filter(function (id) { return lists(id, cat); }).slice(0, MAX);
+    if (!whole && cat === raw.category && keep.join(' ') === readList().ids.join(' ')) return false; // nothing to repair
+    var dropped = whole ? ids.length : ids.filter(function (id) { return !lists(id, cat); }).length;
+    raw.ids = keep; raw.category = cat;
+    if (raw.plans && typeof raw.plans === 'object') Object.keys(raw.plans).forEach(function (id) { if (keep.indexOf(id) < 0) delete raw.plans[id]; });
+    var ok = save(KEY, keep.length ? raw : null);
+    memList = ok ? null : keep.length ? copy(raw) : { ids: [], category: '', plans: {}, weights: {} };
+    if (dropped || whole) noteRepair(dropped, whole);
+    return true;
+  }
+  /** The vendors data, once the saved list has been checked against it (and repaired when needed). */
+  function vendorsChecked() {
+    if (!checking) checking = SC.load('vendors').then(function (V) {
+      if (repair(V)) d.dispatchEvent(new CustomEvent('sc:shortlist-updated', { detail: readList() }));
+      return V;
+    });
+    return checking;
+  }
+  /** Resolves once a saved list has been checked (at once when there is none). */
+  SC.shortlist.ready = function () { return readList().ids.length ? vendorsChecked().then(function () {}, function () {}) : Promise.resolve(); };
+
   var tray, trayFocus = null; // trayFocus: index of the tray button that had focus before a re-render (-1: Clear)
   function renderTray() {
     var o = readList();
@@ -273,12 +353,13 @@
       tray = el('div.tray', { role: 'region', 'aria-label': 'Shortlist', 'data-nosnippet': true });
       d.body.appendChild(tray);
     }
-    SC.load('vendors').then(function (data) {
+    vendorsChecked().then(function (data) {
       var o2 = readList();
+      o2.ids = o2.ids.filter(function (id) { return data.vendors[id]; }); // never a raw id (an older vendors file cannot repair)
       if (!o2.ids.length) return;
       var items = el('div.tray__items');
       o2.ids.forEach(function (id, i) {
-        var v = data.vendors[id] || [id, '', 0];
+        var v = data.vendors[id];
         var logo = el('span.logo' + (v[2] ? '.logo--dark' : ''));
         if (v[1]) logo.appendChild(el('img', { src: SC.url(v[1]), alt: '', width: 28, height: 28, loading: 'lazy' }));
         if (v[1] && v[4]) SC.monogram(logo, v[0]); // a wide wordmark would be unreadable in the small chip
@@ -288,7 +369,7 @@
       var cmp = el('a.btn.btn--sm', { href: canCompare ? SC.shortlist.compareUrl(o2) : SC.url('/shortlist/'), text: canCompare ? 'Compare ' + o2.ids.length : 'Add one more to compare' });
       if (!canCompare) { cmp.className = 'btn btn--sm btn--ghost'; cmp.setAttribute('aria-disabled', 'true'); cmp.removeAttribute('href'); }
       var inner = el('div.wrap.tray__inner', null, [
-        el('span.tray__label', { text: 'Shortlist' + (data.categories[o2.category] ? ' · ' + data.categories[o2.category] : '') }),
+        el('span.tray__label', { text: 'Shortlist' + (data.categories[o2.category] ? ' · ' + data.categories[o2.category] : '') + (memList ? ' · this page only' : '') }),
         items,
         el('div.tray__actions', null, [el('button.tray__clear', { type: 'button', text: 'Clear', on: { click: function () { trayFocus = -1; SC.shortlist.clear(); SC.announce('Shortlist cleared.'); } } }), cmp]),
       ]);
@@ -313,7 +394,12 @@
     if (r === 'removed') announce(b.getAttribute('data-name'), false);
   });
   on(d, 'sc:shortlist-updated', function () { syncButtons(); renderTray(); });
-  on(w, 'storage', function (e) { if (e.key === KEY) { syncButtons(); renderTray(); } });
+  on(w, 'storage', function (e) {
+    if (e.key !== KEY) return;
+    memList = null; // another tab could save it, so this one reads the stored list again
+    syncButtons(); renderTray();
+    if (checking) checking.then(function (V) { if (repair(V)) d.dispatchEvent(new CustomEvent('sc:shortlist-updated', { detail: readList() })); }).catch(function () {});
+  });
 
   // ------------------------------------------------------------------ dialogs
   function dialog(cls, label) {
@@ -390,15 +476,39 @@
     return s;
   }
   var GROUPS = [['category', 'Categories', 4], ['product', 'Products', 6], ['comparison', 'Comparisons', 4], ['guide', 'Guides', 3], ['faq', 'Questions', 3], ['page', 'Pages', 2]];
+  /** Runs fn once the next frame has been painted (so a click shows its result before heavy work starts). */
+  function afterPaint(fn) { (w.requestAnimationFrame || setTimeout)(function () { setTimeout(fn, 0); }); }
+  function whenIdle(fn) { if (w.requestIdleCallback) w.requestIdleCallback(fn, { timeout: 600 }); else setTimeout(fn, 50); }
+  // The previous site's limits for a search, and its message (search.js reads at most this much)
+  SC.searchLimit = {
+    chars: 120, words: 20, message: 'Use at most 120 characters and 20 words, then search again.',
+    over: function (q) { q = String(q || '').trim(); return q.length >= 120 || q.split(/\s+/).length > 20; },
+  };
   SC.search = {
-    ready: null,
-    /** Loads the engine + index once; resolves with the engine instance. */
-    engine: function () {
+    ready: null, full: null,
+    /**
+     * Loads the engine and the first part of the index once (names, aliases, categories: enough for the first
+     * results); resolves with the engine. With { full: true }, it resolves once the second part (descriptions,
+     * features, integrations) is in too — or without it, should that part not load. The palette asks for it after
+     * its first results ({ idle: true }: merged when the browser is idle); /search/ asks at once, so that both
+     * parts load in parallel and the page renders once.
+     */
+    engine: function (opts) {
       if (!SC.search.ready) {
         var link = d.getElementById('sc-search-engine');
-        SC.search.ready = Promise.all([SC.load('search-index'), w.SC.searchEngine || !link ? null : SC.loadScript(link.href)]).then(function (r) { return w.SC.searchEngine.create(r[0]); });
+        SC.search.ready = Promise.all([SC.load('search-index-1'), w.SC.searchEngine || !link ? null : SC.loadScript(link.href)]).then(function (r) { return w.SC.searchEngine.create(r[0]); });
       }
-      return SC.search.ready;
+      if (!(opts && opts.full)) return SC.search.ready;
+      if (!SC.search.full) {
+        var more = SC.load('search-index-2').catch(function () { return null; }), idle = !!opts.idle;
+        SC.search.full = Promise.all([SC.search.ready, more]).then(function (r) {
+          var engine = r[0];
+          if (!r[1] || engine.full || !engine.extend) return engine;
+          if (!idle) { engine.extend(r[1]); return engine; }
+          return new Promise(function (resolve) { whenIdle(function () { engine.extend(r[1]); resolve(engine); }); });
+        });
+      }
+      return SC.search.full;
     },
     recent: function () { return store(RECENT, []).filter(function (x) { return typeof x === 'string'; }).slice(0, 6); },
     remember: function (q) {
@@ -417,10 +527,13 @@
       var icon = el('span.hit__icon');
       if (r.logo) { icon.className = 'logo logo--sm' + (r.dark ? ' logo--dark' : ''); icon.appendChild(el('img', { src: SC.url(r.logo), alt: '', width: 32, height: 32, loading: 'lazy' })); if (r.wide) SC.monogram(icon, r.name); }
       else icon.appendChild(svg(r.type));
+      // the right-hand label is a product's score or price; a comparison, alternatives or tool row names its kind
+      // on its second line already, so it gets none (on phones it would cut the title short)
+      var meta = (opts && opts.meta) || SC.search.meta(r) || (r.priceText && r.type === 'product' && r.amount != null ? r.priceText : '');
       var a = el('a.hit', { href: SC.url(r.url), role: 'option', id: opts && opts.id }, [
         icon,
         el('span.hit__text', null, [el('span.hit__title', { text: r.name }), r.sub ? el('span.hit__sub', { text: r.sub }) : null]),
-        el('span.hit__meta', { text: (opts && opts.meta) || SC.search.meta(r) || (r.priceText && r.type === 'product' && r.amount != null ? r.priceText : '') }),
+        meta ? el('span.hit__meta', { text: meta }) : null,
       ]);
       return a;
     },
@@ -455,8 +568,10 @@
         palInput.setAttribute('aria-activedescendant', hits[palIndex].id);
       } else if (e.key === 'Enter') {
         var q = palInput.value.trim();
-        if (palIndex >= 0 && hits[palIndex]) { e.preventDefault(); SC.search.remember(q); w.location.href = hits[palIndex].href; }
-        else if (!q) e.preventDefault();
+        if (!q && palIndex < 0) e.preventDefault();
+        // Shift+Enter: every result on the search page, even where Enter would open the best match
+        else if (e.shiftKey && q) { e.preventDefault(); SC.search.remember(q); w.location.href = SC.url('/search/?q=' + encodeURIComponent(q)); }
+        else if (palIndex >= 0 && hits[palIndex]) { e.preventDefault(); SC.search.remember(q); w.location.href = hits[palIndex].href; }
         else SC.search.remember(q);
       }
     });
@@ -469,47 +584,23 @@
   }
   function group(title) { return el('div.palette__group', { text: title, role: 'presentation' }); }
   function setPalStatus(text) { if (palStatus.textContent !== text) palStatus.textContent = text; }
+  var palSig = ''; // the rows on screen: refined results (second part of the index) replace them only when they differ
   function renderPalette() {
     var q = palInput.value.trim();
     palIndex = -1;
     palInput.removeAttribute('aria-activedescendant');
     if (!q) return renderPaletteEmpty();
+    // the first time, the palette paints before the engine and the index load and build
+    (SC.search.ready ? function (fn) { fn(); } : afterPaint)(function () { searchPalette(q); });
+  }
+  function searchPalette(q) {
     SC.search.engine().then(function (engine) {
       if (palInput.value.trim() !== q) return;
-      var r = engine.query(q), n = 0, frag = d.createDocumentFragment();
-      function add(item, opts) { var h = SC.search.hit(item, { id: 'hit-' + n++, meta: opts && opts.meta }); if (opts && opts.top) h.setAttribute('data-top', ''); frag.appendChild(h); }
-      // data-top: Enter opens the first best match directly ("X vs Y", "X alternatives", "X pricing")
-      if (r.top.length) { frag.appendChild(group('Best match')); r.top.forEach(function (t, i) { add(t, { top: i === 0 && r.direct !== false, meta: t.why || '' }); }); }
-      var shown = {}; r.top.forEach(function (t) { shown[t.type + ':' + t.id] = 1; });
-      // products that only list the named product as an integration: their own small, labelled group
-      var via = r.via && r.via.items.length ? r.via : null;
-      GROUPS.forEach(function (g) {
-        var list = (r.groups[g[0]] || []).filter(function (x) { return !shown[x.type + ':' + x.id] && !(via && x.via); });
-        if (list.length) {
-          frag.appendChild(group(g[1]));
-          list.slice(0, r.top.length ? Math.min(3, g[2]) : g[2]).forEach(function (x) { add(x); });
-        }
-        if (g[0] === 'product' && via) {
-          var more = via.items.filter(function (x) { return !shown[x.type + ':' + x.id]; }).slice(0, 3);
-          if (more.length) { frag.appendChild(group(via.label)); more.forEach(function (x) { add(x); }); }
-        }
-      });
-      var found = n;
-      palEmpty.textContent = '';
-      palEmpty.hidden = !!found;
-      if (!found) {
-        palEmpty.appendChild(el('p', null, [el('strong', { text: 'No results for “' + q + '”.' })]));
-        palEmpty.appendChild(el('p', { text: 'Check the spelling, or start from a category.' }));
-        frag.appendChild(group('Popular categories'));
-        popularCategories(engine).forEach(function (x) { add(x); });
-        setPalStatus('No results for “' + q + '”. Popular categories are listed instead.');
-      } else {
-        var all = el('a.hit', { href: SC.url('/search/?q=' + encodeURIComponent(q)), role: 'option', id: 'hit-' + n++ }, [el('span.hit__icon', null, [svg('search')]), el('span.hit__text', null, [el('span.hit__title', { text: 'See all ' + r.total + ' results for “' + q + '”' })])]);
-        frag.appendChild(all);
-        setPalStatus(found + (found === 1 ? ' result' : ' results') + (r.total > found ? ', ' + r.total + ' in all' : ''));
-      }
-      palResults.textContent = '';
-      palResults.appendChild(frag);
+      paintResults(engine, q, false);
+      if (!engine.full) SC.search.engine({ full: true, idle: true }).then(function (full) {
+        // refine in place, unless the visitor has moved on or is choosing a row with the arrow keys
+        if (pal.open && palInput.value.trim() === q && palIndex < 0) paintResults(full, q, true);
+      }).catch(function () {});
     }).catch(function () {
       palResults.textContent = '';
       palEmpty.textContent = '';
@@ -517,6 +608,55 @@
       palEmpty.hidden = false;
       setPalStatus('Search could not load. Press Enter to open the search page.');
     });
+  }
+  function paintResults(engine, q, refine) {
+    var r = engine.query(q), n = 0, frag = d.createDocumentFragment(), sig = [], over = SC.searchLimit.over(palInput.value);
+    function add(item, opts) {
+      var h = SC.search.hit(item, { id: 'hit-' + n++ });
+      if (opts && opts.top) h.setAttribute('data-top', '');
+      sig.push(h.getAttribute('href') + (opts && opts.top ? '*' : ''));
+      frag.appendChild(h);
+    }
+    // data-top: Enter opens the first best match directly ("X vs Y", "X alternatives", "X pricing", a product's
+    // name, the site's own page for a question about it)
+    if (r.top.length) { frag.appendChild(group('Best match')); r.top.forEach(function (t, i) { add(t, { top: i === 0 && r.direct !== false }); }); }
+    var shown = {}; r.top.forEach(function (t) { shown[t.type + ':' + t.id] = 1; });
+    // products that only list the named product as an integration: their own small, labelled group
+    var via = r.via && r.via.items.length ? r.via : null;
+    GROUPS.forEach(function (g) {
+      var list = (r.groups[g[0]] || []).filter(function (x) { return !shown[x.type + ':' + x.id] && !(via && x.via); });
+      if (list.length) {
+        frag.appendChild(group(g[1]));
+        // a query that is exactly a category's name ("crm"): Enter opens that category
+        list.slice(0, r.top.length ? Math.min(3, g[2]) : g[2]).forEach(function (x) { add(x, { top: !!(r.exact && r.exact.type === x.type && r.exact.id === x.id) }); });
+      }
+      if (g[0] === 'product' && via) {
+        var more = via.items.filter(function (x) { return !shown[x.type + ':' + x.id]; }).slice(0, 3);
+        if (more.length) { frag.appendChild(group(via.label)); more.forEach(function (x) { add(x); }); }
+      }
+    });
+    var found = n;
+    if (refine && sig.join('|') === palSig) return; // the second part of the index changed nothing on screen
+    palSig = sig.join('|');
+    // the query was cut at 120 characters or 20 words: say so, as the previous site did (above the results, or in
+    // the "No results" note)
+    if (over && found) frag.insertBefore(el('p.note.palette__limit', { role: 'presentation', text: SC.searchLimit.message }), frag.firstChild);
+    palEmpty.textContent = '';
+    palEmpty.hidden = !!found;
+    var limitSaid = over ? SC.searchLimit.message + ' ' : '';
+    if (!found) {
+      palEmpty.appendChild(el('p', null, [el('strong', { text: 'No results for “' + q + '”.' })]));
+      palEmpty.appendChild(el('p', { text: over ? SC.searchLimit.message : 'Check the spelling, or start from a category.' }));
+      frag.appendChild(group('Popular categories'));
+      popularCategories(engine).forEach(function (x) { add(x); });
+      setPalStatus(limitSaid + 'No results for “' + q + '”. Popular categories are listed instead.');
+    } else {
+      var all = el('a.hit', { href: SC.url('/search/?q=' + encodeURIComponent(q)), role: 'option', id: 'hit-' + n++ }, [el('span.hit__icon', null, [svg('search')]), el('span.hit__text', null, [el('span.hit__title', { text: 'See all ' + r.total + ' results for “' + q + '”' })])]);
+      frag.appendChild(all);
+      setPalStatus(limitSaid + found + (found === 1 ? ' result' : ' results') + (r.total > found ? ', ' + r.total + ' in all' : ''));
+    }
+    palResults.textContent = '';
+    palResults.appendChild(frag);
   }
   function popularCategories(engine) {
     var ids = ['crm', 'email-marketing', 'accounting', 'payroll', 'customer-service', 'project-management'];
@@ -540,18 +680,22 @@
     });
     palResults.textContent = '';
     palResults.appendChild(frag);
-    SC.search.engine().then(function (engine) {
-      if (palInput.value.trim()) return;
-      palResults.appendChild(group('Popular categories'));
-      popularCategories(engine).forEach(function (x) { palResults.appendChild(SC.search.hit(x, { id: 'hit-' + n++ })); });
-    }).catch(function () {});
+    palSig = '';
+    // the palette paints first; the engine and the first part of the index load after that frame
+    (SC.search.ready ? function (fn) { fn(); } : afterPaint)(function () {
+      SC.search.engine().then(function (engine) {
+        if (palInput.value.trim() || $('.palette__group[data-popular]', palResults)) return;
+        palResults.appendChild(el('div.palette__group', { text: 'Popular categories', role: 'presentation', 'data-popular': '' }));
+        popularCategories(engine).forEach(function (x) { palResults.appendChild(SC.search.hit(x, { id: 'hit-' + n++ })); });
+      }).catch(function () {});
+    });
   }
   SC.openSearch = function (q) {
     if (!pal) buildPalette();
     palInput.value = q || '';
+    renderPalette(); // the rows are in place before the dialog opens: one style pass for both
     if (!pal.open) { pal.showModal(); setExpanded('[data-search-open]', true); }
-    renderPalette();
-    palInput.focus();
+    if (d.activeElement !== palInput) palInput.focus();
     if (q) palInput.select && palInput.setSelectionRange(q.length, q.length);
   };
   on(d, 'click', function (e) {
@@ -583,8 +727,20 @@
   });
 
   // ------------------------------------------------------------------ tabs
+  // On the home page and on product profiles the chosen category tab is kept in the address (?scope=<category>,
+  // as on /alternatives/), so Back, Forward and a reload return to it; the tab selected in the HTML adds nothing.
   $$('[data-tabs]').forEach(function (box) {
     var tabs = $$('[role="tab"]', box);
+    var scopeOf = function (t) { var m = /^tab-([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(t.id || ''); return m ? m[1] : ''; };
+    var keepsScope = (PAGE === 'home' || PAGE === 'software') && tabs.length > 1 && tabs.every(scopeOf);
+    var first = tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0];
+    function remember(tab) {
+      if (!keepsScope) return;
+      var q = new URLSearchParams(location.search);
+      if (tab === first) q.delete('scope'); else q.set('scope', scopeOf(tab));
+      var s = q.toString();
+      try { history.replaceState(history.state, '', location.pathname + (s ? '?' + s : '') + location.hash); } catch (e) { /* file:// */ }
+    }
     function select(tab, focus) {
       tabs.forEach(function (t) {
         var onNow = t === tab;
@@ -593,6 +749,7 @@
         var p = d.getElementById(t.getAttribute('aria-controls')); if (p) p.hidden = !onNow;
       });
       if (focus) tab.focus();
+      remember(tab);
       syncButtons();
     }
     tabs.forEach(function (t, i) {
@@ -606,6 +763,9 @@
     });
     // panels are hidden by attribute (not only by CSS), so exactly one shows from the start
     tabs.forEach(function (t) { var p = d.getElementById(t.getAttribute('aria-controls')); if (p) p.hidden = t.getAttribute('aria-selected') !== 'true'; });
+    var want = keepsScope ? new URLSearchParams(location.search).get('scope') : '';
+    var from = want && tabs.filter(function (t) { return scopeOf(t) === want; })[0];
+    if (from && from !== first) select(from, false);
   });
 
   // ------------------------------------------------------------------ popovers: one open at a time, close on outside click / Esc
@@ -771,7 +931,7 @@
     var spyTick = false;
     on(w, 'scroll', function () { if (!spyTick) { spyTick = true; w.requestAnimationFrame(function () { spyTick = false; runSpies(); }); } }, { passive: true });
     on(w, 'resize', runSpies);
-    runSpies();
+    afterPaint(runSpies); // it measures sections: after the first layout, not in the middle of the page scripts' DOM work
   }
 
   // ------------------------------------------------------------------ deep links into collapsed content
@@ -873,10 +1033,16 @@
   });
 
   // ------------------------------------------------------------------ misc
-  // Wide tables: make the scroll container keyboard-focusable and labelled.
-  $$('.scroller').forEach(function (s) {
-    if (s.scrollWidth > s.clientWidth + 2 && !s.hasAttribute('tabindex')) { s.tabIndex = 0; s.setAttribute('role', 'region'); if (!s.hasAttribute('aria-label')) s.setAttribute('aria-label', 'Data table — scroll horizontally'); }
-  });
+  // Wide tables: make the scroll container keyboard-focusable and labelled. Measured in a ResizeObserver callback,
+  // which runs right after layout: nothing is forced while the page loads, and a table first laid out later
+  // (content-visibility) or that overflows once the window narrows is labelled then.
+  var scrollers = $$('.scroller');
+  function labelScroller(s) {
+    if (s.hasAttribute('tabindex') || s.scrollWidth <= s.clientWidth + 2) return;
+    s.tabIndex = 0; s.setAttribute('role', 'region'); if (!s.hasAttribute('aria-label')) s.setAttribute('aria-label', 'Data table — scroll horizontally');
+  }
+  if (scrollers.length && 'ResizeObserver' in w) { var scrollRO = new ResizeObserver(function (en) { en.forEach(function (x) { labelScroller(x.target); }); }); scrollers.forEach(function (s) { scrollRO.observe(s); }); }
+  else if (scrollers.length) afterPaint(function () { scrollers.forEach(labelScroller); });
   // Skip link moves focus to main.
   on($('.skip-link'), 'click', function () { var m = d.getElementById('main'); if (m) setTimeout(function () { m.focus(); }, 0); });
   // Copy-to-clipboard buttons: <button data-copy="text or #selector">
@@ -898,4 +1064,5 @@
   };
   syncButtons();
   renderTray();
+  if (readList().ids.length) vendorsChecked().catch(function () {}); // the pages without a tray repair the list too
 })();

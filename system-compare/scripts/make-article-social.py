@@ -6,6 +6,7 @@ not reliably read WebP, so every hero gets  assets/articles/social/<name>.jpg : 
 on a 1200x630 canvas over a blurred copy of itself (nothing is cropped — the artwork has text at its edges).
 
     python3 scripts/make-article-social.py
+    python3 scripts/make-hero-variants.py   # and the responsive sizes the pages load (assets/articles/sized/)
 """
 from pathlib import Path
 from PIL import Image, ImageFilter

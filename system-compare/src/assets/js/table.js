@@ -52,8 +52,10 @@
   }
   function apply(push) {
     if (!table) return;
-    var visible = [];
-    rows.forEach(function (tr) { var ok = matches(tr); tr.hidden = !ok; if (ok) visible.push(tr); });
+    // every row is read first; then only the rows that change are written (an unchanged order is not re-appended),
+    // so a filter chip costs one small style and layout pass instead of re-laying out the whole table
+    var visible = [], want = rows.map(function (tr) { var ok = matches(tr); if (ok) visible.push(tr); return ok; });
+    rows.forEach(function (tr, i) { if (tr.hidden === want[i]) tr.hidden = !want[i]; });
     var sorted = rows.slice().sort(function (a, b) {
       if (state.sort === 'name') return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
       if (state.sort === 'price') {
@@ -65,7 +67,9 @@
       if (state.sort === 'cov') return Number(b.getAttribute('data-cov')) - Number(a.getAttribute('data-cov')) || Number(a.getAttribute('data-rank')) - Number(b.getAttribute('data-rank'));
       return Number(a.getAttribute('data-rank')) - Number(b.getAttribute('data-rank'));
     });
-    sorted.forEach(function (tr) { tbody.appendChild(tr); });
+    var order = tbody.children, same = order.length === sorted.length;
+    for (var i = 0; same && i < sorted.length; i++) same = order[i] === sorted[i];
+    if (!same) sorted.forEach(function (tr) { tbody.appendChild(tr); });
     // controls
     $$('[data-filter]', controls).forEach(function (b) { b.setAttribute('aria-pressed', state.f[b.getAttribute('data-filter')] ? 'true' : 'false'); });
     $$('[data-must]', controls).forEach(function (c) { c.checked = !!state.must[c.getAttribute('data-must')]; });
@@ -125,11 +129,12 @@
     heads.forEach(function (th, i) {
       var id = th.getAttribute('data-v');
       off[i] = !!hiddenIds[id] || (onlyPicked && pickedHere.indexOf(id) < 0);
-      th.hidden = off[i];
+      if (th.hidden !== off[i]) th.hidden = off[i];
     });
+    // a cell is written only when its column changes (hundreds of cells, most of them unchanged)
     $$('tbody tr', matrix).forEach(function (tr) {
       var tds = tr.children;
-      for (var i = 1; i < tds.length; i++) if (tds[i].tagName === 'TD') tds[i].hidden = !!off[i - 1];
+      for (var i = 1; i < tds.length; i++) if (tds[i].tagName === 'TD' && tds[i].hidden !== !!off[i - 1]) tds[i].hidden = !!off[i - 1];
     });
   }
   var STC = { y: 'yes', p: 'partial', n: 'no', u: 'unknown' };
@@ -275,14 +280,16 @@
   // ------------------------------------------------------------------ sort buttons of a stacked table
   // While the ranked table is stacked (phones, large text) its header row is clipped out of sight, so the sort
   // buttons in it must not be tab stops (the toolbar's Sort select does the same job); restored when wide.
-  var thead = table && $('thead', table), sortBtns = thead ? $$('button', thead) : [];
+  var thead = table && $('thead', table), sortBtns = thead ? $$('button', thead) : [], stackedNow = null;
   function syncSortStops() {
     var r = thead.getBoundingClientRect(), stacked = getComputedStyle(thead).position === 'absolute' || r.width < 2 || r.height < 2;
+    if (stacked === stackedNow) return; // writing the same attributes again would cost another style pass
+    stackedNow = stacked;
     sortBtns.forEach(function (b) { if (stacked) b.setAttribute('tabindex', '-1'); else b.removeAttribute('tabindex'); });
   }
   if (sortBtns.length) {
-    syncSortStops();
+    // the observer reports the first size once the table is laid out: no measuring in the middle of page scripts
     if ('ResizeObserver' in window) new ResizeObserver(syncSortStops).observe(table);
-    else window.addEventListener('resize', syncSortStops);
+    else { syncSortStops(); window.addEventListener('resize', syncSortStops); }
   }
 })();

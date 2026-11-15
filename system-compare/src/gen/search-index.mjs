@@ -1,9 +1,17 @@
 // Emits the client data files:
-//   /data/search-index.js  — one unified index (categories, products, suppliers, comparisons, guides, pages, FAQs)
-//   /data/vendors.js       — id → [name, logoPath, darkSurface, primaryCategoryId] for the shortlist tray
+//   /data/search-index-1.js  — one unified index (categories, products, suppliers, comparisons, guides, pages,
+//                              FAQs), part 1: what the first results need (names, aliases, categories, prices, logos)
+//   /data/search-index-2.js  — part 2, loaded once the first results show: descriptions, features, integrations,
+//                              best-for, AI capabilities and guide headings (search.js extend())
+//                              (the one-file index of earlier builds was /data/search-index.js: a page of an earlier
+//                              build, still open, cannot pick up part 1 by mistake — its search says it could not load)
+//   /data/vendors.js         — id → [name, logoPath, darkSurface, primaryCategoryId, wideWordmark, [scored
+//                              category indexes]] for the shortlist tray, and the list of scored categories
 // Files are plain scripts that call SC.define(name, data) so they load from any host (and from file://).
+// buildSearchIndex() returns the whole index in one object (the build and the search benchmark use it).
 
 import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { siteFaq } from '../lib/site-faq.mjs';
 import { WIDE_LOGO_RATIO } from '../lib/components.mjs';
@@ -183,10 +191,15 @@ export async function buildSearchIndex(ctx, root) {
     ['/terms/', 'Terms of use', '', 'terms conditions legal'],
     ['/accessibility/', 'Accessibility', '', 'accessibility a11y contrast text size'],
   ];
-  for (const [u, n, s, kw] of PAGES) docs.push({ t: 'page', id: u, n, u, s: s || 'Page', f: { n: field(n), a: field(kw) } });
+  // the words visitors use for the site's own pages and answers ("how we score", "get my product listed") are
+  // editable in data/content/search-aliases.json (pages: by address, faq: by FAQ id)
+  // (f.q: their words, weighted like aliases but kept out of the typo vocabulary; aq: the phrases as typed, so
+  // that typing one exactly ranks like typing the title)
+  const pageWords = aliasData.pages || {}, faqWords = aliasData.faq || {};
+  for (const [u, n, s, kw] of PAGES) docs.push({ t: 'page', id: u, n, u, s: s || 'Page', aq: (pageWords[u] || []).map(norm), f: { n: field(n), a: field(kw), q: field(pageWords[u] || []) } });
 
   // ---- FAQs (site-wide + category)
-  for (const g of siteFaq(ctx)) for (const it of g.items) docs.push({ t: 'faq', id: `faq-${it.id}`, n: it.q, u: `/faq/#${it.id}`, s: 'FAQ', f: { n: field(it.q), d: field(it.a) } });
+  for (const g of siteFaq(ctx)) for (const it of g.items) docs.push({ t: 'faq', id: `faq-${it.id}`, n: it.q, u: `/faq/#${it.id}`, s: 'FAQ', aq: (faqWords[it.id] || []).map(norm), f: { n: field(it.q), q: field(faqWords[it.id] || []), d: field(it.a) } });
   for (const c of ctx.scoredCategories) {
     (c.faq || []).forEach((it, i) => docs.push({ t: 'faq', id: `faq-${c.id}-${i}`, n: it.q, u: `${ctx.url.category(c.id)}#faq`, s: `FAQ · ${c.name}`, c: [c.id], f: { n: field(it.q), c: field(c.name) } }));
   }
@@ -201,26 +214,61 @@ export async function buildSearchIndex(ctx, root) {
     }
   }
   for (const [p, ids] of Object.entries(aliasData.multi || {})) phrase[E.key(p)] = ids;
+  // a phrase several categories share ("help desk") belongs to the one whose own name, id or synonym it is, as
+  // typed ("it help desk" is IT service management's): typed exactly, it opens that category (search.js r.exact)
+  const owners = {};
+  for (const c of ctx.categories) {
+    for (const p of [c.name, c.id.replace(/-/g, ' '), ...(SYN[c.id] || [])]) {
+      if ((phrase[E.key(p)] || []).length < 2) continue;
+      const typed = norm(p);
+      (owners[typed] ||= []).includes(c.id) || owners[typed].push(c.id);
+    }
+  }
+  const own = {};
+  for (const [typed, ids] of Object.entries(owners)) if (ids.length === 1) own[typed] = ids[0];
 
   // drop empty fields to save bytes
   for (const d of docs) {
     for (const k of Object.keys(d.f)) if (!d.f[k]) delete d.f[k];
-    for (const k of ['al', 'c']) if (Array.isArray(d[k]) && !d[k].length) delete d[k];
+    for (const k of ['al', 'aq', 'c']) if (Array.isArray(d[k]) && !d[k].length) delete d[k];
     for (const k of ['sc', 'am']) if (d[k] === null) delete d[k];
     for (const k of ['fr', 'pu', 'lg', 'dk', 'wd', 's']) if (!d[k]) delete d[k];
   }
-  return { v: 1, cats, phrase, docs };
+  return { v: 1, cats, phrase, own, docs };
+}
+
+// Fields of the second part: long text that refines results but is not needed for the first ones.
+const PART2 = ['d', 'f', 'i', 'b', 'ai', 'h'];
+/**
+ * Splits the whole index into the two files the browser loads. Part 1 drops every address that search.js
+ * urlOf() rebuilds from the type and id; part 2 is one entry per doc, in the same order, tied to part 1 by key.
+ */
+export function splitIndex(E, index) {
+  const key = createHash('sha256').update(index.docs.map((d) => d.t + ':' + d.id).join('|')).digest('hex').slice(0, 10);
+  const x = [];
+  const docs = index.docs.map((d) => {
+    const one = { ...d, f: { ...d.f } }, more = {};
+    if (one.u === E.urlOf(one.t, one.id, one.c, one.pf)) delete one.u;
+    for (const k of PART2) if (one.f[k]) { more[k] = one.f[k]; delete one.f[k]; }
+    x.push(Object.keys(more).length ? more : 0);
+    return one;
+  });
+  return [{ v: 2, key, cats: index.cats, phrase: index.phrase, own: index.own, docs }, { v: 2, key, x }];
 }
 
 export async function generate(ctx, emit) {
   const root = ctx.root;
   const index = await buildSearchIndex(ctx, root);
   ctx.searchIndex = index;
-  await emit('/data/search-index.js', `SC.define("search-index",${JSON.stringify(index)});`);
+  const [part1, part2] = splitIndex(await loadEngine(root), index);
+  await emit('/data/search-index-1.js', `SC.define("search-index-1",${JSON.stringify(part1)});`);
+  await emit('/data/search-index-2.js', `SC.define("search-index-2",${JSON.stringify(part2)});`);
 
   const vendors = {};
-  // [name, logoPath, darkSurface, primaryCategoryId, wideWordmark]
-  for (const v of ctx.vendors) vendors[v.id] = [v.name, v.logo?.path || '', v.logo?.surface === 'dark' || v.logo?.surface === 'brand-gradient' ? 1 : 0, v.categories?.[0] || '', (v.logo?.width || 64) / (v.logo?.height || 64) >= WIDE_LOGO_RATIO ? 1 : 0];
+  // [name, logoPath, darkSurface, primaryCategoryId, wideWordmark, [indexes into `scored` of the scored categories
+  // that list it]] — the last lets every page drop shortlist entries a category no longer lists (core.js)
+  const scored = ctx.scoredCategories.map((c) => c.id);
+  for (const v of ctx.vendors) vendors[v.id] = [v.name, v.logo?.path || '', v.logo?.surface === 'dark' || v.logo?.surface === 'brand-gradient' ? 1 : 0, v.categories?.[0] || '', (v.logo?.width || 64) / (v.logo?.height || 64) >= WIDE_LOGO_RATIO ? 1 : 0, ctx.vendorCategories(v).map((c) => scored.indexOf(c.id)).filter((i) => i >= 0)];
   const catNames = Object.fromEntries(ctx.categories.map((c) => [c.id, c.name]));
-  await emit('/data/vendors.js', `SC.define("vendors",${JSON.stringify({ vendors, categories: catNames })});`);
+  await emit('/data/vendors.js', `SC.define("vendors",${JSON.stringify({ vendors, categories: catNames, scored })});`);
 }

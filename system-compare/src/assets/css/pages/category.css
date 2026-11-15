@@ -1,15 +1,38 @@
 /* Category page */
-.cat-answer { padding-bottom: var(--s-8); }
-.cat-products { padding-top: var(--s-8); padding-bottom: var(--s-10); }
-.cat-products__head { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-2); }
-.cat-products .toolbar { padding-bottom: var(--s-2); }
-/* filters left; the live count and the sort share the row on the right (their own line on phones) */
-.cat-toolbar__end { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--s-2) var(--s-4); margin-left: auto; min-width: 0; }
+/* the first screen leads to the ranking: tight steps from the title to the answer, the section menu and the filters */
+.page-head.cat-head { padding-block: var(--s-4) var(--s-5); }
+/* "{Category} software: N tools compared" fits one line in the 75rem column (all 66 titles at 1440px): no early wrap */
+.cat-head h1 { max-width: none; }
+.cat-answer { padding-bottom: var(--s-5); }
+.cat-products { padding-top: var(--s-4); padding-bottom: var(--s-10); }
+.cat-products .toolbar { padding-top: 0; padding-bottom: var(--s-2); }
+/* filters left; the live count, the score help and the sort share the row on the right (their own line on phones) */
+.cat-toolbar__end { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--s-2) var(--s-3); margin-left: auto; min-width: 0; }
 .cat-products .toolbar__count { margin: 0; min-width: 0; }
+.cat-chips { min-width: 0; }
 .toolbar__sort { margin-left: auto; }
 @media (max-width: 47.99em) {
   .cat-toolbar__end { flex: 1 1 100%; flex-wrap: nowrap; justify-content: space-between; }
-  .cat-toolbar__end .toolbar__sort { flex: none; }
+  /* the count keeps room for whole words; the sort gives way first, and under 375px the count takes its own line */
+  .cat-toolbar__end .toolbar__count { flex: 1 1 auto; min-width: 6rem; }
+  .cat-toolbar__end .pop { flex: none; margin-left: 0; }
+  .cat-toolbar__end .toolbar__sort { flex: 0 1 auto; min-width: 0; margin-left: 0; }
+  .cat-toolbar__end .toolbar__sort .select { width: 100%; }
+  /* phones: the filters are one row that scrolls sideways from edge to edge; the right edge fades to show there is
+     more (the must-have panel is a bottom sheet here, so the scroller never clips it) */
+  .cat-chips { position: relative; flex: 1 1 100%; margin-inline: calc(-1 * var(--gutter)); }
+  .cat-chips .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 0.3rem 2rem 0.3rem var(--gutter); scroll-padding-inline: var(--gutter) 2rem; }
+  .cat-chips .chips::-webkit-scrollbar { display: none; }
+  .cat-chips::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2rem; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; }
+  .cat-toolbar { row-gap: var(--s-1); }
+  /* the buyer's question at body size, and slightly tighter steps down to the filters */
+  .cat-head .lede { margin-top: var(--s-3); font-size: var(--fs-md); line-height: 1.5; }
+  .page-head.cat-head { padding-bottom: var(--s-4); }
+  .cat-answer { padding-bottom: var(--s-4); }
+  .cat-products { padding-top: var(--s-3); }
+}
+@media (max-width: 23.4em) {
+  .cat-toolbar__end { flex-wrap: wrap; row-gap: var(--s-1); }
 }
 /* wide screens: ranking rows no taller than their content needs (name, two-line fit, dated price) */
 @media (min-width: 48em) {

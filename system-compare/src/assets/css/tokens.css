@@ -17,6 +17,131 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* While the web fonts load: Inter itself if the visitor has it installed (nothing moves at the swap) … */
+@font-face { font-family: "Inter local"; font-weight: 100 450; src: local("Inter Regular"), local("Inter-Regular"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Inter local"; font-weight: 451 550; src: local("Inter Medium"), local("Inter-Medium"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Inter local"; font-weight: 551 650; src: local("Inter SemiBold"), local("Inter-SemiBold"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Inter local"; font-weight: 651 900; src: local("Inter Bold"), local("Inter-Bold"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+/* … otherwise metric-matched stand-ins, shown until the web fonts arrive (they are not preloaded): Arial, or a font with Arial's
+   widths (Helvetica, Liberation Sans, Arimo), scaled to the width of the text this site renders in that face and
+   weight (Inter 400 body, 600 labels, 700 uppercase labels; Rubik 500/800 the wordmark, 600 headings, 700 score
+   digits), with the web font's ascent and descent, so the swap moves almost nothing.
+   ascent-override = ascent ÷ size-adjust (Inter 1984 and 494 of 2048 units, Rubik 935 and 250 of 1000).
+   Where text blocks are sized in ch (body text, headings) the digits get their own face, scaled so "0" — and with
+   it the ch unit — is as wide as in the web font; otherwise every ch-sized block would narrow and rewrap.
+   Same unicode-range as the web fonts: characters outside it keep rendering in the system font. */
+@font-face {
+  font-family: "Inter fallback";
+  font-weight: 100 450;
+  src: local("Arial"), local("ArialMT"), local("Helvetica"), local("Liberation Sans"), local("Arimo Regular");
+  size-adjust: 106.81%;
+  ascent-override: 90.7%;
+  descent-override: 22.58%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-002F, U+003A-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter fallback";
+  font-weight: 100 450;
+  src: local("Arial"), local("ArialMT"), local("Helvetica"), local("Liberation Sans"), local("Arimo Regular");
+  size-adjust: 113.43%;
+  ascent-override: 85.4%;
+  descent-override: 21.27%;
+  line-gap-override: 0%;
+  unicode-range: U+0030-0039;
+}
+@font-face {
+  font-family: "Inter fallback";
+  font-weight: 451 550;
+  src: local("Arial"), local("ArialMT"), local("Helvetica"), local("Liberation Sans"), local("Arimo Regular");
+  size-adjust: 107.96%;
+  ascent-override: 89.73%;
+  descent-override: 22.34%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter fallback";
+  font-weight: 551 650;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  size-adjust: 101.69%;
+  ascent-override: 95.27%;
+  descent-override: 23.72%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter fallback";
+  font-weight: 651 900;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  size-adjust: 99.38%;
+  ascent-override: 97.48%;
+  descent-override: 24.27%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SC Rubik fallback";
+  font-weight: 100 550;
+  src: local("Arial"), local("ArialMT"), local("Helvetica"), local("Liberation Sans"), local("Arimo Regular");
+  size-adjust: 110.77%;
+  ascent-override: 84.41%;
+  descent-override: 22.57%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SC Rubik fallback";
+  font-weight: 551 650;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  size-adjust: 101.81%;
+  ascent-override: 91.84%;
+  descent-override: 24.56%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-002F, U+003A-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SC Rubik fallback";
+  font-weight: 551 650;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  size-adjust: 120.1%;
+  ascent-override: 77.85%;
+  descent-override: 20.82%;
+  line-gap-override: 0%;
+  unicode-range: U+0030-0039;
+}
+@font-face {
+  font-family: "SC Rubik fallback";
+  font-weight: 651 750;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  size-adjust: 106.22%;
+  ascent-override: 88.02%;
+  descent-override: 23.54%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-002F, U+003A-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SC Rubik fallback";
+  font-weight: 651 750;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  size-adjust: 118.86%;
+  ascent-override: 78.66%;
+  descent-override: 21.03%;
+  line-gap-override: 0%;
+  unicode-range: U+0030-0039;
+}
+@font-face {
+  font-family: "SC Rubik fallback";
+  font-weight: 751 900;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  size-adjust: 108.06%;
+  ascent-override: 86.53%;
+  descent-override: 23.14%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   /* colour — surfaces */
   --bg: #ffffff;
@@ -59,8 +184,8 @@
   --focus: #1f4fd8;
 
   /* type */
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: "SC Rubik", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font: "Inter", "Inter local", "Inter fallback", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "SC Rubik", "SC Rubik fallback", "Inter", "Inter fallback", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --fs-xs: 0.75rem;   /* 12 — captions only */
   --fs-sm: 0.875rem;  /* 14 */
   --fs-md: 1rem;      /* 16 — body */

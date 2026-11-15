@@ -57,9 +57,25 @@ export function createAnswers(ctx) {
   const onPlan = (plan) => (plan ? ` on the ${planLabel(plan)}` : '');
   // " (custom quote)" / " (usage-based)" — nothing when the headline would only repeat "price not verified"
   const noPriceWhy = (p) => (p.state === 'quote' || p.state === 'usage' || p.smsUnverified ? ` (${p.headline.toLowerCase()})` : '');
+  /**
+   * The published unit inside a sentence. A plain "per …" unit stays in the prose ("$35 per user/month"); a unit
+   * that carries extra terms after a comma or semicolon keeps its words but puts those terms in brackets
+   * ("$300 per month (annual billing; 10 users/10 GB)", "$30,000 per year (starting contract)"), and a unit that is
+   * not a "per …" phrase is bracketed whole ("$0 (core software)"). Takes ctx.price(…).unitPhrase.
+   */
+  const proseUnit = (u) => {
+    u = String(u || '').trim();
+    if (!u || u.startsWith('(')) return u;
+    const m = u.match(/^(per [^,;()]+?)\s*[,;]\s*(.+)$/i);
+    if (m) return `${m[1]} (${m[2]})`;
+    return /^(per|monthly|one-time|flat|annual|yearly|from|each)\b/i.test(u) ? u : `(${u})`;
+  };
+  /** "$35 per user/month, billed annually" — ctx.price(…).phrase with the unit as proseUnit() writes it. */
+  const pricePhrase = (p) =>
+    p.hasAmount ? `${p.headline}${p.unitPhrase ? ' ' + proseUnit(p.unitPhrase) : ''}${p.billingPhrase ? `, ${p.billingPhrase}` : ''}` : p.headline.toLowerCase();
   const priceFrom = (vendor, categoryId) => {
     const p = ctx.price(vendor, categoryId);
-    return p.hasAmount ? `from ${p.phrase}` : null;
+    return p.hasAmount ? `from ${pricePhrase(p)}` : null;
   };
   const scoredName = (vendor, categoryId, { withPrice = true } = {}) => {
     const s = ctx.score(categoryId, vendor.id);
@@ -135,8 +151,8 @@ export function createAnswers(ctx) {
   /** "$0 per workspace (Agile CRM and EngageBay)" — every product that shares an amount is named. */
   const priceGroupText = (group) =>
     group.every((x) => x.p.phrase === group[0].p.phrase)
-      ? `${group[0].p.phrase} (${listText(group.map((x) => x.v.name))})`
-      : listText(group.map((x) => `${x.p.phrase} (${x.v.name})`));
+      ? `${pricePhrase(group[0].p)} (${listText(group.map((x) => x.v.name))})`
+      : listText(group.map((x) => `${pricePhrase(x.p)} (${x.v.name})`));
 
   function categoryPriceFacts(category) {
     const s = ctx.summary(category.id);
@@ -207,7 +223,7 @@ export function createAnswers(ctx) {
       ? `Its documented-fit score is pending: ${s.checked} of ${s.total} checklist items (${s.coveragePct}% of the weight) are checked as of ${fmtDate(s.checkedAt || ctx.catalog.checkedAt)}, below the 80% gate.`
       : `It scores ${s.value}/100 for documented fit (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${fmtDate(s.checkedAt)}` : ''}).`;
     const priceText = p.hasAmount
-      ? `Published pricing starts at ${p.headline}${p.unitPhrase ? ' ' + p.unitPhrase : ''}${onPlan(p.plan)}${p.billingPhrase ? `, ${p.billingPhrase}` : ''}${p.checkedAt ? ` (price checked ${fmtDate(p.checkedAt)})` : ''}.`
+      ? `Published pricing starts at ${p.headline}${p.unitPhrase ? ' ' + proseUnit(p.unitPhrase) : ''}${onPlan(p.plan)}${p.billingPhrase ? `, ${p.billingPhrase}` : ''}${p.checkedAt ? ` (price checked ${fmtDate(p.checkedAt)})` : ''}.`
       : `No verified public starting price is recorded${noPriceWhy(p)}.`;
     return `${vendor.name} is one of ${total} ${things} we researched. ${scoreText} ${priceText} Best for: ${lowerFirst(sentence(vendor.bestFor))}`;
   }
@@ -221,7 +237,7 @@ export function createAnswers(ctx) {
       p.hasAmount
         ? {
             q: `How much does ${vendor.name} cost?`,
-            a: `${vendor.name}’s published pricing starts at ${p.headline}${p.unitPhrase ? ' ' + p.unitPhrase : ''}${onPlan(p.plan)}${p.billingPhrase ? `, ${p.billingPhrase}` : ''}. ${sentence(p.summary)}${p.checkedAt ? ` Price checked ${fmtDate(p.checkedAt)}.` : ''}`.trim(),
+            a: `${vendor.name}’s published pricing starts at ${p.headline}${p.unitPhrase ? ' ' + proseUnit(p.unitPhrase) : ''}${onPlan(p.plan)}${p.billingPhrase ? `, ${p.billingPhrase}` : ''}. ${sentence(p.summary)}${p.checkedAt ? ` Price checked ${fmtDate(p.checkedAt)}.` : ''}`.trim(),
           }
         : {
             q: `How much does ${vendor.name} cost?`,
@@ -288,7 +304,7 @@ export function createAnswers(ctx) {
   function pairQuickAnswer(category, a, b) {
     const f = pairFacts(category, a, b);
     const side = (v, s, p) =>
-      `${v.name} ${s.pending ? `is score-pending (${s.checked} of ${s.total} items checked)` : `scores ${s.value}/100`}${p.hasAmount ? ` and starts at ${p.phrase}` : ', with no verified public starting price'}`;
+      `${v.name} ${s.pending ? `is score-pending (${s.checked} of ${s.total} items checked)` : `scores ${s.value}/100`}${p.hasAmount ? ` and starts at ${pricePhrase(p)}` : ', with no verified public starting price'}`;
     const diffText = f.diff.length
       ? `They differ on ${f.diff.length} of ${f.active.length} scored checks (${f.diff.slice(0, 3).map((r) => r.feature.label).join('; ')}).`
       : `Their documented status is the same on all ${f.active.length} scored checks.`;
@@ -340,7 +356,7 @@ export function createAnswers(ctx) {
       q: `Which is cheaper, ${a.name} or ${b.name}?`,
       a:
         f.pa.hasAmount && f.pb.hasAmount
-          ? `${a.name} starts at ${f.pa.phrase}; ${b.name} starts at ${f.pb.phrase}. Units and plan limits differ, so compare a full quote for the same team size and term.`
+          ? `${a.name} starts at ${pricePhrase(f.pa)}; ${b.name} starts at ${pricePhrase(f.pb)}. Units and plan limits differ, so compare a full quote for the same team size and term.`
           : `A like-for-like price cannot be stated: ${listText([!f.pa.hasAmount && a.name, !f.pb.hasAmount && b.name].filter(Boolean))} ${!f.pa.hasAmount && !f.pb.hasAmount ? 'have' : 'has'} no verified public starting price. Ask both vendors to quote the same scope.`,
     });
     const aiLine = (x) => `${x.name}: ${lowerFirst(ctx.aiLevel(x).label)}${x.ai?.summary ? ` — ${firstSentence(x.ai.summary)}` : '.'}`;
@@ -387,7 +403,7 @@ export function createAnswers(ctx) {
     if (f.cheaper.length) {
       out.push({
         q: `Which ${vendor.name} alternatives have a lower starting price?`,
-        a: `${vendor.name} starts at ${f.focalPrice.phrase}. Lower public starting prices are published by ${listText(f.cheaper.slice(0, 4).map((x) => `${x.v.name} (${x.p.phrase})`))}. Units and plan limits differ, so check what each entry price includes.`,
+        a: `${vendor.name} starts at ${pricePhrase(f.focalPrice)}. Lower public starting prices are published by ${listText(f.cheaper.slice(0, 4).map((x) => `${x.v.name} (${pricePhrase(x.p).replace(/ \(([^)]*)\)/, ' — $1')})`))}. Units and plan limits differ, so check what each entry price includes.`,
       });
     }
     const agents = f.others.filter((v) => ['native', 'agent'].includes(v.ai?.level));
@@ -419,6 +435,8 @@ export function createAnswers(ctx) {
     leaders,
     scoreGroups,
     priceGroupText,
+    proseUnit,
+    pricePhrase,
     firstSentence,
     sentence,
     stripDot,

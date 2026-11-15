@@ -35,6 +35,9 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
   const readJson = async (rel) => JSON.parse(await readFile(path.join(root, rel), 'utf8'));
   const catalogText = await readFile(path.join(root, 'data/catalog.json'), 'utf8');
   const catalog = JSON.parse(catalogText);
+  // Cache key of the generated /data/*.js files (core.js appends it as ?v=). build.mjs replaces it with a hash of
+  // the bytes the generators actually write, which change with code as well as with the catalog; this catalog
+  // hash is only the fallback for a context created outside the build.
   const dataVersion = createHash('sha256').update(catalogText).digest('hex').slice(0, 8);
   const content = {
     softwareServer: await readJson('data/content/software-server-data.json'),

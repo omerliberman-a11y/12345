@@ -84,6 +84,8 @@
     return true;
   }
   var SIMILAR = ' · nothing matches as typed, showing similar spellings', RELATED = ' · including related terms';
+  /** The previous site's message once a filter reaches what it reads (120 characters, 20 words; see tokens()). */
+  function limitTail(value) { return SC.searchLimit && SC.searchLimit.over(value) ? ' · ' + SC.searchLimit.message : ''; }
   /** True when a word was found only through a synonym or alias, not in what the row shows. */
   function viaRelated(row, toks) {
     for (var i = 0; i < toks.length; i++) if (!hit(row.vis, toks[i])) return true;
@@ -150,17 +152,17 @@
       var toks = tokens(input.value), shown = 0, fuzzy = needFuzzy([rows], toks);
       rows.forEach(function (r) {
         var ok = matches(r, toks, fuzzy);
-        r.node.hidden = !ok;
+        if (r.node.hidden === ok) r.node.hidden = !ok;
         if (ok) shown++;
-        var old = $('.ix-why', r.node); if (old) old.remove();
-        if (ok && toks.length) {
-          var reason = fuzzy ? 'Similar spelling' : why(r, toks), slot = $('a > span', r.node);
-          if (reason && slot) slot.appendChild(el('small.ix-why', { text: reason }));
-        }
+        var reason = ok && toks.length ? (fuzzy ? 'Similar spelling' : why(r, toks)) : '', old = $('.ix-why', r.node);
+        if (old && old.textContent === reason) return; // unchanged: no write
+        if (old) old.remove();
+        var slot = reason && $('a > span', r.node);
+        if (slot) slot.appendChild(el('small.ix-why', { text: reason }));
       });
-      groups.forEach(function (g) { g.hidden = !$('[data-ix-row]:not([hidden])', g); });
+      groups.forEach(function (g) { var off = !$('[data-ix-row]:not([hidden])', g); if (g.hidden !== off) g.hidden = off; });
       syncJumpRow(groups);
-      setCount(count, shown, rows.length, toks.length > 0, fuzzy && shown ? SIMILAR : '');
+      setCount(count, shown, rows.length, toks.length > 0, (fuzzy && shown ? SIMILAR : '') + limitTail(input.value));
       setEmpty(empty, shown === 0, input.value.trim());
       if (push !== false) writeParams({ find: input.value.trim() });
     }
@@ -184,18 +186,19 @@
       var inCat = function (r) { return !cat || r.cat === cat; }, fuzzy = needFuzzy([rows], toks, inCat), related = false;
       rows.forEach(function (r) {
         var ok = inCat(r) && matches(r, toks, fuzzy);
-        r.node.hidden = !ok;
+        if (r.node.hidden === ok) r.node.hidden = !ok;
         if (ok) { shown++; if (!fuzzy && !related && viaRelated(r, toks)) related = true; }
       });
-      blocks.forEach(function (b) { b.hidden = !$('[data-ix-row]:not([hidden])', b); });
-      groups.forEach(function (g) { g.hidden = !$('[data-ix-row]:not([hidden])', g); });
+      var sync = function (b) { var off = !$('[data-ix-row]:not([hidden])', b); if (b.hidden !== off) b.hidden = off; };
+      blocks.forEach(sync);
+      groups.forEach(sync);
       // a category's folded pairs ("N more …") open while a filter is on, so every match shows; they fold again after
       $$('details[data-ix-fold]', root).forEach(function (dt) {
         if ((toks.length || cat) && !dt.open) { dt.open = true; dt.setAttribute('data-ix-auto', ''); }
         else if (!toks.length && !cat && dt.hasAttribute('data-ix-auto')) { dt.open = false; dt.removeAttribute('data-ix-auto'); }
       });
       syncJumpRow(groups);
-      setCount(count, shown, rows.length, toks.length > 0 || !!cat, fuzzy && shown ? SIMILAR : related ? RELATED : '');
+      setCount(count, shown, rows.length, toks.length > 0 || !!cat, (fuzzy && shown ? SIMILAR : related ? RELATED : '') + limitTail(input.value));
       setEmpty(empty, shown === 0, input.value.trim(), 'Try a shorter word, clear the filter, or build the comparison yourself in the compare tool.');
       if (push !== false) writeParams({ find: input.value.trim(), category: cat });
     }
@@ -327,10 +330,10 @@
         var good = pass(r) && matches(r, toks, fuzzy), vis = good && shown < state.n;
         if (good) { m++; if (!fuzzy && !related && viaRelated(r, toks)) related = true; }
         if (vis) shown++;
-        r.node.hidden = !vis;
+        if (r.node.hidden === vis) r.node.hidden = !vis; // only rows that change are written (one small layout pass)
       });
       var filtered = toks.length > 0 || !!state.category || !!state.f.scored || !!state.f.priced || !!state.ai;
-      setCount(count, m, rows.length, filtered, (fuzzy && m ? SIMILAR : related ? RELATED : '') + (state.sort === 'price' ? ' · sorted by starting price (products without a public US-dollar price last)' : state.sort === 'score' ? (state.category ? ' · sorted by score in ' + label : ' · sorted by best score') + ' (pending last)' : ''));
+      setCount(count, m, rows.length, filtered, (fuzzy && m ? SIMILAR : related ? RELATED : '') + (state.sort === 'price' ? ' · sorted by starting price (products without a public US-dollar price last)' : state.sort === 'score' ? (state.category ? ' · sorted by score in ' + label : ' · sorted by best score') + ' (pending last)' : '') + limitTail(state.find));
       table.hidden = m === 0;
       if (more) { more.hidden = m <= shown; more.textContent = 'Show ' + Math.min(PAGE, m - shown) + ' more (' + shown + ' of ' + m + ')'; }
 
@@ -339,7 +342,8 @@
       supRows.forEach(function (r) {
         var good = supPass(r) && matches(r, toks, fuzzy);
         if (good) sm++;
-        r.node.hidden = !good || (!supFiltered && !state.supAll && sm > SUP);
+        var off = !good || (!supFiltered && !state.supAll && sm > SUP);
+        if (r.node.hidden !== off) r.node.hidden = off;
       });
       if (supMore) supMore.hidden = supFiltered || state.supAll || supRows.length <= SUP;
       if (supEmpty) supEmpty.hidden = sm > 0;

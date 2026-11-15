@@ -79,7 +79,7 @@ function render(ctx, comparison) {
   const title = seoTitle(core, year);
   const st = (it) => (it.s.pending ? `${it.v.name} score pending` : `${it.v.name} ${it.s.value}/100`);
   const priced = items.every((it) => it.p.hasAmount && it.p.currency === 'USD');
-  const from = priced ? `From ${items.map((it) => `${it.p.headline}${it.p.unit ? ' ' + it.p.unit : ''}`).join(' vs ')}. ` : '';
+  const from = priced ? `From ${items.map((it) => `${it.p.headline}${it.p.unitPhrase ? ' ' + A.proseUnit(it.p.unitPhrase) : ''}`).join(' vs ')}. ` : '';
   const differ = diffRows.length ? `${diffRows.length} of ${activeRows.length} scored checks ${differWord(diffRows.length)}. ` : `Same status on all ${activeRows.length} scored checks. `;
   const checked = `checked ${monYear(lastEvidence || ctx.catalog.checkedAt)}`;
   const sv = (it) => `${it.v.name} (${it.s.pending ? 'score pending' : `${it.s.value}/100`})`;
@@ -120,19 +120,23 @@ function render(ctx, comparison) {
   const head = html`<header class="wrap page-head page-head--wide">
     <p class="eyebrow"><a href="${ctx.url.category(category.id)}">${category.name}</a></p>
     <h1>${pairName}</h1>
-    ${ui.trustline([
-      lastEvidence
-        ? sameDate
-          ? html`Evidence checked ${ui.time(ctx, lastEvidence)}`
-          : html`Evidence checked ${ui.time(ctx, firstEvidence)} to ${ui.time(ctx, lastEvidence)}`
-        : html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
-      `Same ${rows.length}-point checklist, ${activeRows.length} checks scored`,
-      'Desk research, not hands-on testing',
-      html`<a href="/methodology/">How we score</a>`,
-    ])}
+    ${ui.trustline(
+      [
+        lastEvidence
+          ? sameDate
+            ? html`Evidence checked ${ui.time(ctx, lastEvidence)}`
+            : html`Evidence checked ${ui.time(ctx, firstEvidence)} to ${ui.time(ctx, lastEvidence)}`
+          : html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
+        // phones: the checklist size is in the comparison header and the desk-research note in the answer
+        { more: `Same ${rows.length}-point checklist, ${activeRows.length} checks scored` },
+        { more: 'Desk research, not hands-on testing' },
+        html`<a href="/methodology/">How we score</a>`,
+      ],
+      { compact: true },
+    )}
   </header>
   <div class="wrap cmp-answer">
-    ${ui.answer(ctx, quick)}
+    ${ui.answer(ctx, quick, { more: true })}
     <p class="cmp-verdict" data-kind="${verdict.kind}"><b>Verdict</b> ${verdict.text}</p>
     <div class="cmp-tools" data-cmp-tools data-nosnippet>
       <button type="button" class="btn btn--ghost btn--sm" data-copy="url">Copy link</button>
@@ -147,7 +151,7 @@ function render(ctx, comparison) {
   const slot = (it) => {
     const { v, s, p } = it;
     const scoreInline = s.pending ? 'Score pending' : html`<b class="num">${s.value}</b>/100`;
-    const priceInline = p.hasAmount ? `${p.headline}${p.unit ? ' ' + p.unit : ''}` : p.headline;
+    const priceInline = p.hasAmount ? `${p.headline}${p.unitPhrase ? ' ' + A.proseUnit(p.unitPhrase) : ''}` : p.headline;
     return html`<div class="cmp-slot" data-i="${it.i}">
       ${dot()}${ui.logo(ctx, v, { size: 'sm', lazy: false })}
       <div class="cmp-slot__text">
@@ -330,10 +334,13 @@ function render(ctx, comparison) {
   </section>`;
 
   // ---------------------------------------------------------------- prices
-  const priceLine = (it) =>
-    it.p.hasAmount
-      ? `${it.v.name} starts at ${it.p.headline}${it.p.unit ? ' ' + it.p.unit : ''}${it.p.billingNote ? `, ${it.p.billingNote}` : ''}${it.p.plan ? ` (plan: ${it.p.plan})` : ''}`
-      : `${it.v.name} has no verified public starting price${it.p.state === 'quote' ? ' (custom quote)' : it.p.state === 'usage' ? ' (usage-based pricing)' : ''}`;
+  // the unit as written in prose (answers.mjs proseUnit); a unit that ends in brackets takes the plan into them
+  const priceLine = (it) => {
+    if (!it.p.hasAmount) return `${it.v.name} has no verified public starting price${it.p.state === 'quote' ? ' (custom quote)' : it.p.state === 'usage' ? ' (usage-based pricing)' : ''}`;
+    const phrase = A.pricePhrase(it.p);
+    const plan = it.p.plan ? `plan: ${it.p.plan}` : '';
+    return `${it.v.name} starts at ${plan && phrase.endsWith(')') ? `${phrase.slice(0, -1)}; ${plan})` : `${phrase}${plan ? ` (${plan})` : ''}`}`;
+  };
   const priceDates = [...new Set(items.map((it) => it.p.checkedAt).filter(Boolean))].sort();
   const pricing = html`<section class="wrap section cmp-sec" id="pricing" aria-labelledby="pricing-h">
     <div class="section-head">
@@ -526,7 +533,7 @@ function render(ctx, comparison) {
         { id: '#items', name: 'Products compared', ordered: false },
       ),
     ],
-    scripts: ['js/compare.js'],
+    scripts: ['js/compare-base.js'],
     body: html`${head}
       <div class="${cx('cmp', `cmp--n${n}`)}" data-cmp data-category="${category.id}" data-ids="${vendors.map((v) => v.id).join(' ')}" data-view="scored">
         ${bar}${glance}${differences}${capabilities}${pricing}${aiSection}${integrations}

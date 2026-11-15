@@ -62,6 +62,17 @@
   .sw-side__score > div { min-width: 0; }
   .sw-side__label { flex-wrap: wrap; white-space: normal; }
 }
+/* phones from 360px: score and starting price side by side (the ring over its label), then the actions — the
+   decision block keeps its order (score, price, Visit) and "Visit" comes about a screen down */
+@media (min-width: 22.5em) and (max-width: 39.99em) {
+  .sw-hero__side { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); }
+  .sw-side__score { flex-direction: column; align-items: flex-start; gap: var(--s-2); }
+  .sw-side__score .ring { width: 4.5rem; height: 4.5rem; }
+  .sw-side__score .ring__num { font-size: var(--fs-xl); }
+  /* the label wraps inside its column and keeps the help button beside it */
+  .sw-side__label { flex-wrap: nowrap; }
+  .sw-side__cta { grid-column: 1 / -1; }
+}
 @media (min-width: 40em) and (max-width: 61.99em) {
   .sw-hero__side { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-8); }
   .sw-side__cta { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
@@ -93,6 +104,14 @@
   .sw-hero__side { order: 6; margin-top: var(--s-6); }
   .sw-glance .score, .sw-glance .price { display: inline; }
   .sw-glance b { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+}
+/* phones: the summary paragraph at body size (it runs to ten lines on some profiles) and tighter steps between the
+   chips, the strip, the answer and the decision block */
+@media (max-width: 47.99em) {
+  .sw-hero .lede { font-size: var(--fs-md); line-height: 1.6; }
+  .sw-hero__foot { margin-top: var(--s-5); }
+  .sw-hero__foot .answer { margin-top: var(--s-4); }
+  .sw-hero__side { margin-top: var(--s-5); padding-top: var(--s-5); }
 }
 
 /* ---------------------------------------------------------------- key facts: a disclosure (open on wide screens) */

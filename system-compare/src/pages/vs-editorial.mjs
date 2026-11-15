@@ -34,12 +34,15 @@ function render(ctx, X) {
   const description = describe([X.summary, firstSentence(X.summary), live.description]);
 
   const sections = (X.sections || []).map((s, i) => ({ ...s, id: slug(s.heading) || `section-${i + 1}` }));
+  // the buyer questions for the scored pair, generated from the same data as every other comparison page
+  const faqItems = A && B ? ctx.answers.pairFaq(category, A, B) : [];
   const tocItems = [
     { href: '#shortlist', label: 'Where to begin your shortlist' },
     X.rows?.length && { href: '#decision-points', label: 'Decision points' },
     ...sections.map((s) => ({ href: `#${s.id}`, label: s.heading })),
     X.limitations?.length && { href: '#limits', label: 'Scope and open questions' },
     { href: '#data', label: 'Scores and prices' },
+    faqItems.length && { href: '#faq', label: 'Questions buyers ask' },
     X.sources?.length && { href: '#sources', label: 'Primary sources' },
   ].filter(Boolean);
 
@@ -60,7 +63,7 @@ function render(ctx, X) {
   </header>`;
 
   const hero = X.image
-    ? html`<figure class="fx-hero"><img src="${X.image.src}" alt="${X.image.alt}" width="${X.image.width}" height="${X.image.height}" decoding="async"></figure>`
+    ? html`<figure class="fx-hero"><img src="${X.image.src}"${attrs(ctx.imageSet ? ctx.imageSet(X.image.src, '(min-width: 776px) 736px, calc(100vw - 40px)') : null)} alt="${X.image.alt}" width="${X.image.width}" height="${X.image.height}" loading="lazy" decoding="async"></figure>`
     : '';
 
   const shortlist = html`<section class="prose fx-sec fx-sec--first" id="shortlist" aria-labelledby="shortlist-h">
@@ -136,10 +139,13 @@ function render(ctx, X) {
       </section>`
     : '';
 
+  const faq = faqItems.length ? html`<div class="fx-sec">${ui.faq(ctx, faqItems, { heading: `${shortTitle}: questions buyers ask` })}</div>` : '';
+
+  // the "On this page" rail follows the article in the source (it is drawn on the right, as before), so the answer
+  // passage comes first in <main> and the focus order matches what you see
   const page = html`<article class="fx-article">
     ${head}
     <div class="wrap with-rail fx-article__layout">
-      <div class="rail">${ui.toc(tocItems)}</div>
       <div class="fx-article__main">
         ${shortlist}
         ${hero}
@@ -147,9 +153,11 @@ function render(ctx, X) {
         ${body}
         ${limits}
         ${data}
+        ${faq}
         ${sources}
         <p class="fx-updated">Content updated ${ui.time(ctx, modified)}</p>
       </div>
+      <div class="rail">${ui.toc(tocItems)}</div>
     </div>
   </article>`;
 
@@ -173,6 +181,7 @@ function render(ctx, X) {
     dateModified: ctx.isoDate(modified) || undefined,
     accountable: true,
     pageExtra: { mainEntity: { '@id': `${ctx.abs(path)}#article` }, about: vendors.map(softwareRef) },
+    faq: faqItems.map((f) => ({ q: f.q, a: text(f.a) })),
     jsonld: [
       ctx.seo.articleNode({
         path,
