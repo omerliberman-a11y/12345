@@ -153,7 +153,8 @@ function render(ctx, category) {
     ctx,
     category.id,
     ranked.map((vendor) => ({ vendor })),
-    { featureIndex: yesIndex, caption: `${category.name}: ${s.total} products ranked by documented-fit score` },
+    // every price carries the date it was read (the source link is on the profile's pricing section)
+    { featureIndex: yesIndex, priceChecked: true, caption: `${category.name}: ${s.total} products ranked by documented-fit score` },
   );
 
   const products = html`<section class="wrap cat-products" aria-labelledby="products-h">
@@ -178,7 +179,7 @@ function render(ctx, category) {
   const matrixRows = (list) =>
     list.map(
       (f) => html`<tr data-f="${f.i}">
-        <th scope="row">${f.label}</th>
+        <th scope="row"><button type="button" class="matrix__what" data-what="${f.i}" aria-haspopup="dialog" aria-expanded="false">${f.label}</button></th>
         ${ranked.map((v) => cell(v, f))}
       </tr>`,
     );
@@ -186,7 +187,7 @@ function render(ctx, category) {
     <div class="section-head">
       <div>
         <h2 id="features-h">Which capabilities are documented?</h2>
-        <p>${activeCount} checks count toward the score today. Select a mark to see the evidence note, its date and the official source.</p>
+        <p>${activeCount} checks count toward the score today. Select a check to see what it covers, or a mark to see the evidence note, its date and the official source.</p>
       </div>
     </div>
     <div class="toolbar" data-nosnippet>

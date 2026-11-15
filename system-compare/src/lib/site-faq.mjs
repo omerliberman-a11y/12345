@@ -75,7 +75,7 @@ export function siteFaq(ctx) {
         {
           id: 'price-sources',
           q: 'Where do the prices come from?',
-          a: 'From the vendor’s official pricing pages, linked beside each price. Prices are dated research snapshots of public list prices, not live quotes. Taxes, minimums, promotions and contract terms can change the amount you pay; confirm with the vendor.',
+          a: 'From the vendor’s official pricing pages, linked on each product profile and comparison together with the date we read them. Prices are dated research snapshots of public list prices, not live quotes. Taxes, minimums, promotions and contract terms can change the amount you pay; confirm with the vendor.',
           home: true,
         },
         {

@@ -443,6 +443,10 @@
 .matrix td { text-align: center; padding: 0.3rem 0.35rem; vertical-align: middle; }
 .matrix tbody tr:hover td, .matrix tbody tr:hover th { background: var(--bg-subtle); }
 .matrix tr.is-inactive th, .matrix tr.is-inactive td { color: var(--ink-3); }
+/* the row label opens "what this check covers" */
+.matrix__what { font: inherit; color: inherit; text-align: left; text-decoration: underline dotted var(--line-strong); text-underline-offset: 3px; cursor: help; }
+.matrix__what:hover, .matrix__what[aria-expanded="true"] { color: var(--brand-ink); text-decoration-color: currentColor; }
+html:not(.js) .matrix__what { text-decoration: none; cursor: default; pointer-events: none; }
 .matrix tr.is-group th { position: sticky; left: 0; max-width: none; box-shadow: none; }
 .cellbtn { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; }
 .cellbtn:hover, .cellbtn[aria-expanded="true"] { background: var(--bg-muted); }

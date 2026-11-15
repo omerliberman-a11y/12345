@@ -146,7 +146,7 @@
         if (!items.length) return;
         body.appendChild(el('tr.is-group', { 'data-extra': '' }, [el('th', { scope: 'colgroup', colspan: heads.length + 1, text: g[1] + ' — inactive deep checks, not scored yet' })]));
         items.forEach(function (it) {
-          var tr = el('tr.is-inactive', { 'data-extra': '', 'data-f': it[1] }, [el('th', { scope: 'row', text: it[0][1] })]);
+          var tr = el('tr.is-inactive', { 'data-extra': '', 'data-f': it[1] }, [el('th', { scope: 'row' }, [el('button.matrix__what', { type: 'button', 'data-what': it[1], 'aria-haspopup': 'dialog', 'aria-expanded': 'false', text: it[0][1] })])]);
           heads.forEach(function (vid) {
             var c = (byId[vid] && byId[vid].c[it[1]]) || ['u'];
             tr.appendChild(el('td', null, [el('button.cellbtn.st.st--' + STC[c[0]] + '.st--icon', { type: 'button', 'data-c': it[1] }, [el('span', { text: STL[c[0]] })])]));
@@ -177,7 +177,37 @@
     function closePop() { if (pop) { pop.remove(); pop = null; if (popFor) popFor.setAttribute('aria-expanded', 'false'); popFor = null; } }
     var VER = { d: 'Official documentation', v: 'Vendor confirmed', '': 'Not verified' };
     function fmtDate(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + +m[3] + ', ' + m[1] : ''; }
+    var TIER = { foundation: 'Foundation check', advanced: 'Shared deep check' };
+    /** What a check covers: description, tier, score group, the points it carries and the demo question. */
+    function openWhat(b) {
+      if (popFor === b) { closePop(); return; }
+      closePop();
+      var fi = Number(b.getAttribute('data-what'));
+      popFor = b; b.setAttribute('aria-expanded', 'true');
+      pop = el('div.evpop', { role: 'dialog', 'aria-label': 'About this check' }, [el('p', { text: 'Loading…' })]);
+      d.body.appendChild(pop);
+      place(b);
+      SC.load('cat-' + matrix.getAttribute('data-category')).then(function (data) {
+        if (popFor !== b || !pop) return;
+        var f = data.features[fi];
+        if (!f) return closePop();
+        // points: the group's share of the active groups, split evenly over its scored checks
+        var counts = {}, base = {}, activeBase = 0, groupLabel = '';
+        data.groups.forEach(function (g) { base[g[0]] = g[2]; if (g[0] === f[2]) groupLabel = g[1]; });
+        data.features.forEach(function (x) { if (x[3]) counts[x[2]] = (counts[x[2]] || 0) + 1; });
+        Object.keys(counts).forEach(function (g) { activeBase += base[g] || 0; });
+        var pts = f[3] && activeBase && counts[f[2]] ? Math.round((((base[f[2]] / activeBase) * 100) / counts[f[2]]) * 10) / 10 : 0;
+        pop.textContent = '';
+        pop.appendChild(el('h4', { text: f[1] }));
+        pop.appendChild(el('p', { text: f[4] || 'No description is recorded for this check.' }));
+        pop.appendChild(el('p.evpop__meta', { text: [TIER[f[5]] || '', groupLabel, f[3] ? pts + ' of 100 points' : 'not included in the score yet'].filter(Boolean).join(' · ') }));
+        if (f[6]) pop.appendChild(el('p', null, [el('b', { text: 'Ask in a demo: ' }), f[6]]));
+        place(b);
+      }).catch(function () { if (pop) pop.textContent = 'This could not load. The product profiles describe every check.'; });
+    }
     matrix.addEventListener('click', function (e) {
+      var w = e.target.closest('[data-what]');
+      if (w) { openWhat(w); return; }
       var b = e.target.closest('[data-c]');
       if (!b) return;
       if (popFor === b) { closePop(); return; }
@@ -198,6 +228,7 @@
         pop.textContent = '';
         pop.appendChild(el('span.st.st--' + STC[c[0]], { text: STL[c[0]] }));
         pop.appendChild(el('h4', { text: f[1] }));
+        if (f[4]) pop.appendChild(el('p.evpop__meta', { text: f[4] }));
         pop.appendChild(el('p.evpop__who', { text: v.n }));
         pop.appendChild(el('p', { text: c[1] || (c[0] === 'u' ? 'We have not verified this in official documentation. Not verified does not mean the product lacks it.' : 'No note recorded.') }));
         var meta = VER[c[2] || ''] + (c[3] ? ' · ' + fmtDate(c[3]) : '') + (f[3] ? '' : ' · not included in the score yet');
@@ -217,7 +248,7 @@
       pop.style.left = left + window.scrollX + 'px';
       pop.style.top = top + window.scrollY + 'px';
     }
-    d.addEventListener('click', function (e) { if (pop && !pop.contains(e.target) && !e.target.closest('[data-c]')) closePop(); });
+    d.addEventListener('click', function (e) { if (pop && !pop.contains(e.target) && !e.target.closest('[data-c]') && !e.target.closest('[data-what]')) closePop(); });
     d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && pop) { var f = popFor; closePop(); if (f) f.focus(); } });
     window.addEventListener('resize', closePop);
   }
