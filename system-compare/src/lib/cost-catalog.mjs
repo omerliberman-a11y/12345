@@ -153,8 +153,7 @@ export function readyOffers(catalog) {
 }
 
 // ---------------------------------------------------------------- compact client files
-// /data/cost-index.js   { g: [[groupLabel, [[categoryId, categoryName, productCount]]]], r: {categoryId: readyOfferCount} }
-// /data/cost-<id>.js    { id, n, p: [product] }
+// /data/cost-<id>.js    { id, n, p: [product] }      (one file per category; the category list itself is in the page HTML)
 //   product = { i: id, n: name, l?: logoPath, d?: 1 (dark logo surface), f?: 1 (documentary supplier → category anchor), o: [offer] }
 //   offer   = { i: id, n: name, k?: kind (absent = unverified), a?: amount, pa?: publishedAmount, c?: currency (absent = USD),
 //               u: unit, b: billing, s: summary, src?: source, d?: checkedAt, x?: extras, cm?, mq?, me?, mc?,
@@ -206,12 +205,8 @@ export function expandOffer(c) {
 }
 
 export function compactCostCatalog(ctx, catalog = createCostCatalog(ctx)) {
-  const byId = new Map(catalog.categories.map((c) => [c.id, c]));
   const files = {};
-  const ready = {};
   for (const c of catalog.categories) {
-    const n = c.products.reduce((s, p) => s + p.offers.filter((o) => o.kind !== 'unverified').length, 0);
-    if (n) ready[c.id] = n;
     files[c.id] = {
       id: c.id,
       n: c.name,
@@ -226,11 +221,5 @@ export function compactCostCatalog(ctx, catalog = createCostCatalog(ctx)) {
       }),
     };
   }
-  const index = {
-    g: ctx.groups
-      .map((g) => [g.label, g.categories.filter((c) => byId.has(c.id)).map((c) => [c.id, c.name, byId.get(c.id).products.length])])
-      .filter((g) => g[1].length),
-    r: ready,
-  };
-  return { index, files };
+  return { files };
 }

@@ -180,6 +180,9 @@ const EARLY_JS = `(function(){var d=document.documentElement;d.className+=' js';
  *   fullOrg: true                       emit the full Organization node (home, about)
  *   accountable: true                   add the publication approver as accountablePerson
  *   preload: [{href, as, type}]         e.g. the LCP hero image
+ *   head                                extra <head> markup (Raw), e.g. a referrer policy meta
+ *   staticScripts: ['/partners-ui.js']  deferred scripts that live in src/assets/static (not hashed)
+ *   analytics: false                    never load the consent-gated analytics script on this page
  * }
  */
 export function renderDocument(ctx, route, page) {
@@ -257,8 +260,10 @@ ${(page.preload || []).map((p) => html`<link rel="preload"${attrs(p)}>`)}
 <link rel="prefetch" as="script" href="${ctx.asset('js/search.js')}" id="sc-search-engine">
 <script>${raw(EARLY_JS)}</script>
 <script type="application/ld+json">${jsonForScript({ '@context': 'https://schema.org', '@graph': graph })}</script>
+${page.head ? raw(String(page.head)) : ''}
 ${scripts.map((s) => html`<script defer src="${ctx.asset(s)}"></script>`)}
-<script defer src="${ctx.asset('js/analytics.js')}" data-sc-measurement="${site.analytics.ga4Id}" data-sc-host="${site.analytics.productionHost}"></script>
+${(page.staticScripts || []).map((src) => html`<script defer src="${src}"></script>`)}
+${page.analytics === false ? '' : html`<script defer src="${ctx.asset('js/analytics.js')}" data-sc-measurement="${site.analytics.ga4Id}" data-sc-host="${site.analytics.productionHost}"></script>`}
 </head>
 <body${attrs({ class: page.bodyClass, 'data-page': route.module, ...(page.bodyAttrs || {}) })}>
 <a class="skip-link" href="#main">Skip to content</a>

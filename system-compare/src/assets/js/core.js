@@ -492,19 +492,60 @@
   on(w, 'resize', closeFloat);
 
   // ------------------------------------------------------------------ section spy for sticky sub-navigation and "On this page"
+  // The active item is the last section whose top has passed under the sticky chrome, so an item stays
+  // highlighted for the whole section (also on flat prose pages where headings are far apart).
+  var spies = [];
   $$('[data-subnav], [data-toc]').forEach(function (nav) {
     var links = $$('a[href^="#"]', nav), map = [];
     links.forEach(function (a) { var t = d.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))); if (t) map.push([t, a]); });
-    if (!map.length || !('IntersectionObserver' in w)) return;
-    var visible = {};
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) { visible[en.target.id] = en.isIntersecting; });
-      var current = null;
-      map.forEach(function (m) { if (visible[m[0].id] && !current) current = m[1]; });
-      if (current) links.forEach(function (a) { a.classList.toggle('is-active', a === current); if (a === current) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
-    }, { rootMargin: '-25% 0px -60% 0px' });
-    map.forEach(function (m) { io.observe(m[0]); });
+    if (map.length) spies.push({ nav: nav, links: links, map: map, current: null });
   });
+  function runSpies() {
+    var header = $('.site-header'), sub = $('.subnav');
+    var line = (header ? header.offsetHeight : 0) + (sub ? sub.offsetHeight : 0) + 28;
+    spies.forEach(function (s) {
+      var current = null;
+      for (var i = 0; i < s.map.length; i++) {
+        var el2 = s.map[i][0];
+        if (el2.offsetParent === null && el2.tagName !== 'BODY') continue; // hidden (inside a closed panel)
+        if (el2.getBoundingClientRect().top <= line) current = s.map[i][1]; else break;
+      }
+      if (current === s.current) return;
+      s.current = current;
+      s.links.forEach(function (a) { var onNow = a === current; a.classList.toggle('is-active', onNow); if (onNow) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+      // keep the active tab visible when the sub-navigation itself scrolls sideways (phones)
+      var ul = current && current.closest('ul');
+      if (ul && ul.scrollWidth > ul.clientWidth) ul.scrollTo({ left: Math.max(0, current.offsetLeft - 16), behavior: 'auto' });
+    });
+  }
+  if (spies.length) {
+    var spyTick = false;
+    on(w, 'scroll', function () { if (!spyTick) { spyTick = true; w.requestAnimationFrame(function () { spyTick = false; runSpies(); }); } }, { passive: true });
+    on(w, 'resize', runSpies);
+    runSpies();
+  }
+
+  // ------------------------------------------------------------------ deep links into collapsed content
+  // A link to #some-id must show that element: open any closed <details> around it and select the tab
+  // panel it lives in (FAQ items, checklists, per-category capability panels).
+  function revealHashTarget() {
+    var id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return; }
+    if (!id) return;
+    var t = d.getElementById(id), n = t, changed = false;
+    if (!t) return;
+    while (n && n !== d.body) {
+      if (n.tagName === 'DETAILS' && !n.open && !n.hasAttribute('data-pop') && !n.hasAttribute('data-mega')) { n.open = true; changed = true; }
+      if (n.getAttribute && n.getAttribute('role') === 'tabpanel' && n.hidden) {
+        var tab = d.getElementById(n.getAttribute('aria-labelledby'));
+        if (tab) { tab.click(); changed = true; }
+      }
+      n = n.parentNode;
+    }
+    if (changed) t.scrollIntoView();
+  }
+  on(w, 'hashchange', revealHashTarget);
+  revealHashTarget();
 
   // ------------------------------------------------------------------ header search visibility on the home page
   if (d.body.hasAttribute('data-hero-search')) {
@@ -561,10 +602,13 @@
       var body = el('div.dialog__body', null, [
         el('p', { text: 'Optional Google Analytics runs only with your permission. Your saved shortlist and research notes stay in this browser.' }),
       ]);
+      // The analytics script announces itself (SC.hasAnalytics) only where it is allowed to run:
+      // on the production hostname, and never on pages that opt out (contact form, partner application).
       var actions = el('div.cluster', { style: 'margin-top:1rem' }, [
-        el('button.btn.btn--ghost', { type: 'button', text: 'Analytics cookie settings', on: { click: function () { privDlg.close(); d.dispatchEvent(new CustomEvent('sc:open-consent')); } } }),
+        SC.hasAnalytics ? el('button.btn.btn--ghost', { type: 'button', text: 'Analytics cookie settings', on: { click: function () { privDlg.close(); d.dispatchEvent(new CustomEvent('sc:open-consent')); } } }) : null,
         el('button.btn.btn--ghost', { type: 'button', text: 'Clear saved shortlist and notes', on: { click: function () { save(NOTES, null); SC.shortlist.clear(); SC.toast('Saved shortlist and notes cleared from this browser.'); } } }),
       ]);
+      if (!SC.hasAnalytics) body.appendChild(el('p.fineprint', { style: 'margin-top:.75rem', text: 'Optional analytics is not loaded on this page.' }));
       body.appendChild(actions);
       body.appendChild(el('p', { style: 'margin-top:1rem' }, [el('a', { href: SC.url('/privacy/'), text: 'Read the privacy policy' })]));
       privDlg.appendChild(el('div.dialog__head', null, [el('h2', { text: 'Your privacy choices' }), closeBtn(privDlg)]));

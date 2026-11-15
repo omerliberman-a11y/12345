@@ -2,7 +2,7 @@
 // Every word of a guide comes from catalog.guides[]; only the short <title> lives in
 // data/content/guide-seo-titles.json. "Key takeaways" and "Next steps" are derived from the same data.
 
-import { html, raw, cx, attrs } from '../lib/html.mjs';
+import { html, raw, text } from '../lib/html.mjs';
 import * as ui from '../lib/components.mjs';
 import { title as seoTitle, describe } from '../lib/seo.mjs';
 
@@ -32,8 +32,10 @@ chips.forEach(function(b){if(b.tagName==='A')b.setAttribute('role','button');
 b.addEventListener('click',function(e){e.preventDefault();var v=b.getAttribute('data-gd-chip');apply(v);
 if(useHash&&history.replaceState)history.replaceState(null,'',v?'#'+v:location.pathname+location.search)});
 b.addEventListener('keydown',function(e){if(e.key===' '&&b.tagName==='A'){e.preventDefault();b.click()}})});
-var h=useHash?decodeURIComponent(location.hash.slice(1)):'';
-apply(chips.some(function(b){return h&&b.getAttribute('data-gd-chip')===h})?h:'')})();`;
+function fromHash(){var h=useHash?decodeURIComponent(location.hash.slice(1)):'';
+apply(chips.some(function(b){return h&&b.getAttribute('data-gd-chip')===h})?h:'')}
+if(useHash)addEventListener('hashchange',fromHash);
+fromHash()})();`;
 export const filterScript = () => html`<script>${raw(FILTER_JS)}</script>`;
 
 const slugify = (s) =>
@@ -56,15 +58,24 @@ const REENCODED = new Set(['/assets/articles/crm-clean-data.png', '/assets/artic
 const imageSrc = (src) => (REENCODED.has(src) ? src.replace(/\.png$/, '.webp') : src);
 const imageType = (src) => (/\.webp$/.test(src) ? 'image/webp' : /\.png$/.test(src) ? 'image/png' : 'image/jpeg');
 
-/** A cited source that points at this site opens in the same tab as a normal internal link. */
+/** Numbered sources. A source on this site is a normal internal link; every other one opens in a new tab. */
+const hostOf = (url) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+};
 function sourceList(ctx, sources) {
   const origin = ctx.site.origin;
   return html`<ol class="sources">
     ${sources.map((s) => {
       const internal = s.url.startsWith(origin + '/');
-      return internal
-        ? html`<li><a href="${s.url.slice(origin.length)}">${s.label}</a></li>`
-        : html`<li><a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label}</a></li>`;
+      const host = hostOf(s.url);
+      const link = internal
+        ? html`<a href="${s.url.slice(origin.length)}">${s.label}</a>`
+        : html`<a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label}</a>`;
+      return html`<li>${link}${host ? html` <span class="gd-host">${host}</span>` : ''}</li>`;
     })}
   </ol>`;
 }
@@ -171,6 +182,8 @@ function renderGuide(ctx, guide) {
   </section>`;
 
   // ---- next steps: the guide's categories, the first published comparison in each, the cost calculator
+  // "General AI assistants" already names the things; the shared helper would append a second noun ("… assistants tools")
+  const thingsOf = (c) => A.categoryThings(c).replace(/\b(assistants) tools$/i, '$1');
   const nextCats = [...cats, ...(EXTRA_NEXT[guide.id] || []).map((id) => ctx.category(id)).filter((c) => c && !cats.includes(c))];
   const nextItems = [];
   for (const c of nextCats) {
@@ -178,11 +191,13 @@ function renderGuide(ctx, guide) {
     const n = factual ? c.factual?.suppliers?.length || 0 : ctx.summary(c.id).total;
     nextItems.push({
       href: ctx.url.category(c.id),
-      title: `Compare ${A.categoryThings(c)}`,
+      title: `Compare ${thingsOf(c)}`,
       sub: factual ? `${ctx.plural(n, 'supplier')} documented with dated sources` : `${ctx.plural(n, 'product')} checked against one category checklist`,
       meta: 'Category',
     });
-    const vs = ctx.comparisonsInCategory(c.id)[0];
+    // the category's first published comparison; editorial / documentary comparisons (indexable) come first
+    const inCat = ctx.comparisonsInCategory(c.id);
+    const vs = inCat.find((x) => ctx.isIndexable(ctx.url.vs(x.id))) || inCat[0];
     if (vs) {
       nextItems.push({
         href: ctx.url.vs(vs.id),
@@ -270,6 +285,7 @@ function renderGuide(ctx, guide) {
           about: cats.map((c) => ({ '@type': 'Thing', name: A.categoryNoun(c), url: ctx.abs(ctx.url.category(c.id)) })),
           citation: guide.sources.map((s) => ({ '@type': 'WebPage', name: s.label, url: s.url })),
         }),
+        ...(image ? { image: { '@type': 'ImageObject', url: ctx.abs(image.src), width: image.width, height: image.height } } : {}),
         ...(primary ? { articleSection: primary.name } : {}),
         wordCount: wordCount(guide),
         isAccessibleForFree: true,
@@ -292,7 +308,8 @@ function renderIndex(ctx) {
   const indexable = sections.flatMap((s) => s.items).filter((g) => ctx.isIndexable(ctx.url.guide(g.id)));
   const live = ctx.liveHead('/guides/') || {};
 
-  const head = html`<header class="wrap page-head page-head--wide">
+  const head = html`<header class="wrap page-head page-head--wide gd-hub">
+    <p class="eyebrow">Better questions. Better purchases.</p>
     <h1>Buying guides</h1>
     <p class="lede">Practical frameworks for the decisions that sit behind a software subscription.</p>
     ${ui.trustline([
@@ -305,7 +322,7 @@ function renderIndex(ctx) {
 
   const filter = html`<div class="wrap gd-filter" data-nosnippet>
     <div class="chips" role="group" aria-label="Filter guides by topic" data-gd-filter data-gd-hash>
-      <a class="chip" href="#guides" data-gd-chip="" aria-pressed="true">All <span class="n">${guides.length}</span></a>
+      <a class="chip" href="#guides" data-gd-chip="">All <span class="n">${guides.length}</span></a>
       ${chipGroups.map(({ group, n }) => html`<a class="chip" href="#${group.id}" data-gd-chip="${group.id}">${group.label} <span class="n">${n}</span></a>`)}
     </div>
     <p class="toolbar__count" role="status" aria-live="polite"><b data-gd-n>${guides.length}</b> of ${guides.length} guides</p>
@@ -314,7 +331,7 @@ function renderIndex(ctx) {
   const row = (g) => {
     const cats = g.categoryIds.map((id) => ctx.category(id)).filter(Boolean);
     return html`<tr data-gd-tags="${tagsOf(g).join(' ')}">
-      <th scope="row"><a href="${ctx.url.guide(g.id)}">${g.title}</a><small>${g.description}</small></th>
+      <th scope="row"><a href="${ctx.url.guide(g.id)}">${g.title}<small>${g.description}</small></a></th>
       <td class="gd-list__cat"><a href="${ctx.url.category(cats[0].id)}">${cats[0].name}</a>${cats.length > 1 ? html` <span title="${cats.slice(1).map((c) => c.name).join(', ')}">+${cats.length - 1} more</span>` : ''}</td>
       <td class="gd-list__date">Sources checked ${ui.time(ctx, g.checkedAt)}</td>
     </tr>`;
@@ -326,6 +343,7 @@ function renderIndex(ctx) {
         <h2 id="${group.id}-h">${group.label}</h2>
         <table class="dtable gd-list">
           <caption class="sr-only">${group.label}: ${ctx.plural(items.length, 'buying guide')}</caption>
+          <colgroup><col><col class="gd-list__c2"><col class="gd-list__c3"></colgroup>
           <thead class="sr-only"><tr><th scope="col">Guide</th><th scope="col">Software category</th><th scope="col">Sources checked</th></tr></thead>
           <tbody>${items.map(row)}</tbody>
         </table>
@@ -345,15 +363,15 @@ function renderIndex(ctx) {
     },
     {
       q: 'How current are the guides?',
-      a: `The sources behind the ${guides.length} guides were checked between ${ctx.fmtDate(oldest)} and ${ctx.fmtDate(newest)}. Every guide shows its own “Sources checked” date, and a “Content updated” date when the text changed afterwards.`,
+      a: html`<p>Source checks for the ${guides.length} guides ran from ${ui.time(ctx, oldest)} to ${ui.time(ctx, newest)} and every guide shows its own “Sources checked” date, plus a “Content updated” date when the text changed afterwards.</p>`,
     },
     {
       q: 'Which software categories have a buying guide?',
       a: `${ctx.categories.length - uncovered} of the ${ctx.categories.length} categories are covered by at least one guide; ${uncovered} have none yet. Use the topic filter above, or open a category page, which links the guides written for it.`,
     },
     {
-      q: 'Do the guides recommend a product?',
-      a: 'No. The guides are checklists, scorecards and buying frameworks for your own evaluation. Product comparisons live on the category and comparison pages, where every claim links to a dated official source.',
+      q: 'Do the guides test or rank products?',
+      a: 'No. The guides are checklists, scorecards and buying frameworks: editorial recommendations for your own evaluation, not hands-on product tests. Products are compared on the category and comparison pages, where every claim links to a dated official source.',
     },
   ];
   const faq = html`<div class="wrap wrap--narrow section gd-faq">${ui.faq(ctx, faqItems, { heading: 'Questions about the guides', open: 0 })}</div>`;
@@ -369,7 +387,7 @@ function renderIndex(ctx) {
     breadcrumbs: [{ name: 'Guides', url: ctx.url.guides() }],
     pageType: 'CollectionPage',
     dateModified: newest,
-    faq: faqItems,
+    faq: faqItems.map((f) => ({ q: f.q, a: text(f.a) })),
     pageExtra: { mainEntity: { '@id': `${ctx.abs(ctx.url.guides())}#primary-list` } },
     jsonld: [
       ctx.seo.itemListNode(

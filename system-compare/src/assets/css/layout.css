@@ -287,6 +287,8 @@ kbd {
 .crumbs li { display: inline-flex; align-items: center; gap: 0.4rem; }
 .crumbs li + li::before { content: "/"; color: var(--line-strong); }
 .crumbs [aria-current] { color: var(--ink-2); }
+/* 44px touch target without changing the visual rhythm */
+.crumbs a { display: inline-flex; align-items: center; min-height: var(--tap); margin-block: -0.75rem; }
 
 .page-head { padding-block: var(--s-6) var(--s-8); }
 .page-head--center { text-align: center; }
@@ -312,18 +314,29 @@ kbd {
 }
 .page-head--center .lede { margin-inline: auto; }
 
-/* one-line trust strip under a title: "Updated … · N sources · Desk research · How we score" */
+/* one-line trust strip under a title: "Updated … · N sources · Desk research · How we score".
+   Separators sit in each item's left padding; an item that wraps to a new line pushes its separator
+   outside the clipped box, so a line never starts with a dot. */
 .trustline {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.2rem 0.9rem;
-  margin-top: var(--s-4);
+  row-gap: 0.2rem;
+  overflow: hidden;
+  margin: var(--s-4) -4px -4px;
+  padding: 4px;
   font-size: var(--fs-sm);
   color: var(--ink-3);
 }
-.trustline > * + *::before {
+.trustline > * {
+  position: relative;
+  margin-left: -1.5rem;
+  padding-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+.trustline > *::before {
   content: "·";
-  margin-right: 0.9rem;
+  position: absolute;
+  left: 0.62rem;
   color: var(--line-strong);
 }
 .trustline a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }

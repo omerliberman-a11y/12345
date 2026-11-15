@@ -14,6 +14,7 @@
   if (![host, 'www.' + host].includes(location.hostname) || /^\/(admin|api|wp-admin|wp-login)/.test(location.pathname)) return;
   const id = script.dataset.scMeasurement;
   if (!/^G-[A-Z0-9]+$/.test(id)) return;
+  if (window.SC) window.SC.hasAnalytics = true; // lets the privacy dialog offer "Analytics cookie settings"
   const key = 'sc-analytics-consent-v1', maxAge = 180 * 86400000;
   const gpc = navigator.globalPrivacyControl === true;
   let consent = null, loaded = false;

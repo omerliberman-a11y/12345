@@ -770,6 +770,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 .toc a { display: block; padding: 0.35rem 0 0.35rem var(--s-3); border-left: 2px solid var(--line); color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.35; }
 .toc a:hover { color: var(--ink); text-decoration: none; border-left-color: var(--line-strong); }
 .toc a.is-active { color: var(--brand-ink); border-left-color: var(--brand); font-weight: 600; }
+.toc a.toc__sub { padding-left: var(--s-6); font-size: var(--fs-xs); }
 
 /* ---------------------------------------------------------------- forms */
 .field { display: grid; gap: 0.35rem; }

@@ -1,0 +1,200 @@
+/* The "find it" pages: /categories/, /software/, /comparisons/, /alternatives/{id}/ (prefix .ix-) */
+
+/* ---------------------------------------------------------------- filter bar: field, selects, quick filters */
+.ix-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+/* the controls only work with JavaScript; without it every row is simply listed */
+html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count], html:not(.js) .ix-status { display: none; }
+.ix-find { position: relative; display: flex; align-items: center; flex: 1 1 17rem; max-width: 26rem; min-width: 0; }
+.ix-find svg { position: absolute; left: 0.8rem; width: 1.1rem; height: 1.1rem; color: var(--ink-3); pointer-events: none; }
+.ix-find .input { padding-left: 2.5rem; }
+.ix-select { display: block; flex: 0 1 auto; min-width: 0; max-width: 100%; }
+.ix-select .select { width: auto; max-width: 100%; font-size: 0.9375rem; }
+.ix-bar__end { margin-left: auto; }
+.ix-bar .toolbar__count { margin: 0 0 0 auto; }
+.ix-chips { flex: 1 1 100%; }
+.ix-chips .chip { min-height: var(--tap); }
+.ix-cta { margin-top: var(--s-4); font-size: 0.9375rem; color: var(--ink-2); }
+.ix-after { margin-top: var(--s-4); }
+.ix-after .link-arrow, .ix-cta .link-arrow { display: inline-block; padding-block: 0.7rem; }
+.ix-more { margin-top: var(--s-5); text-align: center; }
+.ix-more:has(> [hidden]) { display: none; }
+@media (max-width: 47.99em) {
+  .ix-find { flex-basis: 100%; max-width: none; }
+  .ix-bar .ix-select { flex: 1 1 9rem; }
+  .ix-bar .ix-select .select { width: 100%; }
+  .ix-bar .ix-bar__end { margin-left: 0; }
+  .ix-bar .toolbar__count { margin-left: 0; flex-basis: 100%; }
+}
+
+/* why a row matched a filter word that is not in its visible text */
+.linklist small.ix-why { color: var(--brand-ink); }
+
+/* ---------------------------------------------------------------- group sections (categories, comparisons) */
+.ix-groups { padding-bottom: var(--s-6); }
+.ix-group { padding-block: var(--s-10) var(--s-6); }
+/* a divider only between two groups that are both shown (a filter hides groups) */
+.ix-group:not([hidden]) ~ .ix-group { border-top: 1px solid var(--line); }
+.ix-group__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-1) var(--s-4); margin-bottom: var(--s-3); }
+.ix-group__head h2 { font-size: var(--fs-xl); }
+.ix-group__head p { font-size: var(--fs-sm); color: var(--ink-3); }
+.ix-groups > .table-note { margin-top: var(--s-8); }
+
+/* categories: the hairline under a group's last row is also the divider to the next group (one line, not two) */
+.ix-cats .ix-group { padding-bottom: 0; }
+.ix-cats .ix-group .linklist { margin-bottom: -1px; }
+/* categories: name + what leads it on the left, size on the right */
+.ix-cats .linklist a { align-items: flex-start; padding-block: 0.7rem; }
+.ix-cats .linklist a > span:first-child { font-weight: 600; min-width: 0; }
+.ix-cats .linklist small { font-weight: 400; line-height: 1.4; }
+.ix-cats .linklist a > span:last-child:not(:first-child) { padding-top: 0.1rem; }
+@media (min-width: 40em) and (max-width: 61.99em) {
+  .ix-cats .linklist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* comparisons: category blocks flow in columns; each pair is one line */
+.ix-cmp__cols { columns: 1; column-gap: var(--s-10); }
+@media (min-width: 44em) { .ix-cmp__cols { columns: 2; } }
+@media (min-width: 68em) { .ix-cmp__cols { columns: 3; } }
+.ix-cmp__cat { break-inside: avoid; padding-top: var(--s-4); }
+.ix-cmp__cat h3 { font-family: var(--font); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.4; }
+.ix-cmp__cat h3 a { display: inline-flex; align-items: center; min-height: 2rem; color: var(--ink-3); }
+.ix-cmp__cat h3 a:hover { color: var(--brand); }
+.ix-cmp .linklist { border-top: 1px solid var(--line); }
+.ix-cmp .linklist a { gap: var(--s-3); }
+.ix-cmp .linklist a > span:first-child { min-width: 0; }
+.ix-cmp .linklist small { line-height: 1.35; }
+.ix-vsmeta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.05rem; line-height: 1.3; text-align: right; }
+.ix-vsmeta b { font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ix-vsmeta time { font-size: var(--fs-xs); color: var(--ink-3); }
+@media (max-width: 47.99em) {
+  .ix-cmp .linklist a { min-height: 3rem; padding-block: 0.4rem; }
+  .ix-cmp__cat h3 a { min-height: var(--tap); }
+  .ix-cmp__cat { padding-top: var(--s-2); }
+  .ix-group { padding-block: var(--s-8) var(--s-4); }
+}
+
+/* ---------------------------------------------------------------- software directory: one row per product */
+.ix-dir { padding-bottom: var(--s-6); }
+.ix-dir .ix-bar { margin-top: 0; }
+.ix-status { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--s-4); margin: var(--s-3) 0 var(--s-2); }
+.ix-status .toolbar__count { margin: 0; }
+.ix-status .link-arrow { font-size: var(--fs-sm); white-space: normal; padding-block: 0.5rem; }
+.ix-table .ix-c-cats { width: 14.5rem; }
+.ix-table td.ix-c-cats { font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-3); }
+.ix-table td.ix-c-cats a { color: var(--ink-2); }
+.ix-table td.ix-c-cats a:hover { color: var(--brand); }
+.ix-table .ptable__c-score { width: 10rem; }
+.ix-table .ptable__c-price { width: 12.5rem; }
+.ix-table .score__meta { white-space: normal; }
+.ix-table .score:not(.score--pending) .score__value { font-size: var(--fs-lg); }
+.ix-of { display: none; }
+@media (min-width: 48em) and (max-width: 61.99em) {
+  .ix-table .ix-c-cats { width: 11rem; }
+  .ix-table .ptable__c-score { width: 7.5rem; }
+  .ix-table .ptable__c-price { width: 10.5rem; }
+}
+/* phones: three tight lines per product — name + score, categories, price — and the whole row opens the profile */
+@media (max-width: 47.99em) {
+  .ptable.ix-table tbody tr {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name score"
+      "cats cats"
+      "price price";
+    column-gap: var(--s-3);
+    row-gap: 0;
+    min-height: 3.5rem;
+    padding: 0.35rem 0 0.35rem 3.2rem;
+  }
+  .ix-table .ptable__c-name { line-height: 1.3; }
+  .ix-table .prod { display: block; }
+  .ix-table .prod .logo { position: absolute; left: 0; top: 0.5rem; }
+  .ix-table .prod::after { content: ""; position: absolute; inset: 0; }
+  .ix-table .prod__fit { display: none; }
+  .ix-table .prod__name { margin-right: 0; }
+  .ix-table td.ix-c-cats { display: block; grid-area: cats; width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--fs-xs); line-height: 1.5; }
+  .ix-table td.ix-c-cats a { color: var(--ink-3); text-decoration: none; }
+  .ix-table .ptable__c-price { width: auto; padding-left: 0 !important; }
+  .ix-table .ptable__c-score { width: auto; padding-top: 0 !important; }
+  .ix-table .score { flex-direction: row-reverse; align-items: baseline; gap: 0.4rem; }
+  .ix-table .ix-in { display: none; }
+  .ix-table .ix-of { display: inline; white-space: nowrap; }
+  /* quick filters stay on one line and scroll sideways */
+  .ix-dir .ix-chips { flex: 0 0 calc(100% + 2 * var(--gutter)); flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
+  .ix-dir .ix-chips::-webkit-scrollbar { display: none; }
+  .ix-dir .ix-chips .chip { flex: none; }
+}
+
+/* documented suppliers: dense A–Z list */
+.ix-sup .linklist a > span:first-child { font-weight: 600; min-width: 0; }
+.ix-sup .linklist small { font-weight: 400; }
+@media (min-width: 40em) and (max-width: 61.99em) {
+  .ix-sup .linklist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 47.99em) {
+  .ix-sup.section { padding-block: var(--s-8); }
+}
+
+/* ---------------------------------------------------------------- alternatives */
+.ix-alt { padding-bottom: var(--s-6); }
+.ix-alt .tabs__list { margin-bottom: var(--s-6); }
+.ix-alt .seg button { min-height: var(--tap); }
+.ix-alt .answer { margin-bottom: var(--s-8); }
+.ix-panel__head { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-2); }
+.ix-panel__head h2 { font-size: var(--fs-xl); }
+.ix-toolbar { padding-bottom: var(--s-2); }
+.ix-toolbar .ix-chips { flex: 0 1 auto; min-width: 0; }
+.ix-toolbar .chip { max-width: 100%; white-space: normal; text-align: left; }
+.ix-panel > .toolbar__count { margin: 0 0 var(--s-2); }
+.ix-c-vs { width: 9.5rem; font-size: var(--fs-sm); line-height: 1.35; }
+.ix-c-vs a { color: var(--ink-2); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-strong); }
+.ix-c-vs a:hover { color: var(--brand); text-decoration-color: currentColor; }
+.ix-c-vs a.link-arrow { font-weight: 600; text-decoration: none; }
+/* the product itself sits on top of the ranking like a pinned row: one header, identical columns */
+@media (min-width: 48em) {
+  .ix-alt .ptable { table-layout: fixed; }
+  .ix-alt .ptable__c-rank { width: 3.25rem; white-space: nowrap; }
+  /* the ranking keeps its header row for assistive tech and column widths, at zero height */
+  .ix-alts .ptable thead th { height: 0; padding-block: 0; border: 0; font-size: 0; line-height: 0; color: transparent; }
+}
+@media (min-width: 48em) and (max-width: 74.99em) {
+  .ix-alt .ptable__c-price { width: 11rem; }
+  .ix-c-vs { width: 8rem; }
+}
+@media (min-width: 48em) and (max-width: 61.99em) {
+  .ix-alt .ptable__c-price { width: 9rem; }
+  .ix-c-vs { width: 6.5rem; }
+}
+.ix-ref .ptable tbody tr { border-bottom-color: var(--line-strong); }
+.ix-panel__note { margin-top: var(--s-4); }
+.ix-panel__links { margin-top: var(--s-4); gap: var(--s-3) var(--s-6); }
+.ix-panel__links .link-arrow, .ix-panel__links .btn { white-space: normal; }
+.ix-panel__links .btn { max-width: 100%; }
+.ix-alt > .table-note { margin-top: var(--s-8); }
+.ix-subhead { margin: var(--s-8) 0 var(--s-2); font-family: var(--font); font-size: var(--fs-md); font-weight: 650; letter-spacing: 0; }
+html:not(.js) .ix-alt .tabs__panel + .tabs__panel { padding-top: var(--s-10); border-top: 1px solid var(--line); }
+@media (max-width: 47.99em) {
+  .ix-alt .ptable tbody tr {
+    grid-template-areas:
+      "pick name score"
+      "pick price price"
+      "pick vs vs";
+  }
+  .ix-c-vs { grid-area: vs; width: auto; padding-left: 3.2rem !important; }
+  .ix-c-vs a { display: inline-flex; align-items: center; gap: 0.25rem; min-height: var(--tap); margin-block: -0.35rem -0.6rem; }
+  .ix-alt .prod__text .tag { white-space: normal; }
+  .ix-alt thead .ix-c-vs { display: none; }
+  .ix-ref .ptable tbody tr { border-top: 1px solid var(--line-strong); margin-inline: -0.6rem; padding-inline: 0.6rem; }
+}
+
+/* the short FAQ that closes an index page */
+@media (max-width: 47.99em) {
+  .ix-faq.section { padding-block: var(--s-8); }
+}

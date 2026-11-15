@@ -269,7 +269,9 @@ export const subnav = (items, { label = 'On this page' } = {}) =>
 
 /** "On this page" rail for long reading pages. */
 export const toc = (items, { title = 'On this page' } = {}) =>
-  html`<nav class="toc" aria-label="${title}" data-toc data-nosnippet><h2>${title}</h2><ul>${items.map((it) => html`<li><a href="${it.href}">${it.label}</a></li>`)}</ul></nav>`;
+  html`<nav class="toc" aria-label="${title}" data-toc data-nosnippet><h2>${title}</h2><ul>${items.map(
+    (it) => html`<li><a href="${it.href}"${attrs({ class: it.level === 2 ? 'toc__sub' : null })}>${it.label}</a></li>`,
+  )}</ul></nav>`;
 
 /** Chip links (navigation shortcuts). items: [{href, label}] */
 export const chipLinks = (items) => html`<div class="chips">${items.map((it) => html`<a class="chip chip--link" href="${it.href}">${it.label}</a>`)}</div>`;
