@@ -1,0 +1,1136 @@
+{
+ "/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/"
+  }
+ ],
+ "/categories/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/categories/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/"
+  }
+ ],
+ "/categories/accounting/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/accounting/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/accounting"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/invoicing/"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/invoicing/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/accounting/"
+  }
+ ],
+ "/categories/ai-agents/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/ai-agents/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/ai-agents"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/ai-agents/"
+  }
+ ],
+ "/categories/ai-voice-agents/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/ai-voice-agents/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/ai-voice-agents"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/ai-voice-agents/"
+  }
+ ],
+ "/categories/appointments/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/appointments/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/appointments/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/appointments"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/appointments/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/appointments/"
+  }
+ ],
+ "/categories/bi/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/bi/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/bi/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/bi"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/bi/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/bi/"
+  }
+ ],
+ "/categories/cloud-pbx/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/cloud-pbx/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/cloud-pbx/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/cloud-pbx"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/cloud-pbx/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/cloud-pbx/"
+  }
+ ],
+ "/categories/crm/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/crm/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/crm/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/crm"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/crm/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/crm/"
+  }
+ ],
+ "/categories/customer-service/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/customer-service/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/customer-service/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/customer-service"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/customer-service/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/customer-service/"
+  }
+ ],
+ "/categories/e-signature/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/e-signature/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/e-signature/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/e-signature"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/e-signature/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/e-signature/"
+  }
+ ],
+ "/categories/ecommerce-marketing/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/ecommerce-marketing/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/ecommerce-marketing/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/ecommerce-marketing"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/ecommerce-marketing/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/ecommerce-marketing/"
+  }
+ ],
+ "/categories/ecommerce-platforms/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/ecommerce-platforms/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/ecommerce-platforms"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/ecommerce-platforms/"
+  }
+ ],
+ "/categories/email-marketing/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/email-marketing/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/email-marketing/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/email-marketing"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/email-marketing/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/email-marketing/"
+  }
+ ],
+ "/categories/employee-benefits/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/employee-benefits/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/employee-benefits/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/employee-benefits"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/employee-benefits/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/employee-benefits/"
+  }
+ ],
+ "/categories/erp/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/erp/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/erp/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/erp"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/erp/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/erp/"
+  }
+ ],
+ "/categories/hr/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/hr/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/hr/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/hr"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/hr/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/hr/"
+  }
+ ],
+ "/categories/marketing-automation/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/marketing-automation/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/marketing-automation/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/marketing-automation"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/marketing-automation/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/marketing-automation/"
+  }
+ ],
+ "/categories/payments/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/payments/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/payments/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/payments"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/payments/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/payments/"
+  }
+ ],
+ "/categories/payroll/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/payroll/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/payroll/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/payroll"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/payroll/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/payroll/"
+  }
+ ],
+ "/categories/pos/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/pos/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/pos/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/pos"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/pos/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/pos/"
+  }
+ ],
+ "/categories/project-management/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/project-management/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/project-management/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/project-management"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/project-management/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/project-management/"
+  }
+ ],
+ "/categories/recruiting/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/recruiting/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/recruiting"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/recruiting/"
+  }
+ ],
+ "/categories/sms-marketing/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/sms-marketing/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/sms-marketing"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/sms-marketing/"
+  }
+ ],
+ "/categories/spend-management/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/spend-management/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/spend-management"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/spend-management/"
+  }
+ ],
+ "/categories/time-attendance/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/time-attendance/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/best/time-attendance/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/time-attendance"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/best/time-attendance/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/time-attendance/"
+  }
+ ],
+ "/categories/whatsapp-business/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/whatsapp-business/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/whatsapp-business"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/whatsapp-business/"
+  }
+ ],
+ "/categories/workflow-automation/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/categories/workflow-automation/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/categories/workflow-automation"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/categories/workflow-automation/"
+  }
+ ],
+ "/software/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/"
+  }
+ ],
+ "/software/activecampaign/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/activecampaign/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/activecampaign"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/activecampaign/"
+  }
+ ],
+ "/software/asana/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/asana/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/asana/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/asana"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/asana/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/asana/"
+  }
+ ],
+ "/software/bigcommerce/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/bigcommerce/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/bigcommerce"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/bigcommerce/"
+  }
+ ],
+ "/software/brevo/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/brevo/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/brevo"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/brevo/"
+  }
+ ],
+ "/software/calendly/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/calendly/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/calendly"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/calendly/"
+  }
+ ],
+ "/software/clickup/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/clickup/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/clickup/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/clickup"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/clickup/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/clickup/"
+  }
+ ],
+ "/software/docusign/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/docusign/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/docusign/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/docusign"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/docusign/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/docusign/"
+  }
+ ],
+ "/software/dropbox-sign/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/dropbox-sign/"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/dropbox-sign/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/dropbox-sign/"
+  }
+ ],
+ "/software/freshdesk/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/freshdesk/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/freshdesk/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/freshdesk"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/freshdesk/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/freshdesk/"
+  }
+ ],
+ "/software/getresponse/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/getresponse/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/getresponse/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/getresponse"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/getresponse/"
+  }
+ ],
+ "/software/hubspot-sales/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/hubspot-sales/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/hubspot/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/hubspot-crm"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/hubspot/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/hubspot-sales/"
+  }
+ ],
+ "/software/intercom/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/intercom/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/intercom"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/intercom/"
+  }
+ ],
+ "/software/klaviyo/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/klaviyo/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/klaviyo"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/klaviyo/"
+  }
+ ],
+ "/software/mailchimp/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/mailchimp/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/mailchimp"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/mailchimp/"
+  }
+ ],
+ "/software/make/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/make/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/make"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/make/"
+  }
+ ],
+ "/software/netsuite/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/netsuite/"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/netsuite/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/netsuite/"
+  }
+ ],
+ "/software/notion/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/notion/"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/notion/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/notion/"
+  }
+ ],
+ "/software/omnisend/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/omnisend/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/omnisend"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/omnisend/"
+  }
+ ],
+ "/software/paypal/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/paypal/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/paypal/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/paypal/"
+  }
+ ],
+ "/software/pipedrive/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/pipedrive/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/pipedrive/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/pipedrive"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/pipedrive/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/pipedrive/"
+  }
+ ],
+ "/software/power-bi/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/power-bi/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/power-bi/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/power-bi"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/power-bi/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/power-bi/"
+  }
+ ],
+ "/software/pulseem/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/pulseem/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/pulseem/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/pulseem"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/pulseem/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/pulseem/"
+  }
+ ],
+ "/software/respond-io/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/respond-io/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/respond-io"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/respond-io/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/respond-io/"
+  }
+ ],
+ "/software/shopify/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/shopify/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/shopify"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/shopify/"
+  }
+ ],
+ "/software/square/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/square/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/square"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/square/"
+  }
+ ],
+ "/software/stripe/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/stripe/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/stripe/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/stripe"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/stripe/"
+  }
+ ],
+ "/software/tableau/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/tableau/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/tableau/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/tableau"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/tableau/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/tableau/"
+  }
+ ],
+ "/software/wati/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/wati/"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/wati/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/wati/"
+  }
+ ],
+ "/software/woocommerce/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/woocommerce/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/woocommerce"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/woocommerce/"
+  }
+ ],
+ "/software/xero/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/xero/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/xero"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/xero/"
+  }
+ ],
+ "/software/zapier/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/zapier/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/zapier"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/zapier/"
+  }
+ ],
+ "/software/zendesk/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/zendesk/"
+  },
+  {
+   "hreflang": "en-GB",
+   "href": "https://systemcompare.co.uk/software/zendesk"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/zendesk/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/zendesk/"
+  }
+ ],
+ "/software/zoho-crm/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/zoho-crm/"
+  },
+  {
+   "hreflang": "pl-PL",
+   "href": "https://systemcompare.pl/software/zoho-crm/"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/zoho-crm/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/zoho-crm/"
+  }
+ ],
+ "/software/zoho-sign/": [
+  {
+   "hreflang": "en-US",
+   "href": "https://system-compare.com/software/zoho-sign/"
+  },
+  {
+   "hreflang": "he-IL",
+   "href": "https://systemcompare.co.il/software/zoho-sign/"
+  },
+  {
+   "hreflang": "x-default",
+   "href": "https://system-compare.com/software/zoho-sign/"
+  }
+ ]
+}

@@ -1,0 +1,525 @@
+{
+ "groups": [
+  {
+   "id": "sales-support",
+   "label": "Sales & customer service",
+   "blurb": "Win, serve and talk to customers.",
+   "categories": [
+    "crm",
+    "cold-email",
+    "customer-service",
+    "whatsapp-business",
+    "cloud-pbx"
+   ]
+  },
+  {
+   "id": "marketing",
+   "label": "Marketing",
+   "blurb": "Reach, convert and measure an audience.",
+   "categories": [
+    "email-marketing",
+    "marketing-automation",
+    "sms-marketing",
+    "ecommerce-marketing",
+    "social-media-management",
+    "seo-tools",
+    "web-analytics"
+   ]
+  },
+  {
+   "id": "finance",
+   "label": "Finance & accounting",
+   "blurb": "Books, billing, payments, spend and ERP.",
+   "categories": [
+    "accounting",
+    "invoicing",
+    "e-invoicing",
+    "payments",
+    "spend-management",
+    "procurement",
+    "erp"
+   ]
+  },
+  {
+   "id": "hr",
+   "label": "HR & people",
+   "blurb": "Hire, pay, schedule and develop a team.",
+   "categories": [
+    "hr",
+    "payroll",
+    "employee-benefits",
+    "time-attendance",
+    "recruiting",
+    "learning-management"
+   ]
+  },
+  {
+   "id": "commerce",
+   "label": "Commerce & field operations",
+   "blurb": "Sell, book, stock and deliver.",
+   "categories": [
+    "ecommerce-platforms",
+    "pos",
+    "appointments",
+    "inventory-management",
+    "field-service"
+   ]
+  },
+  {
+   "id": "work",
+   "label": "Work management & data",
+   "blurb": "Plan work, collaborate, automate, sign and report.",
+   "categories": [
+    "project-management",
+    "team-chat",
+    "workflow-automation",
+    "bi",
+    "document-management",
+    "e-signature"
+   ]
+  },
+  {
+   "id": "it-security",
+   "label": "IT, security & web",
+   "blurb": "Run, secure and keep a compliant web and IT estate.",
+   "categories": [
+    "it-service-management",
+    "endpoint-security",
+    "backup-recovery",
+    "password-management",
+    "vpn-security",
+    "web-hosting",
+    "website-accessibility",
+    "consent-management"
+   ]
+  },
+  {
+   "id": "ai-assistants",
+   "label": "AI assistants & agents",
+   "blurb": "Assistants and agents for everyday knowledge and customer work.",
+   "categories": [
+    "ai-general-assistants",
+    "ai-search-research",
+    "ai-office-knowledge-work",
+    "ai-meetings-communications",
+    "ai-writing-language",
+    "ai-agents",
+    "ai-agents-automation",
+    "ai-voice-agents",
+    "ai-sales-customer-service"
+   ]
+  },
+  {
+   "id": "ai-creative",
+   "label": "AI creative & media",
+   "blurb": "Generate and edit images, video, audio, music, 3D and campaigns.",
+   "categories": [
+    "ai-design-images",
+    "ai-video-animation",
+    "ai-voice-audio",
+    "ai-music-sound",
+    "ai-3d-spatial",
+    "ai-marketing-growth"
+   ]
+  },
+  {
+   "id": "ai-builders",
+   "label": "AI for builders & specialists",
+   "blurb": "AI for code, apps, data, engineering, education and AI safety.",
+   "categories": [
+    "ai-software-development",
+    "ai-app-website-building",
+    "ai-ai-development-infrastructure",
+    "ai-data-analytics",
+    "ai-security-trust",
+    "ai-industry-engineering",
+    "ai-learning-education"
+   ]
+  }
+ ],
+ "secondaryGroups": {
+  "ai-sales-customer-service": [
+   "sales-support"
+  ],
+  "ai-security-trust": [
+   "it-security"
+  ],
+  "ai-data-analytics": [
+   "work"
+  ],
+  "ai-agents-automation": [
+   "work"
+  ],
+  "ai-marketing-growth": [
+   "marketing"
+  ],
+  "ai-voice-agents": [
+   "sales-support"
+  ],
+  "ai-agents": [
+   "sales-support"
+  ],
+  "cold-email": [
+   "marketing"
+  ],
+  "whatsapp-business": [
+   "marketing"
+  ],
+  "web-analytics": [
+   "it-security"
+  ],
+  "erp": [
+   "commerce"
+  ],
+  "e-signature": [
+   "finance"
+  ],
+  "invoicing": [
+   "commerce"
+  ],
+  "learning-management": [
+   "work"
+  ],
+  "ai-learning-education": [
+   "hr"
+  ],
+  "ecommerce-marketing": [
+   "commerce"
+  ],
+  "inventory-management": [
+   "finance"
+  ]
+ },
+ "byCategory": {
+  "crm": {
+   "primary": "sales-support",
+   "oldGroup": "Sales & customer experience",
+   "name": "CRM & sales"
+  },
+  "email-marketing": {
+   "primary": "marketing",
+   "oldGroup": "Marketing",
+   "name": "Email marketing"
+  },
+  "marketing-automation": {
+   "primary": "marketing",
+   "oldGroup": "Marketing",
+   "name": "Marketing automation"
+  },
+  "sms-marketing": {
+   "primary": "marketing",
+   "oldGroup": "Marketing",
+   "name": "SMS marketing"
+  },
+  "whatsapp-business": {
+   "primary": "sales-support",
+   "oldGroup": "Customer engagement",
+   "name": "WhatsApp Business"
+  },
+  "ecommerce-marketing": {
+   "primary": "marketing",
+   "oldGroup": "Marketing",
+   "name": "Ecommerce marketing"
+  },
+  "customer-service": {
+   "primary": "sales-support",
+   "oldGroup": "Sales & customer experience",
+   "name": "Customer support & help desk"
+  },
+  "ai-agents": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI & automation",
+   "name": "AI agents & agent platforms"
+  },
+  "ai-voice-agents": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI & automation",
+   "name": "AI voice agents"
+  },
+  "accounting": {
+   "primary": "finance",
+   "oldGroup": "Finance & Operations",
+   "name": "Accounting & Invoicing"
+  },
+  "payments": {
+   "primary": "finance",
+   "oldGroup": "Finance & Operations",
+   "name": "Payment Processing"
+  },
+  "hr": {
+   "primary": "hr",
+   "oldGroup": "People & work",
+   "name": "HR software"
+  },
+  "payroll": {
+   "primary": "hr",
+   "oldGroup": "People & work",
+   "name": "Payroll software"
+  },
+  "project-management": {
+   "primary": "work",
+   "oldGroup": "People & work",
+   "name": "Project management"
+  },
+  "erp": {
+   "primary": "finance",
+   "oldGroup": "Finance & Operations",
+   "name": "ERP & Business Management"
+  },
+  "pos": {
+   "primary": "commerce",
+   "oldGroup": "Commerce & Services",
+   "name": "Point of Sale"
+  },
+  "appointments": {
+   "primary": "commerce",
+   "oldGroup": "Commerce & Services",
+   "name": "Appointment Scheduling"
+  },
+  "e-signature": {
+   "primary": "work",
+   "oldGroup": "Finance & Operations",
+   "name": "Electronic Signature"
+  },
+  "employee-benefits": {
+   "primary": "hr",
+   "oldGroup": "People & work",
+   "name": "Benefits administration"
+  },
+  "time-attendance": {
+   "primary": "hr",
+   "oldGroup": "People & work",
+   "name": "Time & attendance"
+  },
+  "bi": {
+   "primary": "work",
+   "oldGroup": "Data & automation",
+   "name": "Business intelligence"
+  },
+  "cloud-pbx": {
+   "primary": "sales-support",
+   "oldGroup": "Customer engagement",
+   "name": "Business phone systems"
+  },
+  "recruiting": {
+   "primary": "hr",
+   "oldGroup": "People & work",
+   "name": "Recruiting & applicant tracking"
+  },
+  "workflow-automation": {
+   "primary": "work",
+   "oldGroup": "Data & automation",
+   "name": "Workflow automation"
+  },
+  "spend-management": {
+   "primary": "finance",
+   "oldGroup": "Finance & Operations",
+   "name": "Spend & Expense Management"
+  },
+  "ecommerce-platforms": {
+   "primary": "commerce",
+   "oldGroup": "Commerce & Services",
+   "name": "Ecommerce Platforms"
+  },
+  "seo-tools": {
+   "primary": "marketing",
+   "oldGroup": "Marketing",
+   "name": "SEO & AI search visibility"
+  },
+  "social-media-management": {
+   "primary": "marketing",
+   "oldGroup": "Marketing",
+   "name": "Social media management"
+  },
+  "web-hosting": {
+   "primary": "it-security",
+   "oldGroup": "IT & security",
+   "name": "Managed WordPress hosting"
+  },
+  "vpn-security": {
+   "primary": "it-security",
+   "oldGroup": "IT & security",
+   "name": "VPN for individual professionals"
+  },
+  "cold-email": {
+   "primary": "sales-support",
+   "oldGroup": "Marketing & sales",
+   "name": "Cold email and sales outreach"
+  },
+  "team-chat": {
+   "primary": "work",
+   "oldGroup": "Operations",
+   "name": "Team chat and collaboration"
+  },
+  "password-management": {
+   "primary": "it-security",
+   "oldGroup": "Operations",
+   "name": "Business password management"
+  },
+  "website-accessibility": {
+   "primary": "it-security",
+   "oldGroup": "Website operations",
+   "name": "Website accessibility"
+  },
+  "consent-management": {
+   "primary": "it-security",
+   "oldGroup": "Website operations",
+   "name": "Consent management"
+  },
+  "endpoint-security": {
+   "primary": "it-security",
+   "oldGroup": "Security and resilience",
+   "name": "Endpoint security"
+  },
+  "backup-recovery": {
+   "primary": "it-security",
+   "oldGroup": "Security and resilience",
+   "name": "Backup and recovery"
+  },
+  "field-service": {
+   "primary": "commerce",
+   "oldGroup": "Business operations",
+   "name": "Field service"
+  },
+  "inventory-management": {
+   "primary": "commerce",
+   "oldGroup": "Business operations",
+   "name": "Inventory management"
+  },
+  "document-management": {
+   "primary": "work",
+   "oldGroup": "Business operations",
+   "name": "Document management"
+  },
+  "it-service-management": {
+   "primary": "it-security",
+   "oldGroup": "IT and security",
+   "name": "IT service management"
+  },
+  "web-analytics": {
+   "primary": "marketing",
+   "oldGroup": "Marketing",
+   "name": "Web Analytics"
+  },
+  "procurement": {
+   "primary": "finance",
+   "oldGroup": "Finance and operations",
+   "name": "Procurement"
+  },
+  "ai-search-research": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI tools",
+   "name": "AI search & research"
+  },
+  "learning-management": {
+   "primary": "hr",
+   "oldGroup": "People & data",
+   "name": "Learning management"
+  },
+  "invoicing": {
+   "primary": "finance",
+   "oldGroup": "Finance & operations",
+   "name": "Invoicing"
+  },
+  "e-invoicing": {
+   "primary": "finance",
+   "oldGroup": "Finance & operations",
+   "name": "E-invoicing"
+  },
+  "ai-agents-automation": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI tools",
+   "name": "AI agents & automation"
+  },
+  "ai-office-knowledge-work": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI tools",
+   "name": "AI office & knowledge work"
+  },
+  "ai-meetings-communications": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI tools",
+   "name": "AI meetings & communications"
+  },
+  "ai-writing-language": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI tools",
+   "name": "AI writing & language"
+  },
+  "ai-software-development": {
+   "primary": "ai-builders",
+   "oldGroup": "AI tools",
+   "name": "AI software development"
+  },
+  "ai-app-website-building": {
+   "primary": "ai-builders",
+   "oldGroup": "AI tools",
+   "name": "AI app & website building"
+  },
+  "ai-ai-development-infrastructure": {
+   "primary": "ai-builders",
+   "oldGroup": "AI tools",
+   "name": "LLM observability & evaluation"
+  },
+  "ai-industry-engineering": {
+   "primary": "ai-builders",
+   "oldGroup": "AI tools",
+   "name": "AI-assisted mechanical CAD"
+  },
+  "ai-marketing-growth": {
+   "primary": "ai-creative",
+   "oldGroup": "AI tools",
+   "name": "AI marketing & creative workflows"
+  },
+  "ai-design-images": {
+   "primary": "ai-creative",
+   "oldGroup": "AI tools",
+   "name": "AI image creation and editing"
+  },
+  "ai-data-analytics": {
+   "primary": "ai-builders",
+   "oldGroup": "AI tools",
+   "name": "AI data analysis and reporting"
+  },
+  "ai-general-assistants": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI tools",
+   "name": "General AI assistants"
+  },
+  "ai-voice-audio": {
+   "primary": "ai-creative",
+   "oldGroup": "AI tools",
+   "name": "AI voice & audio production"
+  },
+  "ai-video-animation": {
+   "primary": "ai-creative",
+   "oldGroup": "AI tools",
+   "name": "AI video & animation"
+  },
+  "ai-3d-spatial": {
+   "primary": "ai-creative",
+   "oldGroup": "AI tools",
+   "name": "AI 3D asset generation"
+  },
+  "ai-learning-education": {
+   "primary": "ai-builders",
+   "oldGroup": "AI tools",
+   "name": "AI teaching and learning tools"
+  },
+  "ai-music-sound": {
+   "primary": "ai-creative",
+   "oldGroup": "AI tools",
+   "name": "AI music and sound creation"
+  },
+  "ai-sales-customer-service": {
+   "primary": "ai-assistants",
+   "oldGroup": "AI tools",
+   "name": "AI customer-service agents"
+  },
+  "ai-security-trust": {
+   "primary": "ai-builders",
+   "oldGroup": "AI tools",
+   "name": "AI runtime security and guardrails"
+  }
+ }
+}

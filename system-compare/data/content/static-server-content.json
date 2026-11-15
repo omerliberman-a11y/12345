@@ -1,0 +1,966 @@
+{
+ "_note": "Verbatim server-side content of system-compare.com static/global chrome that is NOT (or not identically) present in catalog.json. Extracted from the local mirror on 2026-11-14.",
+ "global_header_html": "<a href=\"#main\" class=\"skip\">Skip to content</a><div class=\"edition-bar\"><div class=\"container\"><span><span class=\"flag\" aria-hidden=\"true\">🇺🇸</span> UNITED STATES EDITION</span><span>US pricing. Source-backed comparisons.</span></div></div><header class=\"site-header workspace-header\"><div class=\"container header-inner\"><a class=\"sc-brand\" href=\"/\" aria-label=\"System Compare US home\"><svg class=\"sc-brand__mark\" viewBox=\"0 0 40 40\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"6.5\" y=\"19\" width=\"11\" height=\"15\" rx=\"3.5\" fill=\"#4a3aff\"/><rect x=\"22.5\" y=\"10\" width=\"11\" height=\"24\" rx=\"3.5\" fill=\"#ff6a3d\"/><rect x=\"3\" y=\"35.5\" width=\"34\" height=\"2.6\" rx=\"1.3\" fill=\"currentColor\"/><path d=\"M12 13.2L28 4.2\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"13.2\" r=\"2.6\" fill=\"currentColor\"/><circle cx=\"28\" cy=\"4.2\" r=\"2.6\" fill=\"currentColor\"/></svg><span class=\"sc-brand__text\"><span class=\"sc-brand__word\"><span class=\"sc-brand__w1\">system</span><span class=\"sc-brand__w2\">compare</span></span><span class=\"sc-brand__tag\" lang=\"en-US\">Choose software with confidence.</span></span></a><nav aria-label=\"Main navigation\"><a href=\"/categories/\">Categories</a><a href=\"/compare/\">Compare</a><a href=\"/guides/\">Buying guides</a><a href=\"/methodology/\">How we score</a></nav><a class=\"header-tool workspace-saved-link\" href=\"/shortlist/\"><span class=\"workspace-saved-wide\">Saved workspace</span><span class=\"workspace-saved-narrow\">Saved</span> <span data-workspace-count aria-label=\"Selected products\">0</span></a></div><div class=\"workspace-nav\"><div class=\"container\"><form action=\"/software/\" method=\"get\" class=\"workspace-search\" role=\"search\" aria-label=\"Search the software catalog\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><circle cx=\"10\" cy=\"10\" r=\"6.5\"/><path d=\"m15 15 6 6\"/></svg><label class=\"sr-only\" for=\"workspace-search\">Find software, categories or guides</label><input id=\"workspace-search\" name=\"q\" type=\"search\" maxlength=\"120\" placeholder=\"Find software, a category or a guide…\" autocomplete=\"off\" data-workspace-search><button type=\"submit\">Search</button><div class=\"workspace-search-results\" data-workspace-results hidden></div></form><nav aria-label=\"Research tools\"><a class=\"\" href=\"/software/\">All software</a><a class=\"\" href=\"/ai/\">AI research</a><a class=\"\" href=\"/tools/cost/\">Cost calculator</a><a class=\"\" href=\"/partners/\">For vendors</a></nav></div></div></header>",
+ "global_footer_and_dialog_html": "<footer><div class=\"container footer-grid\"><div><a class=\"sc-brand\" href=\"/\" aria-label=\"System Compare US home\"><svg class=\"sc-brand__mark\" viewBox=\"0 0 40 40\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"6.5\" y=\"19\" width=\"11\" height=\"15\" rx=\"3.5\" fill=\"#4a3aff\"/><rect x=\"22.5\" y=\"10\" width=\"11\" height=\"24\" rx=\"3.5\" fill=\"#ff6a3d\"/><rect x=\"3\" y=\"35.5\" width=\"34\" height=\"2.6\" rx=\"1.3\" fill=\"currentColor\"/><path d=\"M12 13.2L28 4.2\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"13.2\" r=\"2.6\" fill=\"currentColor\"/><circle cx=\"28\" cy=\"4.2\" r=\"2.6\" fill=\"currentColor\"/></svg><span class=\"sc-brand__text\"><span class=\"sc-brand__word\"><span class=\"sc-brand__w1\">system</span><span class=\"sc-brand__w2\">compare</span></span><span class=\"sc-brand__tag\" lang=\"en-US\">Choose software with confidence.</span></span></a><p>Better questions.<br>Clearer comparisons.<br>More confident decisions.</p><span class=\"footer-edition\">United States · English · USD</span></div><div><h3>Find your software</h3><a class=\"\" href=\"/categories/\">All categories</a><a class=\"\" href=\"/software/\">Software directory</a><a class=\"\" href=\"/comparisons/\">Comparison library</a><a class=\"\" href=\"/ai/\">AI capability research</a></div><div><h3>Make a decision</h3><a class=\"\" href=\"/guides/\">Buying guides</a><a class=\"\" href=\"/tools/cost/\">Total cost calculator</a><a class=\"\" href=\"/shortlist/\">Saved workspace</a><a class=\"\" href=\"/methodology/\">How scoring works</a><a class=\"\" href=\"/research-updates/\">Research updates</a><a class=\"\" href=\"/editorial-policy/\">Editorial responsibility</a><a class=\"\" href=\"/corrections/\">Suggest a correction</a></div><div><h3>System Compare</h3><a class=\"\" href=\"/about/\">About the publisher</a><a class=\"\" href=\"/countries/\">System Compare worldwide</a><a class=\"\" href=\"/how-we-make-money/\">How we make money</a><a class=\"\" href=\"/partners/\">Partners</a><a class=\"\" href=\"/contact/\">Contact</a><a class=\"\" href=\"/privacy/\">Privacy policy</a><a class=\"\" href=\"/terms/\">Terms of use</a><a class=\"\" href=\"/accessibility/\">Accessibility</a><button class=\"footer-button\" id=\"privacy-choices\">Privacy choices</button></div></div><div class=\"container footer-bottom\"><span>© 2026 CLICSYNC LTD · Product names and logos belong to their owners.</span><span>Research, not customer star ratings.</span></div></footer><div id=\"shortlist-tray\" class=\"shortlist-tray\" hidden aria-label=\"Comparison shortlist\"></div><div id=\"toast\" class=\"toast\" role=\"status\" aria-live=\"polite\" hidden></div><dialog id=\"privacy-dialog\" aria-labelledby=\"privacy-heading\"><h2 id=\"privacy-heading\">Your privacy choices</h2><p>Optional Google Analytics runs only with your permission. Your saved shortlist and research notes stay in this browser.</p><button class=\"button secondary\" data-sc-open-consent>Analytics cookie settings</button><button class=\"button secondary\" id=\"clear-saved\">Clear saved workspace</button><button class=\"button\" id=\"close-privacy\">Done</button><p><a class=\"\" href=\"/privacy/\">Read the privacy policy</a></p></dialog>",
+ "organization_jsonld_home_only": {
+  "@type": "Organization",
+  "@id": "https://system-compare.com/#publisher",
+  "name": "System Compare",
+  "legalName": "CLICSYNC LTD",
+  "alternateName": [
+   "SystemCompare",
+   "System-Compare",
+   "CLICXY"
+  ],
+  "url": "https://system-compare.com/",
+  "logo": "https://system-compare.com/brand/icon.svg",
+  "address": {
+   "@type": "PostalAddress",
+   "streetAddress": "9 Tversky Street",
+   "addressLocality": "Tel Aviv-Yafo",
+   "addressCountry": "IL"
+  },
+  "identifier": {
+   "@type": "PropertyValue",
+   "name": "Company number",
+   "value": "515343549"
+  },
+  "contactPoint": {
+   "@type": "ContactPoint",
+   "email": "support@system-compare.com"
+  },
+  "sameAs": [
+   "https://system-compare.com/",
+   "https://systemcompare.co.il/",
+   "https://systemcompare.co.uk/",
+   "https://systemcompare.de/",
+   "https://systemcompare.at/",
+   "https://systemcompare.ch/",
+   "https://systemcompare.fr/",
+   "https://systemcompare.it/",
+   "https://systemcompare.pl/",
+   "https://systemcompare.nl/",
+   "https://systemcompare.se/",
+   "https://systemcompare.com.ph/",
+   "https://systemcompare.com.tw/",
+   "https://systemcompare.co.za/",
+   "https://systemcompare.cl/",
+   "https://systemcompare.com.co/",
+   "https://systemcompare.com.pe/",
+   "https://systemcompare.ai/"
+  ]
+ },
+ "how_we_make_money_main_html": "<nav class=\"crumb\" aria-label=\"Breadcrumb\"><a href=\"/\">Home</a><span aria-hidden=\"true\">/</span><span aria-current=\"page\">How we make money</span></nav><article class=\"prose affiliate-policy\"><h1>How we make money</h1><p>System Compare is published by CLICSYNC LTD. Some supplier links are affiliate links, labelled “Ad · affiliate link”. We may receive a commission when a purchase is attributed to one of these referrals.</p><h2>Offers and evidence</h2><p>An affiliate button takes you to the supplier’s offer. Links in source libraries and evidence records lead directly to the cited pages. An offer does not establish that its plan includes every capability described in our research. Confirm the current price and terms with the supplier.</p><h2>Privacy after you click</h2><p>Our /go/ addresses redirect to a configured destination without forwarding visitor query parameters. They do not set our own affiliate cookie. The supplier or its partner network may use its own referral measurement and cookies after you arrive. Google Analytics click measurement on our site requires analytics consent.</p><p><a href=\"/privacy/\">Privacy policy</a> · <a href=\"/methodology/\">Comparison methodology</a> · <a href=\"/contact/\">Contact</a></p></article>",
+ "contact_main_html": "<nav class=\"crumb\" aria-label=\"Breadcrumb\"><a href=\"/\">Home</a><span aria-hidden=\"true\">/</span><span aria-current=\"page\">Contact System Compare</span></nav><section class=\"sc-contact\" aria-labelledby=\"contact-heading\"><p class=\"sc-contact-eyebrow\">SYSTEM COMPARE</p><h1 id=\"contact-heading\">Contact System Compare</h1><p class=\"sc-contact-intro\">Questions, corrections, partnerships or privacy requests: send a message to the System Compare team.</p><div class=\"sc-contact-grid\"><div class=\"sc-contact-card\"><h2>How can we help?</h2><p id=\"contact-required\">All fields are required. Choose the topic that best matches your request.</p><form id=\"sc-contact-form\" method=\"post\" data-contact=\"{&quot;site&quot;:&quot;system-compare.com&quot;,&quot;locale&quot;:&quot;en-US&quot;,&quot;pageUrl&quot;:&quot;https://system-compare.com/contact/&quot;,&quot;copy&quot;:{&quot;title&quot;:&quot;Contact System Compare&quot;,&quot;description&quot;:&quot;Questions, corrections, partnerships or privacy requests: send a message to the System Compare team.&quot;,&quot;intro&quot;:&quot;How can we help?&quot;,&quot;name&quot;:&quot;Name&quot;,&quot;email&quot;:&quot;Email address&quot;,&quot;topic&quot;:&quot;Topic&quot;,&quot;topics&quot;:[&quot;General&quot;,&quot;Listing / vendor&quot;,&quot;Partnership&quot;,&quot;Correction&quot;,&quot;Privacy / data request&quot;,&quot;Other&quot;],&quot;message&quot;:&quot;Message&quot;,&quot;consent&quot;:&quot;I agree to the processing of my details to handle this request, as described in the&quot;,&quot;privacy&quot;:&quot;privacy policy&quot;,&quot;submit&quot;:&quot;Send message&quot;,&quot;sending&quot;:&quot;Sending…&quot;,&quot;preparing&quot;:&quot;Preparing the secure form…&quot;,&quot;ready&quot;:&quot;Ready to send.&quot;,&quot;wait&quot;:&quot;Please wait a few seconds before sending.&quot;,&quot;required&quot;:&quot;Please complete the required fields and privacy consent.&quot;,&quot;success&quot;:&quot;Your message has been accepted for delivery to our team. Thank you.&quot;,&quot;error&quot;:&quot;We could not send your message. Your text is still here. Please try again or email us.&quot;,&quot;rate&quot;:&quot;Too many messages have been submitted. Please try again later or email us.&quot;,&quot;expired&quot;:&quot;The secure session has expired. Please try again to prepare a new session.&quot;,&quot;duplicate&quot;:&quot;This submission has already been processed. To avoid a duplicate, please email us if you need to check receipt.&quot;,&quot;spam&quot;:&quot;This submission was rejected by our spam protection. Please email us if you need help.&quot;,&quot;fallback&quot;:&quot;You can also email us directly:&quot;,&quot;notice&quot;:&quot;CLICSYNC LTD processes the details you provide to handle your enquiry. Messages are sent through our contact service hosted on systemcompare.co.il to our central support team. A limited anti-spam check uses your IP address. No analytics or third-party CAPTCHA is loaded on the contact form page.&quot;,&quot;sensitive&quot;:&quot;Please do not include passwords, payment-card details or other unnecessary sensitive information.&quot;,&quot;nojs&quot;:&quot;JavaScript is required to send this form. You can contact us by email instead.&quot;,&quot;link&quot;:&quot;Contact&quot;,&quot;requiredNote&quot;:&quot;All fields are required. Choose the topic that best matches your request.&quot;}}\" aria-describedby=\"contact-required\" novalidate><div class=\"sc-contact-field\"><label for=\"contact-name\">Name</label><input id=\"contact-name\" name=\"name\" autocomplete=\"name\" maxlength=\"120\" required></div><div class=\"sc-contact-field\"><label for=\"contact-email\">Email address</label><input id=\"contact-email\" name=\"email\" type=\"email\" autocomplete=\"email\" maxlength=\"254\" required></div><div class=\"sc-contact-field\"><label for=\"contact-topic\">Topic</label><select id=\"contact-topic\" name=\"topic\" required><option value=\"general\">General</option><option value=\"listing\">Listing / vendor</option><option value=\"partnership\">Partnership</option><option value=\"correction\">Correction</option><option value=\"privacy\">Privacy / data request</option><option value=\"other\">Other</option></select></div><div class=\"sc-contact-field\"><label for=\"contact-message\">Message</label><textarea id=\"contact-message\" name=\"message\" rows=\"8\" maxlength=\"10000\" aria-describedby=\"contact-sensitive\" required></textarea><p id=\"contact-sensitive\" class=\"sc-contact-help\">Please do not include passwords, payment-card details or other unnecessary sensitive information.</p></div><div class=\"sc-contact-honeypot\" aria-hidden=\"true\"><label for=\"contact-website\">Website</label><input id=\"contact-website\" name=\"website\" tabindex=\"-1\" autocomplete=\"off\"></div><label class=\"sc-contact-consent\" for=\"contact-consent\"><input id=\"contact-consent\" name=\"consent\" type=\"checkbox\" required><span>I agree to the processing of my details to handle this request, as described in the <a href=\"/privacy/\">privacy policy</a>.</span></label><button class=\"sc-contact-submit\" type=\"submit\" disabled>Send message</button><p id=\"contact-status\" class=\"sc-contact-status\" role=\"status\" aria-live=\"polite\" tabindex=\"-1\"></p></form><noscript><p>JavaScript is required to send this form. You can contact us by email instead. <a href=\"mailto:support@system-compare.com\">support@system-compare.com</a></p></noscript></div><aside class=\"sc-contact-aside\"><h2>You can also email us directly:</h2><a class=\"sc-contact-email\" href=\"mailto:support@system-compare.com\">support@system-compare.com</a><p>CLICSYNC LTD processes the details you provide to handle your enquiry. Messages are sent through our contact service hosted on systemcompare.co.il to our central support team. A limited anti-spam check uses your IP address. No analytics or third-party CAPTCHA is loaded on the contact form page.</p><a href=\"/privacy/\">privacy policy</a><h2>Research corrections</h2><p>Include the product, the exact claim, the plan and a supporting official source. <a href=\"/corrections/\">Read the corrections process</a>. Commercial proposals do not change our scoring rules.</p><h2>Supplier applications</h2><p>To propose a new product, use the <a href=\"/partners/\">Partners program</a>. The initial application is free and nonbinding. Messages sent through this general form, including the Partnership topic, go to our central support team; they do not create a Partners application.</p></aside></div></section>",
+ "contact_form_config(data-contact)": {
+  "site": "system-compare.com",
+  "locale": "en-US",
+  "pageUrl": "https://system-compare.com/contact/",
+  "copy": {
+   "title": "Contact System Compare",
+   "description": "Questions, corrections, partnerships or privacy requests: send a message to the System Compare team.",
+   "intro": "How can we help?",
+   "name": "Name",
+   "email": "Email address",
+   "topic": "Topic",
+   "topics": [
+    "General",
+    "Listing / vendor",
+    "Partnership",
+    "Correction",
+    "Privacy / data request",
+    "Other"
+   ],
+   "message": "Message",
+   "consent": "I agree to the processing of my details to handle this request, as described in the",
+   "privacy": "privacy policy",
+   "submit": "Send message",
+   "sending": "Sending…",
+   "preparing": "Preparing the secure form…",
+   "ready": "Ready to send.",
+   "wait": "Please wait a few seconds before sending.",
+   "required": "Please complete the required fields and privacy consent.",
+   "success": "Your message has been accepted for delivery to our team. Thank you.",
+   "error": "We could not send your message. Your text is still here. Please try again or email us.",
+   "rate": "Too many messages have been submitted. Please try again later or email us.",
+   "expired": "The secure session has expired. Please try again to prepare a new session.",
+   "duplicate": "This submission has already been processed. To avoid a duplicate, please email us if you need to check receipt.",
+   "spam": "This submission was rejected by our spam protection. Please email us if you need help.",
+   "fallback": "You can also email us directly:",
+   "notice": "CLICSYNC LTD processes the details you provide to handle your enquiry. Messages are sent through our contact service hosted on systemcompare.co.il to our central support team. A limited anti-spam check uses your IP address. No analytics or third-party CAPTCHA is loaded on the contact form page.",
+   "sensitive": "Please do not include passwords, payment-card details or other unnecessary sensitive information.",
+   "nojs": "JavaScript is required to send this form. You can contact us by email instead.",
+   "link": "Contact",
+   "requiredNote": "All fields are required. Choose the topic that best matches your request."
+  }
+ },
+ "privacy_server_added_suffix_html": "<section class=\"sc-contact-notice\"><h2>Contact</h2><p>CLICSYNC LTD processes the details you provide to handle your enquiry. Messages are sent through our contact service hosted on systemcompare.co.il to our central support team. A limited anti-spam check uses your IP address. No analytics or third-party CAPTCHA is loaded on the contact form page.</p><p><a href=\"/contact/\">Contact System Compare</a> · <a href=\"mailto:support@system-compare.com\">support@system-compare.com</a></p></section>",
+ "partners_apply_head_html": "<!doctype html><html lang=\"en\" dir=\"ltr\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Apply to add your software | System Compare</title><meta name=\"description\" content=\"Free supplier application for the System Compare network.\"><meta name=\"robots\" content=\"noindex, follow\"><meta name=\"referrer\" content=\"no-referrer\"><meta name=\"theme-color\" content=\"#4a3aff\"><link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><link rel=\"stylesheet\" href=\"/style.css\"><link rel=\"stylesheet\" href=\"/partners-ui.css\"><script defer src=\"/partners-ui.js\"></script></head>",
+ "partners_apply_body_html": "<body class=\"partner-network-shell sc-workspace\" data-partner-shell><a class=\"skip\" href=\"#main\">Skip to content</a><header class=\"site-header\"><div class=\"container partner-network-header\"><a class=\"sc-brand\" href=\"/partners/\"><img src=\"/favicon.svg\" alt=\"\" width=\"40\" height=\"40\"><span>System Compare</span></a><p>System Compare partner network</p><label class=\"partner-language-switch\">Language<select id=\"partner-interface-language\"><option value=\"en\" selected>English</option><option value=\"he\">עברית</option><option value=\"pl\">Polski</option><option value=\"de\">Deutsch</option><option value=\"fr\">Français</option><option value=\"it\">Italiano</option><option value=\"nl\">Nederlands</option><option value=\"es\">Español</option><option value=\"sv\">Svenska</option><option value=\"cs\">Čeština</option><option value=\"zh\">繁體中文</option><option value=\"ko\">한국어</option></select></label></div></header><main id=\"main\" tabindex=\"-1\" class=\"container\"><section class=\"partner-workspace\" data-partner-page=\"apply\" data-application-blocked=\"false\" data-source-market=\"\" data-source-language=\"\" data-market=\"us\" data-language=\"en\" data-service=\"supplier_registration\"><p class=\"eyebrow\">SYSTEM COMPARE PARTNERS</p><h1>Tell us about your software.</h1><aside class=\"partner-card\" lang=\"en\" dir=\"ltr\" aria-label=\"Application availability\"><p>Approval invitation emails are available in Hebrew and English. Other correspondence languages receive an English invitation; your selected correspondence language is saved for the team.</p></aside><p>This central application workspace serves all System Compare editions. The publisher is CLICSYNC LTD, Israel.</p><p>Applying is free. Our team manually reviews eligibility. If eligible, you can continue through a personal link and review the proposed scope, final fee and commercial terms before deciding whether to agree. There is no charge, listing approval or marketing subscription when you apply.</p><p id=\"partner-status\" class=\"partner-status\" role=\"status\" tabindex=\"-1\">Checking availability…</p><p id=\"partner-unavailable\" hidden>Online applications are temporarily unavailable. Send your company, product, official website and requested markets to <a href=\"mailto:partnerships@system-compare.com\">partnerships@system-compare.com</a>.</p><form id=\"partner-application\" hidden><label>What would you like us to review?<select name=\"serviceCode\" id=\"partner-service\"><option value=\"supplier_registration\">Add a supplier to existing categories</option><option value=\"category_registration\">Propose a new category and add your supplier</option><option value=\"supplier_rescan\">Request a new review of an existing listing</option></select></label><fieldset id=\"partner-rescan-fields\" hidden disabled><legend>Existing supplier listing</legend><label>System Compare listing URL<input name=\"listingUrl\" type=\"url\" maxlength=\"1500\" required></label><p>Factual corrections and an included six-month review do not require a paid rescan. Contact our team if either applies.</p></fieldset><div class=\"partner-fields\"><label>Company legal name<input name=\"company\" autocomplete=\"organization\" maxlength=\"200\" required></label><label>Product name<input name=\"product\" maxlength=\"200\" required></label><label>Official website (HTTPS)<input name=\"website\" type=\"url\" placeholder=\"https://example.com/\" maxlength=\"1500\" required></label><label>Business contact name<input name=\"contactName\" autocomplete=\"name\" maxlength=\"120\" required></label><label>Business email<input name=\"email\" type=\"email\" autocomplete=\"email\" maxlength=\"254\" required></label><label>Preferred correspondence language<select name=\"language\" id=\"partner-language\" required></select></label></div><fieldset><legend>Requested country editions — select 1 to 25</legend><div class=\"partner-checks\" id=\"partner-markets\"></div></fieldset><fieldset id=\"partner-existing-categories\"><legend>Relevant software categories — select at least one</legend><p class=\"muted\">This helps route your request; the editorial team decides final placement.</p><label>Search software categories<input type=\"search\" id=\"partner-category-search\" autocomplete=\"off\"></label><p id=\"partner-category-empty\" hidden>No categories match your search.</p><div class=\"partner-checks partner-categories\" id=\"partner-categories\"></div></fieldset><fieldset id=\"partner-category-proposal\" hidden disabled><legend>New category proposal</legend><label>Proposed category name<input name=\"categoryName\" maxlength=\"160\" required></label><label>What will this category help businesses compare?<textarea name=\"categoryDescription\" minlength=\"20\" maxlength=\"2000\" required></textarea></label><p>Provide at least five distinct companies and their official websites, including your own if relevant. These are research candidates, not verified product claims.</p><div id=\"partner-company-rows\"></div><button type=\"button\" class=\"button secondary\" id=\"partner-add-company\">Add another company</button></fieldset><div class=\"partner-trap\" aria-hidden=\"true\"><label>Leave this field empty<input name=\"websiteTrap\" tabindex=\"-1\" autocomplete=\"off\"></label></div><label class=\"partner-check\"><input type=\"checkbox\" name=\"authority\" required><span>I am authorized to apply on behalf of this supplier.</span></label><label class=\"partner-check\"><input type=\"checkbox\" name=\"privacy\" required><span>I have read the <a href=\"#application-privacy\">application privacy information</a>. My contact details will be used to administer this request.</span></label><button class=\"button\" type=\"submit\">Send free application</button><p class=\"muted\">No payment is requested. After a successful submission, keep the reference number shown on screen. This page confirms receipt. After approval and a completed service proposal, a separate email can provide your personal continuation link.</p></form><section id=\"partner-receipt\" class=\"partner-card\" hidden tabindex=\"-1\" aria-labelledby=\"partner-receipt-title\"><h2 id=\"partner-receipt-title\">Application received</h2><p>Keep your reference number: <strong id=\"partner-reference\"></strong></p><p>Your request is in our staff review queue. If eligible, our team will arrange a personal continuation link so you can review any proposed service before agreement. No payment has been taken. The on-screen status distinguishes the saved application from staff email acceptance. Invitation email status is managed separately from receipt of this form. Contact <a href=\"mailto:partnerships@system-compare.com\">partnerships@system-compare.com</a> with this reference if you need to follow up.</p></section><section class=\"prose\" id=\"application-privacy\"><h2>Application privacy information</h2><p>CLICSYNC LTD, Israel company 515343549, 9 Tversky Street, Tel Aviv-Yafo 6721010, Israel, is responsible for this application service. For privacy and data-rights requests, contact <a href=\"mailto:support@system-compare.com\">support@system-compare.com</a>.</p><p>We collect your company and product names, official website, business contact name and email, requested markets and categories, correspondence language, request type, proposed category and candidate company names/URLs or existing listing URL, authority/privacy acknowledgments and a submission reference. We use them to identify the supplier, verify authority, assess eligibility, respond and administer a possible service. These fields are not verified evidence of product features and are not published as public contact data. Required fields let us identify and handle the application; you may instead contact us by email.</p><p>We also save the originating System Compare edition and page language supplied in the application link to help route your request. These link values are not independently verified.</p><p>We use legitimate interests in handling business enquiries and protecting the service, and, where applicable, steps requested by a contracting party before a contract. Technical request information is used for security and bounded abuse prevention. No optional analytics is loaded on this application or the private portal.</p><p>Authorized staff access a separate private application database on the existing OpenAI Sites/Cloudflare infrastructure. The operator is in Israel; hosting and email providers may process information in other countries under applicable arrangements. Applications and review records are retained for the request, necessary business records and applicable legal obligations. You can request the relevant retention or transfer information and exercise applicable access, correction, deletion, restriction, objection or portability rights by contacting us. You may complain to the relevant data protection authority.</p><p>Applying does not subscribe you to marketing. Any PayPal processing is explained in the private workspace before agreement and payment. A separate staff email notification is queued when you apply. Following approval, a personal continuation invitation may be sent to your application email. No automated research scanner is promised. See the <a href=\"/privacy/\">site privacy notice</a>, <a href=\"/partners/\">onboarding terms</a> and <a href=\"/terms/\">terms of use</a>.</p></section><noscript><p>JavaScript is needed for this application form. You can instead email <a href=\"mailto:partnerships@system-compare.com\">partnerships@system-compare.com</a>.</p></noscript></section></main><footer><nav class=\"container partner-network-footer\" aria-label=\"Main navigation\"><a href=\"/partners/\">Partners</a><a href=\"/privacy/\">Privacy</a><a href=\"/terms/\">Terms of use</a><span dir=\"ltr\">© 2026 CLICSYNC LTD</span></nav></footer>",
+ "methodology_score_method_html": "<p class=\"score-method\">Ranked by documented-fit score (0–100): the weighted share of the category checklist documented in official sources as of 2026-10-20 (core capabilities 45, integrations 20, local suitability 20, AI 15). Unverified items score zero, and no score is shown until 80% of the checklist weight has been checked. No vendor pays for placement. <a href=\"/methodology/\">How scoring works</a></p>",
+ "seo_head_by_page": {
+  "/about/": {
+   "html_title": "About our software research | System Compare US",
+   "meta_description": "About System Compare US, published by CLICSYNC LTD.",
+   "og_title": "About our software research",
+   "canonical": "https://system-compare.com/about/",
+   "robots": null,
+   "h1": "Software decisions deserve better evidence",
+   "catalog_title": "Software decisions deserve better evidence",
+   "catalog_description": "About System Compare US, published by CLICSYNC LTD.",
+   "catalog_modifiedAt": "2026-11-05",
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/about/#page",
+       "name": "About our software research",
+       "description": "About System Compare US, published by CLICSYNC LTD.",
+       "url": "https://system-compare.com/about/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       },
+       "dateModified": "2026-11-05"
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "About our software research",
+         "item": "https://system-compare.com/about/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/methodology/": {
+   "html_title": "How our comparisons work | System Compare US",
+   "meta_description": "One documented-fit score using four weighted groups, official evidence and an 80% checked-weight gate.",
+   "og_title": "How our comparisons work",
+   "canonical": "https://system-compare.com/methodology/",
+   "robots": null,
+   "h1": "How our comparisons work",
+   "catalog_title": "How our comparisons work",
+   "catalog_description": "One documented-fit score using four weighted groups, official evidence and an 80% checked-weight gate.",
+   "catalog_modifiedAt": "2026-11-13",
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/methodology/#page",
+       "name": "How our comparisons work",
+       "description": "One documented-fit score using four weighted groups, official evidence and an 80% checked-weight gate.",
+       "url": "https://system-compare.com/methodology/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       },
+       "dateModified": "2026-11-13"
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "How our comparisons work",
+         "item": "https://system-compare.com/methodology/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/editorial-policy/": {
+   "html_title": "Editorial policy and source checks | System Compare US",
+   "meta_description": "Who is responsible for publication, how US software claims are checked, and how to report a correction.",
+   "og_title": "Editorial policy and source checks",
+   "canonical": "https://system-compare.com/editorial-policy/",
+   "robots": null,
+   "h1": "Editorial responsibility and source checks",
+   "catalog_title": "Editorial responsibility and source checks",
+   "catalog_description": "Who is responsible for publication, how US software claims are checked, and how to report a correction.",
+   "catalog_modifiedAt": "2026-11-05",
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/editorial-policy/#page",
+       "name": "Editorial policy and source checks",
+       "description": "Who is responsible for publication, how US software claims are checked, and how to report a correction.",
+       "url": "https://system-compare.com/editorial-policy/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       },
+       "dateModified": "2026-11-05"
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Editorial policy and source checks",
+         "item": "https://system-compare.com/editorial-policy/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/how-we-make-money/": {
+   "html_title": "How we make money | System Compare US",
+   "meta_description": "Affiliate links, supplier offers and referral measurement at System Compare.",
+   "og_title": "How we make money",
+   "canonical": "https://system-compare.com/how-we-make-money/",
+   "robots": null,
+   "h1": "How we make money",
+   "catalog_title": null,
+   "catalog_description": null,
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/how-we-make-money/#page",
+       "name": "How we make money",
+       "description": "Affiliate links, supplier offers and referral measurement at System Compare.",
+       "url": "https://system-compare.com/how-we-make-money/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "How we make money",
+         "item": "https://system-compare.com/how-we-make-money/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/corrections/": {
+   "html_title": "Help us improve the evidence | System Compare US",
+   "meta_description": "Report a software pricing or feature correction with a supporting official source.",
+   "og_title": "Help us improve the evidence",
+   "canonical": "https://system-compare.com/corrections/",
+   "robots": null,
+   "h1": "Help us improve the evidence",
+   "catalog_title": "Help us improve the evidence",
+   "catalog_description": "Report a software pricing or feature correction with a supporting official source.",
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/corrections/#page",
+       "name": "Help us improve the evidence",
+       "description": "Report a software pricing or feature correction with a supporting official source.",
+       "url": "https://system-compare.com/corrections/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Help us improve the evidence",
+         "item": "https://system-compare.com/corrections/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/contact/": {
+   "html_title": "Contact our research team | System Compare US",
+   "meta_description": "Questions, corrections, partnerships or privacy requests: send a message to the System Compare team.",
+   "og_title": "Contact our research team",
+   "canonical": "https://system-compare.com/contact/",
+   "robots": null,
+   "h1": "Contact System Compare",
+   "catalog_title": "Contact System Compare US",
+   "catalog_description": "Contact the System Compare research and support team.",
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/contact/#page",
+       "name": "Contact our research team",
+       "description": "Questions, corrections, partnerships or privacy requests: send a message to the System Compare team.",
+       "url": "https://system-compare.com/contact/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Contact our research team",
+         "item": "https://system-compare.com/contact/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/partners/": {
+   "html_title": "Software supplier partners | System Compare US",
+   "meta_description": "Apply for supplier onboarding, understand our official-source research and see how editorial independence is protected.",
+   "og_title": "Software supplier partners",
+   "canonical": "https://system-compare.com/partners/",
+   "robots": null,
+   "h1": "Partners — add your software to System Compare",
+   "catalog_title": "Partners — add your software to System Compare",
+   "catalog_description": "Apply for supplier onboarding, understand our official-source research and see how editorial independence is protected.",
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/partners/#page",
+       "name": "Software supplier partners",
+       "description": "Apply for supplier onboarding, understand our official-source research and see how editorial independence is protected.",
+       "url": "https://system-compare.com/partners/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Software supplier partners",
+         "item": "https://system-compare.com/partners/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/partners/apply/": {
+   "html_title": "Apply to add your software | System Compare",
+   "meta_description": "Free supplier application for the System Compare network.",
+   "og_title": null,
+   "canonical": null,
+   "robots": "noindex, follow",
+   "h1": "Tell us about your software.",
+   "catalog_title": null,
+   "catalog_description": null,
+   "catalog_modifiedAt": null,
+   "jsonld": []
+  },
+  "/privacy/": {
+   "html_title": "Privacy and your choices | System Compare US",
+   "meta_description": "How the US edition handles website requests, local preferences and messages.",
+   "og_title": "Privacy and your choices",
+   "canonical": "https://system-compare.com/privacy/",
+   "robots": null,
+   "h1": "Privacy and your choices",
+   "catalog_title": "Privacy and your choices",
+   "catalog_description": "How the US edition handles website requests, local preferences and messages.",
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/privacy/#page",
+       "name": "Privacy and your choices",
+       "description": "How the US edition handles website requests, local preferences and messages.",
+       "url": "https://system-compare.com/privacy/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Privacy and your choices",
+         "item": "https://system-compare.com/privacy/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/terms/": {
+   "html_title": "Terms of use | System Compare US",
+   "meta_description": "Terms for using System Compare US research and decision tools.",
+   "og_title": "Terms of use",
+   "canonical": "https://system-compare.com/terms/",
+   "robots": null,
+   "h1": "Terms of use",
+   "catalog_title": "Terms of use",
+   "catalog_description": "Terms for using System Compare US research and decision tools.",
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/terms/#page",
+       "name": "Terms of use",
+       "description": "Terms for using System Compare US research and decision tools.",
+       "url": "https://system-compare.com/terms/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Terms of use",
+         "item": "https://system-compare.com/terms/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/accessibility/": {
+   "html_title": "Accessibility | System Compare US",
+   "meta_description": "Accessibility preferences, keyboard support and how to report a barrier.",
+   "og_title": "Accessibility",
+   "canonical": "https://system-compare.com/accessibility/",
+   "robots": null,
+   "h1": "Accessibility",
+   "catalog_title": "Accessibility",
+   "catalog_description": "Accessibility preferences, keyboard support and how to report a barrier.",
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/accessibility/#page",
+       "name": "Accessibility",
+       "description": "Accessibility preferences, keyboard support and how to report a barrier.",
+       "url": "https://system-compare.com/accessibility/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Accessibility",
+         "item": "https://system-compare.com/accessibility/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/countries/": {
+   "html_title": "Country editions | System Compare US",
+   "meta_description": "Choose a System Compare country edition to explore software comparisons, local suppliers, languages and business requirements.",
+   "og_title": "Country editions",
+   "canonical": "https://system-compare.com/countries/",
+   "robots": null,
+   "h1": "System Compare around the world",
+   "catalog_title": "System Compare around the world",
+   "catalog_description": "Choose your local System Compare edition. Explore software comparisons, local suppliers, languages, pricing and business requirements across our country editions.",
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "CollectionPage",
+       "@id": "https://system-compare.com/countries/#page",
+       "name": "Country editions",
+       "description": "Choose a System Compare country edition to explore software comparisons, local suppliers, languages and business requirements.",
+       "url": "https://system-compare.com/countries/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Country editions",
+         "item": "https://system-compare.com/countries/"
+        }
+       ]
+      },
+      {
+       "@type": "ItemList",
+       "@id": "https://system-compare.com/countries/#editions",
+       "name": "System Compare country editions",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "United States",
+         "url": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "United Kingdom",
+         "url": "https://systemcompare.co.uk/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 3,
+         "name": "Germany",
+         "url": "https://systemcompare.de/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 4,
+         "name": "Austria",
+         "url": "https://systemcompare.at/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 5,
+         "name": "Switzerland",
+         "url": "https://systemcompare.ch/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 6,
+         "name": "France",
+         "url": "https://systemcompare.fr/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 7,
+         "name": "Italy",
+         "url": "https://systemcompare.it/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 8,
+         "name": "Poland",
+         "url": "https://systemcompare.pl/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 9,
+         "name": "Israel",
+         "url": "https://systemcompare.co.il/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 10,
+         "name": "Netherlands",
+         "url": "https://systemcompare.nl/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 11,
+         "name": "Philippines",
+         "url": "https://systemcompare.com.ph/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 12,
+         "name": "Colombia",
+         "url": "https://systemcompare.com.co/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 13,
+         "name": "Chile",
+         "url": "https://systemcompare.cl/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 14,
+         "name": "Taiwan",
+         "url": "https://systemcompare.com.tw/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 15,
+         "name": "South Africa",
+         "url": "https://systemcompare.co.za/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 16,
+         "name": "Sweden",
+         "url": "https://systemcompare.se/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 17,
+         "name": "Peru",
+         "url": "https://systemcompare.com.pe/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "/research-updates/": {
+   "html_title": "Research updates | System Compare US",
+   "meta_description": "Dated public-source checks, changes and open questions for US software buyers.",
+   "og_title": "Research updates",
+   "canonical": "https://system-compare.com/research-updates/",
+   "robots": null,
+   "h1": "Research updates",
+   "catalog_title": "Research updates",
+   "catalog_description": "Dated public-source checks, changes and open questions for US software buyers.",
+   "catalog_modifiedAt": null,
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@graph": [
+      {
+       "@type": "WebSite",
+       "@id": "https://system-compare.com/#website",
+       "name": "System Compare US",
+       "url": "https://system-compare.com/",
+       "inLanguage": "en-US",
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "WebPage",
+       "@id": "https://system-compare.com/research-updates/#page",
+       "name": "Research updates",
+       "description": "Dated public-source checks, changes and open questions for US software buyers.",
+       "url": "https://system-compare.com/research-updates/",
+       "inLanguage": "en-US",
+       "isPartOf": {
+        "@id": "https://system-compare.com/#website"
+       },
+       "publisher": {
+        "@id": "https://system-compare.com/#publisher"
+       }
+      },
+      {
+       "@type": "BreadcrumbList",
+       "itemListElement": [
+        {
+         "@type": "ListItem",
+         "position": 1,
+         "name": "Home",
+         "item": "https://system-compare.com/"
+        },
+        {
+         "@type": "ListItem",
+         "position": 2,
+         "name": "Research updates",
+         "item": "https://system-compare.com/research-updates/"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "analytics_consent_copy": {
+  "title": "Your privacy choices",
+  "text": "With your permission, we use Google Analytics to measure visits and how our comparison tools are used. Analytics stays off until you agree. You can change your choice at any time.",
+  "accept": "Allow analytics",
+  "reject": "Reject analytics",
+  "settings": "Cookie settings",
+  "policy": "Privacy policy",
+  "gpc": "Your browser sends a Global Privacy Control signal. Analytics is disabled. You can manage this signal in your browser settings."
+ },
+ "accessibility_widget_copy_en": {
+  "open": "Accessibility",
+  "title": "Accessibility settings",
+  "intro": "Adjust how the site looks. Preferences stay in this browser.",
+  "size": "Text size",
+  "contrast": "High contrast",
+  "spacing": "More text spacing",
+  "links": "Underline links",
+  "motion": "Reduce motion",
+  "reset": "Reset to defaults",
+  "close": "Close",
+  "statement": "Accessibility information",
+  "saved": "Preferences saved.",
+  "table": "Data table — use arrow keys to scroll horizontally",
+  "zoom": "You can also use browser zoom (Ctrl/Cmd and +)."
+ },
+ "affiliate_disclosure_snippets": {
+  "page_notice": "<aside class=\"affiliate-notice\" aria-label=\"Affiliate advertising\"><b>Affiliate advertising.</b> Buttons marked “Ad · affiliate link” can earn System Compare a commission when you buy. <a href=\"/how-we-make-money/\">How we make money</a>.</aside>",
+  "link_label": "<span class=\"affiliate-label\">Ad · affiliate link</span>",
+  "link_explainer": "<small class=\"affiliate-explainer\">We may earn a commission if you buy through this link.</small>",
+  "category_callout_template": "<aside class=\"affiliate-notice\" aria-label=\"Advertisement\" data-affiliate-callout=\"{categoryId}\"><h2>Ad · Partner links</h2><p>We may earn a commission for a qualifying referral, demo or purchase. These advertisements are separate from the comparison rankings.</p><p><a class=\"button small\" href=\"{partnerUrl}\" target=\"_blank\" rel=\"sponsored nofollow noopener noreferrer\">{cta} ↗</a></p></aside>"
+ }
+}

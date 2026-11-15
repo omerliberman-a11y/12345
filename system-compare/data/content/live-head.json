@@ -1,0 +1,4322 @@
+{
+"/": {
+"type": "home",
+"indexable": true,
+"lastmod": null,
+"title": "Compare business software in the US | System Compare US",
+"description": "Compare business software for the United States. Source-backed capabilities, pricing context, AI research and documented-fit comparisons.",
+"h1": "Find the right software. Know the trade-offs."
+},
+"/about/": {
+"type": "static:about",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "About our software research | System Compare US",
+"description": "About System Compare US, published by CLICSYNC LTD.",
+"h1": "Software decisions deserve better evidence"
+},
+"/accessibility/": {
+"type": "static:accessibility",
+"indexable": true,
+"lastmod": null,
+"title": "Accessibility | System Compare US",
+"description": "Accessibility preferences, keyboard support and how to report a barrier.",
+"h1": "Accessibility"
+},
+"/ai/": {
+"type": "ai-hub",
+"indexable": true,
+"lastmod": null,
+"title": "AI capability research | System Compare US",
+"description": "Distinguish AI assistants, predictions and agents, and compare their effect on documented software fit.",
+"h1": "Less AI hype. More workflow evidence."
+},
+"/alternatives/1password-business/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "1Password Business alternatives | System Compare US",
+"description": "Explore researched Business password management alternatives to 1Password Business.",
+"h1": "Alternatives to 1Password Business"
+},
+"/alternatives/activecampaign/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "ActiveCampaign alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to ActiveCampaign.",
+"h1": "Alternatives to ActiveCampaign"
+},
+"/alternatives/acuity-scheduling/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Acuity Scheduling alternatives | System Compare US",
+"description": "Explore researched Appointment Scheduling alternatives to Acuity Scheduling.",
+"h1": "Alternatives to Acuity Scheduling"
+},
+"/alternatives/acumatica/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Acumatica alternatives | System Compare US",
+"description": "Explore researched ERP & Business Management alternatives to Acumatica.",
+"h1": "Alternatives to Acumatica"
+},
+"/alternatives/adobe-acrobat/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Adobe Acrobat alternatives | System Compare US",
+"description": "Explore researched Electronic Signature alternatives to Adobe Acrobat.",
+"h1": "Alternatives to Adobe Acrobat"
+},
+"/alternatives/adp-workforce-now/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "ADP Workforce Now alternatives | System Compare US",
+"description": "Explore researched HR software alternatives to ADP Workforce Now.",
+"h1": "Alternatives to ADP Workforce Now"
+},
+"/alternatives/adyen/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Adyen alternatives | System Compare US",
+"description": "Explore researched Payment Processing alternatives to Adyen.",
+"h1": "Alternatives to Adyen"
+},
+"/alternatives/agile-crm/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Agile CRM alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Agile CRM.",
+"h1": "Alternatives to Agile CRM"
+},
+"/alternatives/ahrefs/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Ahrefs alternatives | System Compare US",
+"description": "Explore researched SEO & AI search visibility alternatives to Ahrefs.",
+"h1": "Alternatives to Ahrefs"
+},
+"/alternatives/asana/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Asana alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to Asana.",
+"h1": "Alternatives to Asana"
+},
+"/alternatives/ashby/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Ashby alternatives | System Compare US",
+"description": "Explore researched Recruiting & applicant tracking alternatives to Ashby.",
+"h1": "Alternatives to Ashby"
+},
+"/alternatives/attentive/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Attentive alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Attentive.",
+"h1": "Alternatives to Attentive"
+},
+"/alternatives/attio/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Attio alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Attio.",
+"h1": "Alternatives to Attio"
+},
+"/alternatives/authorize-net/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Authorize.net alternatives | System Compare US",
+"description": "Explore researched Payment Processing alternatives to Authorize.net.",
+"h1": "Alternatives to Authorize.net"
+},
+"/alternatives/aweber/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "AWeber alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to AWeber.",
+"h1": "Alternatives to AWeber"
+},
+"/alternatives/bamboohr/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "BambooHR alternatives | System Compare US",
+"description": "Explore researched HR software alternatives to BambooHR.",
+"h1": "Alternatives to BambooHR"
+},
+"/alternatives/bigcommerce/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "BigCommerce alternatives | System Compare US",
+"description": "Explore researched Ecommerce Platforms alternatives to BigCommerce.",
+"h1": "Alternatives to BigCommerce"
+},
+"/alternatives/bill/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "BILL alternatives | System Compare US",
+"description": "Explore researched Spend & Expense Management alternatives to BILL.",
+"h1": "Alternatives to BILL"
+},
+"/alternatives/bland-ai/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Bland AI alternatives | System Compare US",
+"description": "Explore researched AI voice agents alternatives to Bland AI.",
+"h1": "Alternatives to Bland AI"
+},
+"/alternatives/botpress/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Botpress alternatives | System Compare US",
+"description": "Explore researched AI agents & agent platforms alternatives to Botpress.",
+"h1": "Alternatives to Botpress"
+},
+"/alternatives/braze/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Braze alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Braze.",
+"h1": "Alternatives to Braze"
+},
+"/alternatives/breakcold/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Breakcold alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Breakcold.",
+"h1": "Alternatives to Breakcold"
+},
+"/alternatives/brevo/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Brevo alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Brevo.",
+"h1": "Alternatives to Brevo"
+},
+"/alternatives/brex/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Brex alternatives | System Compare US",
+"description": "Explore researched Spend & Expense Management alternatives to Brex.",
+"h1": "Alternatives to Brex"
+},
+"/alternatives/business-central/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Microsoft Dynamics 365 Business Central alternatives | System Compare US",
+"description": "Explore researched ERP & Business Management alternatives to Microsoft Dynamics 365 Business Central.",
+"h1": "Alternatives to Microsoft Dynamics 365 Business Central"
+},
+"/alternatives/calendly/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Calendly alternatives | System Compare US",
+"description": "Explore researched Appointment Scheduling alternatives to Calendly.",
+"h1": "Alternatives to Calendly"
+},
+"/alternatives/clickup/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "ClickUp alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to ClickUp.",
+"h1": "Alternatives to ClickUp"
+},
+"/alternatives/clockify/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Clockify alternatives | System Compare US",
+"description": "Explore researched Time & attendance alternatives to Clockify.",
+"h1": "Alternatives to Clockify"
+},
+"/alternatives/close/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Close alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Close.",
+"h1": "Alternatives to Close"
+},
+"/alternatives/clover/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Clover alternatives | System Compare US",
+"description": "Explore researched Point of Sale alternatives to Clover.",
+"h1": "Alternatives to Clover"
+},
+"/alternatives/constant-contact/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Constant Contact alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Constant Contact.",
+"h1": "Alternatives to Constant Contact"
+},
+"/alternatives/customer-io/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Customer.io alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Customer.io.",
+"h1": "Alternatives to Customer.io"
+},
+"/alternatives/deel/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Deel alternatives | System Compare US",
+"description": "Explore researched HR software alternatives to Deel.",
+"h1": "Alternatives to Deel"
+},
+"/alternatives/deputy/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Deputy alternatives | System Compare US",
+"description": "Explore researched Time & attendance alternatives to Deputy.",
+"h1": "Alternatives to Deputy"
+},
+"/alternatives/dialpad-connect/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Dialpad Connect alternatives | System Compare US",
+"description": "Explore researched Business phone systems alternatives to Dialpad Connect.",
+"h1": "Alternatives to Dialpad Connect"
+},
+"/alternatives/docusign/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Docusign alternatives | System Compare US",
+"description": "Explore researched Electronic Signature alternatives to Docusign.",
+"h1": "Alternatives to Docusign"
+},
+"/alternatives/domo/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Domo alternatives | System Compare US",
+"description": "Explore researched Business intelligence alternatives to Domo.",
+"h1": "Alternatives to Domo"
+},
+"/alternatives/drip/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Drip alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Drip.",
+"h1": "Alternatives to Drip"
+},
+"/alternatives/dropbox-sign/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Dropbox Sign alternatives | System Compare US",
+"description": "Explore researched Electronic Signature alternatives to Dropbox Sign.",
+"h1": "Alternatives to Dropbox Sign"
+},
+"/alternatives/elevenlabs-agents/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "ElevenLabs Agents alternatives | System Compare US",
+"description": "Explore researched AI voice agents alternatives to ElevenLabs Agents.",
+"h1": "Alternatives to ElevenLabs Agents"
+},
+"/alternatives/engagebay/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "EngageBay alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to EngageBay.",
+"h1": "Alternatives to EngageBay"
+},
+"/alternatives/expensify/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Expensify alternatives | System Compare US",
+"description": "Explore researched Spend & Expense Management alternatives to Expensify.",
+"h1": "Alternatives to Expensify"
+},
+"/alternatives/ez-texting/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "EZ Texting alternatives | System Compare US",
+"description": "Explore researched SMS marketing alternatives to EZ Texting.",
+"h1": "Alternatives to EZ Texting"
+},
+"/alternatives/flowlu/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Flowlu alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Flowlu.",
+"h1": "Alternatives to Flowlu"
+},
+"/alternatives/folk/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "folk alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to folk.",
+"h1": "Alternatives to folk"
+},
+"/alternatives/freshbooks/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "FreshBooks alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to FreshBooks.",
+"h1": "Alternatives to FreshBooks"
+},
+"/alternatives/freshdesk/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Freshdesk alternatives | System Compare US",
+"description": "Explore researched Customer support & help desk alternatives to Freshdesk.",
+"h1": "Alternatives to Freshdesk"
+},
+"/alternatives/freshsales/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Freshsales alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Freshsales.",
+"h1": "Alternatives to Freshsales"
+},
+"/alternatives/front/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Front alternatives | System Compare US",
+"description": "Explore researched Customer support & help desk alternatives to Front.",
+"h1": "Alternatives to Front"
+},
+"/alternatives/getresponse/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "GetResponse alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to GetResponse.",
+"h1": "Alternatives to GetResponse"
+},
+"/alternatives/gorgias/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Gorgias alternatives | System Compare US",
+"description": "Explore researched Customer support & help desk alternatives to Gorgias.",
+"h1": "Alternatives to Gorgias"
+},
+"/alternatives/greenhouse/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Greenhouse alternatives | System Compare US",
+"description": "Explore researched Recruiting & applicant tracking alternatives to Greenhouse.",
+"h1": "Alternatives to Greenhouse"
+},
+"/alternatives/gusto/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Gusto alternatives | System Compare US",
+"description": "Explore researched HR software alternatives to Gusto.",
+"h1": "Alternatives to Gusto"
+},
+"/alternatives/help-scout/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Help Scout alternatives | System Compare US",
+"description": "Explore researched Customer support & help desk alternatives to Help Scout.",
+"h1": "Alternatives to Help Scout"
+},
+"/alternatives/homebase/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Homebase alternatives | System Compare US",
+"description": "Explore researched Time & attendance alternatives to Homebase.",
+"h1": "Alternatives to Homebase"
+},
+"/alternatives/hostinger/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Hostinger alternatives | System Compare US",
+"description": "Explore researched Managed WordPress hosting alternatives to Hostinger.",
+"h1": "Alternatives to Hostinger"
+},
+"/alternatives/hubspot-sales/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "HubSpot Sales Hub alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to HubSpot Sales Hub.",
+"h1": "Alternatives to HubSpot Sales Hub"
+},
+"/alternatives/intercom/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Intercom alternatives | System Compare US",
+"description": "Explore researched Customer support & help desk alternatives to Intercom.",
+"h1": "Alternatives to Intercom"
+},
+"/alternatives/invoice-ninja/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Invoice Ninja alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to Invoice Ninja.",
+"h1": "Alternatives to Invoice Ninja"
+},
+"/alternatives/iterable/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Iterable alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Iterable.",
+"h1": "Alternatives to Iterable"
+},
+"/alternatives/justworks/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Justworks alternatives | System Compare US",
+"description": "Explore researched HR software alternatives to Justworks.",
+"h1": "Alternatives to Justworks"
+},
+"/alternatives/kit/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Kit alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Kit.",
+"h1": "Alternatives to Kit"
+},
+"/alternatives/klaviyo/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Klaviyo alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Klaviyo.",
+"h1": "Alternatives to Klaviyo"
+},
+"/alternatives/lemlist/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "lemlist alternatives | System Compare US",
+"description": "Explore researched Cold email and sales outreach alternatives to lemlist.",
+"h1": "Alternatives to lemlist"
+},
+"/alternatives/lever/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Lever alternatives | System Compare US",
+"description": "Explore researched Recruiting & applicant tracking alternatives to Lever.",
+"h1": "Alternatives to Lever"
+},
+"/alternatives/lightspeed-retail/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Lightspeed Retail alternatives | System Compare US",
+"description": "Explore researched Point of Sale alternatives to Lightspeed Retail.",
+"h1": "Alternatives to Lightspeed Retail"
+},
+"/alternatives/livechat/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "LiveChat / Text alternatives | System Compare US",
+"description": "Explore researched Customer support & help desk alternatives to LiveChat / Text.",
+"h1": "Alternatives to LiveChat / Text"
+},
+"/alternatives/looker/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Looker alternatives | System Compare US",
+"description": "Explore researched Business intelligence alternatives to Looker.",
+"h1": "Alternatives to Looker"
+},
+"/alternatives/mailchimp/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Mailchimp alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Mailchimp.",
+"h1": "Alternatives to Mailchimp"
+},
+"/alternatives/make/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Make alternatives | System Compare US",
+"description": "Explore researched Workflow automation alternatives to Make.",
+"h1": "Alternatives to Make"
+},
+"/alternatives/manychat/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Manychat alternatives | System Compare US",
+"description": "Explore researched WhatsApp Business alternatives to Manychat.",
+"h1": "Alternatives to Manychat"
+},
+"/alternatives/metricool/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Metricool alternatives | System Compare US",
+"description": "Explore researched Social media management alternatives to Metricool.",
+"h1": "Alternatives to Metricool"
+},
+"/alternatives/microsoft-copilot-studio/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Microsoft Copilot Studio alternatives | System Compare US",
+"description": "Explore researched AI agents & agent platforms alternatives to Microsoft Copilot Studio.",
+"h1": "Alternatives to Microsoft Copilot Studio"
+},
+"/alternatives/monday-work-management/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "monday work management alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to monday work management.",
+"h1": "Alternatives to monday work management"
+},
+"/alternatives/moosend/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Moosend alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Moosend.",
+"h1": "Alternatives to Moosend"
+},
+"/alternatives/n8n/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "n8n alternatives | System Compare US",
+"description": "Explore researched Workflow automation alternatives to n8n.",
+"h1": "Alternatives to n8n"
+},
+"/alternatives/navan/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Navan alternatives | System Compare US",
+"description": "Explore researched Spend & Expense Management alternatives to Navan.",
+"h1": "Alternatives to Navan"
+},
+"/alternatives/netsuite/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Oracle NetSuite alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to Oracle NetSuite.",
+"h1": "Alternatives to Oracle NetSuite"
+},
+"/alternatives/nextiva/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Nextiva alternatives | System Compare US",
+"description": "Explore researched Business phone systems alternatives to Nextiva.",
+"h1": "Alternatives to Nextiva"
+},
+"/alternatives/nifty/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Nifty alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to Nifty.",
+"h1": "Alternatives to Nifty"
+},
+"/alternatives/nocrm/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "noCRM alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to noCRM.",
+"h1": "Alternatives to noCRM"
+},
+"/alternatives/nordpass/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "NordPass alternatives | System Compare US",
+"description": "Explore researched Business password management alternatives to NordPass.",
+"h1": "Alternatives to NordPass"
+},
+"/alternatives/nordvpn/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "NordVPN alternatives | System Compare US",
+"description": "Explore researched VPN for individual professionals alternatives to NordVPN.",
+"h1": "Alternatives to NordVPN"
+},
+"/alternatives/notion/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Notion alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to Notion.",
+"h1": "Alternatives to Notion"
+},
+"/alternatives/nozbe/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Nozbe alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to Nozbe.",
+"h1": "Alternatives to Nozbe"
+},
+"/alternatives/odoo/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Odoo alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to Odoo.",
+"h1": "Alternatives to Odoo"
+},
+"/alternatives/omnisend/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Omnisend alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Omnisend.",
+"h1": "Alternatives to Omnisend"
+},
+"/alternatives/onpay/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "OnPay alternatives | System Compare US",
+"description": "Explore researched HR software alternatives to OnPay.",
+"h1": "Alternatives to OnPay"
+},
+"/alternatives/pandadoc/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "PandaDoc alternatives | System Compare US",
+"description": "Explore researched Electronic Signature alternatives to PandaDoc.",
+"h1": "Alternatives to PandaDoc"
+},
+"/alternatives/paychex-flex/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Paychex Flex alternatives | System Compare US",
+"description": "Explore researched HR software alternatives to Paychex Flex.",
+"h1": "Alternatives to Paychex Flex"
+},
+"/alternatives/paypal/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "PayPal alternatives | System Compare US",
+"description": "Explore researched Payment Processing alternatives to PayPal.",
+"h1": "Alternatives to PayPal"
+},
+"/alternatives/pipedrive/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Pipedrive alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Pipedrive.",
+"h1": "Alternatives to Pipedrive"
+},
+"/alternatives/plaky/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Plaky alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to Plaky.",
+"h1": "Alternatives to Plaky"
+},
+"/alternatives/postscript/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Postscript alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Postscript.",
+"h1": "Alternatives to Postscript"
+},
+"/alternatives/power-automate/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Microsoft Power Automate alternatives | System Compare US",
+"description": "Explore researched Workflow automation alternatives to Microsoft Power Automate.",
+"h1": "Alternatives to Microsoft Power Automate"
+},
+"/alternatives/power-bi/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Microsoft Power BI alternatives | System Compare US",
+"description": "Explore researched Business intelligence alternatives to Microsoft Power BI.",
+"h1": "Alternatives to Microsoft Power BI"
+},
+"/alternatives/proton-vpn/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Proton VPN alternatives | System Compare US",
+"description": "Explore researched VPN for individual professionals alternatives to Proton VPN.",
+"h1": "Alternatives to Proton VPN"
+},
+"/alternatives/pulseem/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Pulseem alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to Pulseem.",
+"h1": "Alternatives to Pulseem"
+},
+"/alternatives/pumble/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Pumble alternatives | System Compare US",
+"description": "Explore researched Team chat and collaboration alternatives to Pumble.",
+"h1": "Alternatives to Pumble"
+},
+"/alternatives/qlik-cloud-analytics/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Qlik Cloud Analytics alternatives | System Compare US",
+"description": "Explore researched Business intelligence alternatives to Qlik Cloud Analytics.",
+"h1": "Alternatives to Qlik Cloud Analytics"
+},
+"/alternatives/quickbooks-online/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "QuickBooks Online alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to QuickBooks Online.",
+"h1": "Alternatives to QuickBooks Online"
+},
+"/alternatives/quo/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Quo (formerly OpenPhone) alternatives | System Compare US",
+"description": "Explore researched Business phone systems alternatives to Quo (formerly OpenPhone).",
+"h1": "Alternatives to Quo (formerly OpenPhone)"
+},
+"/alternatives/ramp/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Ramp alternatives | System Compare US",
+"description": "Explore researched Spend & Expense Management alternatives to Ramp.",
+"h1": "Alternatives to Ramp"
+},
+"/alternatives/relevance-ai/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Relevance AI alternatives | System Compare US",
+"description": "Explore researched AI agents & agent platforms alternatives to Relevance AI.",
+"h1": "Alternatives to Relevance AI"
+},
+"/alternatives/respond-io/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "respond.io alternatives | System Compare US",
+"description": "Explore researched WhatsApp Business alternatives to respond.io.",
+"h1": "Alternatives to respond.io"
+},
+"/alternatives/retell-ai/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Retell AI alternatives | System Compare US",
+"description": "Explore researched AI voice agents alternatives to Retell AI.",
+"h1": "Alternatives to Retell AI"
+},
+"/alternatives/ringcentral/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "RingCentral RingEX alternatives | System Compare US",
+"description": "Explore researched Business phone systems alternatives to RingCentral RingEX.",
+"h1": "Alternatives to RingCentral RingEX"
+},
+"/alternatives/rippling/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Rippling alternatives | System Compare US",
+"description": "Explore researched HR software alternatives to Rippling.",
+"h1": "Alternatives to Rippling"
+},
+"/alternatives/sage-intacct/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Sage Intacct alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to Sage Intacct.",
+"h1": "Alternatives to Sage Intacct"
+},
+"/alternatives/salesforce-sales/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Salesforce Sales alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Salesforce Sales.",
+"h1": "Alternatives to Salesforce Sales"
+},
+"/alternatives/sap-business-one/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "SAP Business One alternatives | System Compare US",
+"description": "Explore researched ERP & Business Management alternatives to SAP Business One.",
+"h1": "Alternatives to SAP Business One"
+},
+"/alternatives/se-ranking/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "SE Ranking alternatives | System Compare US",
+"description": "Explore researched SEO & AI search visibility alternatives to SE Ranking.",
+"h1": "Alternatives to SE Ranking"
+},
+"/alternatives/shopify/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Shopify alternatives | System Compare US",
+"description": "Explore researched Point of Sale alternatives to Shopify.",
+"h1": "Alternatives to Shopify"
+},
+"/alternatives/simpletexting/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "SimpleTexting alternatives | System Compare US",
+"description": "Explore researched SMS marketing alternatives to SimpleTexting.",
+"h1": "Alternatives to SimpleTexting"
+},
+"/alternatives/simplybook-me/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "SimplyBook.me alternatives | System Compare US",
+"description": "Explore researched Appointment Scheduling alternatives to SimplyBook.me.",
+"h1": "Alternatives to SimplyBook.me"
+},
+"/alternatives/siteground/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "SiteGround alternatives | System Compare US",
+"description": "Explore researched Managed WordPress hosting alternatives to SiteGround.",
+"h1": "Alternatives to SiteGround"
+},
+"/alternatives/smartlead/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Smartlead alternatives | System Compare US",
+"description": "Explore researched Cold email and sales outreach alternatives to Smartlead.",
+"h1": "Alternatives to Smartlead"
+},
+"/alternatives/smartsheet/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Smartsheet alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to Smartsheet.",
+"h1": "Alternatives to Smartsheet"
+},
+"/alternatives/smartsupp/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Smartsupp alternatives | System Compare US",
+"description": "Explore researched Customer support & help desk alternatives to Smartsupp.",
+"h1": "Alternatives to Smartsupp"
+},
+"/alternatives/snov-io/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Snov.io alternatives | System Compare US",
+"description": "Explore researched Cold email and sales outreach alternatives to Snov.io.",
+"h1": "Alternatives to Snov.io"
+},
+"/alternatives/square/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Square alternatives | System Compare US",
+"description": "Explore researched Payment Processing alternatives to Square.",
+"h1": "Alternatives to Square"
+},
+"/alternatives/squarespace/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Squarespace alternatives | System Compare US",
+"description": "Explore researched Ecommerce Platforms alternatives to Squarespace.",
+"h1": "Alternatives to Squarespace"
+},
+"/alternatives/stripe/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Stripe alternatives | System Compare US",
+"description": "Explore researched Payment Processing alternatives to Stripe.",
+"h1": "Alternatives to Stripe"
+},
+"/alternatives/suitedash/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "SuiteDash alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to SuiteDash.",
+"h1": "Alternatives to SuiteDash"
+},
+"/alternatives/synthflow/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Synthflow alternatives | System Compare US",
+"description": "Explore researched AI voice agents alternatives to Synthflow.",
+"h1": "Alternatives to Synthflow"
+},
+"/alternatives/systeme-io/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "systeme.io alternatives | System Compare US",
+"description": "Explore researched Email marketing alternatives to systeme.io.",
+"h1": "Alternatives to systeme.io"
+},
+"/alternatives/tableau/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Tableau alternatives | System Compare US",
+"description": "Explore researched Business intelligence alternatives to Tableau.",
+"h1": "Alternatives to Tableau"
+},
+"/alternatives/toast/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Toast alternatives | System Compare US",
+"description": "Explore researched Point of Sale alternatives to Toast.",
+"h1": "Alternatives to Toast"
+},
+"/alternatives/twilio/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Twilio alternatives | System Compare US",
+"description": "Explore researched SMS marketing alternatives to Twilio.",
+"h1": "Alternatives to Twilio"
+},
+"/alternatives/vagaro/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Vagaro alternatives | System Compare US",
+"description": "Explore researched Appointment Scheduling alternatives to Vagaro.",
+"h1": "Alternatives to Vagaro"
+},
+"/alternatives/vapi/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Vapi alternatives | System Compare US",
+"description": "Explore researched AI voice agents alternatives to Vapi.",
+"h1": "Alternatives to Vapi"
+},
+"/alternatives/vista-social/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Vista Social alternatives | System Compare US",
+"description": "Explore researched Social media management alternatives to Vista Social.",
+"h1": "Alternatives to Vista Social"
+},
+"/alternatives/wati/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Wati alternatives | System Compare US",
+"description": "Explore researched WhatsApp Business alternatives to Wati.",
+"h1": "Alternatives to Wati"
+},
+"/alternatives/wave/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Wave alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to Wave.",
+"h1": "Alternatives to Wave"
+},
+"/alternatives/when-i-work/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "When I Work alternatives | System Compare US",
+"description": "Explore researched Time & attendance alternatives to When I Work.",
+"h1": "Alternatives to When I Work"
+},
+"/alternatives/wix/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Wix alternatives | System Compare US",
+"description": "Explore researched Ecommerce Platforms alternatives to Wix.",
+"h1": "Alternatives to Wix"
+},
+"/alternatives/woocommerce/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "WooCommerce alternatives | System Compare US",
+"description": "Explore researched Ecommerce Platforms alternatives to WooCommerce.",
+"h1": "Alternatives to WooCommerce"
+},
+"/alternatives/woodpecker/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Woodpecker alternatives | System Compare US",
+"description": "Explore researched Cold email and sales outreach alternatives to Woodpecker.",
+"h1": "Alternatives to Woodpecker"
+},
+"/alternatives/workable/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Workable alternatives | System Compare US",
+"description": "Explore researched Recruiting & applicant tracking alternatives to Workable.",
+"h1": "Alternatives to Workable"
+},
+"/alternatives/workato/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Workato alternatives | System Compare US",
+"description": "Explore researched Workflow automation alternatives to Workato.",
+"h1": "Alternatives to Workato"
+},
+"/alternatives/wrike/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Wrike alternatives | System Compare US",
+"description": "Explore researched Project management alternatives to Wrike.",
+"h1": "Alternatives to Wrike"
+},
+"/alternatives/xero/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Xero alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to Xero.",
+"h1": "Alternatives to Xero"
+},
+"/alternatives/zadarma/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Zadarma alternatives | System Compare US",
+"description": "Explore researched Business phone systems alternatives to Zadarma.",
+"h1": "Alternatives to Zadarma"
+},
+"/alternatives/zapier/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Zapier alternatives | System Compare US",
+"description": "Explore researched Workflow automation alternatives to Zapier.",
+"h1": "Alternatives to Zapier"
+},
+"/alternatives/zendesk/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Zendesk alternatives | System Compare US",
+"description": "Explore researched Customer support & help desk alternatives to Zendesk.",
+"h1": "Alternatives to Zendesk"
+},
+"/alternatives/zoho-books/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Zoho Books alternatives | System Compare US",
+"description": "Explore researched Accounting & Invoicing alternatives to Zoho Books.",
+"h1": "Alternatives to Zoho Books"
+},
+"/alternatives/zoho-crm/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Zoho CRM alternatives | System Compare US",
+"description": "Explore researched CRM & sales alternatives to Zoho CRM.",
+"h1": "Alternatives to Zoho CRM"
+},
+"/alternatives/zoho-sign/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Zoho Sign alternatives | System Compare US",
+"description": "Explore researched Electronic Signature alternatives to Zoho Sign.",
+"h1": "Alternatives to Zoho Sign"
+},
+"/alternatives/zoom-phone/": {
+"type": "alternatives",
+"indexable": false,
+"lastmod": null,
+"title": "Zoom Phone alternatives | System Compare US",
+"description": "Explore researched Business phone systems alternatives to Zoom Phone.",
+"h1": "Alternatives to Zoom Phone"
+},
+"/categories/": {
+"type": "categories-index",
+"indexable": true,
+"lastmod": null,
+"title": "Business software categories | System Compare US",
+"description": "Find US software by workflow, with source-backed criteria and buying guides.",
+"h1": "Start with the work."
+},
+"/categories/accounting/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Accounting & Invoicing comparison | System Compare US",
+"description": "Compare US bookkeeping, billing, reconciliation and financial reporting tools, from a solo business to a multi-entity finance team.",
+"h1": "Accounting & Invoicing"
+},
+"/categories/ai-3d-spatial/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI 3D asset generation comparison | System Compare US",
+"description": "Compare Meshy, Tripo Studio, Hyper3D Rodin and Sloyd across eight offers, asset rights, generation credits, exports and US purchase limits.",
+"h1": "AI 3D asset tools for US creative teams"
+},
+"/categories/ai-agents-automation/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI agents & automation comparison | System Compare US",
+"description": "Compare Zapier, Make, n8n and Workato by action controls, real usage units, migration boundaries and seven documented offers. Ratings are pending.",
+"h1": "AI agents and automation for US business workflows"
+},
+"/categories/ai-agents/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "AI agents & agent platforms comparison | System Compare US",
+"description": "Compare grounded answers, tool actions, oversight and usage models for business AI agents.",
+"h1": "AI agents & agent platforms"
+},
+"/categories/ai-ai-development-infrastructure/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "Compare LLM observability & evaluation | System Compare US",
+"description": "Compare LangSmith, Langfuse, Braintrust and Arize AX across eight offers, trace billing, evaluation scope, retention and US procurement.",
+"h1": "LLM observability and evaluation for US engineering teams"
+},
+"/categories/ai-app-website-building/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI app & website building comparison | System Compare US",
+"description": "Compare Lovable, Replit, Bolt and v0 across actual plans, hosting limits, collaboration, source portability and AI-data defaults.",
+"h1": "AI app and website builders for US teams"
+},
+"/categories/ai-data-analytics/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "Compare AI data analysis and reporting | System Compare US",
+"description": "Compare Julius, Bricks, Sourcetable and Better Analyst across eight offers, calculation inspection, report delivery, data controls and billing uncertainty.",
+"h1": "AI data-analysis tools for US teams"
+},
+"/categories/ai-design-images/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI image creation and editing comparison | System Compare US",
+"description": "Compare Adobe Firefly, Canva, Ideogram and Midjourney across eight image-creation offers, private generation, US prices and commercial-use limits.",
+"h1": "AI image tools for US creative teams"
+},
+"/categories/ai-general-assistants/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "General AI assistants comparison | System Compare US",
+"description": "Compare ChatGPT, Claude, Gemini and Mistral Vibe across eight personal or team offers, US access, tool limits, contracts and unresolved prices.",
+"h1": "General AI assistant plans for US users"
+},
+"/categories/ai-industry-engineering/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI-assisted mechanical CAD comparison | System Compare US",
+"description": "Compare Fusion, Onshape, SOLIDWORKS Design Offer and Siemens Designcenter X through eight commercial offers, US costs and engineering limits.",
+"h1": "Mechanical CAD and engineering AI for US teams"
+},
+"/categories/ai-learning-education/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "Compare AI teaching and learning tools | System Compare US",
+"description": "Compare Brisk, MagicSchool, Diffit and Wayground through eight offers, teacher preparation, student access, district controls and US school purchasing.",
+"h1": "AI teaching tools for US schools and educators"
+},
+"/categories/ai-marketing-growth/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI marketing & creative workflows | System Compare US",
+"description": "Compare Jasper, Copy.ai, Anyword and AdCreative.ai across eight offers, seats, campaign credits, prediction limits and US contract conditions.",
+"h1": "AI marketing and creative tools for US campaign teams"
+},
+"/categories/ai-meetings-communications/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI meetings & communications comparison | System Compare US",
+"description": "Compare Otter, Fireflies, Fathom and tl;dv across eight real offers, meeting limits, AI charges, recording controls and data-use boundaries.",
+"h1": "AI meeting assistants for US teams"
+},
+"/categories/ai-music-sound/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI music and sound creation comparison | System Compare US",
+"description": "Compare AIVA, SOUNDRAW, Mubert Render and Suno through eight offers, downloads, editable formats, background licenses and song distribution.",
+"h1": "AI music tools and release rights for US creators"
+},
+"/categories/ai-office-knowledge-work/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI office & knowledge work comparison | System Compare US",
+"description": "Compare Notion, ClickUp, Microsoft 365 Copilot and Google Workspace by plan entitlements, AI allowances, permission boundaries and real suite costs.",
+"h1": "AI office and knowledge work tools for US teams"
+},
+"/categories/ai-sales-customer-service/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI customer-service agents comparison | System Compare US",
+"description": "Compare Intercom Fin, Zendesk, Freshdesk Freddy and Ada across seven offers, outcome/session billing, handoffs, knowledge and US deployment scope.",
+"h1": "AI customer-service agents for US support teams"
+},
+"/categories/ai-search-research/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI search & research comparison | System Compare US",
+"description": "Compare Perplexity, Elicit, Consensus and Scite by research workflow, documented plans, citations, exports and buying limits.",
+"h1": "AI search and research tools for US teams"
+},
+"/categories/ai-security-trust/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI runtime security and guardrails | System Compare US",
+"description": "Compare Google Model Armor, Amazon Bedrock Guardrails, Azure AI Content Safety and Lakera across seven offers, US regions, enforcement and meters.",
+"h1": "AI guardrails and runtime security for US applications"
+},
+"/categories/ai-software-development/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI software development comparison | System Compare US",
+"description": "Compare GitHub Copilot, Cursor, JetBrains AI/Junie and Augment Code by actual subscriptions, code-data settings, editor coverage and usage units.",
+"h1": "AI coding tools and agents for US development teams"
+},
+"/categories/ai-video-animation/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI video & animation comparison | System Compare US",
+"description": "Compare Runway, Pika, Synthesia and HeyGen across eight offers, generative clips versus presenters, credits, exports and US purchasing limits.",
+"h1": "AI video tools for US creative and training production"
+},
+"/categories/ai-voice-agents/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "AI voice agents comparison | System Compare US",
+"description": "Compare configurable voice agents by deployment, real business actions, handoff, operations and the complete cost of a working call.",
+"h1": "AI voice agents"
+},
+"/categories/ai-voice-audio/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI voice & audio production comparison | System Compare US",
+"description": "Compare ElevenLabs Creative, Murf Studio, WellSaid and Descript across eight voice-production plans, usage meters, US pronunciation and license limits.",
+"h1": "AI voice and narration tools for US production teams"
+},
+"/categories/ai-writing-language/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "AI writing & language comparison | System Compare US",
+"description": "Compare Grammarly, QuillBot, ProWritingAid and Wordtune using eight actual offers, writing limits, data-use defaults and explicit price uncertainty.",
+"h1": "AI writing and language tools for US teams"
+},
+"/categories/appointments/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Appointment Scheduling comparison | System Compare US",
+"description": "Compare scheduling for US sales teams, consultants, salons and service businesses, including reminders, payments and AI booking.",
+"h1": "Appointment Scheduling"
+},
+"/categories/backup-recovery/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Backup and recovery comparison | System Compare US",
+"description": "Compare Backblaze, IDrive, Acronis and Veeam for US business computer recovery, with clear server/VM extensions, storage boundaries and plan costs.",
+"h1": "Business backup and recovery: compare file protection, capacity and restore scope"
+},
+"/categories/bi/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Business intelligence comparison | System Compare US",
+"description": "Data connections, semantic models, dashboards, governance, and analytical AI.",
+"h1": "Business intelligence"
+},
+"/categories/cloud-pbx/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Business phone systems comparison | System Compare US",
+"description": "Compare US business calling, shared numbers, routing, integrations and AI assistance without confusing a seat subscription with the entire phone bill.",
+"h1": "Business phone systems"
+},
+"/categories/cold-email/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Cold email and sales outreach comparison | System Compare US",
+"description": "Compare tools for personalised prospecting from connected sales mailboxes, follow-up sequences and reply handling.",
+"h1": "Cold email and sales outreach"
+},
+"/categories/consent-management/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Consent management comparison | System Compare US",
+"description": "Compare CookieYes, Termly, Osano and Cookiebot by plan, traffic unit, GPC scope, records, billing and unresolved implementation questions.",
+"h1": "Consent management platforms for US websites"
+},
+"/categories/crm/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "CRM & sales comparison | System Compare US",
+"description": "Compare sales pipelines, outreach, forecasting, data controls and AI for US sales teams.",
+"h1": "CRM & sales"
+},
+"/categories/customer-service/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Customer support & help desk comparison | System Compare US",
+"description": "Compare shared inboxes, ticketing, routing, knowledge and customer-service AI.",
+"h1": "Customer support & help desk"
+},
+"/categories/document-management/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Document management comparison | System Compare US",
+"description": "Compare DocuWare, M-Files, Laserfiche and Revver for controlled documents, workflow, real packages, user rights and AI processing.",
+"h1": "Document management software for US teams"
+},
+"/categories/e-invoicing/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "E-invoicing comparison | System Compare US",
+"description": "E-invoicing: compare software options, documented features, pricing context and buying considerations for US teams.",
+"h1": "E-invoicing networks and integration for US businesses"
+},
+"/categories/e-signature/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Electronic Signature comparison | System Compare US",
+"description": "Compare signature collection, reusable documents, approval workflows and agreement intelligence for US businesses.",
+"h1": "Electronic Signature"
+},
+"/categories/ecommerce-marketing/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Ecommerce marketing comparison | System Compare US",
+"description": "Evaluate store-connected email, SMS and lifecycle automation with attention to catalog data, customer events and attributable revenue.",
+"h1": "Ecommerce marketing"
+},
+"/categories/ecommerce-platforms/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Ecommerce Platforms comparison | System Compare US",
+"description": "Compare storefronts, checkout, catalog operations and extensibility for US merchants, from a first store to complex commerce.",
+"h1": "Ecommerce Platforms"
+},
+"/categories/email-marketing/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Email marketing comparison | System Compare US",
+"description": "Compare email tools by audience control, automation, real plan limits and documented AI capabilities.",
+"h1": "Email marketing"
+},
+"/categories/employee-benefits/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Benefits administration comparison | System Compare US",
+"description": "US enrollment, payroll deductions, plan access, and benefits reporting.",
+"h1": "Benefits administration"
+},
+"/categories/endpoint-security/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Endpoint security comparison | System Compare US",
+"description": "Compare Microsoft Defender, CrowdStrike, Bitdefender and Avast by endpoint scope, EDR, patching, annual costs, add-ons and documented plan boundaries.",
+"h1": "Endpoint security for US small businesses: compare protection and plan limits"
+},
+"/categories/erp/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "ERP & Business Management comparison | System Compare US",
+"description": "Compare integrated finance and operations systems for US companies with complex orders, inventory, projects or multiple entities.",
+"h1": "ERP & Business Management"
+},
+"/categories/field-service/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Field service comparison | System Compare US",
+"description": "Compare Jobber, Housecall Pro, Workiz and ServiceM8 plans, users, job limits, field workflows and AI boundaries for US service businesses.",
+"h1": "Field service software for US home-service teams"
+},
+"/categories/hr/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "HR software comparison | System Compare US",
+"description": "Employee records, onboarding, reporting, and permissions for US employers.",
+"h1": "HR software"
+},
+"/categories/inventory-management/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Inventory management comparison | System Compare US",
+"description": "Inventory management: compare software options, documented features, pricing context and buying considerations for US teams.",
+"h1": "Inventory software for US small-business stock and orders"
+},
+"/categories/invoicing/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Invoicing comparison | System Compare US",
+"description": "Compare Zoho Invoice, FreshBooks, Invoice Ninja and Square by real plans, invoice/client limits, renewal costs and separate payment charges.",
+"h1": "Invoicing software for US small businesses"
+},
+"/categories/it-service-management/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "IT service management comparison | System Compare US",
+"description": "IT service management: compare software options, documented features, pricing context and buying considerations for US teams.",
+"h1": "IT service management software for US internal teams"
+},
+"/categories/learning-management/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Learning management comparison | System Compare US",
+"description": "Compare four LMS families and seven named offers: learner billing, learning paths, implementation and AI limits, with dated official sources.",
+"h1": "Learning management software for US teams"
+},
+"/categories/marketing-automation/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Marketing automation comparison | System Compare US",
+"description": "Evaluate branching journeys, customer events, channel coordination and AI execution against your operating model.",
+"h1": "Marketing automation"
+},
+"/categories/password-management/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "Business password management comparison | System Compare US",
+"description": "Compare workforce vaults, controlled sharing, identity integration and auditable access.",
+"h1": "Business password management"
+},
+"/categories/payments/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Payment Processing comparison | System Compare US",
+"description": "Compare US payment providers for online checkout, invoices, recurring charges and connected payment operations.",
+"h1": "Payment Processing"
+},
+"/categories/payroll/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Payroll software comparison | System Compare US",
+"description": "US pay runs, filing services, time integration, and benefit deductions.",
+"h1": "Payroll software"
+},
+"/categories/pos/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Point of Sale comparison | System Compare US",
+"description": "Compare US point-of-sale systems for retail, hospitality and service businesses, including hardware, inventory and connected sales.",
+"h1": "Point of Sale"
+},
+"/categories/procurement/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Procurement comparison | System Compare US",
+"description": "Compare Precoro, Tradogram, Procurify and ProcureDesk using current named offers, 30 operational checks, US buying questions and dated primary evidence.",
+"h1": "Procurement software for US teams: requests, receipts and invoice boundaries"
+},
+"/categories/project-management/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Project management comparison | System Compare US",
+"description": "Planning, collaboration, automation, and portfolio visibility for teams.",
+"h1": "Project management"
+},
+"/categories/recruiting/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Compare Recruiting & applicant tracking | System Compare US",
+"description": "Candidate sourcing, hiring pipelines, interview coordination, and recruiting analytics.",
+"h1": "Recruiting & applicant tracking"
+},
+"/categories/seo-tools/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "SEO & AI search visibility comparison | System Compare US",
+"description": "Compare keyword research, ranking history, technical audits, reporting and visibility in AI answers.",
+"h1": "SEO & AI search visibility"
+},
+"/categories/sms-marketing/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "SMS marketing comparison | System Compare US",
+"description": "Compare US texting by sender readiness, campaign tools, reply workflows and the true per-segment bill.",
+"h1": "SMS marketing"
+},
+"/categories/social-media-management/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "Social media management comparison | System Compare US",
+"description": "Compare publishing, approvals, shared inboxes, analytics and AI for multi-brand social teams.",
+"h1": "Social media management"
+},
+"/categories/spend-management/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Spend & Expense Management comparison | System Compare US",
+"description": "Compare corporate spending controls, receipts, reimbursements, bills and accounting handoffs for US finance teams.",
+"h1": "Spend & Expense Management"
+},
+"/categories/team-chat/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "Team chat and collaboration comparison | System Compare US",
+"description": "Compare persistent team conversations, searchable knowledge, meetings and administrative control.",
+"h1": "Team chat and collaboration"
+},
+"/categories/time-attendance/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Time & attendance comparison | System Compare US",
+"description": "Time capture, scheduling, approvals, and payroll handoff for US teams.",
+"h1": "Time & attendance"
+},
+"/categories/vpn-security/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "Compare VPN for individual professionals | System Compare US",
+"description": "Compare encrypted connections, platform coverage, privacy controls and optional threat protection.",
+"h1": "VPN for individual professionals"
+},
+"/categories/web-analytics/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Web Analytics comparison | System Compare US",
+"description": "Compare Plausible, Matomo Cloud, Fathom Analytics and Simple Analytics through 30 operational checks, current named offers and dated official evidence.",
+"h1": "Web analytics for US teams: plans, traffic and data boundaries"
+},
+"/categories/web-hosting/": {
+"type": "category",
+"indexable": false,
+"lastmod": null,
+"title": "Managed WordPress hosting comparison | System Compare US",
+"description": "Compare managed WordPress operations, recovery, performance tools, developer access and AI assistance.",
+"h1": "Managed WordPress hosting"
+},
+"/categories/website-accessibility/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Website accessibility comparison | System Compare US",
+"description": "Compare Deque, AudioEye, Siteimprove and Silktide by workflow, documented packages, cost boundaries and limitations for US teams.",
+"h1": "Website accessibility tools: testing, monitoring and remediation"
+},
+"/categories/whatsapp-business/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "WhatsApp Business comparison | System Compare US",
+"description": "Compare shared inboxes, customer-service automation and official WhatsApp connections with the US recipient restriction made explicit.",
+"h1": "WhatsApp Business"
+},
+"/categories/workflow-automation/": {
+"type": "category",
+"indexable": true,
+"lastmod": null,
+"title": "Workflow automation comparison | System Compare US",
+"description": "Connect apps, orchestrate processes, operate automations, and govern AI actions.",
+"h1": "Workflow automation"
+},
+"/compare/": {
+"type": "compare-tool",
+"indexable": false,
+"lastmod": null,
+"title": "Compare software side by side | System Compare US",
+"description": "Choose products in the same category and compare documented capabilities, plans and AI using one published method.",
+"h1": "Build a comparison."
+},
+"/comparisons/": {
+"type": "comparisons-index",
+"indexable": true,
+"lastmod": null,
+"title": "Software comparison library | System Compare US",
+"description": "Explore side-by-side software decisions with features, limitations and source evidence.",
+"h1": "Put your options side by side."
+},
+"/contact/": {
+"type": "static:contact",
+"indexable": true,
+"lastmod": null,
+"title": "Contact our research team | System Compare US",
+"description": "Questions, corrections, partnerships or privacy requests: send a message to the System Compare team.",
+"h1": "Contact System Compare"
+},
+"/corrections/": {
+"type": "static:corrections",
+"indexable": true,
+"lastmod": null,
+"title": "Help us improve the evidence | System Compare US",
+"description": "Report a software pricing or feature correction with a supporting official source.",
+"h1": "Help us improve the evidence"
+},
+"/countries/": {
+"type": "countries",
+"indexable": true,
+"lastmod": null,
+"title": "Country editions | System Compare US",
+"description": "Choose a System Compare country edition to explore software comparisons, local suppliers, languages and business requirements.",
+"h1": "System Compare around the world"
+},
+"/editorial-policy/": {
+"type": "static:editorial-policy",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Editorial policy and source checks | System Compare US",
+"description": "Who is responsible for publication, how US software claims are checked, and how to report a correction.",
+"h1": "Editorial responsibility and source checks"
+},
+"/guides/": {
+"type": "guides-index",
+"indexable": true,
+"lastmod": null,
+"title": "Software buying guides | System Compare US",
+"description": "Practical software procurement, migration, AI and cost guides for US business buyers.",
+"h1": "The buyer’s reading list."
+},
+"/guides/ai-3d-spatial-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI 3D assets, licences and costs | System Compare US",
+"description": "Evaluate AI 3D assets with a licensed-input exercise, export inspection, production-cost estimate and a review of resale and private-generation rights.",
+"h1": "How to evaluate AI 3D assets, licenses and production costs"
+},
+"/guides/ai-agent-pilot-to-production/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "AI agent demo and pilot guide | System Compare US",
+"description": "Define boundaries, evaluate failures and model costs before an agent starts changing business systems.",
+"h1": "From an AI agent demo to a controlled pilot"
+},
+"/guides/ai-agents-automation-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Controlled AI agent workflow guide | System Compare US",
+"description": "Define actions, approvals, billing units and migration tests before buying a workflow-based AI agent for a US team.",
+"h1": "How to buy a controlled AI agent workflow"
+},
+"/guides/ai-ai-development-infrastructure-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "LLM observability budget and validation | System Compare US",
+"description": "LLM observability budget and validation. Practical buying questions, documented limits and sources for US teams.",
+"h1": "How to budget and validate an LLM observability platform"
+},
+"/guides/ai-app-website-building-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI app builder production buying guide | System Compare US",
+"description": "AI app builder production buying guide. Practical buying questions, documented limits and sources for US teams.",
+"h1": "How to buy an AI app builder for a real production workload"
+},
+"/guides/ai-data-analytics-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Validate AI data analysis reports | System Compare US",
+"description": "Validate AI-generated calculations, recurring reports and recipient access with an approved dataset before using the output for a business decision.",
+"h1": "How to validate AI data analysis before using a report"
+},
+"/guides/ai-design-images-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI image tools for US business | System Compare US",
+"description": "Plan a controlled image-tool evaluation using a defined deliverable, privacy requirements, US subscription terms and an inspected export.",
+"h1": "How to choose AI image tools for a US business workflow"
+},
+"/guides/ai-general-assistants-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Personal AI assistants for US work | System Compare US",
+"description": "Evaluate personal AI subscriptions using repeatable work, account permissions, allowance boundaries and verified sources rather than model-name rankings.",
+"h1": "How to compare personal AI assistants for real US work"
+},
+"/guides/ai-industry-engineering-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Mechanical CAD offers and AI credits | System Compare US",
+"description": "Mechanical CAD offers and AI credits. Practical buying questions, documented limits and sources for US teams.",
+"h1": "How to compare mechanical CAD offers, AI credits and engineering risk"
+},
+"/guides/ai-learning-education-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Classroom AI: student & district scope | System Compare US",
+"description": "Plan a teacher-led AI evaluation around classroom tasks, student access, district approval, data agreements and the full institutional subscription cost.",
+"h1": "How to choose classroom AI with clear student and district boundaries"
+},
+"/guides/ai-marketing-growth-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Marketing AI predictions and results | System Compare US",
+"description": "Marketing AI predictions and results. Practical buying questions, documented limits and sources for US teams.",
+"h1": "How to compare marketing AI without mistaking predictions for results"
+},
+"/guides/ai-meetings-communications-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Meeting AI limits, recording & data | System Compare US",
+"description": "Keep live minutes, imports, storage, AI questions, disclosure and data-use policies separate when choosing a meeting assistant.",
+"h1": "How to compare meeting AI limits, recording rules and data use"
+},
+"/guides/ai-music-sound-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI music licences and release workflows | System Compare US",
+"description": "Check AI music rights for the intended release, compare generation and download limits, and keep license records for commissioned and published tracks.",
+"h1": "How to compare AI music licenses, downloads and release workflows"
+},
+"/guides/ai-office-knowledge-work-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Workplace AI and suite buying guide | System Compare US",
+"description": "Separate suite licenses, assistant allowances, source permissions and retained business records before expanding workplace AI.",
+"h1": "How to compare workplace AI without double-counting the suite"
+},
+"/guides/ai-sales-customer-service-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI customer-service agent buying guide | System Compare US",
+"description": "Design a support-agent trial with safe test cases, reliable handoff, outcome-billing checks and a clear boundary between assistance and automated actions.",
+"h1": "How to budget and validate an AI customer-service agent"
+},
+"/guides/ai-search-research-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI research tool buying guide | System Compare US",
+"description": "A practical US buying brief for web research, literature extraction, cited synthesis and citation monitoring, with a reproducible source-checking exercise.",
+"h1": "How to evaluate an AI research tool before buying"
+},
+"/guides/ai-security-trust-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI guardrails, US regions & usage costs | System Compare US",
+"description": "AI guardrails, US regions & usage costs. Practical buying questions, documented limits and sources for US teams.",
+"h1": "How to evaluate AI guardrails, US regions and usage costs"
+},
+"/guides/ai-software-development-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI coding plans, access & usage costs | System Compare US",
+"description": "AI coding plans, access & usage costs. Practical buying questions, documented limits and sources for US teams.",
+"h1": "How to evaluate AI coding subscriptions, code access and usage costs"
+},
+"/guides/ai-video-animation-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI video budgets and approvals | System Compare US",
+"description": "Plan an AI video budget using production lanes, rejected takes, export requirements, source rights and the actual US purchasing contract.",
+"h1": "How to budget and approve AI video for a US production workflow"
+},
+"/guides/ai-voice-agent-pilot-scorecard/": {
+"type": "guide",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "AI voice agent pilot scorecard | System Compare US",
+"description": "Evaluate task completion, handoff and complete operating cost before expanding an AI receptionist or voice workflow.",
+"h1": "A practical pilot scorecard for AI voice agents"
+},
+"/guides/ai-voice-audio-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "AI narration: voice rights and cost | System Compare US",
+"description": "Build a narration buying brief around US pronunciation, draft and download meters, commercial permissions and an editable delivery trail.",
+"h1": "How to choose AI narration: US pronunciation, voice rights and production cost"
+},
+"/guides/ai-work-data-cost-governance/": {
+"type": "guide",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "AI budgets for projects & automation | System Compare US",
+"description": "A buying framework that separates AI assistance from action-taking agents, normalizes usage costs, and tests data access before production rollout.",
+"h1": "Budget and govern AI across projects, analytics, and automation"
+},
+"/guides/ai-writing-language-buying-guide-us/": {
+"type": "guide",
+"indexable": false,
+"lastmod": null,
+"title": "Writing AI meaning and data control | System Compare US",
+"description": "Choose a writing AI workflow with a meaning-preservation test, US-English checks, quota planning and a review of training, saved drafts and team settings.",
+"h1": "How to choose writing AI without losing meaning or data control"
+},
+"/guides/build-a-us-finance-stack/": {
+"type": "guide",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Build a US finance stack | System Compare US",
+"description": "A practical selection and migration framework for accounting, payments, spend management and ERP—organized around a traceable month-end close.",
+"h1": "Build a US finance stack that closes cleanly"
+},
+"/guides/crm-data-readiness-checklist/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "CRM data readiness checklist | System Compare US",
+"description": "Prepare for a CRM move with a practical checklist for record identifiers, field mapping, duplicate handling, test imports and reconciliation.",
+"h1": "Before You Move CRM, Clean the Data First"
+},
+"/guides/e-invoicing-networks-buying-guide-us/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "US e-invoicing recipient routes | System Compare US",
+"description": "Separate business exchange networks, cross-border formats and federal-agency submission, then define acceptance, pricing and integration ownership.",
+"h1": "US e-invoicing: choose the recipient route before the provider"
+},
+"/guides/email-campaign-pre-send-checklist/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "Email campaign pre-send checklist | System Compare US",
+"description": "Check the audience, content variants, destination, display, approval and measurement behind your next email campaign.",
+"h1": "Your Email Looks Ready. Is the Workflow Ready?"
+},
+"/guides/helpdesk-handoff-checklist/": {
+"type": "guide",
+"indexable": true,
+"lastmod": "2026-11-13",
+"title": "Help desk handoff checklist | System Compare US",
+"description": "Build a practical handoff checklist so the next support agent receives the customer context, a clear next action and an explicit owner.",
+"h1": "A Better Help Desk Handoff Starts With Clear Ownership"
+},
+"/guides/invoicing-buying-guide-us/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "US invoicing costs and limits | System Compare US",
+"description": "Choose an invoice workflow using document and client limits, ordinary renewal prices, payment fees and records you can retrieve.",
+"h1": "How to compare US invoice software costs and limits"
+},
+"/guides/learning-management-buying-guide-us/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "US LMS buying guide | System Compare US",
+"description": "A buying exercise for learner billing, sequenced training, integrations, AI authoring and an auditable LMS migration.",
+"h1": "How to scope an LMS purchase for a US team"
+},
+"/guides/price-the-whole-commerce-workflow/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "Commerce & service workflow costs | System Compare US",
+"description": "Compare the real cost and operational fit of storefronts, POS, appointment tools, payment processing and electronic signatures.",
+"h1": "Price the whole commerce and service workflow"
+},
+"/guides/procurement-buying-guide-us/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "US procurement software buying guide | System Compare US",
+"description": "Map requests to payment-ready records, compare configured costs, and test partial receipts, invoice exceptions, accounting synchronization and data exit.",
+"h1": "How to scope procurement software for a US finance team"
+},
+"/guides/project-management-pilot-checklist/": {
+"type": "guide",
+"indexable": true,
+"lastmod": "2026-11-13",
+"title": "Project management pilot checklist | System Compare US",
+"description": "Test ownership, dependencies, approvals and reporting with a small project pilot before committing your whole team to a new platform.",
+"h1": "Before You Buy Project Software, Run One Real Project Through It"
+},
+"/guides/software-demo-scorecard/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "Software demo scorecard | System Compare US",
+"description": "A repeatable procurement process for comparing real workflows, full costs and implementation risk.",
+"h1": "Run a software demo that answers your questions"
+},
+"/guides/us-messaging-stack-buying-guide/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "US email, SMS & WhatsApp stack guide | System Compare US",
+"description": "A practical framework for deciding between an integrated marketing suite and specialist tools, with a shared cost model and a staged rollout.",
+"h1": "How to choose a US email, SMS and WhatsApp stack"
+},
+"/guides/us-people-stack-migration/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "US people operations migration guide | System Compare US",
+"description": "A practical buying and migration sequence for HR, payroll, benefits, time tracking, and recruiting, with clear ownership and a measurable acceptance test.",
+"h1": "How to choose and migrate a US people operations stack"
+},
+"/guides/web-analytics-buying-guide-us/": {
+"type": "guide",
+"indexable": true,
+"lastmod": null,
+"title": "US web analytics buying guide | System Compare US",
+"description": "Define a measurement brief, normalize traffic and event charges, verify client access, and plan a controlled analytics migration.",
+"h1": "How to choose web analytics for a US business"
+},
+"/how-we-make-money/": {
+"type": "static:how-we-make-money",
+"indexable": true,
+"lastmod": null,
+"title": "How we make money | System Compare US",
+"description": "Affiliate links, supplier offers and referral measurement at System Compare.",
+"h1": "How we make money"
+},
+"/methodology/": {
+"type": "static:methodology",
+"indexable": true,
+"lastmod": "2026-11-13",
+"title": "How our comparisons work | System Compare US",
+"description": "One documented-fit score using four weighted groups, official evidence and an 80% checked-weight gate.",
+"h1": "How our comparisons work"
+},
+"/partners/": {
+"type": "partners",
+"indexable": true,
+"lastmod": null,
+"title": "Software supplier partners | System Compare US",
+"description": "Apply for supplier onboarding, understand our official-source research and see how editorial independence is protected.",
+"h1": "Partners — add your software to System Compare"
+},
+"/partners/apply/": {
+"type": "partners-sub",
+"indexable": false,
+"lastmod": null,
+"title": "Apply to add your software | System Compare",
+"description": "Free supplier application for the System Compare network.",
+"h1": "Tell us about your software."
+},
+"/privacy/": {
+"type": "static:privacy",
+"indexable": true,
+"lastmod": null,
+"title": "Privacy and your choices | System Compare US",
+"description": "How the US edition handles website requests, local preferences and messages.",
+"h1": "Privacy and your choices"
+},
+"/research-updates/": {
+"type": "research-updates",
+"indexable": true,
+"lastmod": null,
+"title": "Research updates | System Compare US",
+"description": "Dated public-source checks, changes and open questions for US software buyers.",
+"h1": "Research updates"
+},
+"/shortlist/": {
+"type": "shortlist",
+"indexable": false,
+"lastmod": null,
+"title": "Your saved software workspace | System Compare US",
+"description": "Review your locally saved category comparison and private research notes.",
+"h1": "Your shortlist. Your notes."
+},
+"/software/": {
+"type": "software-index",
+"indexable": true,
+"lastmod": null,
+"title": "Software directory | System Compare US",
+"description": "Explore researched US software, pricing and AI capabilities.",
+"h1": "Find your next tool."
+},
+"/software/1password-business/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "1Password Business: pricing & features | System Compare US",
+"description": "1Password combines workforce vaults with developer secret access.",
+"h1": "1Password Business"
+},
+"/software/activecampaign/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "ActiveCampaign: pricing & features | System Compare US",
+"description": "Marketing automation with a visual workflow engine, connected email/SMS/WhatsApp and Active Intelligence campaign assistance.",
+"h1": "ActiveCampaign"
+},
+"/software/acuity-scheduling/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Acuity Scheduling: pricing & features | System Compare US",
+"description": "Service appointment scheduling with intake forms, deposits, packages and calendar-based capacity. It can operate independently of a Squarespace website.",
+"h1": "Acuity Scheduling"
+},
+"/software/acumatica/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Acumatica: pricing & features | System Compare US",
+"description": "Cloud ERP with industry editions and a consumption-based commercial model.",
+"h1": "Acumatica"
+},
+"/software/adobe-acrobat/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Adobe Acrobat: pricing & features | System Compare US",
+"description": "Adobe Acrobat: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Adobe Acrobat"
+},
+"/software/adp-workforce-now/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "ADP Workforce Now: pricing & features | System Compare US",
+"description": "A configurable HR, payroll, benefits, and workforce-management suite for more complex employers.",
+"h1": "ADP Workforce Now"
+},
+"/software/adyen/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Adyen: pricing & features | System Compare US",
+"description": "Payment platform for merchants coordinating methods, markets and risk operations.",
+"h1": "Adyen"
+},
+"/software/agile-crm/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Agile CRM: pricing & features | System Compare US",
+"description": "Agile CRM combines contact management, sales tracking and marketing workflows for small teams.",
+"h1": "Agile CRM"
+},
+"/software/ahrefs/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Ahrefs: pricing & features | System Compare US",
+"description": "Ahrefs brings keyword, competitor and backlink research together with technical auditing and rank tracking.",
+"h1": "Ahrefs"
+},
+"/software/asana/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Asana: pricing & features | System Compare US",
+"description": "Work management for task ownership, dependencies, portfolios, and repeatable team workflows.",
+"h1": "Asana"
+},
+"/software/ashby/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Ashby: pricing & features | System Compare US",
+"description": "Ashby: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Ashby"
+},
+"/software/attentive/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Attentive: pricing & features | System Compare US",
+"description": "Retail-oriented lifecycle messaging combining SMS, email, RCS and push with identity tools and optional predictive AI products.",
+"h1": "Attentive"
+},
+"/software/attio/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Attio: pricing & features | System Compare US",
+"description": "Attio: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Attio"
+},
+"/software/authorize-net/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Authorize.net: pricing & features | System Compare US",
+"description": "Payment gateway offered alone or with a merchant-account package.",
+"h1": "Authorize.net"
+},
+"/software/aweber/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "AWeber: pricing & features | System Compare US",
+"description": "AWeber combines newsletters with tag-based subscriber journeys.",
+"h1": "AWeber"
+},
+"/software/bamboohr/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "BambooHR: pricing & features | System Compare US",
+"description": "An HR-centered platform with connected payroll, benefits, time, and recruiting modules.",
+"h1": "BambooHR"
+},
+"/software/bigcommerce/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "BigCommerce: pricing & features | System Compare US",
+"description": "BigCommerce: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "BigCommerce"
+},
+"/software/bill/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "BILL: pricing & features | System Compare US",
+"description": "BILL: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "BILL"
+},
+"/software/bland-ai/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Bland AI: pricing & features | System Compare US",
+"description": "AI phone automation with node-based Conversational Pathways, webhook actions, knowledge nodes and transfer controls.",
+"h1": "Bland AI"
+},
+"/software/botpress/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Botpress: pricing & features | System Compare US",
+"description": "Botpress provides an AI agent platform oriented toward customer support, with a free starting allowance and paid conversation packages.",
+"h1": "Botpress"
+},
+"/software/braze/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Braze: pricing & features | System Compare US",
+"description": "Enterprise customer engagement linking live customer data with cross-channel orchestration, experimentation and BrazeAI.",
+"h1": "Braze"
+},
+"/software/breakcold/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Breakcold: pricing & features | System Compare US",
+"description": "Breakcold focuses on keeping sales records current from conversations.",
+"h1": "Breakcold"
+},
+"/software/brevo/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Brevo: pricing & features | System Compare US",
+"description": "A marketing suite combining email, automation and prepaid messaging, with Aura AI and optional sales/conversation tools.",
+"h1": "Brevo"
+},
+"/software/brex/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Brex: pricing & features | System Compare US",
+"description": "Corporate spend, expense and travel software with US and international entity options. The entry package and advanced policy controls have different scope.",
+"h1": "Brex"
+},
+"/software/business-central/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Microsoft Dynamics 365 Business Central | System Compare US",
+"description": "ERP for finance, sales and operations with Microsoft ecosystem integration.",
+"h1": "Microsoft Dynamics 365 Business Central"
+},
+"/software/calendly/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Calendly: pricing & features | System Compare US",
+"description": "Calendly: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Calendly"
+},
+"/software/clickup/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "ClickUp: pricing & features | System Compare US",
+"description": "Tasks, documents, chat, time, and AI in a configurable work-management platform.",
+"h1": "ClickUp"
+},
+"/software/clockify/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Clockify: pricing & features | System Compare US",
+"description": "Project time tracking with paid approvals, attendance controls, and resource scheduling.",
+"h1": "Clockify"
+},
+"/software/close/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Close: pricing & features | System Compare US",
+"description": "Close: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Close"
+},
+"/software/clover/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Clover: pricing & features | System Compare US",
+"description": "US point-of-sale hardware and software packages with separate processing terms.",
+"h1": "Clover"
+},
+"/software/constant-contact/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Constant Contact: pricing & features | System Compare US",
+"description": "Small-business email and SMS marketing with templates, segmentation, preset automations and AI content assistance.",
+"h1": "Constant Contact"
+},
+"/software/customer-io/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Customer.io: pricing & features | System Compare US",
+"description": "Data-driven messaging with event-based journeys, customer/object profiles, APIs, native channels and a credit-based AI agent.",
+"h1": "Customer.io"
+},
+"/software/deel/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Deel: pricing & features | System Compare US",
+"description": "A workforce platform spanning US payroll, global hiring, HR records, and employment services.",
+"h1": "Deel"
+},
+"/software/deputy/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Deputy: pricing & features | System Compare US",
+"description": "Shift scheduling and attendance software with workforce forecasting and AI assistance.",
+"h1": "Deputy"
+},
+"/software/dialpad-connect/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Dialpad Connect: pricing & features | System Compare US",
+"description": "A unified calling, messaging and meetings application with live transcription, AI recaps and action items.",
+"h1": "Dialpad Connect"
+},
+"/software/docusign/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Docusign: pricing & features | System Compare US",
+"description": "Docusign: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Docusign"
+},
+"/software/domo/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Domo: pricing & features | System Compare US",
+"description": "A cloud data platform combining integration, analytics, applications, and AI services.",
+"h1": "Domo"
+},
+"/software/drip/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Drip: pricing & features | System Compare US",
+"description": "B2C email automation centered on purchase behavior, customer lifecycle stages and store revenue.",
+"h1": "Drip"
+},
+"/software/dropbox-sign/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Dropbox Sign: pricing & features | System Compare US",
+"description": "Dropbox Sign: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Dropbox Sign"
+},
+"/software/elevenlabs-agents/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "ElevenLabs Agents: pricing & features | System Compare US",
+"description": "Voice and multimodal agents with speech models, workflows, knowledge retrieval, tools, telephony and application SDKs.",
+"h1": "ElevenLabs Agents"
+},
+"/software/engagebay/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "EngageBay: pricing & features | System Compare US",
+"description": "EngageBay combines sales, marketing and support in one account.",
+"h1": "EngageBay"
+},
+"/software/expensify/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Expensify: pricing & features | System Compare US",
+"description": "Expense capture, approvals and reimbursement software that can connect existing cards and accounting systems. Bill pay and travel extend the same workflow.",
+"h1": "Expensify"
+},
+"/software/ez-texting/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "EZ Texting: pricing & features | System Compare US",
+"description": "Small-business SMS/MMS/RCS campaigns with a shared inbox, opt-in tools, workflows and AI drafting/reply features.",
+"h1": "EZ Texting"
+},
+"/software/flowlu/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Flowlu: pricing & features | System Compare US",
+"description": "Flowlu links customer records with projects, tasks and financial context.",
+"h1": "Flowlu"
+},
+"/software/folk/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "folk: pricing & features | System Compare US",
+"description": "folk builds relationship records from email, meetings and messaging.",
+"h1": "folk"
+},
+"/software/freshbooks/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "FreshBooks: pricing & features | System Compare US",
+"description": "Accounting and billing oriented around service businesses and client work.",
+"h1": "FreshBooks"
+},
+"/software/freshdesk/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Freshdesk: pricing & features | System Compare US",
+"description": "Freshdesk: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Freshdesk"
+},
+"/software/freshsales/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Freshsales: pricing & features | System Compare US",
+"description": "Freshsales: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Freshsales"
+},
+"/software/front/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Front: pricing & features | System Compare US",
+"description": "Front: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Front"
+},
+"/software/getresponse/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "GetResponse: pricing & features | System Compare US",
+"description": "Email and lifecycle marketing with landing pages, commerce automation and creator features; enterprise adds advanced messaging options.",
+"h1": "GetResponse"
+},
+"/software/gorgias/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Gorgias: pricing & features | System Compare US",
+"description": "Gorgias: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Gorgias"
+},
+"/software/greenhouse/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Greenhouse: pricing & features | System Compare US",
+"description": "Greenhouse: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Greenhouse"
+},
+"/software/gusto/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Gusto: pricing & features | System Compare US",
+"description": "US payroll with connected benefits and HR tools; plan selection matters for multistate teams and time management.",
+"h1": "Gusto"
+},
+"/software/help-scout/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Help Scout: pricing & features | System Compare US",
+"description": "Help Scout: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Help Scout"
+},
+"/software/homebase/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Homebase: pricing & features | System Compare US",
+"description": "Scheduling and time tools for hourly businesses, with optional payroll and hiring services.",
+"h1": "Homebase"
+},
+"/software/hostinger/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Hostinger: pricing & features | System Compare US",
+"description": "Hostinger combines a managed WordPress control panel with backup, staging and AI tools.",
+"h1": "Hostinger"
+},
+"/software/hubspot-sales/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "HubSpot Sales Hub: pricing & features | System Compare US",
+"description": "HubSpot Sales Hub: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "HubSpot Sales Hub"
+},
+"/software/intercom/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Intercom: pricing & features | System Compare US",
+"description": "Intercom: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Intercom"
+},
+"/software/invoice-ninja/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Invoice Ninja: pricing & features | System Compare US",
+"description": "Invoice Ninja handles quoting, invoicing, recurring billing and payment collection.",
+"h1": "Invoice Ninja"
+},
+"/software/iterable/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Iterable: pricing & features | System Compare US",
+"description": "Enterprise customer engagement with real-time journeys, cross-channel messaging and Nova AI analysis and orchestration.",
+"h1": "Iterable"
+},
+"/software/justworks/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Justworks: pricing & features | System Compare US",
+"description": "US payroll and PEO plans with HR support, benefits options, and optional time tracking.",
+"h1": "Justworks"
+},
+"/software/kit/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Kit: pricing & features | System Compare US",
+"description": "Creator-focused email software with audience tags, sequences, recommendations, digital-product selling and AI connectors.",
+"h1": "Kit"
+},
+"/software/klaviyo/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Klaviyo: pricing & features | System Compare US",
+"description": "A commerce-oriented customer platform combining profiles, email, mobile messaging and AI-assisted campaign operations.",
+"h1": "Klaviyo"
+},
+"/software/lemlist/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "lemlist: pricing & features | System Compare US",
+"description": "lemlist combines email outreach with optional multichannel steps.",
+"h1": "lemlist"
+},
+"/software/lever/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Lever: pricing & features | System Compare US",
+"description": "Lever: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Lever"
+},
+"/software/lightspeed-retail/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Lightspeed Retail: pricing & features | System Compare US",
+"description": "Retail POS with inventory, purchasing and connected ecommerce capabilities.",
+"h1": "Lightspeed Retail"
+},
+"/software/livechat/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "LiveChat / Text: pricing & features | System Compare US",
+"description": "New LiveChat trials now use the Text platform, combining chat, tickets and AI agents.",
+"h1": "LiveChat / Text"
+},
+"/software/looker/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Looker: pricing & features | System Compare US",
+"description": "An enterprise BI platform centered on reusable semantic definitions and governed exploration.",
+"h1": "Looker"
+},
+"/software/mailchimp/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Mailchimp: pricing & features | System Compare US",
+"description": "An email-centered marketing platform with audience tools, automated journeys, store connections and a paid SMS extension.",
+"h1": "Mailchimp"
+},
+"/software/make/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Make: pricing & features | System Compare US",
+"description": "Make: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Make"
+},
+"/software/manychat/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Manychat: pricing & features | System Compare US",
+"description": "Social and messaging automation that connects audience acquisition, conversations and an inbox across channels.",
+"h1": "Manychat"
+},
+"/software/metricool/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Metricool: pricing & features | System Compare US",
+"description": "Metricool: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Metricool"
+},
+"/software/microsoft-copilot-studio/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Microsoft Copilot Studio: pricing | System Compare US",
+"description": "Microsoft Copilot Studio: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Microsoft Copilot Studio"
+},
+"/software/monday-work-management/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "monday work management: pricing | System Compare US",
+"description": "Configurable boards, dashboards, and automations for team work and portfolios.",
+"h1": "monday work management"
+},
+"/software/moosend/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Moosend: pricing & features | System Compare US",
+"description": "Moosend combines email campaigns with behavioural segmentation and visual automation.",
+"h1": "Moosend"
+},
+"/software/n8n/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "n8n: pricing & features | System Compare US",
+"description": "n8n: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "n8n"
+},
+"/software/navan/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Navan: pricing & features | System Compare US",
+"description": "Travel and expense operations with policy-based booking, card-connected expense capture and accounting synchronization.",
+"h1": "Navan"
+},
+"/software/netsuite/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Oracle NetSuite: pricing & features | System Compare US",
+"description": "Integrated cloud ERP spanning finance, inventory, orders and global entities.",
+"h1": "Oracle NetSuite"
+},
+"/software/nextiva/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Nextiva: pricing & features | System Compare US",
+"description": "Business calling and team communications with tiered routing, SMS, customer-engagement features and optional XBert AI.",
+"h1": "Nextiva"
+},
+"/software/nifty/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Nifty: pricing & features | System Compare US",
+"description": "Nifty combines tasks, project discussions, documents and direct messages.",
+"h1": "Nifty"
+},
+"/software/nocrm/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "noCRM: pricing & features | System Compare US",
+"description": "noCRM centers sales work on leads, next actions and visual pipelines.",
+"h1": "noCRM"
+},
+"/software/nordpass/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "NordPass: pricing & features | System Compare US",
+"description": "NordPass centralises workforce credentials, passkeys and shared access.",
+"h1": "NordPass"
+},
+"/software/nordvpn/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "NordVPN: pricing & features | System Compare US",
+"description": "NordVPN is an individual VPN with optional protection bundles.",
+"h1": "NordVPN"
+},
+"/software/notion/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Notion: pricing & features | System Compare US",
+"description": "A document and database workspace for knowledge-centered projects and AI-assisted work.",
+"h1": "Notion"
+},
+"/software/nozbe/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Nozbe: pricing & features | System Compare US",
+"description": "Nozbe organises work around assigned tasks and contextual comments.",
+"h1": "Nozbe"
+},
+"/software/odoo/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Odoo: pricing & features | System Compare US",
+"description": "Odoo links sales, purchasing, inventory and accounting through configurable applications.",
+"h1": "Odoo"
+},
+"/software/omnisend/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Omnisend: pricing & features | System Compare US",
+"description": "Ecommerce email, web push and SMS automation with store-driven segmentation and plan-specific AI features.",
+"h1": "Omnisend"
+},
+"/software/onpay/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "OnPay: pricing & features | System Compare US",
+"description": "US payroll with published base pricing and separately priced HR and time options.",
+"h1": "OnPay"
+},
+"/software/pandadoc/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "PandaDoc: pricing & features | System Compare US",
+"description": "PandaDoc: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "PandaDoc"
+},
+"/software/paychex-flex/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Paychex Flex: pricing & features | System Compare US",
+"description": "Payroll and HR software with connected benefits, time tools, and service options.",
+"h1": "Paychex Flex"
+},
+"/software/paypal/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "PayPal: pricing & features | System Compare US",
+"description": "US checkout, wallet, card and recurring-payment services.",
+"h1": "PayPal"
+},
+"/software/pipedrive/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Pipedrive: pricing & features | System Compare US",
+"description": "Pipedrive: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Pipedrive"
+},
+"/software/plaky/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Plaky: pricing & features | System Compare US",
+"description": "Plaky organises work in customisable boards with task fields and comments.",
+"h1": "Plaky"
+},
+"/software/postscript/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Postscript: pricing & features | System Compare US",
+"description": "Shopify-oriented retention marketing with SMS/RCS, email and a paid AI bundle for personalized messaging.",
+"h1": "Postscript"
+},
+"/software/power-automate/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Microsoft Power Automate: pricing | System Compare US",
+"description": "Microsoft Power Automate: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Microsoft Power Automate"
+},
+"/software/power-bi/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Microsoft Power BI: pricing & features | System Compare US",
+"description": "BI authoring and sharing integrated with Microsoft's Fabric analytics environment.",
+"h1": "Microsoft Power BI"
+},
+"/software/proton-vpn/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Proton VPN: pricing & features | System Compare US",
+"description": "Proton VPN offers an unlimited-data free tier and a paid Plus tier with more location choice and protection features.",
+"h1": "Proton VPN"
+},
+"/software/pulseem/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Pulseem: pricing & features | System Compare US",
+"description": "A combined email, SMS, WhatsApp and automation platform with native AI creation, customer-data analysis, and connections to external AI assistants.",
+"h1": "Pulseem"
+},
+"/software/pumble/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Pumble: pricing & features | System Compare US",
+"description": "Pumble is a dedicated messenger with channels, direct messages and searchable history.",
+"h1": "Pumble"
+},
+"/software/qlik-cloud-analytics/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Qlik Cloud Analytics: pricing & features | System Compare US",
+"description": "Cloud analytics with associative exploration, data connections, and Qlik Answers AI.",
+"h1": "Qlik Cloud Analytics"
+},
+"/software/quickbooks-online/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "QuickBooks Online: pricing & features | System Compare US",
+"description": "Cloud accounting with US invoicing, bank workflows and plan-based financial reporting.",
+"h1": "QuickBooks Online"
+},
+"/software/quo/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Quo (formerly OpenPhone): pricing | System Compare US",
+"description": "A shared business phone workspace for calls and texts, with optional Sona AI answering and higher-tier team features.",
+"h1": "Quo (formerly OpenPhone)"
+},
+"/software/ramp/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Ramp: pricing & features | System Compare US",
+"description": "Spend operations combining cards, expenses, bill payment and accounting connections, with AI applied to review and coding tasks.",
+"h1": "Ramp"
+},
+"/software/relevance-ai/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Relevance AI: pricing & features | System Compare US",
+"description": "Relevance AI: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Relevance AI"
+},
+"/software/respond-io/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "respond.io: pricing & features | System Compare US",
+"description": "An omnichannel conversation workspace with shared inboxes, routing, workflows and AI agents for chat and voice.",
+"h1": "respond.io"
+},
+"/software/retell-ai/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Retell AI: pricing & features | System Compare US",
+"description": "A voice-agent platform with phone and web deployment, conversation flows, tools, simulation testing and call monitoring.",
+"h1": "Retell AI"
+},
+"/software/ringcentral/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "RingCentral RingEX: pricing & features | System Compare US",
+"description": "Cloud business phone and team communications with US/Canada calling, routing, app integrations and tier-based AI assistance.",
+"h1": "RingCentral RingEX"
+},
+"/software/rippling/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Rippling: pricing & features | System Compare US",
+"description": "A modular employee platform linking HR, payroll, benefits, recruiting, and business automation.",
+"h1": "Rippling"
+},
+"/software/sage-intacct/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Sage Intacct: pricing & features | System Compare US",
+"description": "Finance-led cloud platform for multi-entity reporting and a more controlled close.",
+"h1": "Sage Intacct"
+},
+"/software/salesforce-sales/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Salesforce Sales: pricing & features | System Compare US",
+"description": "Salesforce Sales: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Salesforce Sales"
+},
+"/software/sap-business-one/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "SAP Business One: pricing & features | System Compare US",
+"description": "ERP for smaller organizations combining financial and operational management.",
+"h1": "SAP Business One"
+},
+"/software/se-ranking/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "SE Ranking: pricing & features | System Compare US",
+"description": "SE Ranking combines search research, daily rank tracking and technical audits with AI-answer monitoring.",
+"h1": "SE Ranking"
+},
+"/software/shopify/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Shopify: pricing & features | System Compare US",
+"description": "Hosted commerce platform connecting an online store, payments and physical selling.",
+"h1": "Shopify"
+},
+"/software/simpletexting/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "SimpleTexting: pricing & features | System Compare US",
+"description": "A small-business texting platform for broadcasts, two-way conversations, drip campaigns and opt-in collection.",
+"h1": "SimpleTexting"
+},
+"/software/simplybook-me/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "SimplyBook.me: pricing & features | System Compare US",
+"description": "Configurable booking software with provider capacity, payment options and selectable custom features. It offers a free entry tier and paid booking quotas.",
+"h1": "SimplyBook.me"
+},
+"/software/siteground/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "SiteGround: pricing & features | System Compare US",
+"description": "SiteGround provides managed WordPress hosting with migrations, caching and recovery tools.",
+"h1": "SiteGround"
+},
+"/software/smartlead/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Smartlead: pricing & features | System Compare US",
+"description": "Smartlead centres outreach on mailbox infrastructure and a shared reply workspace.",
+"h1": "Smartlead"
+},
+"/software/smartsheet/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Smartsheet: pricing & features | System Compare US",
+"description": "Spreadsheet-style work management with forms, reporting, automations, and portfolio options.",
+"h1": "Smartsheet"
+},
+"/software/smartsupp/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Smartsupp: pricing & features | System Compare US",
+"description": "Smartsupp combines website chat with email and messaging, with Mira available separately for automated shopping conversations.",
+"h1": "Smartsupp"
+},
+"/software/snov-io/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Snov.io: pricing & features | System Compare US",
+"description": "Snov.io combines prospect finding, verification and outreach.",
+"h1": "Snov.io"
+},
+"/software/square/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Square: pricing & features | System Compare US",
+"description": "Connected US payments, point of sale and service-booking tools.",
+"h1": "Square"
+},
+"/software/squarespace/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Squarespace: pricing & features | System Compare US",
+"description": "Squarespace: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Squarespace"
+},
+"/software/stripe/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Stripe: pricing & features | System Compare US",
+"description": "Payment infrastructure for hosted checkout, custom integrations and recurring revenue.",
+"h1": "Stripe"
+},
+"/software/suitedash/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "SuiteDash: pricing & features | System Compare US",
+"description": "SuiteDash combines client records, portals, projects and billing with flat workspace pricing.",
+"h1": "SuiteDash"
+},
+"/software/synthflow/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Synthflow: pricing & features | System Compare US",
+"description": "Enterprise voice-agent deployment sold with scoped capacity, integrations, telephony and launch support.",
+"h1": "Synthflow"
+},
+"/software/systeme-io/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "systeme.io: pricing & features | System Compare US",
+"description": "systeme.io connects funnels, email, courses and workflow automation.",
+"h1": "systeme.io"
+},
+"/software/tableau/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Tableau: pricing & features | System Compare US",
+"description": "Visual analytics with Cloud, Server, and Salesforce-oriented Tableau Next options.",
+"h1": "Tableau"
+},
+"/software/toast/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Toast: pricing & features | System Compare US",
+"description": "POS platform with restaurant workflows, hardware and connected digital ordering.",
+"h1": "Toast"
+},
+"/software/twilio/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Twilio: pricing & features | System Compare US",
+"description": "Programmable communications APIs for building SMS and WhatsApp workflows, with usage-based rates and optional messaging tools.",
+"h1": "Twilio"
+},
+"/software/vagaro/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Vagaro: pricing & features | System Compare US",
+"description": "Booking and business management oriented to beauty, wellness and fitness operators. Calendar capacity and optional services determine the final bill.",
+"h1": "Vagaro"
+},
+"/software/vapi/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Vapi: pricing & features | System Compare US",
+"description": "Developer-oriented voice-agent infrastructure with configurable speech/model providers, tools, assistants and multi-agent handoffs.",
+"h1": "Vapi"
+},
+"/software/vista-social/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Vista Social: pricing & features | System Compare US",
+"description": "Vista Social combines publishing, social engagement and reports with Ask Vista.",
+"h1": "Vista Social"
+},
+"/software/wati/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Wati: pricing & features | System Compare US",
+"description": "WhatsApp-centered team messaging with workflow automation, business integrations and current AI copilot/agent options.",
+"h1": "Wati"
+},
+"/software/wave/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Wave: pricing & features | System Compare US",
+"description": "Small-business invoicing and bookkeeping with a free base and optional Pro automation.",
+"h1": "Wave"
+},
+"/software/when-i-work/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "When I Work: pricing & features | System Compare US",
+"description": "Employee scheduling, team communication, and optional attendance for shift-based teams.",
+"h1": "When I Work"
+},
+"/software/wix/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Wix: pricing & features | System Compare US",
+"description": "Hosted website and commerce builder combining visual design, store management and service-business tools. Selling requires a payment-enabled paid plan.",
+"h1": "Wix"
+},
+"/software/woocommerce/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "WooCommerce: pricing & features | System Compare US",
+"description": "WooCommerce: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "WooCommerce"
+},
+"/software/woodpecker/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Woodpecker: pricing & features | System Compare US",
+"description": "Woodpecker organises prospect outreach around connected mailboxes, scheduled follow-ups and reply handling.",
+"h1": "Woodpecker"
+},
+"/software/workable/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Workable: pricing & features | System Compare US",
+"description": "Workable: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Workable"
+},
+"/software/workato/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Workato: pricing & features | System Compare US",
+"description": "Workato: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Workato"
+},
+"/software/wrike/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Wrike: pricing & features | System Compare US",
+"description": "Work management with request workflows, resource planning, and configurable AI agents.",
+"h1": "Wrike"
+},
+"/software/xero/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Xero: pricing & features | System Compare US",
+"description": "US cloud accounting with shared access, bank reconciliation and tiered reporting.",
+"h1": "Xero"
+},
+"/software/zadarma/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Zadarma: pricing & features | System Compare US",
+"description": "Zadarma combines cloud telephony, country-specific numbers and programmable call events.",
+"h1": "Zadarma"
+},
+"/software/zapier/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Zapier: pricing & features | System Compare US",
+"description": "Zapier: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Zapier"
+},
+"/software/zendesk/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Zendesk: pricing & features | System Compare US",
+"description": "Zendesk: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Zendesk"
+},
+"/software/zoho-books/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Zoho Books: pricing & features | System Compare US",
+"description": "US accounting with invoices, bank feeds and configurable workflows across paid tiers.",
+"h1": "Zoho Books"
+},
+"/software/zoho-crm/": {
+"type": "software",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Zoho CRM: pricing & features | System Compare US",
+"description": "Zoho CRM: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Zoho CRM"
+},
+"/software/zoho-sign/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Zoho Sign: pricing & features | System Compare US",
+"description": "Zoho Sign: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+"h1": "Zoho Sign"
+},
+"/software/zoom-phone/": {
+"type": "software",
+"indexable": true,
+"lastmod": null,
+"title": "Zoom Phone: pricing & features | System Compare US",
+"description": "Cloud telephony inside the Zoom communications environment with domestic calling choices, routing and AI Companion phone assistance.",
+"h1": "Zoom Phone"
+},
+"/terms/": {
+"type": "static:terms",
+"indexable": true,
+"lastmod": null,
+"title": "Terms of use | System Compare US",
+"description": "Terms for using System Compare US research and decision tools.",
+"h1": "Terms of use"
+},
+"/tools/cost/": {
+"type": "tool",
+"indexable": true,
+"lastmod": null,
+"title": "Software total cost calculator | System Compare US",
+"description": "Estimate seats, usage, add-ons, implementation and growth with a transparent software ownership cost model.",
+"h1": "Compare modeled costs."
+},
+"/vs/1password-business-vs-nordpass/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "1Password Business vs NordPass | System Compare US",
+"description": "1Password Business vs NordPass: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "1Password Business vs NordPass"
+},
+"/vs/activecampaign-vs-brevo/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "ActiveCampaign vs Brevo | System Compare US",
+"description": "ActiveCampaign vs Brevo: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "ActiveCampaign vs Brevo"
+},
+"/vs/activecampaign-vs-getresponse/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "ActiveCampaign vs GetResponse | System Compare US",
+"description": "ActiveCampaign vs GetResponse: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "ActiveCampaign vs GetResponse"
+},
+"/vs/activecampaign-vs-klaviyo/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "ActiveCampaign vs Klaviyo | System Compare US",
+"description": "ActiveCampaign vs Klaviyo: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "ActiveCampaign vs Klaviyo"
+},
+"/vs/acuity-scheduling-vs-calendly/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Acuity Scheduling vs Calendly | System Compare US",
+"description": "Acuity Scheduling vs Calendly: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Acuity Scheduling vs Calendly"
+},
+"/vs/acuity-scheduling-vs-vagaro/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Acuity Scheduling vs Vagaro | System Compare US",
+"description": "Acuity Scheduling vs Vagaro: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Acuity Scheduling vs Vagaro"
+},
+"/vs/acumatica-vs-business-central/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Acumatica vs Business Central | System Compare US",
+"description": "Acumatica vs Microsoft Dynamics 365 Business Central: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Acumatica vs Microsoft Dynamics 365 Business Central"
+},
+"/vs/acumatica-vs-sap-business-one/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Acumatica vs SAP Business One | System Compare US",
+"description": "Acumatica vs SAP Business One: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Acumatica vs SAP Business One"
+},
+"/vs/adobe-acrobat-vs-docusign/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Adobe Acrobat vs Docusign | System Compare US",
+"description": "Adobe Acrobat vs Docusign: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Adobe Acrobat vs Docusign"
+},
+"/vs/adobe-acrobat-vs-pandadoc/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Adobe Acrobat vs PandaDoc | System Compare US",
+"description": "Adobe Acrobat vs PandaDoc: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Adobe Acrobat vs PandaDoc"
+},
+"/vs/adp-workforce-now-vs-gusto/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "ADP Workforce Now vs Gusto | System Compare US",
+"description": "ADP Workforce Now vs Gusto: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "ADP Workforce Now vs Gusto"
+},
+"/vs/adp-workforce-now-vs-paychex-flex/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "ADP Workforce Now vs Paychex Flex | System Compare US",
+"description": "ADP Workforce Now vs Paychex Flex: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "ADP Workforce Now vs Paychex Flex"
+},
+"/vs/adp-workforce-now-vs-rippling/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "ADP Workforce Now vs Rippling | System Compare US",
+"description": "ADP Workforce Now vs Rippling: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "ADP Workforce Now vs Rippling"
+},
+"/vs/adyen-vs-authorize-net/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Adyen vs Authorize.net | System Compare US",
+"description": "Adyen vs Authorize.net: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Adyen vs Authorize.net"
+},
+"/vs/adyen-vs-paypal/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Adyen vs PayPal | System Compare US",
+"description": "Adyen vs PayPal: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Adyen vs PayPal"
+},
+"/vs/ahrefs-vs-se-ranking/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Ahrefs vs SE Ranking | System Compare US",
+"description": "Ahrefs vs SE Ranking: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Ahrefs vs SE Ranking"
+},
+"/vs/ai-3d-spatial-meshy-vs-sloyd/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Meshy vs Sloyd | System Compare US",
+"description": "Compare Meshy Pro/Premium with Sloyd Plus/Pro using documented production boundaries and unresolved US costs.",
+"h1": "Meshy vs Sloyd: credits, private assets and resale rights"
+},
+"/vs/ai-agents-automation-zapier-vs-n8n/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Zapier vs n8n for AI agents | System Compare US",
+"description": "Compare current Zapier Professional/Team AI steps with n8n Starter/Pro cloud using documented plans, action controls and different billing units.",
+"h1": "Zapier vs n8n for AI agents: tasks, executions and approvals"
+},
+"/vs/ai-ai-development-infrastructure-langsmith-vs-langfuse/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "LangSmith vs Langfuse | System Compare US",
+"description": "A stored comparison of Developer/Plus and Core/Pro, with plan-level evidence and unresolved rights.",
+"h1": "LangSmith vs Langfuse: trace billing, retention and evaluation scope"
+},
+"/vs/ai-app-website-building-lovable-vs-bolt/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Lovable vs Bolt | System Compare US",
+"description": "A stored comparison of Lovable Pro/Business and Bolt Pro/Teams with current quotas, code rights and training conditions.",
+"h1": "Lovable vs Bolt: workspace credits, member tokens and deployment"
+},
+"/vs/ai-data-analytics-julius-vs-better-analyst/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Julius vs Better Analyst | System Compare US",
+"description": "A stored comparison of Julius Plus/Pro and Better Analyst Pro/Team, with documentary limits and a proposed numerical validation exercise.",
+"h1": "Julius vs Better Analyst: file analysis, connected reporting and usage meters"
+},
+"/vs/ai-design-images-ideogram-vs-midjourney/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Ideogram vs Midjourney | System Compare US",
+"description": "Compare Ideogram Plus/Pro with Midjourney Standard/Pro using documented privacy, usage and US commercial-offer boundaries.",
+"h1": "Ideogram vs Midjourney: private images, credits and commercial tiers"
+},
+"/vs/ai-general-assistants-chatgpt-vs-claude/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "ChatGPT vs Claude | System Compare US",
+"description": "Compare ChatGPT Plus/Pro 100 and Claude Pro/Max without inheriting enterprise controls or treating allowances as measured output quality.",
+"h1": "ChatGPT vs Claude: personal subscriptions, usage windows and API boundaries"
+},
+"/vs/ai-industry-engineering-onshape-vs-solidworks/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Onshape vs SOLIDWORKS Design Offer | System Compare US",
+"description": "A stored comparison of two Standard and Professional offer pairs, with named-user pricing and documentary limitations.",
+"h1": "Onshape vs SOLIDWORKS Design Offer: private CAD, team control and US annual cost"
+},
+"/vs/ai-learning-education-brisk-vs-diffit/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Brisk vs Diffit | System Compare US",
+"description": "Compare Brisk Free/Premium and Diffit Basic/Schools for teacher workflows, exports and district procurement.",
+"h1": "Brisk vs Diffit: browser assistance, source adaptation and school scope"
+},
+"/vs/ai-marketing-growth-jasper-vs-anyword/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Jasper vs Anyword | System Compare US",
+"description": "A stored comparison of Jasper Pro/Business and Anyword Starter/Data-Driven monthly offers.",
+"h1": "Jasper vs Anyword: brand workflow, prediction caps and US pricing"
+},
+"/vs/ai-meetings-communications-otter-vs-fireflies/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Otter vs Fireflies | System Compare US",
+"description": "A stored comparison of Otter Pro/Business monthly and Fireflies Pro/Business annual offers, with recording limits and separate AI charges.",
+"h1": "Otter vs Fireflies: minutes, storage, AI credits and data use"
+},
+"/vs/ai-music-sound-soundraw-vs-mubert-render/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "SOUNDRAW vs Mubert Render | System Compare US",
+"description": "Compare SOUNDRAW Creator/Artist Pro with Mubert Pro/Business on licensed use, client projects, downloads and exports.",
+"h1": "SOUNDRAW vs Mubert Render: background music and distribution limits"
+},
+"/vs/ai-office-knowledge-work-microsoft-365-copilot-vs-google-workspace/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Microsoft 365 Copilot & Google Workspace | System Compare US",
+"description": "Microsoft 365 Copilot vs Google Workspace: compare documented features, plan limits, pricing context and sources for US buyers.",
+"h1": "Microsoft 365 Copilot vs Google Workspace: suite cost and data controls"
+},
+"/vs/ai-sales-customer-service-intercom-vs-freshdesk/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Intercom Fin vs Freshdesk Freddy | System Compare US",
+"description": "Compare Intercom Advanced/Expert with Freshdesk Growth/Pro using actual billing definitions and plan boundaries.",
+"h1": "Intercom Fin vs Freshdesk Freddy: outcomes, sessions and support controls"
+},
+"/vs/ai-search-research-consensus-vs-scite/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Consensus Pro vs Scite Basic | System Compare US",
+"description": "Compare documented research, citation, quota and billing boundaries for Consensus Pro and Scite Basic in a US buying context.",
+"h1": "Consensus Pro vs Scite Basic: research answers or citation context?"
+},
+"/vs/ai-security-trust-google-model-armor-vs-bedrock-guardrails/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Google Model Armor vs Bedrock Guardrails | System Compare US",
+"description": "Compare Model Armor standalone/SCC subscription entitlement with Bedrock Classic/Standard safeguard tiers.",
+"h1": "Google Model Armor vs Bedrock Guardrails: US regions and policy meters"
+},
+"/vs/ai-software-development-github-copilot-vs-jetbrains-ai/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "GitHub Copilot vs JetBrains AI | System Compare US",
+"description": "Compare Copilot Pro/Pro+ with JetBrains AI Pro/Ultimate using real individual plans, quotas and documentary feature scope.",
+"h1": "GitHub Copilot vs JetBrains AI: individual plans and editor workflows"
+},
+"/vs/ai-video-animation-runway-vs-pika/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Runway vs Pika | System Compare US",
+"description": "A stored comparison of Standard/Pro and Starter/Creator, with documented concurrency, licensing, export scope and unresolved invoice details.",
+"h1": "Runway vs Pika: generative clips, parallel jobs and credit boundaries"
+},
+"/vs/ai-voice-audio-murf-studio-vs-wellsaid/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Murf Studio vs WellSaid | System Compare US",
+"description": "Compare four narration offers, pronunciation controls, production meters and commercial-license boundaries without inventing a quality or price winner.",
+"h1": "Murf Studio vs WellSaid: generation hours or downloaded minutes?"
+},
+"/vs/ai-writing-language-grammarly-vs-quillbot/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Grammarly vs QuillBot | System Compare US",
+"description": "A stored comparison of Grammarly Pro/Enterprise and QuillBot Premium/Team with current documented rights and limits.",
+"h1": "Grammarly vs QuillBot: writing workflows, quotas and data defaults"
+},
+"/vs/asana-vs-monday-work-management/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Asana vs monday work management | System Compare US",
+"description": "Asana vs monday work management: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Asana vs monday work management"
+},
+"/vs/ashby-vs-lever/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Ashby vs Lever | System Compare US",
+"description": "Ashby vs Lever: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Ashby vs Lever"
+},
+"/vs/bamboohr-vs-gusto/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "BambooHR vs Gusto | System Compare US",
+"description": "BambooHR vs Gusto: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "BambooHR vs Gusto"
+},
+"/vs/bamboohr-vs-rippling/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "BambooHR vs Rippling | System Compare US",
+"description": "BambooHR vs Rippling: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "BambooHR vs Rippling"
+},
+"/vs/bigcommerce-vs-shopify/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "BigCommerce vs Shopify | System Compare US",
+"description": "BigCommerce vs Shopify: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "BigCommerce vs Shopify"
+},
+"/vs/bigcommerce-vs-woocommerce/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "BigCommerce vs WooCommerce | System Compare US",
+"description": "BigCommerce vs WooCommerce: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "BigCommerce vs WooCommerce"
+},
+"/vs/bill-vs-brex/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "BILL vs Brex | System Compare US",
+"description": "BILL vs Brex: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "BILL vs Brex"
+},
+"/vs/bill-vs-expensify/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "BILL vs Expensify | System Compare US",
+"description": "BILL vs Expensify: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "BILL vs Expensify"
+},
+"/vs/bland-ai-vs-synthflow/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Bland AI vs Synthflow | System Compare US",
+"description": "Bland AI vs Synthflow: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Bland AI vs Synthflow"
+},
+"/vs/bland-ai-vs-vapi/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Bland AI vs Vapi | System Compare US",
+"description": "Bland AI vs Vapi: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Bland AI vs Vapi"
+},
+"/vs/brevo-vs-getresponse/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-13",
+"title": "Brevo vs GetResponse | System Compare US",
+"description": "Brevo vs GetResponse: compare documented features, plan limits, pricing context and sources for US buyers.",
+"h1": "Brevo vs GetResponse: match the audience, sends and automation before comparing cost"
+},
+"/vs/brevo-vs-mailchimp/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Brevo vs Mailchimp | System Compare US",
+"description": "Brevo vs Mailchimp: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Brevo vs Mailchimp"
+},
+"/vs/brevo-vs-pulseem/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Brevo vs Pulseem | System Compare US",
+"description": "Brevo vs Pulseem: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Brevo vs Pulseem"
+},
+"/vs/brex-vs-ramp/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Brex vs Ramp | System Compare US",
+"description": "Brex vs Ramp: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Brex vs Ramp"
+},
+"/vs/business-central-vs-sage-intacct/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Business Central vs Sage Intacct | System Compare US",
+"description": "Microsoft Dynamics 365 Business Central vs Sage Intacct: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Microsoft Dynamics 365 Business Central vs Sage Intacct"
+},
+"/vs/calendly-vs-square/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Calendly vs Square | System Compare US",
+"description": "Calendly vs Square: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Calendly vs Square"
+},
+"/vs/clickup-vs-monday-work-management/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-13",
+"title": "ClickUp vs monday work management | System Compare US",
+"description": "ClickUp vs monday work management: compare documented features, plan limits, pricing context and sources for US buyers.",
+"h1": "ClickUp vs monday work management: build the project test before choosing a plan"
+},
+"/vs/clickup-vs-wrike/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "ClickUp vs Wrike | System Compare US",
+"description": "ClickUp vs Wrike: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "ClickUp vs Wrike"
+},
+"/vs/clover-vs-lightspeed-retail/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Clover vs Lightspeed Retail | System Compare US",
+"description": "Clover vs Lightspeed Retail: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Clover vs Lightspeed Retail"
+},
+"/vs/customer-io-vs-klaviyo/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Customer.io vs Klaviyo | System Compare US",
+"description": "Customer.io vs Klaviyo: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Customer.io vs Klaviyo"
+},
+"/vs/deputy-vs-justworks/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Deputy vs Justworks | System Compare US",
+"description": "Deputy vs Justworks: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Deputy vs Justworks"
+},
+"/vs/dialpad-connect-vs-nextiva/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Dialpad Connect vs Nextiva | System Compare US",
+"description": "Dialpad Connect vs Nextiva: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Dialpad Connect vs Nextiva"
+},
+"/vs/dialpad-connect-vs-zoom-phone/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Dialpad Connect vs Zoom Phone | System Compare US",
+"description": "Dialpad Connect vs Zoom Phone: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Dialpad Connect vs Zoom Phone"
+},
+"/vs/document-management-docuware-vs-laserfiche/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "DocuWare vs Laserfiche | System Compare US",
+"description": "Compare DocuWare Cloud 4/15 with Laserfiche Professional/Business: user minimums, storage, records controls, AI units and implementation gaps.",
+"h1": "DocuWare vs Laserfiche: document workflows, licences and annual cost"
+},
+"/vs/domo-vs-looker/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Domo vs Looker | System Compare US",
+"description": "Domo vs Looker: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Domo vs Looker"
+},
+"/vs/domo-vs-qlik-cloud-analytics/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Domo vs Qlik Cloud Analytics | System Compare US",
+"description": "Domo vs Qlik Cloud Analytics: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Domo vs Qlik Cloud Analytics"
+},
+"/vs/dropbox-sign-vs-pandadoc/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Dropbox Sign vs PandaDoc | System Compare US",
+"description": "Dropbox Sign vs PandaDoc: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Dropbox Sign vs PandaDoc"
+},
+"/vs/dropbox-sign-vs-zoho-sign/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Dropbox Sign vs Zoho Sign | System Compare US",
+"description": "Dropbox Sign vs Zoho Sign: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Dropbox Sign vs Zoho Sign"
+},
+"/vs/e-invoicing-storecove-vs-edicom/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Storecove vs EDICOM | System Compare US",
+"description": "A stored factual comparison of two DBNAlliance-listed provider configurations, with no invented public prices or federal-agency eligibility.",
+"h1": "Storecove vs EDICOM: API ownership and managed integration scope"
+},
+"/vs/expensify-vs-navan/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Expensify vs Navan | System Compare US",
+"description": "Expensify vs Navan: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Expensify vs Navan"
+},
+"/vs/freshbooks-vs-wave/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "FreshBooks vs Wave | System Compare US",
+"description": "FreshBooks vs Wave: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "FreshBooks vs Wave"
+},
+"/vs/freshbooks-vs-zoho-books/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "FreshBooks vs Zoho Books | System Compare US",
+"description": "FreshBooks vs Zoho Books: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "FreshBooks vs Zoho Books"
+},
+"/vs/freshdesk-vs-help-scout/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Freshdesk vs Help Scout | System Compare US",
+"description": "Freshdesk vs Help Scout: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Freshdesk vs Help Scout"
+},
+"/vs/freshdesk-vs-intercom/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Freshdesk vs Intercom | System Compare US",
+"description": "Freshdesk vs Intercom: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Freshdesk vs Intercom"
+},
+"/vs/freshdesk-vs-zendesk/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Freshdesk vs Zendesk | System Compare US",
+"description": "Freshdesk vs Zendesk: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Freshdesk vs Zendesk"
+},
+"/vs/freshsales-vs-zoho-crm/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Freshsales vs Zoho CRM | System Compare US",
+"description": "Freshsales vs Zoho CRM: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Freshsales vs Zoho CRM"
+},
+"/vs/front-vs-gorgias/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Front vs Gorgias | System Compare US",
+"description": "Front vs Gorgias: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Front vs Gorgias"
+},
+"/vs/gorgias-vs-help-scout/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Gorgias vs Help Scout | System Compare US",
+"description": "Gorgias vs Help Scout: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Gorgias vs Help Scout"
+},
+"/vs/greenhouse-vs-lever/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Greenhouse vs Lever | System Compare US",
+"description": "Greenhouse vs Lever: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Greenhouse vs Lever"
+},
+"/vs/greenhouse-vs-rippling/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Greenhouse vs Rippling | System Compare US",
+"description": "Greenhouse vs Rippling: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Greenhouse vs Rippling"
+},
+"/vs/hostinger-vs-siteground/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Hostinger vs SiteGround | System Compare US",
+"description": "Hostinger vs SiteGround: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Hostinger vs SiteGround"
+},
+"/vs/hubspot-sales-vs-salesforce-sales/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "HubSpot Sales Hub vs Salesforce Sales | System Compare US",
+"description": "HubSpot Sales Hub vs Salesforce Sales: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "HubSpot Sales Hub vs Salesforce Sales"
+},
+"/vs/invoicing-zoho-invoice-vs-square/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "Zoho Invoice vs Square | System Compare US",
+"description": "Compare Zoho Invoice Free with Square Free/Plus for a fixed US invoicing workload, without treating payment processing as free.",
+"h1": "Zoho Invoice vs Square: free subscriptions, limits and payment costs"
+},
+"/vs/it-service-management-freshservice-vs-manageengine-cloud/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Freshservice vs ServiceDesk Plus Cloud | System Compare US",
+"description": "Freshservice vs ServiceDesk Plus Cloud: compare documented features, plan limits, pricing context and sources for US buyers.",
+"h1": "Freshservice vs ServiceDesk Plus Cloud: agents, assets and change control"
+},
+"/vs/justworks-vs-paychex-flex/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Justworks vs Paychex Flex | System Compare US",
+"description": "Justworks vs Paychex Flex: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Justworks vs Paychex Flex"
+},
+"/vs/learning-management-talentlms-vs-360learning/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-06",
+"title": "TalentLMS vs 360Learning | System Compare US",
+"description": "A dated comparison of TalentLMS Core/Grow and 360Learning Team/Business, with clear billing and module boundaries.",
+"h1": "TalentLMS vs 360Learning: learner counts, paths and plan boundaries"
+},
+"/vs/lemlist-vs-smartlead/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "lemlist vs Smartlead | System Compare US",
+"description": "lemlist vs Smartlead: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "lemlist vs Smartlead"
+},
+"/vs/lightspeed-retail-vs-toast/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Lightspeed Retail vs Toast | System Compare US",
+"description": "Lightspeed Retail vs Toast: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Lightspeed Retail vs Toast"
+},
+"/vs/looker-vs-tableau/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Looker vs Tableau | System Compare US",
+"description": "Looker vs Tableau: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Looker vs Tableau"
+},
+"/vs/mailchimp-vs-pulseem/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Mailchimp vs Pulseem | System Compare US",
+"description": "Mailchimp vs Pulseem: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Mailchimp vs Pulseem"
+},
+"/vs/make-vs-workato/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Make vs Workato | System Compare US",
+"description": "Make vs Workato: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Make vs Workato"
+},
+"/vs/make-vs-zapier/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Make vs Zapier | System Compare US",
+"description": "Make vs Zapier: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Make vs Zapier"
+},
+"/vs/metricool-vs-vista-social/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Metricool vs Vista Social | System Compare US",
+"description": "Metricool vs Vista Social: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Metricool vs Vista Social"
+},
+"/vs/microsoft-copilot-studio-vs-relevance-ai/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Microsoft Copilot Studio vs Relevance AI | System Compare US",
+"description": "Microsoft Copilot Studio vs Relevance AI: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Microsoft Copilot Studio vs Relevance AI"
+},
+"/vs/microsoft-copilot-studio-vs-zendesk/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Microsoft Copilot Studio vs Zendesk | System Compare US",
+"description": "Microsoft Copilot Studio vs Zendesk: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Microsoft Copilot Studio vs Zendesk"
+},
+"/vs/n8n-vs-workato/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "n8n vs Workato | System Compare US",
+"description": "n8n vs Workato: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "n8n vs Workato"
+},
+"/vs/netsuite-vs-sage-intacct/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Oracle NetSuite vs Sage Intacct | System Compare US",
+"description": "Oracle NetSuite vs Sage Intacct: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Oracle NetSuite vs Sage Intacct"
+},
+"/vs/nextiva-vs-ringcentral/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Nextiva vs RingCentral RingEX | System Compare US",
+"description": "Nextiva vs RingCentral RingEX: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Nextiva vs RingCentral RingEX"
+},
+"/vs/nifty-vs-pumble/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Nifty vs Pumble | System Compare US",
+"description": "Nifty vs Pumble: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Nifty vs Pumble"
+},
+"/vs/nordvpn-vs-proton-vpn/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "NordVPN vs Proton VPN | System Compare US",
+"description": "NordVPN vs Proton VPN: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "NordVPN vs Proton VPN"
+},
+"/vs/paypal-vs-square/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "PayPal vs Square | System Compare US",
+"description": "PayPal vs Square: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "PayPal vs Square"
+},
+"/vs/pipedrive-vs-salesforce-sales/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Pipedrive vs Salesforce Sales | System Compare US",
+"description": "Pipedrive vs Salesforce Sales: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Pipedrive vs Salesforce Sales"
+},
+"/vs/pipedrive-vs-zoho-crm/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Pipedrive vs Zoho CRM | System Compare US",
+"description": "Pipedrive vs Zoho CRM: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Pipedrive vs Zoho CRM"
+},
+"/vs/power-bi-vs-tableau/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-13",
+"title": "Microsoft Power BI vs Tableau | System Compare US",
+"description": "Microsoft Power BI vs Tableau: compare documented features, plan limits, pricing context and sources for US buyers.",
+"h1": "Power BI vs Tableau: compare the reporting audience before the licence price"
+},
+"/vs/procurement-precoro-core-vs-procuredesk-startup/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Precoro Core vs ProcureDesk Startup | System Compare US",
+"description": "Compare the request-to-invoice workflow, matching exceptions, OCR, accounting connections and commercial boundaries of two named procurement offers.",
+"h1": "Precoro Core vs ProcureDesk Startup: purchasing and matching"
+},
+"/vs/quickbooks-online-vs-xero/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "QuickBooks Online vs Xero | System Compare US",
+"description": "QuickBooks Online vs Xero: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "QuickBooks Online vs Xero"
+},
+"/vs/quo-vs-zoom-phone/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Quo (formerly OpenPhone) vs Zoom Phone | System Compare US",
+"description": "Quo (formerly OpenPhone) vs Zoom Phone: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Quo (formerly OpenPhone) vs Zoom Phone"
+},
+"/vs/respond-io-vs-retell-ai/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "respond.io vs Retell AI | System Compare US",
+"description": "respond.io vs Retell AI: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "respond.io vs Retell AI"
+},
+"/vs/retell-ai-vs-vapi/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Retell AI vs Vapi | System Compare US",
+"description": "Retell AI vs Vapi: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Retell AI vs Vapi"
+},
+"/vs/rippling-vs-zapier/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Rippling vs Zapier | System Compare US",
+"description": "Rippling vs Zapier: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Rippling vs Zapier"
+},
+"/vs/shopify-vs-square/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Shopify vs Square | System Compare US",
+"description": "Shopify vs Square: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Shopify vs Square"
+},
+"/vs/shopify-vs-toast/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Shopify vs Toast | System Compare US",
+"description": "Shopify vs Toast: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Shopify vs Toast"
+},
+"/vs/simplybook-me-vs-vagaro/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "SimplyBook.me vs Vagaro | System Compare US",
+"description": "SimplyBook.me vs Vagaro: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "SimplyBook.me vs Vagaro"
+},
+"/vs/smartlead-vs-snov-io/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Smartlead vs Snov.io | System Compare US",
+"description": "Smartlead vs Snov.io: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Smartlead vs Snov.io"
+},
+"/vs/smartsheet-vs-wrike/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Smartsheet vs Wrike | System Compare US",
+"description": "Smartsheet vs Wrike: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Smartsheet vs Wrike"
+},
+"/vs/snov-io-vs-woodpecker/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Snov.io vs Woodpecker | System Compare US",
+"description": "Snov.io vs Woodpecker: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Snov.io vs Woodpecker"
+},
+"/vs/square-vs-stripe/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Square vs Stripe | System Compare US",
+"description": "Square vs Stripe: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Square vs Stripe"
+},
+"/vs/squarespace-vs-wix/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Squarespace vs Wix | System Compare US",
+"description": "Squarespace vs Wix: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Squarespace vs Wix"
+},
+"/vs/web-analytics-plausible-business-vs-fathom/": {
+"type": "vs",
+"indexable": true,
+"lastmod": "2026-11-05",
+"title": "Plausible Business vs Fathom | System Compare US",
+"description": "Compare Plausible Business at the displayed 10k tier with Fathom at 100k: API, events, team boundaries, traffic billing and unresolved entitlements.",
+"h1": "Plausible Business vs Fathom: features and traffic limits"
+},
+"/vs/wix-vs-woocommerce/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Wix vs WooCommerce | System Compare US",
+"description": "Wix vs WooCommerce: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Wix vs WooCommerce"
+},
+"/vs/xero-vs-zoho-books/": {
+"type": "vs",
+"indexable": false,
+"lastmod": null,
+"title": "Xero vs Zoho Books | System Compare US",
+"description": "Xero vs Zoho Books: compare documented features, AI, pricing and buyer fit in the US.",
+"h1": "Xero vs Zoho Books"
+}
+}

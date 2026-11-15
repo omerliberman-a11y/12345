@@ -1,0 +1,3180 @@
+{
+ "_about": "Server-side-only data for /software/, /software/{id}/ and /alternatives/{id}/ that is NOT present in catalog.json; extracted from the mirror fetched 2026-11-14. Hosts come from data-destination-host attributes on /go/ links; the full affiliate URLs are held by the server-side /go/ redirect and are not public.",
+ "decisionTemplateVendorIds": [
+  "pipedrive",
+  "salesforce-sales",
+  "twilio",
+  "zoho-crm"
+ ],
+ "directoryCommercialLinkCategoryIds": [
+  "crm",
+  "sms-marketing"
+ ],
+ "affiliateVendorIds": [
+  "agile-crm",
+  "aweber",
+  "breakcold",
+  "clickup",
+  "clockify",
+  "deel",
+  "engagebay",
+  "flowlu",
+  "folk",
+  "getresponse",
+  "invoice-ninja",
+  "lemlist",
+  "livechat",
+  "metricool",
+  "moosend",
+  "nifty",
+  "nocrm",
+  "nordpass",
+  "nordvpn",
+  "nozbe",
+  "odoo",
+  "plaky",
+  "pumble",
+  "relevance-ai",
+  "se-ranking",
+  "siteground",
+  "smartlead",
+  "smartsupp",
+  "snov-io",
+  "suitedash",
+  "systeme-io",
+  "vapi",
+  "vista-social",
+  "woodpecker",
+  "wrike",
+  "zadarma"
+ ],
+ "affiliatePricingLinkVendorIds": [
+  "engagebay"
+ ],
+ "outbound": {
+  "pulseem": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "site.pulseem.com",
+   "vendorUrlHost": "site.pulseem.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "site.pulseem.com",
+   "pricingSourceHost": "site.pulseem.com"
+  },
+  "mailchimp": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "mailchimp.com",
+   "vendorUrlHost": "mailchimp.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "mailchimp.com",
+   "pricingSourceHost": "mailchimp.com"
+  },
+  "brevo": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.brevo.com",
+   "vendorUrlHost": "www.brevo.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "help.brevo.com",
+   "pricingSourceHost": "help.brevo.com"
+  },
+  "getresponse": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "try.getresponsetoday.com",
+   "vendorUrlHost": "www.getresponse.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.getresponse.com",
+   "pricingSourceHost": "www.getresponse.com"
+  },
+  "activecampaign": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.activecampaign.com",
+   "vendorUrlHost": "www.activecampaign.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.activecampaign.com",
+   "pricingSourceHost": "www.activecampaign.com"
+  },
+  "klaviyo": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.klaviyo.com",
+   "vendorUrlHost": "www.klaviyo.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "help.klaviyo.com",
+   "pricingSourceHost": "help.klaviyo.com"
+  },
+  "omnisend": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.omnisend.com",
+   "vendorUrlHost": "www.omnisend.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.omnisend.com",
+   "pricingSourceHost": "www.omnisend.com"
+  },
+  "drip": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.drip.com",
+   "vendorUrlHost": "www.drip.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.drip.com",
+   "pricingSourceHost": "www.drip.com"
+  },
+  "constant-contact": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.constantcontact.com",
+   "vendorUrlHost": "www.constantcontact.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.constantcontact.com",
+   "pricingSourceHost": "www.constantcontact.com"
+  },
+  "kit": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "kit.com",
+   "vendorUrlHost": "kit.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "kit.com",
+   "pricingSourceHost": "kit.com"
+  },
+  "customer-io": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "customer.io",
+   "vendorUrlHost": "customer.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "customer.io",
+   "pricingSourceHost": "customer.io"
+  },
+  "braze": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.braze.com",
+   "vendorUrlHost": "www.braze.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.braze.com",
+   "pricingSourceHost": "www.braze.com"
+  },
+  "iterable": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "iterable.com",
+   "vendorUrlHost": "iterable.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "iterable.com",
+   "pricingSourceHost": "iterable.com"
+  },
+  "attentive": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.attentive.com",
+   "vendorUrlHost": "www.attentive.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.attentive.com",
+   "pricingSourceHost": "www.attentive.com"
+  },
+  "postscript": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "postscript.io",
+   "vendorUrlHost": "postscript.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "postscript.io",
+   "pricingSourceHost": "postscript.io"
+  },
+  "simpletexting": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "simpletexting.com",
+   "vendorUrlHost": "simpletexting.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "simpletexting.com",
+   "pricingSourceHost": "simpletexting.com"
+  },
+  "ez-texting": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.eztexting.com",
+   "vendorUrlHost": "www.eztexting.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.eztexting.com",
+   "pricingSourceHost": "www.eztexting.com"
+  },
+  "twilio": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.twilio.com",
+   "vendorUrlHost": "www.twilio.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.twilio.com",
+   "pricingSourceHost": "www.twilio.com"
+  },
+  "wati": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.wati.io",
+   "vendorUrlHost": "www.wati.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "support.wati.io",
+   "pricingSourceHost": "support.wati.io"
+  },
+  "respond-io": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "respond.io",
+   "vendorUrlHost": "respond.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "respond.io",
+   "pricingSourceHost": "respond.io"
+  },
+  "manychat": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "manychat.com",
+   "vendorUrlHost": "manychat.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "help.manychat.com",
+   "pricingSourceHost": "help.manychat.com"
+  },
+  "retell-ai": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.retellai.com",
+   "vendorUrlHost": "www.retellai.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.retellai.com",
+   "pricingSourceHost": "www.retellai.com"
+  },
+  "vapi": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "vapi.ai",
+   "vendorUrlHost": "vapi.ai",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "vapi.ai",
+   "pricingSourceHost": "vapi.ai"
+  },
+  "bland-ai": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.bland.ai",
+   "vendorUrlHost": "www.bland.ai",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.bland.ai",
+   "pricingSourceHost": "www.bland.ai"
+  },
+  "synthflow": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "synthflow.ai",
+   "vendorUrlHost": "synthflow.ai",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "synthflow.ai",
+   "pricingSourceHost": "synthflow.ai"
+  },
+  "elevenlabs-agents": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "elevenlabs.io",
+   "vendorUrlHost": "elevenlabs.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "elevenlabs.io",
+   "pricingSourceHost": "elevenlabs.io"
+  },
+  "ringcentral": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.ringcentral.com",
+   "vendorUrlHost": "www.ringcentral.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.ringcentral.com",
+   "pricingSourceHost": "www.ringcentral.com"
+  },
+  "nextiva": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.nextiva.com",
+   "vendorUrlHost": "www.nextiva.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.nextiva.com",
+   "pricingSourceHost": "www.nextiva.com"
+  },
+  "dialpad-connect": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.dialpad.com",
+   "vendorUrlHost": "www.dialpad.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.dialpad.com",
+   "pricingSourceHost": "www.dialpad.com"
+  },
+  "zoom-phone": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.zoom.com",
+   "vendorUrlHost": "www.zoom.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.zoom.com",
+   "pricingSourceHost": "www.zoom.com"
+  },
+  "quo": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.quo.com",
+   "vendorUrlHost": "www.quo.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.quo.com",
+   "pricingSourceHost": "www.quo.com"
+  },
+  "quickbooks-online": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "quickbooks.intuit.com",
+   "vendorUrlHost": "quickbooks.intuit.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "quickbooks.intuit.com",
+   "pricingSourceHost": "quickbooks.intuit.com"
+  },
+  "xero": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.xero.com",
+   "vendorUrlHost": "www.xero.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.xero.com",
+   "pricingSourceHost": "www.xero.com"
+  },
+  "zoho-books": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.zoho.com",
+   "vendorUrlHost": "www.zoho.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.zoho.com",
+   "pricingSourceHost": "www.zoho.com"
+  },
+  "freshbooks": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.freshbooks.com",
+   "vendorUrlHost": "www.freshbooks.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.freshbooks.com",
+   "pricingSourceHost": "www.freshbooks.com"
+  },
+  "wave": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.waveapps.com",
+   "vendorUrlHost": "www.waveapps.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.waveapps.com",
+   "pricingSourceHost": "www.waveapps.com"
+  },
+  "netsuite": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.netsuite.com",
+   "vendorUrlHost": "www.netsuite.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.netsuite.com",
+   "pricingSourceHost": "www.netsuite.com"
+  },
+  "sage-intacct": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.sage.com",
+   "vendorUrlHost": "www.sage.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.sage.com",
+   "pricingSourceHost": "www.sage.com"
+  },
+  "business-central": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.microsoft.com",
+   "vendorUrlHost": "www.microsoft.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.microsoft.com",
+   "pricingSourceHost": "www.microsoft.com"
+  },
+  "acumatica": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.acumatica.com",
+   "vendorUrlHost": "www.acumatica.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "erp.acumatica.com",
+   "pricingSourceHost": "erp.acumatica.com"
+  },
+  "sap-business-one": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.sap.com",
+   "vendorUrlHost": "www.sap.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.sap.com",
+   "pricingSourceHost": "www.sap.com"
+  },
+  "stripe": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "stripe.com",
+   "vendorUrlHost": "stripe.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "stripe.com",
+   "pricingSourceHost": "stripe.com"
+  },
+  "square": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "squareup.com",
+   "vendorUrlHost": "squareup.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "squareup.com",
+   "pricingSourceHost": "squareup.com"
+  },
+  "paypal": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.paypal.com",
+   "vendorUrlHost": "www.paypal.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.paypal.com",
+   "pricingSourceHost": "www.paypal.com"
+  },
+  "adyen": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.adyen.com",
+   "vendorUrlHost": "www.adyen.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.adyen.com",
+   "pricingSourceHost": "www.adyen.com"
+  },
+  "authorize-net": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.authorize.net",
+   "vendorUrlHost": "www.authorize.net",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.authorize.net",
+   "pricingSourceHost": "www.authorize.net"
+  },
+  "shopify": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.shopify.com",
+   "vendorUrlHost": "www.shopify.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.shopify.com",
+   "pricingSourceHost": "www.shopify.com"
+  },
+  "toast": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "pos.toasttab.com",
+   "vendorUrlHost": "pos.toasttab.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "pos.toasttab.com",
+   "pricingSourceHost": "pos.toasttab.com"
+  },
+  "lightspeed-retail": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.lightspeedhq.com",
+   "vendorUrlHost": "www.lightspeedhq.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.lightspeedhq.com",
+   "pricingSourceHost": "www.lightspeedhq.com"
+  },
+  "clover": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.clover.com",
+   "vendorUrlHost": "www.clover.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.clover.com",
+   "pricingSourceHost": "www.clover.com"
+  },
+  "calendly": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "calendly.com",
+   "vendorUrlHost": "calendly.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "calendly.com",
+   "pricingSourceHost": "calendly.com"
+  },
+  "acuity-scheduling": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "acuityscheduling.com",
+   "vendorUrlHost": "acuityscheduling.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "acuityscheduling.com",
+   "pricingSourceHost": "acuityscheduling.com"
+  },
+  "vagaro": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.vagaro.com",
+   "vendorUrlHost": "www.vagaro.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.vagaro.com",
+   "pricingSourceHost": "www.vagaro.com"
+  },
+  "simplybook-me": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "simplybook.me",
+   "vendorUrlHost": "simplybook.me",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "simplybook.me",
+   "pricingSourceHost": "simplybook.me"
+  },
+  "docusign": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.docusign.com",
+   "vendorUrlHost": "www.docusign.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "ecom.docusign.com",
+   "pricingSourceHost": "ecom.docusign.com"
+  },
+  "adobe-acrobat": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.adobe.com",
+   "vendorUrlHost": "www.adobe.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.adobe.com",
+   "pricingSourceHost": "www.adobe.com"
+  },
+  "pandadoc": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.pandadoc.com",
+   "vendorUrlHost": "www.pandadoc.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.pandadoc.com",
+   "pricingSourceHost": "www.pandadoc.com"
+  },
+  "dropbox-sign": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "sign.dropbox.com",
+   "vendorUrlHost": "sign.dropbox.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "sign.dropbox.com",
+   "pricingSourceHost": "sign.dropbox.com"
+  },
+  "zoho-sign": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.zoho.com",
+   "vendorUrlHost": "www.zoho.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.zoho.com",
+   "pricingSourceHost": "www.zoho.com"
+  },
+  "ramp": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "ramp.com",
+   "vendorUrlHost": "ramp.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "ramp.com",
+   "pricingSourceHost": "ramp.com"
+  },
+  "brex": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.brex.com",
+   "vendorUrlHost": "www.brex.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.brex.com",
+   "pricingSourceHost": "www.brex.com"
+  },
+  "bill": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.bill.com",
+   "vendorUrlHost": "www.bill.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.bill.com",
+   "pricingSourceHost": "www.bill.com"
+  },
+  "expensify": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.expensify.com",
+   "vendorUrlHost": "www.expensify.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.expensify.com",
+   "pricingSourceHost": "www.expensify.com"
+  },
+  "navan": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "navan.com",
+   "vendorUrlHost": "navan.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "navan.com",
+   "pricingSourceHost": "navan.com"
+  },
+  "bigcommerce": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.bigcommerce.com",
+   "vendorUrlHost": "www.bigcommerce.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.bigcommerce.com",
+   "pricingSourceHost": "www.bigcommerce.com"
+  },
+  "woocommerce": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "woocommerce.com",
+   "vendorUrlHost": "woocommerce.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "woocommerce.com",
+   "pricingSourceHost": "woocommerce.com"
+  },
+  "wix": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.wix.com",
+   "vendorUrlHost": "www.wix.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.wix.com",
+   "pricingSourceHost": "www.wix.com"
+  },
+  "squarespace": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.squarespace.com",
+   "vendorUrlHost": "www.squarespace.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.squarespace.com",
+   "pricingSourceHost": "www.squarespace.com"
+  },
+  "gusto": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "gusto.com",
+   "vendorUrlHost": "gusto.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "gusto.com",
+   "pricingSourceHost": "gusto.com"
+  },
+  "bamboohr": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.bamboohr.com",
+   "vendorUrlHost": "www.bamboohr.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.bamboohr.com",
+   "pricingSourceHost": "www.bamboohr.com"
+  },
+  "rippling": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.rippling.com",
+   "vendorUrlHost": "www.rippling.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.rippling.com",
+   "pricingSourceHost": "www.rippling.com"
+  },
+  "adp-workforce-now": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.adp.com",
+   "vendorUrlHost": "www.adp.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.adp.com",
+   "pricingSourceHost": "www.adp.com"
+  },
+  "paychex-flex": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.paychex.com",
+   "vendorUrlHost": "www.paychex.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.paychex.com",
+   "pricingSourceHost": "www.paychex.com"
+  },
+  "justworks": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.justworks.com",
+   "vendorUrlHost": "www.justworks.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.justworks.com",
+   "pricingSourceHost": "www.justworks.com"
+  },
+  "deel": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "get.deel.com",
+   "vendorUrlHost": "www.deel.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.deel.com",
+   "pricingSourceHost": "www.deel.com"
+  },
+  "onpay": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "onpay.com",
+   "vendorUrlHost": "onpay.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "onpay.com",
+   "pricingSourceHost": "onpay.com"
+  },
+  "deputy": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.deputy.com",
+   "vendorUrlHost": "www.deputy.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.deputy.com",
+   "pricingSourceHost": "www.deputy.com"
+  },
+  "homebase": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.joinhomebase.com",
+   "vendorUrlHost": "www.joinhomebase.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.joinhomebase.com",
+   "pricingSourceHost": "www.joinhomebase.com"
+  },
+  "when-i-work": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "wheniwork.com",
+   "vendorUrlHost": "wheniwork.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "wheniwork.com",
+   "pricingSourceHost": "wheniwork.com"
+  },
+  "clockify": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "clockify.me",
+   "vendorUrlHost": "clockify.me",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "clockify.me",
+   "pricingSourceHost": "clockify.me"
+  },
+  "asana": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "asana.com",
+   "vendorUrlHost": "asana.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "asana.com",
+   "pricingSourceHost": "asana.com"
+  },
+  "monday-work-management": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "monday.com",
+   "vendorUrlHost": "monday.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "monday.com",
+   "pricingSourceHost": "monday.com"
+  },
+  "clickup": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "try.web.clickup.com",
+   "vendorUrlHost": "clickup.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "clickup.com",
+   "pricingSourceHost": "clickup.com"
+  },
+  "wrike": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "get.wrike.com",
+   "vendorUrlHost": "www.wrike.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.wrike.com",
+   "pricingSourceHost": "www.wrike.com"
+  },
+  "smartsheet": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.smartsheet.com",
+   "vendorUrlHost": "www.smartsheet.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.smartsheet.com",
+   "pricingSourceHost": "www.smartsheet.com"
+  },
+  "notion": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.notion.com",
+   "vendorUrlHost": "www.notion.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.notion.com",
+   "pricingSourceHost": "www.notion.com"
+  },
+  "power-bi": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.microsoft.com",
+   "vendorUrlHost": "www.microsoft.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.microsoft.com",
+   "pricingSourceHost": "www.microsoft.com"
+  },
+  "tableau": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.tableau.com",
+   "vendorUrlHost": "www.tableau.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.tableau.com",
+   "pricingSourceHost": "www.tableau.com"
+  },
+  "looker": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "cloud.google.com",
+   "vendorUrlHost": "cloud.google.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "cloud.google.com",
+   "pricingSourceHost": "cloud.google.com"
+  },
+  "domo": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.domo.com",
+   "vendorUrlHost": "www.domo.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.domo.com",
+   "pricingSourceHost": "www.domo.com"
+  },
+  "qlik-cloud-analytics": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.qlik.com",
+   "vendorUrlHost": "www.qlik.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.qlik.com",
+   "pricingSourceHost": "www.qlik.com"
+  },
+  "greenhouse": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.greenhouse.com",
+   "vendorUrlHost": "www.greenhouse.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.greenhouse.com",
+   "pricingSourceHost": "www.greenhouse.com"
+  },
+  "lever": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.lever.co",
+   "vendorUrlHost": "www.lever.co",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.lever.co",
+   "pricingSourceHost": "www.lever.co"
+  },
+  "ashby": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.ashbyhq.com",
+   "vendorUrlHost": "www.ashbyhq.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.ashbyhq.com",
+   "pricingSourceHost": "www.ashbyhq.com"
+  },
+  "workable": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.workable.com",
+   "vendorUrlHost": "www.workable.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.workable.com",
+   "pricingSourceHost": "www.workable.com"
+  },
+  "zapier": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "zapier.com",
+   "vendorUrlHost": "zapier.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "zapier.com",
+   "pricingSourceHost": "zapier.com"
+  },
+  "make": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.make.com",
+   "vendorUrlHost": "www.make.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.make.com",
+   "pricingSourceHost": "www.make.com"
+  },
+  "workato": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.workato.com",
+   "vendorUrlHost": "www.workato.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "docs.workato.com",
+   "pricingSourceHost": "docs.workato.com"
+  },
+  "n8n": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "n8n.io",
+   "vendorUrlHost": "n8n.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "n8n.io",
+   "pricingSourceHost": "n8n.io"
+  },
+  "power-automate": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.microsoft.com",
+   "vendorUrlHost": "www.microsoft.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.microsoft.com",
+   "pricingSourceHost": "www.microsoft.com"
+  },
+  "hubspot-sales": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.hubspot.com",
+   "vendorUrlHost": "www.hubspot.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.hubspot.com",
+   "pricingSourceHost": "www.hubspot.com"
+  },
+  "salesforce-sales": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.salesforce.com",
+   "vendorUrlHost": "www.salesforce.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.salesforce.com",
+   "pricingSourceHost": "www.salesforce.com"
+  },
+  "pipedrive": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.pipedrive.com",
+   "vendorUrlHost": "www.pipedrive.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.pipedrive.com",
+   "pricingSourceHost": "www.pipedrive.com"
+  },
+  "zoho-crm": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.zoho.com",
+   "vendorUrlHost": "www.zoho.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.zoho.com",
+   "pricingSourceHost": "www.zoho.com"
+  },
+  "freshsales": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.freshworks.com",
+   "vendorUrlHost": "www.freshworks.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.freshworks.com",
+   "pricingSourceHost": "www.freshworks.com"
+  },
+  "close": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "close.com",
+   "vendorUrlHost": "close.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "close.com",
+   "pricingSourceHost": "close.com"
+  },
+  "attio": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "attio.com",
+   "vendorUrlHost": "attio.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "attio.com",
+   "pricingSourceHost": "attio.com"
+  },
+  "intercom": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.intercom.com",
+   "vendorUrlHost": "www.intercom.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.intercom.com",
+   "pricingSourceHost": "www.intercom.com"
+  },
+  "freshdesk": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.freshworks.com",
+   "vendorUrlHost": "www.freshworks.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.freshworks.com",
+   "pricingSourceHost": "www.freshworks.com"
+  },
+  "help-scout": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.helpscout.com",
+   "vendorUrlHost": "www.helpscout.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.helpscout.com",
+   "pricingSourceHost": "www.helpscout.com"
+  },
+  "gorgias": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.gorgias.com",
+   "vendorUrlHost": "www.gorgias.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.gorgias.com",
+   "pricingSourceHost": "www.gorgias.com"
+  },
+  "front": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "front.com",
+   "vendorUrlHost": "front.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "front.com",
+   "pricingSourceHost": "front.com"
+  },
+  "zendesk": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.zendesk.com",
+   "vendorUrlHost": "www.zendesk.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.zendesk.com",
+   "pricingSourceHost": "www.zendesk.com"
+  },
+  "microsoft-copilot-studio": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.microsoft.com",
+   "vendorUrlHost": "www.microsoft.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.microsoft.com",
+   "pricingSourceHost": "www.microsoft.com"
+  },
+  "relevance-ai": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "relevanceai.com",
+   "vendorUrlHost": "relevanceai.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "relevanceai.com",
+   "pricingSourceHost": "relevanceai.com"
+  },
+  "botpress": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "botpress.com",
+   "vendorUrlHost": "botpress.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "botpress.com",
+   "pricingSourceHost": "botpress.com"
+  },
+  "se-ranking": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "seranking.com",
+   "vendorUrlHost": "seranking.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "seranking.com",
+   "pricingSourceHost": "seranking.com"
+  },
+  "ahrefs": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "ahrefs.com",
+   "vendorUrlHost": "ahrefs.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "ahrefs.com",
+   "pricingSourceHost": "ahrefs.com"
+  },
+  "vista-social": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "vistasocial.com",
+   "vendorUrlHost": "vistasocial.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "vistasocial.com",
+   "pricingSourceHost": "vistasocial.com"
+  },
+  "metricool": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "i.mtr.cool",
+   "vendorUrlHost": "metricool.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "metricool.com",
+   "pricingSourceHost": "metricool.com"
+  },
+  "siteground": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.siteground.com",
+   "vendorUrlHost": "www.siteground.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.siteground.com",
+   "pricingSourceHost": "www.siteground.com"
+  },
+  "hostinger": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "www.hostinger.com",
+   "vendorUrlHost": "www.hostinger.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.hostinger.com",
+   "pricingSourceHost": "www.hostinger.com"
+  },
+  "nordvpn": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "go.nordvpn.net",
+   "vendorUrlHost": "nordvpn.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "nordvpn.com",
+   "pricingSourceHost": "nordvpn.com"
+  },
+  "proton-vpn": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "protonvpn.com",
+   "vendorUrlHost": "protonvpn.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "protonvpn.com",
+   "pricingSourceHost": "protonvpn.com"
+  },
+  "woodpecker": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "woodpecker.co",
+   "vendorUrlHost": "woodpecker.co",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "woodpecker.co",
+   "pricingSourceHost": "woodpecker.co"
+  },
+  "snov-io": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "snov.io",
+   "vendorUrlHost": "snov.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "snov.io",
+   "pricingSourceHost": "snov.io"
+  },
+  "smartlead": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "smartlead.ai",
+   "vendorUrlHost": "www.smartlead.ai",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "helpcenter.smartlead.ai",
+   "pricingSourceHost": "helpcenter.smartlead.ai"
+  },
+  "lemlist": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "get.lemlist.com",
+   "vendorUrlHost": "www.lemlist.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.lemlist.com",
+   "pricingSourceHost": "www.lemlist.com"
+  },
+  "systeme-io": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "systeme.io",
+   "vendorUrlHost": "systeme.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "systeme.io",
+   "pricingSourceHost": "systeme.io"
+  },
+  "moosend": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "trymoo.moosend.com",
+   "vendorUrlHost": "moosend.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "moosend.com",
+   "pricingSourceHost": "moosend.com"
+  },
+  "aweber": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.aweber.com",
+   "vendorUrlHost": "www.aweber.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "docs.aweber.com",
+   "pricingSourceHost": "docs.aweber.com"
+  },
+  "agile-crm": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "my.agilecrm.com",
+   "vendorUrlHost": "www.agilecrm.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.agilecrm.com",
+   "pricingSourceHost": "www.agilecrm.com"
+  },
+  "nocrm": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.nocrm.io",
+   "vendorUrlHost": "www.nocrm.io",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.nocrm.io",
+   "pricingSourceHost": "www.nocrm.io"
+  },
+  "folk": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "try.folk.app",
+   "vendorUrlHost": "www.folk.app",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.folk.app",
+   "pricingSourceHost": "www.folk.app"
+  },
+  "breakcold": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.breakcold.com",
+   "vendorUrlHost": "www.breakcold.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.breakcold.com",
+   "pricingSourceHost": "www.breakcold.com"
+  },
+  "engagebay": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.awin1.com",
+   "vendorUrlHost": "www.engagebay.com",
+   "pricingAffiliate": true,
+   "pricingDestinationHost": "www.awin1.com",
+   "pricingSourceHost": "www.engagebay.com"
+  },
+  "livechat": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.livechat.com",
+   "vendorUrlHost": "www.livechat.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.livechat.com",
+   "pricingSourceHost": "www.livechat.com"
+  },
+  "smartsupp": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.smartsupp.com",
+   "vendorUrlHost": "www.smartsupp.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.smartsupp.com",
+   "pricingSourceHost": "www.smartsupp.com"
+  },
+  "flowlu": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.flowlu.com",
+   "vendorUrlHost": "www.flowlu.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "www.flowlu.com",
+   "pricingSourceHost": "www.flowlu.com"
+  },
+  "suitedash": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "suitedash.com",
+   "vendorUrlHost": "suitedash.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "suitedash.com",
+   "pricingSourceHost": "suitedash.com"
+  },
+  "nozbe": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "get.nozbe.com",
+   "vendorUrlHost": "nozbe.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "nozbe.com",
+   "pricingSourceHost": "nozbe.com"
+  },
+  "nifty": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "niftypm.com",
+   "vendorUrlHost": "niftypm.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "niftypm.com",
+   "pricingSourceHost": "niftypm.com"
+  },
+  "pumble": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "pumble.com",
+   "vendorUrlHost": "pumble.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "pumble.com",
+   "pricingSourceHost": "pumble.com"
+  },
+  "plaky": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "plaky.com",
+   "vendorUrlHost": "plaky.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "plaky.com",
+   "pricingSourceHost": "plaky.com"
+  },
+  "invoice-ninja": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "app.invoicing.co",
+   "vendorUrlHost": "invoiceninja.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "invoiceninja.com",
+   "pricingSourceHost": "invoiceninja.com"
+  },
+  "nordpass": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "go.nordpass.io",
+   "vendorUrlHost": "nordpass.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "nordpass.com",
+   "pricingSourceHost": "nordpass.com"
+  },
+  "zadarma": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "zadarma.com",
+   "vendorUrlHost": "zadarma.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "zadarma.com",
+   "pricingSourceHost": "zadarma.com"
+  },
+  "odoo": {
+   "websiteAffiliate": true,
+   "websiteDestinationHost": "www.odoo.com",
+   "vendorUrlHost": "www.odoo.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "raw.githubusercontent.com",
+   "pricingSourceHost": "raw.githubusercontent.com"
+  },
+  "1password-business": {
+   "websiteAffiliate": false,
+   "websiteDestinationHost": "1password.com",
+   "vendorUrlHost": "1password.com",
+   "pricingAffiliate": false,
+   "pricingDestinationHost": "1password.com",
+   "pricingSourceHost": "1password.com"
+  }
+ },
+ "hreflang": {
+  "/software/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/"
+   ]
+  ],
+  "/software/pulseem/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/pulseem/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/pulseem/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/pulseem"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/pulseem/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/pulseem/"
+   ]
+  ],
+  "/software/mailchimp/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/mailchimp/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/mailchimp"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/mailchimp/"
+   ]
+  ],
+  "/software/brevo/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/brevo/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/brevo"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/brevo/"
+   ]
+  ],
+  "/software/getresponse/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/getresponse/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/getresponse/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/getresponse"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/getresponse/"
+   ]
+  ],
+  "/software/activecampaign/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/activecampaign/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/activecampaign"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/activecampaign/"
+   ]
+  ],
+  "/software/klaviyo/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/klaviyo/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/klaviyo"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/klaviyo/"
+   ]
+  ],
+  "/software/omnisend/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/omnisend/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/omnisend"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/omnisend/"
+   ]
+  ],
+  "/software/wati/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/wati/"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/wati/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/wati/"
+   ]
+  ],
+  "/software/respond-io/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/respond-io/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/respond-io"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/respond-io/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/respond-io/"
+   ]
+  ],
+  "/software/xero/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/xero/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/xero"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/xero/"
+   ]
+  ],
+  "/software/netsuite/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/netsuite/"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/netsuite/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/netsuite/"
+   ]
+  ],
+  "/software/stripe/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/stripe/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/stripe/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/stripe"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/stripe/"
+   ]
+  ],
+  "/software/square/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/square/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/square"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/square/"
+   ]
+  ],
+  "/software/paypal/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/paypal/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/paypal/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/paypal/"
+   ]
+  ],
+  "/software/shopify/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/shopify/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/shopify"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/shopify/"
+   ]
+  ],
+  "/software/calendly/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/calendly/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/calendly"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/calendly/"
+   ]
+  ],
+  "/software/docusign/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/docusign/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/docusign/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/docusign"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/docusign/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/docusign/"
+   ]
+  ],
+  "/software/dropbox-sign/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/dropbox-sign/"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/dropbox-sign/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/dropbox-sign/"
+   ]
+  ],
+  "/software/zoho-sign/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/zoho-sign/"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/zoho-sign/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/zoho-sign/"
+   ]
+  ],
+  "/software/bigcommerce/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/bigcommerce/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/bigcommerce"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/bigcommerce/"
+   ]
+  ],
+  "/software/woocommerce/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/woocommerce/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/woocommerce"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/woocommerce/"
+   ]
+  ],
+  "/software/asana/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/asana/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/asana/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/asana"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/asana/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/asana/"
+   ]
+  ],
+  "/software/clickup/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/clickup/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/clickup/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/clickup"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/clickup/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/clickup/"
+   ]
+  ],
+  "/software/notion/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/notion/"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/notion/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/notion/"
+   ]
+  ],
+  "/software/power-bi/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/power-bi/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/power-bi/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/power-bi"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/power-bi/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/power-bi/"
+   ]
+  ],
+  "/software/tableau/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/tableau/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/tableau/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/tableau"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/tableau/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/tableau/"
+   ]
+  ],
+  "/software/zapier/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/zapier/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/zapier"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/zapier/"
+   ]
+  ],
+  "/software/make/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/make/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/make"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/make/"
+   ]
+  ],
+  "/software/hubspot-sales/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/hubspot-sales/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/hubspot/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/hubspot-crm"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/hubspot/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/hubspot-sales/"
+   ]
+  ],
+  "/software/pipedrive/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/pipedrive/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/pipedrive/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/pipedrive"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/pipedrive/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/pipedrive/"
+   ]
+  ],
+  "/software/zoho-crm/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/zoho-crm/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/zoho-crm/"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/zoho-crm/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/zoho-crm/"
+   ]
+  ],
+  "/software/intercom/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/intercom/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/intercom"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/intercom/"
+   ]
+  ],
+  "/software/freshdesk/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/freshdesk/"
+   ],
+   [
+    "pl-PL",
+    "https://systemcompare.pl/software/freshdesk/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/freshdesk"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/freshdesk/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/freshdesk/"
+   ]
+  ],
+  "/software/zendesk/": [
+   [
+    "en-US",
+    "https://system-compare.com/software/zendesk/"
+   ],
+   [
+    "en-GB",
+    "https://systemcompare.co.uk/software/zendesk"
+   ],
+   [
+    "he-IL",
+    "https://systemcompare.co.il/software/zendesk/"
+   ],
+   [
+    "x-default",
+    "https://system-compare.com/software/zendesk/"
+   ]
+  ]
+ },
+ "livechatTextProductFamilyHtml": "<section class=\"plan-options section panel container\" id=\"text-product-family\"><h2>ChatBot, HelpDesk and the Text platform</h2><p>Current new-customer pricing for these brands points to Text. Compare the current suite once; do not assume an existing ChatBot or HelpDesk account has the same rights. Ask the supplier about legacy-plan migration.</p><ul><li><strong>ChatBot</strong> · <a href=\"https://www.chatbot.com/?a=I0Iv_SjvR&amp;utm_campaign=pp_chatbot-default&amp;utm_source=PP\" rel=\"sponsored nofollow noopener noreferrer\" target=\"_blank\">ChatBot ↗ · Ad · affiliate link</a> · <a href=\"https://www.chatbot.com/pricing/\" rel=\"noopener noreferrer\" target=\"_blank\">Current plan source ↗</a></li><li><strong>HelpDesk</strong> · <a href=\"https://www.helpdesk.com/?a=I0Iv_SjvR&amp;utm_campaign=pp_helpdesk-default&amp;utm_source=PP\" rel=\"sponsored nofollow noopener noreferrer\" target=\"_blank\">HelpDesk ↗ · Ad · affiliate link</a> · <a href=\"https://www.helpdesk.com/pricing/\" rel=\"noopener noreferrer\" target=\"_blank\">Current plan source ↗</a></li></ul></section>",
+ "head": {
+  "pulseem": {
+   "title": "Pulseem: pricing & features | System Compare US",
+   "description": "A combined email, SMS, WhatsApp and automation platform with native AI creation, customer-data analysis, and connections to external AI assistants.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Pulseem alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Pulseem.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "mailchimp": {
+   "title": "Mailchimp: pricing & features | System Compare US",
+   "description": "An email-centered marketing platform with audience tools, automated journeys, store connections and a paid SMS extension.",
+   "ogImage": "https://system-compare.com/assets/research-cards/mailchimp.png",
+   "alternativesTitle": "Mailchimp alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Mailchimp.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "brevo": {
+   "title": "Brevo: pricing & features | System Compare US",
+   "description": "A marketing suite combining email, automation and prepaid messaging, with Aura AI and optional sales/conversation tools.",
+   "ogImage": "https://system-compare.com/assets/research-cards/brevo.png",
+   "alternativesTitle": "Brevo alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Brevo.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "getresponse": {
+   "title": "GetResponse: pricing & features | System Compare US",
+   "description": "Email and lifecycle marketing with landing pages, commerce automation and creator features; enterprise adds advanced messaging options.",
+   "ogImage": "https://system-compare.com/assets/research-cards/getresponse.png",
+   "alternativesTitle": "GetResponse alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to GetResponse.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "activecampaign": {
+   "title": "ActiveCampaign: pricing & features | System Compare US",
+   "description": "Marketing automation with a visual workflow engine, connected email/SMS/WhatsApp and Active Intelligence campaign assistance.",
+   "ogImage": "https://system-compare.com/assets/research-cards/activecampaign.png",
+   "alternativesTitle": "ActiveCampaign alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to ActiveCampaign.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "klaviyo": {
+   "title": "Klaviyo: pricing & features | System Compare US",
+   "description": "A commerce-oriented customer platform combining profiles, email, mobile messaging and AI-assisted campaign operations.",
+   "ogImage": "https://system-compare.com/assets/research-cards/klaviyo.png",
+   "alternativesTitle": "Klaviyo alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Klaviyo.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "omnisend": {
+   "title": "Omnisend: pricing & features | System Compare US",
+   "description": "Ecommerce email, web push and SMS automation with store-driven segmentation and plan-specific AI features.",
+   "ogImage": "https://system-compare.com/assets/research-cards/omnisend.png",
+   "alternativesTitle": "Omnisend alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Omnisend.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "drip": {
+   "title": "Drip: pricing & features | System Compare US",
+   "description": "B2C email automation centered on purchase behavior, customer lifecycle stages and store revenue.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Drip alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Drip.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "constant-contact": {
+   "title": "Constant Contact: pricing & features | System Compare US",
+   "description": "Small-business email and SMS marketing with templates, segmentation, preset automations and AI content assistance.",
+   "ogImage": "https://system-compare.com/assets/research-cards/constant-contact.png",
+   "alternativesTitle": "Constant Contact alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Constant Contact.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "kit": {
+   "title": "Kit: pricing & features | System Compare US",
+   "description": "Creator-focused email software with audience tags, sequences, recommendations, digital-product selling and AI connectors.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Kit alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Kit.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "customer-io": {
+   "title": "Customer.io: pricing & features | System Compare US",
+   "description": "Data-driven messaging with event-based journeys, customer/object profiles, APIs, native channels and a credit-based AI agent.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Customer.io alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Customer.io.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "braze": {
+   "title": "Braze: pricing & features | System Compare US",
+   "description": "Enterprise customer engagement linking live customer data with cross-channel orchestration, experimentation and BrazeAI.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Braze alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Braze.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "marketing-automation"
+  },
+  "iterable": {
+   "title": "Iterable: pricing & features | System Compare US",
+   "description": "Enterprise customer engagement with real-time journeys, cross-channel messaging and Nova AI analysis and orchestration.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Iterable alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Iterable.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "marketing-automation"
+  },
+  "attentive": {
+   "title": "Attentive: pricing & features | System Compare US",
+   "description": "Retail-oriented lifecycle messaging combining SMS, email, RCS and push with identity tools and optional predictive AI products.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Attentive alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Attentive.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "sms-marketing"
+  },
+  "postscript": {
+   "title": "Postscript: pricing & features | System Compare US",
+   "description": "Shopify-oriented retention marketing with SMS/RCS, email and a paid AI bundle for personalized messaging.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Postscript alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Postscript.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "sms-marketing"
+  },
+  "simpletexting": {
+   "title": "SimpleTexting: pricing & features | System Compare US",
+   "description": "A small-business texting platform for broadcasts, two-way conversations, drip campaigns and opt-in collection.",
+   "ogImage": "https://system-compare.com/assets/research-cards/simpletexting.png",
+   "alternativesTitle": "SimpleTexting alternatives | System Compare US",
+   "alternativesDescription": "Explore researched SMS marketing alternatives to SimpleTexting.",
+   "alternativesDefaultCategory": "sms-marketing",
+   "shortlistCategory": "sms-marketing"
+  },
+  "ez-texting": {
+   "title": "EZ Texting: pricing & features | System Compare US",
+   "description": "Small-business SMS/MMS/RCS campaigns with a shared inbox, opt-in tools, workflows and AI drafting/reply features.",
+   "ogImage": "https://system-compare.com/assets/research-cards/ez-texting.png",
+   "alternativesTitle": "EZ Texting alternatives | System Compare US",
+   "alternativesDescription": "Explore researched SMS marketing alternatives to EZ Texting.",
+   "alternativesDefaultCategory": "sms-marketing",
+   "shortlistCategory": "sms-marketing"
+  },
+  "twilio": {
+   "title": "Twilio: pricing & features | System Compare US",
+   "description": "Programmable communications APIs for building SMS and WhatsApp workflows, with usage-based rates and optional messaging tools.",
+   "ogImage": "https://system-compare.com/assets/research-cards/twilio.png",
+   "alternativesTitle": "Twilio alternatives | System Compare US",
+   "alternativesDescription": "Explore researched SMS marketing alternatives to Twilio.",
+   "alternativesDefaultCategory": "sms-marketing",
+   "shortlistCategory": "sms-marketing"
+  },
+  "wati": {
+   "title": "Wati: pricing & features | System Compare US",
+   "description": "WhatsApp-centered team messaging with workflow automation, business integrations and current AI copilot/agent options.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Wati alternatives | System Compare US",
+   "alternativesDescription": "Explore researched WhatsApp Business alternatives to Wati.",
+   "alternativesDefaultCategory": "whatsapp-business",
+   "shortlistCategory": "whatsapp-business"
+  },
+  "respond-io": {
+   "title": "respond.io: pricing & features | System Compare US",
+   "description": "An omnichannel conversation workspace with shared inboxes, routing, workflows and AI agents for chat and voice.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "respond.io alternatives | System Compare US",
+   "alternativesDescription": "Explore researched WhatsApp Business alternatives to respond.io.",
+   "alternativesDefaultCategory": "whatsapp-business",
+   "shortlistCategory": "whatsapp-business"
+  },
+  "manychat": {
+   "title": "Manychat: pricing & features | System Compare US",
+   "description": "Social and messaging automation that connects audience acquisition, conversations and an inbox across channels.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Manychat alternatives | System Compare US",
+   "alternativesDescription": "Explore researched WhatsApp Business alternatives to Manychat.",
+   "alternativesDefaultCategory": "whatsapp-business",
+   "shortlistCategory": "whatsapp-business"
+  },
+  "retell-ai": {
+   "title": "Retell AI: pricing & features | System Compare US",
+   "description": "A voice-agent platform with phone and web deployment, conversation flows, tools, simulation testing and call monitoring.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Retell AI alternatives | System Compare US",
+   "alternativesDescription": "Explore researched AI voice agents alternatives to Retell AI.",
+   "alternativesDefaultCategory": "ai-voice-agents",
+   "shortlistCategory": "ai-voice-agents"
+  },
+  "vapi": {
+   "title": "Vapi: pricing & features | System Compare US",
+   "description": "Developer-oriented voice-agent infrastructure with configurable speech/model providers, tools, assistants and multi-agent handoffs.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Vapi alternatives | System Compare US",
+   "alternativesDescription": "Explore researched AI voice agents alternatives to Vapi.",
+   "alternativesDefaultCategory": "ai-voice-agents",
+   "shortlistCategory": "ai-voice-agents"
+  },
+  "bland-ai": {
+   "title": "Bland AI: pricing & features | System Compare US",
+   "description": "AI phone automation with node-based Conversational Pathways, webhook actions, knowledge nodes and transfer controls.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Bland AI alternatives | System Compare US",
+   "alternativesDescription": "Explore researched AI voice agents alternatives to Bland AI.",
+   "alternativesDefaultCategory": "ai-voice-agents",
+   "shortlistCategory": "ai-voice-agents"
+  },
+  "synthflow": {
+   "title": "Synthflow: pricing & features | System Compare US",
+   "description": "Enterprise voice-agent deployment sold with scoped capacity, integrations, telephony and launch support.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Synthflow alternatives | System Compare US",
+   "alternativesDescription": "Explore researched AI voice agents alternatives to Synthflow.",
+   "alternativesDefaultCategory": "ai-voice-agents",
+   "shortlistCategory": "ai-voice-agents"
+  },
+  "elevenlabs-agents": {
+   "title": "ElevenLabs Agents: pricing & features | System Compare US",
+   "description": "Voice and multimodal agents with speech models, workflows, knowledge retrieval, tools, telephony and application SDKs.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "ElevenLabs Agents alternatives | System Compare US",
+   "alternativesDescription": "Explore researched AI voice agents alternatives to ElevenLabs Agents.",
+   "alternativesDefaultCategory": "ai-voice-agents",
+   "shortlistCategory": "ai-voice-agents"
+  },
+  "ringcentral": {
+   "title": "RingCentral RingEX: pricing & features | System Compare US",
+   "description": "Cloud business phone and team communications with US/Canada calling, routing, app integrations and tier-based AI assistance.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "RingCentral RingEX alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business phone systems alternatives to RingCentral RingEX.",
+   "alternativesDefaultCategory": "cloud-pbx",
+   "shortlistCategory": "cloud-pbx"
+  },
+  "nextiva": {
+   "title": "Nextiva: pricing & features | System Compare US",
+   "description": "Business calling and team communications with tiered routing, SMS, customer-engagement features and optional XBert AI.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Nextiva alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business phone systems alternatives to Nextiva.",
+   "alternativesDefaultCategory": "cloud-pbx",
+   "shortlistCategory": "cloud-pbx"
+  },
+  "dialpad-connect": {
+   "title": "Dialpad Connect: pricing & features | System Compare US",
+   "description": "A unified calling, messaging and meetings application with live transcription, AI recaps and action items.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Dialpad Connect alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business phone systems alternatives to Dialpad Connect.",
+   "alternativesDefaultCategory": "cloud-pbx",
+   "shortlistCategory": "cloud-pbx"
+  },
+  "zoom-phone": {
+   "title": "Zoom Phone: pricing & features | System Compare US",
+   "description": "Cloud telephony inside the Zoom communications environment with domestic calling choices, routing and AI Companion phone assistance.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Zoom Phone alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business phone systems alternatives to Zoom Phone.",
+   "alternativesDefaultCategory": "cloud-pbx",
+   "shortlistCategory": "cloud-pbx"
+  },
+  "quo": {
+   "title": "Quo (formerly OpenPhone): pricing | System Compare US",
+   "description": "A shared business phone workspace for calls and texts, with optional Sona AI answering and higher-tier team features.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Quo (formerly OpenPhone) alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business phone systems alternatives to Quo (formerly OpenPhone).",
+   "alternativesDefaultCategory": "cloud-pbx",
+   "shortlistCategory": "cloud-pbx"
+  },
+  "quickbooks-online": {
+   "title": "QuickBooks Online: pricing & features | System Compare US",
+   "description": "Cloud accounting with US invoicing, bank workflows and plan-based financial reporting.",
+   "ogImage": "https://system-compare.com/assets/research-cards/quickbooks-online.png",
+   "alternativesTitle": "QuickBooks Online alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to QuickBooks Online.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "xero": {
+   "title": "Xero: pricing & features | System Compare US",
+   "description": "US cloud accounting with shared access, bank reconciliation and tiered reporting.",
+   "ogImage": "https://system-compare.com/assets/research-cards/xero.png",
+   "alternativesTitle": "Xero alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to Xero.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "zoho-books": {
+   "title": "Zoho Books: pricing & features | System Compare US",
+   "description": "US accounting with invoices, bank feeds and configurable workflows across paid tiers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Zoho Books alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to Zoho Books.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "freshbooks": {
+   "title": "FreshBooks: pricing & features | System Compare US",
+   "description": "Accounting and billing oriented around service businesses and client work.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "FreshBooks alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to FreshBooks.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "wave": {
+   "title": "Wave: pricing & features | System Compare US",
+   "description": "Small-business invoicing and bookkeeping with a free base and optional Pro automation.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Wave alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to Wave.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "netsuite": {
+   "title": "Oracle NetSuite: pricing & features | System Compare US",
+   "description": "Integrated cloud ERP spanning finance, inventory, orders and global entities.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Oracle NetSuite alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to Oracle NetSuite.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "sage-intacct": {
+   "title": "Sage Intacct: pricing & features | System Compare US",
+   "description": "Finance-led cloud platform for multi-entity reporting and a more controlled close.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Sage Intacct alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to Sage Intacct.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "business-central": {
+   "title": "Microsoft Dynamics 365 Business Central | System Compare US",
+   "description": "ERP for finance, sales and operations with Microsoft ecosystem integration.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Microsoft Dynamics 365 Business Central alternatives | System Compare US",
+   "alternativesDescription": "Explore researched ERP & Business Management alternatives to Microsoft Dynamics 365 Business Central.",
+   "alternativesDefaultCategory": "erp",
+   "shortlistCategory": "erp"
+  },
+  "acumatica": {
+   "title": "Acumatica: pricing & features | System Compare US",
+   "description": "Cloud ERP with industry editions and a consumption-based commercial model.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Acumatica alternatives | System Compare US",
+   "alternativesDescription": "Explore researched ERP & Business Management alternatives to Acumatica.",
+   "alternativesDefaultCategory": "erp",
+   "shortlistCategory": "erp"
+  },
+  "sap-business-one": {
+   "title": "SAP Business One: pricing & features | System Compare US",
+   "description": "ERP for smaller organizations combining financial and operational management.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "SAP Business One alternatives | System Compare US",
+   "alternativesDescription": "Explore researched ERP & Business Management alternatives to SAP Business One.",
+   "alternativesDefaultCategory": "erp",
+   "shortlistCategory": "erp"
+  },
+  "stripe": {
+   "title": "Stripe: pricing & features | System Compare US",
+   "description": "Payment infrastructure for hosted checkout, custom integrations and recurring revenue.",
+   "ogImage": "https://system-compare.com/assets/research-cards/stripe.png",
+   "alternativesTitle": "Stripe alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Payment Processing alternatives to Stripe.",
+   "alternativesDefaultCategory": "payments",
+   "shortlistCategory": "payments"
+  },
+  "square": {
+   "title": "Square: pricing & features | System Compare US",
+   "description": "Connected US payments, point of sale and service-booking tools.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Square alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Payment Processing alternatives to Square.",
+   "alternativesDefaultCategory": "payments",
+   "shortlistCategory": "payments"
+  },
+  "paypal": {
+   "title": "PayPal: pricing & features | System Compare US",
+   "description": "US checkout, wallet, card and recurring-payment services.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "PayPal alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Payment Processing alternatives to PayPal.",
+   "alternativesDefaultCategory": "payments",
+   "shortlistCategory": "payments"
+  },
+  "adyen": {
+   "title": "Adyen: pricing & features | System Compare US",
+   "description": "Payment platform for merchants coordinating methods, markets and risk operations.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Adyen alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Payment Processing alternatives to Adyen.",
+   "alternativesDefaultCategory": "payments",
+   "shortlistCategory": "payments"
+  },
+  "authorize-net": {
+   "title": "Authorize.net: pricing & features | System Compare US",
+   "description": "Payment gateway offered alone or with a merchant-account package.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Authorize.net alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Payment Processing alternatives to Authorize.net.",
+   "alternativesDefaultCategory": "payments",
+   "shortlistCategory": "payments"
+  },
+  "shopify": {
+   "title": "Shopify: pricing & features | System Compare US",
+   "description": "Hosted commerce platform connecting an online store, payments and physical selling.",
+   "ogImage": "https://system-compare.com/assets/research-cards/shopify.png",
+   "alternativesTitle": "Shopify alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Point of Sale alternatives to Shopify.",
+   "alternativesDefaultCategory": "pos",
+   "shortlistCategory": "pos"
+  },
+  "toast": {
+   "title": "Toast: pricing & features | System Compare US",
+   "description": "POS platform with restaurant workflows, hardware and connected digital ordering.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Toast alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Point of Sale alternatives to Toast.",
+   "alternativesDefaultCategory": "pos",
+   "shortlistCategory": "pos"
+  },
+  "lightspeed-retail": {
+   "title": "Lightspeed Retail: pricing & features | System Compare US",
+   "description": "Retail POS with inventory, purchasing and connected ecommerce capabilities.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Lightspeed Retail alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Point of Sale alternatives to Lightspeed Retail.",
+   "alternativesDefaultCategory": "pos",
+   "shortlistCategory": "pos"
+  },
+  "clover": {
+   "title": "Clover: pricing & features | System Compare US",
+   "description": "US point-of-sale hardware and software packages with separate processing terms.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Clover alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Point of Sale alternatives to Clover.",
+   "alternativesDefaultCategory": "pos",
+   "shortlistCategory": "pos"
+  },
+  "calendly": {
+   "title": "Calendly: pricing & features | System Compare US",
+   "description": "Calendly: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Calendly alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Appointment Scheduling alternatives to Calendly.",
+   "alternativesDefaultCategory": "appointments",
+   "shortlistCategory": "appointments"
+  },
+  "acuity-scheduling": {
+   "title": "Acuity Scheduling: pricing & features | System Compare US",
+   "description": "Service appointment scheduling with intake forms, deposits, packages and calendar-based capacity. It can operate independently of a Squarespace website.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Acuity Scheduling alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Appointment Scheduling alternatives to Acuity Scheduling.",
+   "alternativesDefaultCategory": "appointments",
+   "shortlistCategory": "appointments"
+  },
+  "vagaro": {
+   "title": "Vagaro: pricing & features | System Compare US",
+   "description": "Booking and business management oriented to beauty, wellness and fitness operators. Calendar capacity and optional services determine the final bill.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Vagaro alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Appointment Scheduling alternatives to Vagaro.",
+   "alternativesDefaultCategory": "appointments",
+   "shortlistCategory": "appointments"
+  },
+  "simplybook-me": {
+   "title": "SimplyBook.me: pricing & features | System Compare US",
+   "description": "Configurable booking software with provider capacity, payment options and selectable custom features. It offers a free entry tier and paid booking quotas.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "SimplyBook.me alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Appointment Scheduling alternatives to SimplyBook.me.",
+   "alternativesDefaultCategory": "appointments",
+   "shortlistCategory": "appointments"
+  },
+  "docusign": {
+   "title": "Docusign: pricing & features | System Compare US",
+   "description": "Docusign: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Docusign alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Electronic Signature alternatives to Docusign.",
+   "alternativesDefaultCategory": "e-signature",
+   "shortlistCategory": "e-signature"
+  },
+  "adobe-acrobat": {
+   "title": "Adobe Acrobat: pricing & features | System Compare US",
+   "description": "Adobe Acrobat: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Adobe Acrobat alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Electronic Signature alternatives to Adobe Acrobat.",
+   "alternativesDefaultCategory": "e-signature",
+   "shortlistCategory": "e-signature"
+  },
+  "pandadoc": {
+   "title": "PandaDoc: pricing & features | System Compare US",
+   "description": "PandaDoc: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "PandaDoc alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Electronic Signature alternatives to PandaDoc.",
+   "alternativesDefaultCategory": "e-signature",
+   "shortlistCategory": "e-signature"
+  },
+  "dropbox-sign": {
+   "title": "Dropbox Sign: pricing & features | System Compare US",
+   "description": "Dropbox Sign: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Dropbox Sign alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Electronic Signature alternatives to Dropbox Sign.",
+   "alternativesDefaultCategory": "e-signature",
+   "shortlistCategory": "e-signature"
+  },
+  "zoho-sign": {
+   "title": "Zoho Sign: pricing & features | System Compare US",
+   "description": "Zoho Sign: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Zoho Sign alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Electronic Signature alternatives to Zoho Sign.",
+   "alternativesDefaultCategory": "e-signature",
+   "shortlistCategory": "e-signature"
+  },
+  "ramp": {
+   "title": "Ramp: pricing & features | System Compare US",
+   "description": "Spend operations combining cards, expenses, bill payment and accounting connections, with AI applied to review and coding tasks.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Ramp alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Spend & Expense Management alternatives to Ramp.",
+   "alternativesDefaultCategory": "spend-management",
+   "shortlistCategory": "spend-management"
+  },
+  "brex": {
+   "title": "Brex: pricing & features | System Compare US",
+   "description": "Corporate spend, expense and travel software with US and international entity options. The entry package and advanced policy controls have different scope.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Brex alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Spend & Expense Management alternatives to Brex.",
+   "alternativesDefaultCategory": "spend-management",
+   "shortlistCategory": "spend-management"
+  },
+  "bill": {
+   "title": "BILL: pricing & features | System Compare US",
+   "description": "BILL: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "BILL alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Spend & Expense Management alternatives to BILL.",
+   "alternativesDefaultCategory": "spend-management",
+   "shortlistCategory": "spend-management"
+  },
+  "expensify": {
+   "title": "Expensify: pricing & features | System Compare US",
+   "description": "Expense capture, approvals and reimbursement software that can connect existing cards and accounting systems. Bill pay and travel extend the same workflow.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Expensify alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Spend & Expense Management alternatives to Expensify.",
+   "alternativesDefaultCategory": "spend-management",
+   "shortlistCategory": "spend-management"
+  },
+  "navan": {
+   "title": "Navan: pricing & features | System Compare US",
+   "description": "Travel and expense operations with policy-based booking, card-connected expense capture and accounting synchronization.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Navan alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Spend & Expense Management alternatives to Navan.",
+   "alternativesDefaultCategory": "spend-management",
+   "shortlistCategory": "spend-management"
+  },
+  "bigcommerce": {
+   "title": "BigCommerce: pricing & features | System Compare US",
+   "description": "BigCommerce: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "BigCommerce alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Ecommerce Platforms alternatives to BigCommerce.",
+   "alternativesDefaultCategory": "ecommerce-platforms",
+   "shortlistCategory": "ecommerce-platforms"
+  },
+  "woocommerce": {
+   "title": "WooCommerce: pricing & features | System Compare US",
+   "description": "WooCommerce: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "WooCommerce alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Ecommerce Platforms alternatives to WooCommerce.",
+   "alternativesDefaultCategory": "ecommerce-platforms",
+   "shortlistCategory": "ecommerce-platforms"
+  },
+  "wix": {
+   "title": "Wix: pricing & features | System Compare US",
+   "description": "Hosted website and commerce builder combining visual design, store management and service-business tools. Selling requires a payment-enabled paid plan.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Wix alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Ecommerce Platforms alternatives to Wix.",
+   "alternativesDefaultCategory": "ecommerce-platforms",
+   "shortlistCategory": "ecommerce-platforms"
+  },
+  "squarespace": {
+   "title": "Squarespace: pricing & features | System Compare US",
+   "description": "Squarespace: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Squarespace alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Ecommerce Platforms alternatives to Squarespace.",
+   "alternativesDefaultCategory": "ecommerce-platforms",
+   "shortlistCategory": "ecommerce-platforms"
+  },
+  "gusto": {
+   "title": "Gusto: pricing & features | System Compare US",
+   "description": "US payroll with connected benefits and HR tools; plan selection matters for multistate teams and time management.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Gusto alternatives | System Compare US",
+   "alternativesDescription": "Explore researched HR software alternatives to Gusto.",
+   "alternativesDefaultCategory": "hr",
+   "shortlistCategory": "hr"
+  },
+  "bamboohr": {
+   "title": "BambooHR: pricing & features | System Compare US",
+   "description": "An HR-centered platform with connected payroll, benefits, time, and recruiting modules.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "BambooHR alternatives | System Compare US",
+   "alternativesDescription": "Explore researched HR software alternatives to BambooHR.",
+   "alternativesDefaultCategory": "hr",
+   "shortlistCategory": "hr"
+  },
+  "rippling": {
+   "title": "Rippling: pricing & features | System Compare US",
+   "description": "A modular employee platform linking HR, payroll, benefits, recruiting, and business automation.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Rippling alternatives | System Compare US",
+   "alternativesDescription": "Explore researched HR software alternatives to Rippling.",
+   "alternativesDefaultCategory": "hr",
+   "shortlistCategory": "hr"
+  },
+  "adp-workforce-now": {
+   "title": "ADP Workforce Now: pricing & features | System Compare US",
+   "description": "A configurable HR, payroll, benefits, and workforce-management suite for more complex employers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "ADP Workforce Now alternatives | System Compare US",
+   "alternativesDescription": "Explore researched HR software alternatives to ADP Workforce Now.",
+   "alternativesDefaultCategory": "hr",
+   "shortlistCategory": "hr"
+  },
+  "paychex-flex": {
+   "title": "Paychex Flex: pricing & features | System Compare US",
+   "description": "Payroll and HR software with connected benefits, time tools, and service options.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Paychex Flex alternatives | System Compare US",
+   "alternativesDescription": "Explore researched HR software alternatives to Paychex Flex.",
+   "alternativesDefaultCategory": "hr",
+   "shortlistCategory": "hr"
+  },
+  "justworks": {
+   "title": "Justworks: pricing & features | System Compare US",
+   "description": "US payroll and PEO plans with HR support, benefits options, and optional time tracking.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Justworks alternatives | System Compare US",
+   "alternativesDescription": "Explore researched HR software alternatives to Justworks.",
+   "alternativesDefaultCategory": "hr",
+   "shortlistCategory": "hr"
+  },
+  "deel": {
+   "title": "Deel: pricing & features | System Compare US",
+   "description": "A workforce platform spanning US payroll, global hiring, HR records, and employment services.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Deel alternatives | System Compare US",
+   "alternativesDescription": "Explore researched HR software alternatives to Deel.",
+   "alternativesDefaultCategory": "hr",
+   "shortlistCategory": "hr"
+  },
+  "onpay": {
+   "title": "OnPay: pricing & features | System Compare US",
+   "description": "US payroll with published base pricing and separately priced HR and time options.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "OnPay alternatives | System Compare US",
+   "alternativesDescription": "Explore researched HR software alternatives to OnPay.",
+   "alternativesDefaultCategory": "hr",
+   "shortlistCategory": "hr"
+  },
+  "deputy": {
+   "title": "Deputy: pricing & features | System Compare US",
+   "description": "Shift scheduling and attendance software with workforce forecasting and AI assistance.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Deputy alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Time & attendance alternatives to Deputy.",
+   "alternativesDefaultCategory": "time-attendance",
+   "shortlistCategory": "time-attendance"
+  },
+  "homebase": {
+   "title": "Homebase: pricing & features | System Compare US",
+   "description": "Scheduling and time tools for hourly businesses, with optional payroll and hiring services.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Homebase alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Time & attendance alternatives to Homebase.",
+   "alternativesDefaultCategory": "time-attendance",
+   "shortlistCategory": "time-attendance"
+  },
+  "when-i-work": {
+   "title": "When I Work: pricing & features | System Compare US",
+   "description": "Employee scheduling, team communication, and optional attendance for shift-based teams.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "When I Work alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Time & attendance alternatives to When I Work.",
+   "alternativesDefaultCategory": "time-attendance",
+   "shortlistCategory": "time-attendance"
+  },
+  "clockify": {
+   "title": "Clockify: pricing & features | System Compare US",
+   "description": "Project time tracking with paid approvals, attendance controls, and resource scheduling.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Clockify alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Time & attendance alternatives to Clockify.",
+   "alternativesDefaultCategory": "time-attendance",
+   "shortlistCategory": "time-attendance"
+  },
+  "asana": {
+   "title": "Asana: pricing & features | System Compare US",
+   "description": "Work management for task ownership, dependencies, portfolios, and repeatable team workflows.",
+   "ogImage": "https://system-compare.com/assets/research-cards/asana.png",
+   "alternativesTitle": "Asana alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to Asana.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "monday-work-management": {
+   "title": "monday work management: pricing | System Compare US",
+   "description": "Configurable boards, dashboards, and automations for team work and portfolios.",
+   "ogImage": "https://system-compare.com/assets/research-cards/monday-work-management.png",
+   "alternativesTitle": "monday work management alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to monday work management.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "clickup": {
+   "title": "ClickUp: pricing & features | System Compare US",
+   "description": "Tasks, documents, chat, time, and AI in a configurable work-management platform.",
+   "ogImage": "https://system-compare.com/assets/research-cards/clickup.png",
+   "alternativesTitle": "ClickUp alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to ClickUp.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "wrike": {
+   "title": "Wrike: pricing & features | System Compare US",
+   "description": "Work management with request workflows, resource planning, and configurable AI agents.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Wrike alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to Wrike.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "smartsheet": {
+   "title": "Smartsheet: pricing & features | System Compare US",
+   "description": "Spreadsheet-style work management with forms, reporting, automations, and portfolio options.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Smartsheet alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to Smartsheet.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "notion": {
+   "title": "Notion: pricing & features | System Compare US",
+   "description": "A document and database workspace for knowledge-centered projects and AI-assisted work.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Notion alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to Notion.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "power-bi": {
+   "title": "Microsoft Power BI: pricing & features | System Compare US",
+   "description": "BI authoring and sharing integrated with Microsoft's Fabric analytics environment.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Microsoft Power BI alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business intelligence alternatives to Microsoft Power BI.",
+   "alternativesDefaultCategory": "bi",
+   "shortlistCategory": "bi"
+  },
+  "tableau": {
+   "title": "Tableau: pricing & features | System Compare US",
+   "description": "Visual analytics with Cloud, Server, and Salesforce-oriented Tableau Next options.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Tableau alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business intelligence alternatives to Tableau.",
+   "alternativesDefaultCategory": "bi",
+   "shortlistCategory": "bi"
+  },
+  "looker": {
+   "title": "Looker: pricing & features | System Compare US",
+   "description": "An enterprise BI platform centered on reusable semantic definitions and governed exploration.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Looker alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business intelligence alternatives to Looker.",
+   "alternativesDefaultCategory": "bi",
+   "shortlistCategory": "bi"
+  },
+  "domo": {
+   "title": "Domo: pricing & features | System Compare US",
+   "description": "A cloud data platform combining integration, analytics, applications, and AI services.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Domo alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business intelligence alternatives to Domo.",
+   "alternativesDefaultCategory": "bi",
+   "shortlistCategory": "bi"
+  },
+  "qlik-cloud-analytics": {
+   "title": "Qlik Cloud Analytics: pricing & features | System Compare US",
+   "description": "Cloud analytics with associative exploration, data connections, and Qlik Answers AI.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Qlik Cloud Analytics alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business intelligence alternatives to Qlik Cloud Analytics.",
+   "alternativesDefaultCategory": "bi",
+   "shortlistCategory": "bi"
+  },
+  "greenhouse": {
+   "title": "Greenhouse: pricing & features | System Compare US",
+   "description": "Greenhouse: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Greenhouse alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Recruiting & applicant tracking alternatives to Greenhouse.",
+   "alternativesDefaultCategory": "recruiting",
+   "shortlistCategory": "recruiting"
+  },
+  "lever": {
+   "title": "Lever: pricing & features | System Compare US",
+   "description": "Lever: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Lever alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Recruiting & applicant tracking alternatives to Lever.",
+   "alternativesDefaultCategory": "recruiting",
+   "shortlistCategory": "recruiting"
+  },
+  "ashby": {
+   "title": "Ashby: pricing & features | System Compare US",
+   "description": "Ashby: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Ashby alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Recruiting & applicant tracking alternatives to Ashby.",
+   "alternativesDefaultCategory": "recruiting",
+   "shortlistCategory": "recruiting"
+  },
+  "workable": {
+   "title": "Workable: pricing & features | System Compare US",
+   "description": "Workable: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Workable alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Recruiting & applicant tracking alternatives to Workable.",
+   "alternativesDefaultCategory": "recruiting",
+   "shortlistCategory": "recruiting"
+  },
+  "zapier": {
+   "title": "Zapier: pricing & features | System Compare US",
+   "description": "Zapier: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/zapier.png",
+   "alternativesTitle": "Zapier alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Workflow automation alternatives to Zapier.",
+   "alternativesDefaultCategory": "workflow-automation",
+   "shortlistCategory": "workflow-automation"
+  },
+  "make": {
+   "title": "Make: pricing & features | System Compare US",
+   "description": "Make: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/make.png",
+   "alternativesTitle": "Make alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Workflow automation alternatives to Make.",
+   "alternativesDefaultCategory": "workflow-automation",
+   "shortlistCategory": "workflow-automation"
+  },
+  "workato": {
+   "title": "Workato: pricing & features | System Compare US",
+   "description": "Workato: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Workato alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Workflow automation alternatives to Workato.",
+   "alternativesDefaultCategory": "workflow-automation",
+   "shortlistCategory": "workflow-automation"
+  },
+  "n8n": {
+   "title": "n8n: pricing & features | System Compare US",
+   "description": "n8n: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/n8n.png",
+   "alternativesTitle": "n8n alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Workflow automation alternatives to n8n.",
+   "alternativesDefaultCategory": "workflow-automation",
+   "shortlistCategory": "workflow-automation"
+  },
+  "power-automate": {
+   "title": "Microsoft Power Automate: pricing | System Compare US",
+   "description": "Microsoft Power Automate: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Microsoft Power Automate alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Workflow automation alternatives to Microsoft Power Automate.",
+   "alternativesDefaultCategory": "workflow-automation",
+   "shortlistCategory": "workflow-automation"
+  },
+  "hubspot-sales": {
+   "title": "HubSpot Sales Hub: pricing & features | System Compare US",
+   "description": "HubSpot Sales Hub: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/hubspot-sales.png",
+   "alternativesTitle": "HubSpot Sales Hub alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to HubSpot Sales Hub.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "salesforce-sales": {
+   "title": "Salesforce Sales: pricing & features | System Compare US",
+   "description": "Salesforce Sales: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/salesforce-sales.png",
+   "alternativesTitle": "Salesforce Sales alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Salesforce Sales.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "pipedrive": {
+   "title": "Pipedrive: pricing & features | System Compare US",
+   "description": "Pipedrive: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/pipedrive.png",
+   "alternativesTitle": "Pipedrive alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Pipedrive.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "zoho-crm": {
+   "title": "Zoho CRM: pricing & features | System Compare US",
+   "description": "Zoho CRM: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/zoho-crm.png",
+   "alternativesTitle": "Zoho CRM alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Zoho CRM.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "freshsales": {
+   "title": "Freshsales: pricing & features | System Compare US",
+   "description": "Freshsales: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/freshsales.png",
+   "alternativesTitle": "Freshsales alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Freshsales.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "close": {
+   "title": "Close: pricing & features | System Compare US",
+   "description": "Close: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/close.png",
+   "alternativesTitle": "Close alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Close.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "attio": {
+   "title": "Attio: pricing & features | System Compare US",
+   "description": "Attio: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/research-cards/attio.png",
+   "alternativesTitle": "Attio alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Attio.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "intercom": {
+   "title": "Intercom: pricing & features | System Compare US",
+   "description": "Intercom: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Intercom alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Customer support & help desk alternatives to Intercom.",
+   "alternativesDefaultCategory": "customer-service",
+   "shortlistCategory": "customer-service"
+  },
+  "freshdesk": {
+   "title": "Freshdesk: pricing & features | System Compare US",
+   "description": "Freshdesk: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Freshdesk alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Customer support & help desk alternatives to Freshdesk.",
+   "alternativesDefaultCategory": "customer-service",
+   "shortlistCategory": "customer-service"
+  },
+  "help-scout": {
+   "title": "Help Scout: pricing & features | System Compare US",
+   "description": "Help Scout: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Help Scout alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Customer support & help desk alternatives to Help Scout.",
+   "alternativesDefaultCategory": "customer-service",
+   "shortlistCategory": "customer-service"
+  },
+  "gorgias": {
+   "title": "Gorgias: pricing & features | System Compare US",
+   "description": "Gorgias: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Gorgias alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Customer support & help desk alternatives to Gorgias.",
+   "alternativesDefaultCategory": "customer-service",
+   "shortlistCategory": "customer-service"
+  },
+  "front": {
+   "title": "Front: pricing & features | System Compare US",
+   "description": "Front: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Front alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Customer support & help desk alternatives to Front.",
+   "alternativesDefaultCategory": "customer-service",
+   "shortlistCategory": "customer-service"
+  },
+  "zendesk": {
+   "title": "Zendesk: pricing & features | System Compare US",
+   "description": "Zendesk: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Zendesk alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Customer support & help desk alternatives to Zendesk.",
+   "alternativesDefaultCategory": "customer-service",
+   "shortlistCategory": "customer-service"
+  },
+  "microsoft-copilot-studio": {
+   "title": "Microsoft Copilot Studio: pricing | System Compare US",
+   "description": "Microsoft Copilot Studio: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Microsoft Copilot Studio alternatives | System Compare US",
+   "alternativesDescription": "Explore researched AI agents & agent platforms alternatives to Microsoft Copilot Studio.",
+   "alternativesDefaultCategory": "ai-agents",
+   "shortlistCategory": "ai-agents"
+  },
+  "relevance-ai": {
+   "title": "Relevance AI: pricing & features | System Compare US",
+   "description": "Relevance AI: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Relevance AI alternatives | System Compare US",
+   "alternativesDescription": "Explore researched AI agents & agent platforms alternatives to Relevance AI.",
+   "alternativesDefaultCategory": "ai-agents",
+   "shortlistCategory": "ai-agents"
+  },
+  "botpress": {
+   "title": "Botpress: pricing & features | System Compare US",
+   "description": "Botpress provides an AI agent platform oriented toward customer support, with a free starting allowance and paid conversation packages.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Botpress alternatives | System Compare US",
+   "alternativesDescription": "Explore researched AI agents & agent platforms alternatives to Botpress.",
+   "alternativesDefaultCategory": "ai-agents",
+   "shortlistCategory": "ai-agents"
+  },
+  "se-ranking": {
+   "title": "SE Ranking: pricing & features | System Compare US",
+   "description": "SE Ranking combines search research, daily rank tracking and technical audits with AI-answer monitoring.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "SE Ranking alternatives | System Compare US",
+   "alternativesDescription": "Explore researched SEO & AI search visibility alternatives to SE Ranking.",
+   "alternativesDefaultCategory": "seo-tools",
+   "shortlistCategory": "seo-tools"
+  },
+  "ahrefs": {
+   "title": "Ahrefs: pricing & features | System Compare US",
+   "description": "Ahrefs brings keyword, competitor and backlink research together with technical auditing and rank tracking.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Ahrefs alternatives | System Compare US",
+   "alternativesDescription": "Explore researched SEO & AI search visibility alternatives to Ahrefs.",
+   "alternativesDefaultCategory": "seo-tools",
+   "shortlistCategory": "seo-tools"
+  },
+  "vista-social": {
+   "title": "Vista Social: pricing & features | System Compare US",
+   "description": "Vista Social combines publishing, social engagement and reports with Ask Vista.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Vista Social alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Social media management alternatives to Vista Social.",
+   "alternativesDefaultCategory": "social-media-management",
+   "shortlistCategory": "social-media-management"
+  },
+  "metricool": {
+   "title": "Metricool: pricing & features | System Compare US",
+   "description": "Metricool: review documented capabilities, pricing context, plan limits and official sources for US buyers.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Metricool alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Social media management alternatives to Metricool.",
+   "alternativesDefaultCategory": "social-media-management",
+   "shortlistCategory": "social-media-management"
+  },
+  "siteground": {
+   "title": "SiteGround: pricing & features | System Compare US",
+   "description": "SiteGround provides managed WordPress hosting with migrations, caching and recovery tools.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "SiteGround alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Managed WordPress hosting alternatives to SiteGround.",
+   "alternativesDefaultCategory": "web-hosting",
+   "shortlistCategory": "web-hosting"
+  },
+  "hostinger": {
+   "title": "Hostinger: pricing & features | System Compare US",
+   "description": "Hostinger combines a managed WordPress control panel with backup, staging and AI tools.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Hostinger alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Managed WordPress hosting alternatives to Hostinger.",
+   "alternativesDefaultCategory": "web-hosting",
+   "shortlistCategory": "web-hosting"
+  },
+  "nordvpn": {
+   "title": "NordVPN: pricing & features | System Compare US",
+   "description": "NordVPN is an individual VPN with optional protection bundles.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "NordVPN alternatives | System Compare US",
+   "alternativesDescription": "Explore researched VPN for individual professionals alternatives to NordVPN.",
+   "alternativesDefaultCategory": "vpn-security",
+   "shortlistCategory": "vpn-security"
+  },
+  "proton-vpn": {
+   "title": "Proton VPN: pricing & features | System Compare US",
+   "description": "Proton VPN offers an unlimited-data free tier and a paid Plus tier with more location choice and protection features.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Proton VPN alternatives | System Compare US",
+   "alternativesDescription": "Explore researched VPN for individual professionals alternatives to Proton VPN.",
+   "alternativesDefaultCategory": "vpn-security",
+   "shortlistCategory": "vpn-security"
+  },
+  "woodpecker": {
+   "title": "Woodpecker: pricing & features | System Compare US",
+   "description": "Woodpecker organises prospect outreach around connected mailboxes, scheduled follow-ups and reply handling.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Woodpecker alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Cold email and sales outreach alternatives to Woodpecker.",
+   "alternativesDefaultCategory": "cold-email",
+   "shortlistCategory": "cold-email"
+  },
+  "snov-io": {
+   "title": "Snov.io: pricing & features | System Compare US",
+   "description": "Snov.io combines prospect finding, verification and outreach.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Snov.io alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Cold email and sales outreach alternatives to Snov.io.",
+   "alternativesDefaultCategory": "cold-email",
+   "shortlistCategory": "cold-email"
+  },
+  "smartlead": {
+   "title": "Smartlead: pricing & features | System Compare US",
+   "description": "Smartlead centres outreach on mailbox infrastructure and a shared reply workspace.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Smartlead alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Cold email and sales outreach alternatives to Smartlead.",
+   "alternativesDefaultCategory": "cold-email",
+   "shortlistCategory": "cold-email"
+  },
+  "lemlist": {
+   "title": "lemlist: pricing & features | System Compare US",
+   "description": "lemlist combines email outreach with optional multichannel steps.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "lemlist alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Cold email and sales outreach alternatives to lemlist.",
+   "alternativesDefaultCategory": "cold-email",
+   "shortlistCategory": "cold-email"
+  },
+  "systeme-io": {
+   "title": "systeme.io: pricing & features | System Compare US",
+   "description": "systeme.io connects funnels, email, courses and workflow automation.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "systeme.io alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to systeme.io.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "moosend": {
+   "title": "Moosend: pricing & features | System Compare US",
+   "description": "Moosend combines email campaigns with behavioural segmentation and visual automation.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Moosend alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to Moosend.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "aweber": {
+   "title": "AWeber: pricing & features | System Compare US",
+   "description": "AWeber combines newsletters with tag-based subscriber journeys.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "AWeber alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Email marketing alternatives to AWeber.",
+   "alternativesDefaultCategory": "email-marketing",
+   "shortlistCategory": "email-marketing"
+  },
+  "agile-crm": {
+   "title": "Agile CRM: pricing & features | System Compare US",
+   "description": "Agile CRM combines contact management, sales tracking and marketing workflows for small teams.",
+   "ogImage": "https://system-compare.com/assets/research-cards/agile-crm.png",
+   "alternativesTitle": "Agile CRM alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Agile CRM.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "nocrm": {
+   "title": "noCRM: pricing & features | System Compare US",
+   "description": "noCRM centers sales work on leads, next actions and visual pipelines.",
+   "ogImage": "https://system-compare.com/assets/research-cards/nocrm.png",
+   "alternativesTitle": "noCRM alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to noCRM.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "folk": {
+   "title": "folk: pricing & features | System Compare US",
+   "description": "folk builds relationship records from email, meetings and messaging.",
+   "ogImage": "https://system-compare.com/assets/research-cards/folk.png",
+   "alternativesTitle": "folk alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to folk.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "breakcold": {
+   "title": "Breakcold: pricing & features | System Compare US",
+   "description": "Breakcold focuses on keeping sales records current from conversations.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Breakcold alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Breakcold.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "engagebay": {
+   "title": "EngageBay: pricing & features | System Compare US",
+   "description": "EngageBay combines sales, marketing and support in one account.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "EngageBay alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to EngageBay.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "livechat": {
+   "title": "LiveChat / Text: pricing & features | System Compare US",
+   "description": "New LiveChat trials now use the Text platform, combining chat, tickets and AI agents.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "LiveChat / Text alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Customer support & help desk alternatives to LiveChat / Text.",
+   "alternativesDefaultCategory": "customer-service",
+   "shortlistCategory": "customer-service"
+  },
+  "smartsupp": {
+   "title": "Smartsupp: pricing & features | System Compare US",
+   "description": "Smartsupp combines website chat with email and messaging, with Mira available separately for automated shopping conversations.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Smartsupp alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Customer support & help desk alternatives to Smartsupp.",
+   "alternativesDefaultCategory": "customer-service",
+   "shortlistCategory": "customer-service"
+  },
+  "flowlu": {
+   "title": "Flowlu: pricing & features | System Compare US",
+   "description": "Flowlu links customer records with projects, tasks and financial context.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Flowlu alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to Flowlu.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "suitedash": {
+   "title": "SuiteDash: pricing & features | System Compare US",
+   "description": "SuiteDash combines client records, portals, projects and billing with flat workspace pricing.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "SuiteDash alternatives | System Compare US",
+   "alternativesDescription": "Explore researched CRM & sales alternatives to SuiteDash.",
+   "alternativesDefaultCategory": "crm",
+   "shortlistCategory": "crm"
+  },
+  "nozbe": {
+   "title": "Nozbe: pricing & features | System Compare US",
+   "description": "Nozbe organises work around assigned tasks and contextual comments.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Nozbe alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to Nozbe.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "nifty": {
+   "title": "Nifty: pricing & features | System Compare US",
+   "description": "Nifty combines tasks, project discussions, documents and direct messages.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Nifty alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to Nifty.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "pumble": {
+   "title": "Pumble: pricing & features | System Compare US",
+   "description": "Pumble is a dedicated messenger with channels, direct messages and searchable history.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Pumble alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Team chat and collaboration alternatives to Pumble.",
+   "alternativesDefaultCategory": "team-chat",
+   "shortlistCategory": "team-chat"
+  },
+  "plaky": {
+   "title": "Plaky: pricing & features | System Compare US",
+   "description": "Plaky organises work in customisable boards with task fields and comments.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Plaky alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Project management alternatives to Plaky.",
+   "alternativesDefaultCategory": "project-management",
+   "shortlistCategory": "project-management"
+  },
+  "invoice-ninja": {
+   "title": "Invoice Ninja: pricing & features | System Compare US",
+   "description": "Invoice Ninja handles quoting, invoicing, recurring billing and payment collection.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Invoice Ninja alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to Invoice Ninja.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "nordpass": {
+   "title": "NordPass: pricing & features | System Compare US",
+   "description": "NordPass centralises workforce credentials, passkeys and shared access.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "NordPass alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business password management alternatives to NordPass.",
+   "alternativesDefaultCategory": "password-management",
+   "shortlistCategory": "password-management"
+  },
+  "zadarma": {
+   "title": "Zadarma: pricing & features | System Compare US",
+   "description": "Zadarma combines cloud telephony, country-specific numbers and programmable call events.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Zadarma alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business phone systems alternatives to Zadarma.",
+   "alternativesDefaultCategory": "cloud-pbx",
+   "shortlistCategory": "cloud-pbx"
+  },
+  "odoo": {
+   "title": "Odoo: pricing & features | System Compare US",
+   "description": "Odoo links sales, purchasing, inventory and accounting through configurable applications.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "Odoo alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Accounting & Invoicing alternatives to Odoo.",
+   "alternativesDefaultCategory": "accounting",
+   "shortlistCategory": "accounting"
+  },
+  "1password-business": {
+   "title": "1Password Business: pricing & features | System Compare US",
+   "description": "1Password combines workforce vaults with developer secret access.",
+   "ogImage": "https://system-compare.com/assets/social-preview.png",
+   "alternativesTitle": "1Password Business alternatives | System Compare US",
+   "alternativesDescription": "Explore researched Business password management alternatives to 1Password Business.",
+   "alternativesDefaultCategory": "password-management",
+   "shortlistCategory": "password-management"
+  }
+ }
+}

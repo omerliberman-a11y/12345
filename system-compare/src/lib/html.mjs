@@ -70,5 +70,7 @@ export function clip(s, max) {
 }
 
 /** JSON for embedding inside a <script> tag (prevents </script> and HTML comment breakouts). */
+const LS = String.fromCharCode(0x2028);
+const PS = String.fromCharCode(0x2029);
 export const jsonForScript = (obj) =>
-  raw(JSON.stringify(obj).replace(/</g, '\\u003c').replace(/ /g, '\\u2028').replace(/ /g, '\\u2029'));
+  raw(JSON.stringify(obj).replace(/</g, '\\u003c').split(LS).join('\\u2028').split(PS).join('\\u2029'));

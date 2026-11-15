@@ -1,0 +1,15 @@
+{
+  "name": "system-compare-site",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "System Compare (US edition) — static site generated from the public catalog.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node build.mjs --report",
+    "build:preview": "node build.mjs --links=portable --outbound=direct --out=preview",
+    "check": "node scripts/check.mjs dist",
+    "serve": "node scripts/serve.mjs dist 4173",
+    "fetch": "node scripts/fetch-catalog.mjs"
+  }
+}

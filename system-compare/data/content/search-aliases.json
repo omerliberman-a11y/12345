@@ -1,0 +1,228 @@
+{
+ "_about": "Product aliases (former names, short brand names) and multi-category phrases for site search. Editable.",
+ "aliases": {
+  "quo": [
+   "openphone",
+   "open phone"
+  ],
+  "hubspot-sales": [
+   "hubspot",
+   "hubspot crm"
+  ],
+  "salesforce-sales": [
+   "salesforce",
+   "sfdc",
+   "sales cloud"
+  ],
+  "quickbooks-online": [
+   "quickbooks",
+   "qbo",
+   "intuit quickbooks"
+  ],
+  "monday-work-management": [
+   "monday",
+   "monday.com"
+  ],
+  "adp-workforce-now": [
+   "adp"
+  ],
+  "paychex-flex": [
+   "paychex"
+  ],
+  "dialpad-connect": [
+   "dialpad"
+  ],
+  "adobe-acrobat": [
+   "adobe sign",
+   "acrobat sign"
+  ],
+  "docusign": [
+   "docu sign"
+  ],
+  "kit": [
+   "convertkit"
+  ],
+  "microsoft-copilot-studio": [
+   "copilot studio"
+  ],
+  "1password-business": [
+   "1password",
+   "one password"
+  ],
+  "livechat": [
+   "livechat",
+   "live chat"
+  ],
+  "chatgpt": [
+   "chat gpt",
+   "openai",
+   "gpt"
+  ],
+  "claude": [
+   "anthropic"
+  ],
+  "acuity-scheduling": [
+   "acuity"
+  ],
+  "lightspeed-retail": [
+   "lightspeed"
+  ],
+  "sage-intacct": [
+   "intacct",
+   "sage"
+  ],
+  "sap-business-one": [
+   "sap",
+   "sap b1"
+  ],
+  "qlik-cloud-analytics": [
+   "qlik"
+  ],
+  "elevenlabs-agents": [
+   "elevenlabs",
+   "eleven labs"
+  ],
+  "zoho-crm": [
+   "zoho"
+  ],
+  "se-ranking": [
+   "seranking"
+  ],
+  "wave": [
+   "wave accounting",
+   "waveapps"
+  ],
+  "square": [
+   "squareup"
+  ],
+  "bill": [
+   "bill.com"
+  ],
+  "when-i-work": [
+   "wheniwork"
+  ],
+  "google-workspace": [
+   "gsuite",
+   "g suite"
+  ],
+  "power-bi": [
+   "power bi",
+   "powerbi",
+   "microsoft power bi"
+  ],
+  "business-central": [
+   "business central",
+   "dynamics 365",
+   "d365"
+  ],
+  "netsuite": [
+   "oracle netsuite"
+  ],
+  "ringcentral": [
+   "ring central",
+   "ringex"
+  ],
+  "power-automate": [
+   "power automate",
+   "microsoft flow"
+  ]
+ },
+ "multi": {
+  "chatbot": [
+   "ai-agents",
+   "ai-general-assistants",
+   "ai-sales-customer-service"
+  ],
+  "ai chatbot": [
+   "ai-agents",
+   "ai-general-assistants",
+   "ai-sales-customer-service"
+  ],
+  "automation": [
+   "workflow-automation",
+   "marketing-automation",
+   "ai-agents-automation"
+  ],
+  "ecommerce": [
+   "ecommerce-platforms",
+   "ecommerce-marketing"
+  ],
+  "e-commerce": [
+   "ecommerce-platforms",
+   "ecommerce-marketing"
+  ],
+  "help desk": [
+   "customer-service",
+   "it-service-management"
+  ],
+  "helpdesk": [
+   "customer-service",
+   "it-service-management"
+  ],
+  "service desk": [
+   "it-service-management",
+   "customer-service"
+  ],
+  "analytics": [
+   "web-analytics",
+   "bi",
+   "ai-data-analytics"
+  ],
+  "invoicing": [
+   "invoicing",
+   "accounting",
+   "e-invoicing"
+  ],
+  "invoice": [
+   "invoicing",
+   "accounting",
+   "e-invoicing"
+  ],
+  "scheduling": [
+   "appointments",
+   "time-attendance"
+  ],
+  "ai voice": [
+   "ai-voice-agents",
+   "ai-voice-audio"
+  ],
+  "voice ai": [
+   "ai-voice-agents",
+   "ai-voice-audio"
+  ],
+  "ai agents": [
+   "ai-agents",
+   "ai-agents-automation",
+   "ai-voice-agents",
+   "ai-sales-customer-service"
+  ],
+  "ai agent": [
+   "ai-agents",
+   "ai-agents-automation",
+   "ai-voice-agents",
+   "ai-sales-customer-service"
+  ],
+  "website builder": [
+   "ecommerce-platforms",
+   "ai-app-website-building"
+  ],
+  "accounting": [
+   "accounting",
+   "invoicing"
+  ],
+  "marketing": [
+   "email-marketing",
+   "marketing-automation",
+   "sms-marketing",
+   "ecommerce-marketing",
+   "ai-marketing-growth"
+  ],
+  "hr": [
+   "hr",
+   "payroll",
+   "employee-benefits",
+   "time-attendance",
+   "recruiting"
+  ]
+ }
+}

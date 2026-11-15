@@ -1,0 +1,84 @@
+{
+ "sc-us-shortlist": {
+  "storage": "localStorage",
+  "writtenBy": "app.js persist()",
+  "removedWhen": "ids becomes empty (key is removed, not written as empty)",
+  "shape": {
+   "ids": "string[] vendor ids, insertion order = column order a,b,c,d; max 4 honoured",
+   "category": "string scored category id | null",
+   "plans": "{ [vendorId]: planId | '' }  ('' = product-wide evidence)",
+   "weights": "{} legacy; always written as {} by new saves; any stored value is ignored",
+   "at": "number, Date.now() ms of last change"
+  },
+  "ttlDays": 180,
+  "example": {
+   "ids": [
+    "brevo",
+    "activecampaign"
+   ],
+   "category": "email-marketing",
+   "plans": {
+    "brevo": "starter",
+    "activecampaign": ""
+   },
+   "weights": {},
+   "at": 1794678904821
+  },
+  "readTolerance": [
+   "missing plans/weights keys accepted",
+   "ids deduped, non-strings dropped, sliced to 4",
+   "unknown vendor ids and vendors not in the category dropped at render time",
+   "factual or unknown category => treated as empty",
+   "missing/non-finite at => treated as empty",
+   "at more than 60 s in the future => empty (workspaceSavedSelection only)",
+   "age >= 180 days => empty (stored value is NOT deleted until next write)",
+   "stale plan id => falls back to product-wide evidence + notice"
+  ]
+ },
+ "sc-us-research-notes": {
+  "storage": "localStorage",
+  "writtenBy": "assets/workspace-ui-20261114.js",
+  "removedWhen": "object becomes empty",
+  "shape": {
+   "[vendorId /^[a-z0-9-]+$/]": {
+    "text": "string, trimmed, <= 5000 chars",
+    "updatedAt": "ISO-8601 string"
+   }
+  },
+  "ttlDays": null,
+  "example": {
+   "brevo": {
+    "text": "Ask about 10DLC registration and contact tier overage.\nBudget: $300/mo",
+    "updatedAt": "2026-11-14T17:55:05.818Z"
+   }
+  }
+ },
+ "sc-analytics-consent-v1": {
+  "storage": "localStorage",
+  "writtenBy": "analytics.js",
+  "shape": {
+   "allowed": "boolean",
+   "until": "number"
+  },
+  "note": "not touched by Clear workspace"
+ },
+ "sc-accessibility-v1": {
+  "storage": "localStorage",
+  "writtenBy": "accessibility.js",
+  "note": "not touched by Clear workspace"
+ },
+ "sessionStorage": "not used",
+ "cookies": "none set by first-party code on these pages",
+ "urlParams": {
+  "/compare/": {
+   "scope": "scored category id",
+   "a|b|c|d": "vendor id per slot",
+   "plan_a|plan_b|plan_c|plan_d": "researched plan id for that slot (omit or empty = product-wide)",
+   "w_*": "legacy weight params; stripped client-side by history.replaceState"
+  },
+  "factual category pages": {
+   "facts": "comma-separated supplier ids (2-4)",
+   "facts_diff": "'1' = hide rows with identical descriptions"
+  }
+ }
+}
