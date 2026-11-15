@@ -1057,8 +1057,9 @@
   SC.el = el; SC.$ = $; SC.$$ = $$; SC.store = store; SC.save = save; SC.syncButtons = syncButtons;
 
   /** Small logo tiles: a wordmark much wider than tall shows the product's initials instead (CSS hides the image). */
-  SC.monogram = function (tile, name) {
-    tile.setAttribute('data-wide', '');
+  /** attr/value: 'data-wide' (small tiles) by default; product-row plates use 'data-xwide' with '' or '2'. */
+  SC.monogram = function (tile, name, attr, value) {
+    tile.setAttribute(attr || 'data-wide', value || '');
     tile.appendChild(el('span.logo__mono', { 'aria-hidden': 'true', text: String(name || '').replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (x) { return x.charAt(0); }).slice(0, 2).join('').toUpperCase() }));
     return tile;
   };

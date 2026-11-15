@@ -39,6 +39,7 @@
     if (v.lg) {
       node.appendChild(el('img', { src: SC.url(v.lg), alt: '', width: 64, height: 64, loading: lazy ? 'lazy' : null, decoding: 'async' })); // every use prints the name next to it
       if (size === 'sm' && v.wd && SC.monogram) SC.monogram(node, v.n); // a wide wordmark is unreadable in the small round tile
+      else if (!size && v.xw && SC.monogram) SC.monogram(node, v.n, 'data-xwide', v.xw === 2 ? '2' : ''); // row plate: initials on phones
     }
     else {
       node.setAttribute('aria-hidden', 'true');

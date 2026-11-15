@@ -109,9 +109,10 @@
    chips, the strip, the answer and the decision block */
 @media (max-width: 47.99em) {
   .sw-hero .lede { font-size: var(--fs-md); line-height: 1.6; }
-  .sw-hero__foot { margin-top: var(--s-5); }
+  .sw-cats { margin-top: var(--s-4); }
+  .sw-hero__foot { margin-top: var(--s-4); }
   .sw-hero__foot .answer { margin-top: var(--s-4); }
-  .sw-hero__side { margin-top: var(--s-5); padding-top: var(--s-5); }
+  .sw-hero__side { margin-top: var(--s-4); padding-top: var(--s-4); }
 }
 
 /* ---------------------------------------------------------------- key facts: a disclosure (open on wide screens) */

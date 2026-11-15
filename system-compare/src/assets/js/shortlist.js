@@ -83,7 +83,10 @@
   }
   function logo(v) {
     var box = el('span.logo' + (v.dk ? '.logo--dark' : ''), { 'aria-hidden': 'true' });
-    if (v.lg) box.appendChild(el('img', { src: SC.url(v.lg), alt: '', width: 44, height: 44, loading: 'lazy', decoding: 'async' })); // the name is printed next to it
+    if (v.lg) {
+      box.appendChild(el('img', { src: SC.url(v.lg), alt: '', width: 44, height: 44, loading: 'lazy', decoding: 'async' })); // the name is printed next to it
+      if (v.xw && SC.monogram) SC.monogram(box, v.n, 'data-xwide', v.xw === 2 ? '2' : ''); // very long wordmark: initials on phones
+    }
     else box.appendChild(el('span.logo__fallback', { text: v.n.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (x) { return x.charAt(0); }).slice(0, 2).join('').toUpperCase() }));
     return box;
   }

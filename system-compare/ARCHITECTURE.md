@@ -153,7 +153,27 @@ Rules that keep every page consistent:
 `ui.searchField` · `ui.time` · `ui.tag` · `ui.tableNote` · `ui.methodSentence` · `ui.icon(name)` ·
 `ui.dated(text)` (plain generated text → HTML with every printed date in `<time>`; `ui.answer` and `ui.faq`
 apply it to string input). `ui.productTable` options: `action(vendor)` + `actionLabel` + `actionClass` add a
-trailing column; `focalId`/`focalTag` mark the reference row; `priceChecked` prints the price-check date.
+trailing column; `focalId`/`focalTag` mark the reference row; `priceChecked` prints the price-check date;
+`lazyFrom` (default 4) lazy-loads row logos after the rows a first screen shows; `eagerIds` (a Set) keeps the
+first rows of a table the script re-orders eager.
+- `ui.answer(ctx, text, { label, meta, more })`: with `more: true` the passage is clamped to 3 lines on phones with a
+  native `<details>` "Show the full answer" (CSS only; the full text stays in the HTML; the meta note opens with it).
+- `ui.trustline(items, { compact })`: an item given as `{ more: text }` is visually collapsed on phones (screen
+  readers keep it); never pass a link as a `more` item.
+- `ui.logo`: product-row plates (no `size`) carry `data-xwide` from a 5.5:1 aspect ratio (phones show initials) and
+  `data-xwide="2"` from 8:1 (tablets too); small tiles carry `data-wide` from 2.5:1. The ratios are exported
+  (`WIDE_LOGO_RATIO`, `XWIDE_LOGO_RATIO`, `XXWIDE_LOGO_RATIO`) and mirrored in the data files (`wd`, `xw`), so
+  rows and tiles drawn by scripts behave the same (`SC.monogram`).
+- Prices in sentences: `ctx.answers.pricePhrase(p)` / `proseUnit(p.unitPhrase)` — a plain "per …" unit stays in
+  the sentence, anything else is bracketed as published; never splice `p.unit` into prose.
+
+Layout rules learned the hard way:
+- Phone product rows: a compact plate floated beside the name, the fit line and price at full width under it.
+- Script-rendered tools reserve their space before the first paint (compare mount min-height while empty or
+  loading; the shortlist paints only its status line while `data-state="loading"`; `/search/` results keep a
+  min-height) — target CLS under 0.1, also when the script arrives late.
+- Do not use `content-visibility` on blocks above anchored sections: placeholder heights moved 434 deep links
+  under the sticky header.
 
 CSS building blocks: `.wrap`, `.wrap--narrow`, `.section`, `.section--tint`, `.section-head`, `.page-head`,
 `.eyebrow`, `.lede`, `.trustline`, `.btn` (`--ghost --quiet --soft --sm --lg`), `.chip` / `.chips`, `.tag`,
