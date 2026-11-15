@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Static QA for a build:  node scripts/check.mjs [dir=dist] [--json] [--max=40]
+// Static QA for a build:  node scripts/check.mjs [dir=dist] [--json] [--max=40] [--base=/sub/path/]
+// (--base: the build was made with --links=absolute --base=/sub/path/ and will be served under that path)
 // Checks every HTML file for broken internal links/anchors, SEO basics (one h1, title, description,
 // canonical, valid JSON-LD), duplicate ids, images without alt, template leaks ("undefined", "NaN"…)
 // and reports size budgets. Exit code 1 when errors are found.
@@ -21,6 +22,8 @@ const sitePath = (file) => {
   return p.replace(/index\.html$/, '');
 };
 const max = Number((argv.find((a) => a.startsWith('--max=')) || '--max=40').split('=')[1]);
+// URL prefix the site is served under ("/preview/"): root-absolute links start with it and map to the build root
+const urlBase = ((argv.find((a) => a.startsWith('--base=')) || '').split('=')[1] || '/').replace(/\/?$/, '/');
 
 async function walk(d) {
   const out = [];
@@ -145,7 +148,8 @@ for (const pg of pages) {
     let target;
     if (p === '' || p === undefined) target = file;
     else {
-      const clean = p.split('?')[0];
+      let clean = p.split('?')[0];
+      if (urlBase !== '/' && clean.startsWith(urlBase)) clean = '/' + clean.slice(urlBase.length);
       const base = clean.startsWith('/') ? path.join(dir, clean) : path.resolve(path.dirname(file), clean);
       target = base;
       if (clean.endsWith('/') || (existsSync(base) && !fileSet.has(base))) target = path.join(base, 'index.html');
