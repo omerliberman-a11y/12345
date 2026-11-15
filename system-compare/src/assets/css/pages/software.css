@@ -9,7 +9,6 @@
 .sw-logo { display: inline-flex; }
 .sw-logo .logo--lg { height: 3.5rem; min-width: 3.5rem; }
 .sw-logo .logo--wide { max-width: 10rem; }
-.sw-logo--inverse .logo { background: var(--bg-inverse); border-color: var(--bg-inverse); }
 .sw-hero .lede { max-width: 64ch; }
 .sw-cats { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); margin-top: var(--s-5); }
 .sw-cats li { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.4rem; max-width: 100%; }
@@ -196,6 +195,7 @@
 .sw-tablist::-webkit-scrollbar { display: none; }
 html:not(.js) .sw-tablist { display: none; }
 .sw-tablist [role="tab"] {
+  position: relative; /* keeps the visually hidden "score" label inside the scrolling strip */
   flex: none;
   display: inline-flex;
   align-items: center;
@@ -330,10 +330,11 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-cite { display: block; margin-top: 0.1rem; font-size: var(--fs-sm); }
 
 /* ---------------------------------------------------------------- alternatives: the shared product rows + a "vs" link per row */
-.sw-vs { width: 1%; white-space: nowrap; text-align: right; font-size: var(--fs-sm); font-weight: 600; }
-/* white wordmarks (logo.surface "brand-gradient") sit on the dark surface in product rows as well */
-.sw-alts tr[data-logo="inverse"] .logo { background: var(--bg-inverse); border-color: var(--bg-inverse); }
-/* tablet and narrow desktop: the product column keeps its room next to the extra "vs" column */
+/* the link sits in the product table's action column (.ptable__c-go) */
+.sw-alts .ptable__c-go { font-size: var(--fs-sm); font-weight: 600; }
+.sw-vs { display: inline-flex; align-items: center; min-height: var(--tap); }
+.sw-vs::after { content: " →"; white-space: pre; }
+/* tablet and narrow desktop: the product column keeps its room next to the action column */
 @media (min-width: 48em) and (max-width: 74.99em) {
   .sw-alts .ptable__c-name { width: 44%; }
   .sw-alts .ptable__c-price { width: 10rem; }
@@ -341,15 +342,14 @@ html:not(.js) .sw-tablist { display: none; }
 }
 @media (min-width: 48em) and (max-width: 61.99em) {
   .sw-alts .ptable__c-price { width: 8.5rem; }
-  .sw-alts .sw-vs { width: 6rem; white-space: normal; }
+  .sw-alts .ptable__c-go { width: 6rem; white-space: normal; }
 }
-.sw-vs a { display: inline-flex; align-items: center; min-height: var(--tap); }
-.sw-vs a::after { content: " →"; white-space: pre; }
 .sw-alts .scorebtn { min-height: var(--tap); }
 @media (max-width: 47.99em) {
+  /* phones: the shared table drops its action column; here the comparison link stays, under the price */
   .sw-alts .ptable tbody tr { grid-template-areas: "pick name score" "pick price price" "pick vs vs"; row-gap: 0.2rem; }
-  .sw-alts .ptable td.sw-vs { grid-area: vs; width: auto; padding-left: 3.2rem; text-align: left; }
-  .sw-alts .ptable td.sw-vs:empty { display: none; }
+  .sw-alts .ptable td.ptable__c-go { display: block !important; grid-area: vs; width: auto; padding-left: 3.2rem !important; text-align: left; }
+  .sw-alts .ptable td.ptable__c-go:empty { display: none !important; }
 }
 
 /* ---------------------------------------------------------------- private notes */
@@ -378,7 +378,12 @@ html:not(.js) .sw-tablist { display: none; }
   .sw-kf td > a:only-child,
   .sw-kf .commercial-link > a,
   .sw-side__cat a,
-  .sw-plan > .fineprint a { display: inline-block; padding-block: 0.9rem; margin-block: -0.9rem; }
+  .sw-plan > .fineprint a,
+  /* the shared touch rule pads these by 0.6rem, which leaves 36–41px with small text */
+  [data-page="software"] main .trustline a,
+  [data-page="software"] main .sources a,
+  [data-page="software"] main .fineprint a,
+  [data-page="software"] main .table-note a { display: inline-block; padding-block: 0.9rem; margin-block: -0.9rem; }
 }
 /* key facts: the affiliate label and its explainer sit under the link */
 .sw-kf .commercial-link--ad { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 0.5rem; }

@@ -58,6 +58,9 @@ export const text = (h) =>
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/\s+/g, ' ')
+    // a removed tag must not leave a space before punctuation ("Nov 5, 2026 ." → "Nov 5, 2026.")
+    .replace(/ ([.,;:!?)])/g, '$1')
+    .replace(/\( /g, '(')
     .trim();
 
 /** Truncate plain text at a word boundary. */

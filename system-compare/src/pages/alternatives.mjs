@@ -110,20 +110,19 @@ function render(ctx, vendor) {
       priceSpan ? html` Price sources were checked ${priceSpan}${priceDates.every(Boolean) ? '' : ', where a check date is recorded'}.` : ''
     }`;
 
-    // Quick filters (when the data offers any), the sort and the live count. Without quick filters the count
-    // shares the row with the sort instead of leaving the sort alone on a line.
-    const countLine = html`<p class="toolbar__count" role="status" aria-live="polite" data-ix-count data-noun="alternatives"><b>${n}</b> alternatives</p>`;
+    // Quick filters (when the data offers any), the live count and the sort, in one toolbar.
     const controls =
       n > 1
-        ? html`<div class="toolbar ix-toolbar" data-ix-controls data-nosnippet>
+        ? html`<div class="${chips.length ? 'toolbar ix-toolbar' : 'toolbar ix-toolbar ix-toolbar--plain'}" data-ix-controls data-nosnippet>
             ${
               chips.length
                 ? html`<div class="chips ix-chips" role="group" aria-label="Filter alternatives">
                     ${chips.map((c) => html`<button type="button" class="chip" data-f="${c.f}" aria-pressed="false">${c.label} <span class="n">${c.n}</span></button>`)}
                     <button type="button" class="chip chip--link" data-ix-reset hidden>Clear filters</button>
                   </div>`
-                : countLine
+                : ''
             }
+            <p class="toolbar__count" role="status" aria-live="polite" data-ix-count data-noun="alternatives"><b>${n}</b> alternatives</p>
             <label class="ix-select ix-bar__end"><span class="sr-only">Sort alternatives</span>
               <select class="select" data-ix-sort aria-label="Sort alternatives">
                 <option value="score">Sort: score</option>
@@ -131,8 +130,7 @@ function render(ctx, vendor) {
                 <option value="name">Sort: name A–Z</option>
               </select>
             </label>
-          </div>
-          ${chips.length ? countLine : ''}`
+          </div>`
         : '';
 
     return html`<div${attrs({

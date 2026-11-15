@@ -89,7 +89,7 @@
   }
   function writeList(o) {
     if (!o.ids.length) save(KEY, null);
-    else { o.at = new Date().toISOString(); save(KEY, o); }
+    else { o.at = Date.now(); save(KEY, o); } // a number, as the previous site wrote it (readers accept a number or an ISO string)
     d.dispatchEvent(new CustomEvent('sc:shortlist-updated', { detail: readList() }));
   }
   SC.shortlist = {

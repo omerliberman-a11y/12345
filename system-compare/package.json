@@ -5,6 +5,9 @@
   "type": "module",
   "description": "System Compare (US edition) — static site generated from the public catalog.",
   "engines": { "node": ">=20" },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
   "scripts": {
     "build": "node build.mjs --report",
     "build:preview": "node build.mjs --links=portable --outbound=direct --out=preview",

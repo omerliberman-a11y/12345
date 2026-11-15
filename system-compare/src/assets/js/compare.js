@@ -731,17 +731,41 @@
       return line;
     };
     if (m.allDiff.length) {
-      var colsBox = el('div.cmp-ahead', null, m.items.map(function (it) {
-        var rest = m.items.filter(function (o) { return o !== it; }).map(function (o) { return o.v.n; }).join(' or ');
-        return el('div.cmp-ahead__col', { 'data-i': it.i }, [
-          el('h3', null, [dot(), 'Where ' + it.v.n + ' is ahead (' + m.ahead[it.i].length + ')']),
-          m.ahead[it.i].length ? el('ul.cmp-ahead__list', null, m.ahead[it.i].map(diffLine)) : el('p.cmp-none', { text: 'No scored check is documented as supported for ' + it.v.n + ' and not for ' + rest + '.' }),
-          offLine(it),
+      var colsBox;
+      if (n === 2) {
+        // two products: one list per product, exactly like the /vs/ pages
+        colsBox = el('div.cmp-ahead', null, m.items.map(function (it) {
+          var rest = m.items.filter(function (o) { return o !== it; }).map(function (o) { return o.v.n; }).join(' or ');
+          return el('div.cmp-ahead__col', { 'data-i': it.i }, [
+            el('h3', null, [dot(), 'Where ' + it.v.n + ' is ahead (' + m.ahead[it.i].length + ')']),
+            m.ahead[it.i].length ? el('ul.cmp-ahead__list', null, m.ahead[it.i].map(diffLine)) : el('p.cmp-none', { text: 'No scored check is documented as supported for ' + it.v.n + ' and not for ' + rest + '.' }),
+            offLine(it),
+          ]);
+        }));
+        if (m.other.length) colsBox.appendChild(el('div.cmp-ahead__col.cmp-ahead__col--other', null, [el('h3', { text: 'Other differences (' + m.other.length + ')' }), el('ul.cmp-ahead__list', null, m.other.map(diffLine))]));
+      } else {
+        // three or four products: each differing check once with every status (a list per product would repeat
+        // the same check up to three times), then one summary line per product
+        var sorted = m.diff.slice().sort(function (x, y) { return y.f.weight - x.f.weight; });
+        colsBox = el('div.cmp-ahead.cmp-ahead--many', null, [
+          el('div.cmp-ahead__col', null, [
+            el('h3', { text: 'Scored checks that differ (' + sorted.length + ')' }),
+            sorted.length ? el('ul.cmp-ahead__list.cmp-ahead__list--cols', null, sorted.map(diffLine)) : el('p.cmp-none', { text: 'All ' + n + ' products have the same documented status on every scored check.' }),
+          ]),
+          el('div.cmp-ahead__col', null, [el('h3', { text: 'Product by product' })].concat(m.items.map(function (it) {
+            var k = m.ahead[it.i].length, list = m.aheadOff[it.i];
+            var line = el('p.cmp-ahead__off', { 'data-i': it.i }, [dot(), el('b', { text: it.v.n + ':' }), ' supported on ' + k + ' scored ' + (k === 1 ? 'check' : 'checks') + ' where at least one other product is not.']);
+            if (list.length) {
+              line.appendChild(d.createTextNode(' Not scored yet, supported here and not for every other product (' + list.length + '): '));
+              list.forEach(function (r, i) { if (i) line.appendChild(d.createTextNode(', ')); line.appendChild(el('a', { href: '#cap-' + r.f.id, text: r.f.label })); });
+              line.appendChild(d.createTextNode('.'));
+            }
+            return line;
+          }))),
         ]);
-      }));
-      if (m.other.length) colsBox.appendChild(el('div.cmp-ahead__col.cmp-ahead__col--other', null, [el('h3', { text: 'Other differences (' + m.other.length + ')' }), el('ul.cmp-ahead__list', null, m.other.map(diffLine))]));
+      }
       diffSec.appendChild(colsBox);
-      diffSec.appendChild(el('p.fineprint', null, ['A product is ahead on a check when official documentation supports it there and not for ' + (n === 2 ? 'the other product' : 'at least one other product') + '. Lines are ordered by the points each check carries. “Not verified” means no qualifying public evidence was found, not that the capability is missing. ',
+      diffSec.appendChild(el('p.fineprint', null, [(n === 2 ? 'A product is ahead on a check when official documentation supports it there and not for the other product. ' : '') + 'Lines are ordered by the points each check carries. “Not verified” means no qualifying public evidence was found, not that the capability is missing. ',
         el('a', { href: '#capabilities', 'data-view': 'diff', text: 'See all ' + m.allDiff.length + ' differing checks with their evidence' }), '.']));
     }
     root.appendChild(diffSec);

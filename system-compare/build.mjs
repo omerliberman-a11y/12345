@@ -38,47 +38,94 @@ const log = (...a) => QUIET || console.log(...a);
 const hash = (buf) => createHash('sha256').update(buf).digest('hex').slice(0, 10);
 
 // ---------------------------------------------------------------- assets
+// CSS is split so a page only downloads what it uses:
+//   site.<hash>.css          tokens + base + layout + shared components (every page)
+//   p-<name>.<hash>.css      one file per src/assets/css/pages/<name>.css, linked only by the pages that need it
+// Which page files a page needs = the files mapped to its module below + any file whose own classes
+// appear in the page's HTML (so a template that borrows another page's styles keeps working).
 const CSS_ORDER = ['tokens.css', 'base.css', 'layout.css', 'components.css', 'utilities.css'];
+const PAGE_CSS = {
+  home: ['home'], category: ['category'], software: ['software'], vs: ['compare'], compare: ['compare'],
+  'category-factual': ['factual'], 'vs-factual': ['factual'], 'vs-editorial': ['factual'],
+  categories: ['indexes'], 'software-index': ['indexes'], alternatives: ['indexes'], comparisons: ['indexes'],
+  shortlist: ['tools'], cost: ['tools'], guides: ['guides'], ai: ['guides'], 'research-updates': ['guides'],
+  static: ['static'], countries: ['static'], contact: ['static'], 'partners-apply': ['static'],
+  faq: ['search'], search: ['search'], notfound: ['search'],
+};
 
+/** Whitespace/comment minifier that never touches strings or url(...) values. */
 function minifyCss(css) {
+  const keep = [];
+  const stash = (m) => `\u0000${keep.push(m) - 1}\u0000`;
   return css
     .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/\s*\n\s*/g, '\n')
-    .replace(/[ \t]{2,}/g, ' ')
-    .replace(/\n+/g, '\n')
-    .replace(/\s*([{};,>])\s*/g, (m, c) => (c === '>' ? m.replace(/\s+/g, ' ') : c))
+    .replace(/url\((?:"[^"]*"|'[^']*'|[^)]*)\)|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g, stash)
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([{};,])\s*/g, '$1')
+    .replace(/\s*>\s*/g, '>')
+    .replace(/:\s+/g, ':')
     .replace(/;}/g, '}')
+    .replace(/\u0000(\d+)\u0000/g, (m, i) => keep[Number(i)])
     .trim();
+}
+const cssClasses = (css) => new Set([...css.replace(/url\([^)]*\)/g, '').matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]));
+
+/** Optional esbuild (npm i -D esbuild): smaller JS. The build works without it. */
+async function loadMinifier() {
+  if (args['no-minify']) return null;
+  try {
+    const esbuild = await import('esbuild');
+    return async (code) => (await esbuild.transform(code, { minify: true, target: 'es2019', legalComments: 'none' })).code;
+  } catch {
+    return null;
+  }
 }
 
 async function buildAssets() {
   const manifest = {};
   const outAssets = path.join(OUT, 'assets');
   await mkdir(outAssets, { recursive: true });
+  const min = (css) => (args['no-minify'] ? css : minifyCss(css));
 
-  // CSS → one bundle
+  // core CSS bundle
   const cssDir = path.join(ROOT, 'src/assets/css');
   const parts = [];
   for (const f of CSS_ORDER) {
     const p = path.join(cssDir, f);
-    if (existsSync(p)) parts.push(`/* ${f} */\n` + (await readFile(p, 'utf8')));
+    if (existsSync(p)) parts.push(await readFile(p, 'utf8'));
   }
-  const pagesDir = path.join(cssDir, 'pages');
-  if (existsSync(pagesDir)) {
-    for (const f of (await readdir(pagesDir)).filter((f) => f.endsWith('.css')).sort()) {
-      parts.push(`/* pages/${f} */\n` + (await readFile(path.join(pagesDir, f), 'utf8')));
-    }
-  }
-  const css = args['no-minify'] ? parts.join('\n') : minifyCss(parts.join('\n'));
+  const css = min(parts.join('\n'));
   const cssName = `site.${hash(css)}.css`;
   await writeFile(path.join(outAssets, cssName), css);
   manifest['site.css'] = `/assets/${cssName}`;
+  const coreClasses = cssClasses(css);
 
-  // JS → copied one-to-one with a content hash
+  // page CSS files
+  const pageCss = new Map(); // name → { url, own: Set(classes not defined in core) }
+  const pagesDir = path.join(cssDir, 'pages');
+  let pageCssBytes = 0;
+  if (existsSync(pagesDir)) {
+    for (const f of (await readdir(pagesDir)).filter((f) => f.endsWith('.css')).sort()) {
+      const name = f.replace(/\.css$/, '');
+      const text = min(await readFile(path.join(pagesDir, f), 'utf8'));
+      const file = `p-${name}.${hash(text)}.css`;
+      await writeFile(path.join(outAssets, file), text);
+      pageCssBytes += Buffer.byteLength(text);
+      pageCss.set(name, { url: `/assets/${file}`, own: new Set([...cssClasses(text)].filter((c) => !coreClasses.has(c))) });
+    }
+    // a class that several page files define cannot identify one of them
+    const seen = new Map();
+    for (const { own } of pageCss.values()) for (const c of own) seen.set(c, (seen.get(c) || 0) + 1);
+    for (const entry of pageCss.values()) entry.unique = new Set([...entry.own].filter((c) => seen.get(c) === 1));
+  }
+
+  // JS → copied one-to-one with a content hash (minified when esbuild is installed)
+  const minifyJs = await loadMinifier();
   const jsDir = path.join(ROOT, 'src/assets/js');
   if (existsSync(jsDir)) {
     for (const f of (await readdir(jsDir)).filter((f) => f.endsWith('.js')).sort()) {
-      const buf = await readFile(path.join(jsDir, f));
+      let buf = await readFile(path.join(jsDir, f), 'utf8');
+      if (minifyJs) buf = await minifyJs(buf);
       const name = f.replace(/\.js$/, `.${hash(buf)}.js`);
       await writeFile(path.join(outAssets, name), buf);
       manifest[`js/${f}`] = `/assets/${name}`;
@@ -89,7 +136,20 @@ async function buildAssets() {
   const staticDir = path.join(ROOT, 'src/assets/static');
   if (existsSync(staticDir)) await cp(staticDir, OUT, { recursive: true });
 
-  return { manifest, cssBytes: Buffer.byteLength(css) };
+  /** Stylesheets a page needs, in a stable order: module defaults first, then detected ones. */
+  const stylesFor = (module, htmlStr, explicit) => {
+    if (args.css === 'all') return [...pageCss.values()].map((e) => e.url); // every page file on every page (regression baseline)
+    const names = new Set(explicit || PAGE_CSS[module] || (pageCss.has(module) ? [module] : []));
+    const used = new Set();
+    for (const m of String(htmlStr).matchAll(/\sclass="([^"]*)"/g)) for (const c of m[1].split(/\s+/)) if (c) used.add(c);
+    for (const [name, entry] of pageCss) {
+      if (names.has(name)) continue;
+      for (const c of entry.unique) if (used.has(c)) { names.add(name); break; }
+    }
+    return [...pageCss.keys()].filter((n) => names.has(n)).map((n) => pageCss.get(n).url);
+  };
+
+  return { manifest, cssBytes: Buffer.byteLength(css), pageCssBytes, stylesFor, minified: Boolean(minifyJs) };
 }
 
 // ---------------------------------------------------------------- link rewriting
@@ -128,13 +188,14 @@ async function main() {
   if (!args['no-clean']) await rm(OUT, { recursive: true, force: true });
   await mkdir(OUT, { recursive: true });
 
-  const { manifest, cssBytes } = await buildAssets();
+  const { manifest, cssBytes, pageCssBytes, stylesFor, minified } = await buildAssets();
 
   const { createContext } = await import(pathToFileURL(path.join(ROOT, 'src/lib/context.mjs')).href);
   const overrides = {};
   if (args.outbound) overrides.outbound = String(args.outbound); // go | direct
   if (args.index) overrides.indexPolicy = String(args.index); // parity | gated
   const ctx = await createContext({ root: ROOT, manifest, links: LINKS, base: BASE, overrides });
+  ctx.stylesFor = stylesFor;
 
   const written = [];
   const errors = [];
@@ -213,7 +274,7 @@ async function main() {
   const total = written.reduce((s, w) => s + w.bytes, 0);
   log(
     `built ${pageCount} pages (${routes.length} routes) + ${written.length - htmlPages.length} files → ${path.relative(process.cwd(), OUT) || '.'}` +
-      `  [${(total / 1e6).toFixed(1)} MB, css ${(cssBytes / 1024).toFixed(1)} KB, ${Math.round(performance.now() - t0)} ms, links=${LINKS}]`,
+      `  [${(total / 1e6).toFixed(1)} MB, core css ${(cssBytes / 1024).toFixed(1)} KB + page css ${(pageCssBytes / 1024).toFixed(1)} KB, js ${minified ? 'minified' : 'not minified'}, ${Math.round(performance.now() - t0)} ms, links=${LINKS}]`,
   );
   if (args.report) {
     const top = [...htmlPages].sort((a, b) => b.bytes - a.bytes).slice(0, 12);

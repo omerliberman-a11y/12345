@@ -29,13 +29,13 @@ const firstSentence = (s) => {
 /** Noun phrase for questions: "CRM & sales software", "Payroll software", "Business phone systems". */
 export function categoryNoun(category) {
   const n = category.name;
-  return /(software|systems|platforms|tools|agents|hosting)$/i.test(n) ? n : `${n} software`;
+  return /(software|systems|platforms|tools|agents|assistants|hosting)$/i.test(n) ? n : `${n} software`;
 }
 /** Plural phrase used inside sentences: "CRM & sales tools", "HR tools", "Business phone systems". */
 export function categoryThings(category) {
   const n = category.name;
   if (/software$/i.test(n)) return n.replace(/\s*software$/i, ' tools');
-  if (/(systems|platforms|tools|agents)$/i.test(n)) return n;
+  if (/(systems|platforms|tools|agents|assistants)$/i.test(n)) return n;
   return `${n} tools`;
 }
 

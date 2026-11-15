@@ -54,13 +54,15 @@ function restoreCase(answer, originals, always = false) {
   }
   return out;
 }
-// "on the Base plan plan" → "on the Base plan"; "on the Starter, 5,000 emails plan" → "on the “Starter, 5,000 emails” plan"
-const fixPlanPhrase = (answer, plan) => {
-  if (!plan) return answer;
-  if (/plans?$/i.test(plan)) return answer.replace(` on the ${plan} plan`, ` on the ${plan}`);
-  if (/tier|edition|,/i.test(plan)) return answer.replace(` on the ${plan} plan`, ` on the “${plan}” plan`);
-  return answer;
+// The shared plan label reads every name with a comma or a slash as a list ("Starter, 5,000 emails plans",
+// "Essentials AP/AR plans"). A name with one qualifier, or a slash inside a word, is a single plan.
+const planPhrase = (plan, shared) => {
+  if (!/ plans$/.test(shared) || / plans$/i.test(plan)) return shared;
+  if (/ \/ | and | or /.test(plan)) return shared; // real lists: "Gateway / All-in-One"
+  if (plan.includes(', ')) return plan.split(', ').length === 2 ? `“${plan}” plan` : shared; // "5,000" is not a separator
+  return `${plan} plan`;
 };
+const fixPlanPhrase = (answer, plan, shared) => (plan && shared ? answer.replace(` on the ${shared}`, ` on the ${planPhrase(plan, shared)}`) : answer);
 
 function render(ctx, vendor) {
   const A = ctx.answers;
@@ -100,10 +102,10 @@ function render(ctx, vendor) {
   ]);
 
   // ---------------------------------------------------------------- answers (generated from data)
-  const quick = fixPlanPhrase(restoreCase(A.productQuickAnswer(vendor), [vendor.bestFor]), p.plan);
+  const quick = fixPlanPhrase(restoreCase(A.productQuickAnswer(vendor), [vendor.bestFor]), p.plan, p.planLabel);
   const faqItems = A.productFaq(vendor).map((f) => ({
     ...f,
-    a: fixPlanPhrase(restoreCase(restoreCase(f.a, [...(ai.capabilities || []).slice(0, 3), (ai.limits || [])[0]], true), [vendor.bestFor]), p.plan),
+    a: fixPlanPhrase(restoreCase(restoreCase(f.a, [...(ai.capabilities || []).slice(0, 3), (ai.limits || [])[0]], true), [vendor.bestFor]), p.plan, p.planLabel),
   }));
 
   // ---------------------------------------------------------------- hero
@@ -116,7 +118,7 @@ function render(ctx, vendor) {
   const hero = html`<header class="wrap sw-hero">
     <div class="sw-hero__main">
       <div class="sw-hero__id">
-        <span class="${cx('sw-logo', vendor.logo?.surface === 'brand-gradient' && 'sw-logo--inverse')}">${ui.logo(ctx, vendor, { size: 'lg', wide: true, lazy: false })}</span>
+        <span class="sw-logo">${ui.logo(ctx, vendor, { size: 'lg', wide: true, lazy: false })}</span>
         <h1>${name}</h1>
       </div>
       <p class="lede">${vendor.description}</p>
@@ -210,7 +212,11 @@ function render(ctx, vendor) {
     { href: '#alternatives', label: 'Alternatives' },
     { href: '#faq', label: 'FAQ' },
     { href: '#evidence', label: 'Sources' },
-  ]);
+  ], {
+    // the shortlist stays one click away while reading (desktop). The vendor link is not repeated here:
+    // an affiliate link needs its label and explainer next to it, and they do not fit the bar.
+    extra: ui.shortlistButton(ctx, vendor, primary.id, { cls: 'btn btn--ghost btn--sm' }),
+  });
 
   // ---------------------------------------------------------------- fit
   const fit = html`<section class="wrap section" id="fit" aria-labelledby="fit-h">
@@ -514,29 +520,24 @@ function render(ctx, vendor) {
   // ---------------------------------------------------------------- alternatives (rows) + published comparisons
   const top = others.slice(0, 5);
   const altRows = summary.ranked.filter((v) => v.id === vendor.id || top.includes(v)).map((v) => ({ vendor: v }));
-  const vsCell = (id) => {
-    if (id === vendor.id) return '<td class="sw-vs"></td>';
-    const other = ctx.vendor(id);
-    const pair = ctx.pairPage(primary.id, vendor.id, id);
-    const href = pair ? ctx.url.vs(pair.id) : ctx.url.compare({ scope: primary.id, ids: [vendor.id, id] });
-    return String(html`<td class="sw-vs"><a href="${href}">${pair ? 'Read comparison' : 'Compare'}<span class="sr-only"> ${name} with ${other.name}</span></a></td>`);
+  // per row: the published comparison when one exists, else the comparison tool with both products selected
+  const vsLink = (other) => {
+    if (other.id === vendor.id) return '';
+    const pair = ctx.pairPage(primary.id, vendor.id, other.id);
+    const href = pair ? ctx.url.vs(pair.id) : ctx.url.compare({ scope: primary.id, ids: [vendor.id, other.id] });
+    return html`<a class="sw-vs" href="${href}">${pair ? 'Read comparison' : 'Compare'}<span class="sr-only"> ${name} with ${other.name}</span></a>`;
   };
-  // ui.productTable has no slot for a per-row action; the "vs" cell is appended to each generated row.
   const altTable = top.length
-    ? raw(
-        String(
-          ui.productTable(ctx, primary.id, altRows, {
-            id: 'alternatives-table',
-            focalId: vendor.id,
-            sortable: false,
-            lazyFrom: 0,
-            caption: top.length === 1 ? `${name} and the one alternative we researched in ${primary.name}` : `${name} and the ${top.length} alternatives with the highest documented-fit scores in ${primary.name}`,
-          }),
-        )
-          .replace('>You are comparing against this<', '>This product<')
-          .replace('</tr>', '<th scope="col" class="sw-vs"><span class="sr-only">Compare</span></th></tr>')
-          .replace(/(<tr[^>]*\sdata-id="([^"]+)"[^>]*>)([\s\S]*?)<\/tr>/g, (m, open, id, inner) => `${ctx.vendor(id)?.logo?.surface === 'brand-gradient' ? open.replace('<tr', '<tr data-logo="inverse"') : open}${inner}${vsCell(id)}</tr>`),
-      )
+    ? ui.productTable(ctx, primary.id, altRows, {
+        id: 'alternatives-table',
+        focalId: vendor.id,
+        focalTag: 'This product',
+        sortable: false,
+        lazyFrom: 0,
+        action: vsLink,
+        actionLabel: html`<span class="sr-only">Compare</span>`,
+        caption: top.length === 1 ? `${name} and the one alternative we researched in ${primary.name}` : `${name} and the ${top.length} alternatives with the highest documented-fit scores in ${primary.name}`,
+      })
     : '';
   const vsItems = publishedVs.map((x) => {
     const names = ctx.comparisonNames(x);

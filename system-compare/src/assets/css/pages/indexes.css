@@ -152,7 +152,14 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 .ix-toolbar { padding-bottom: var(--s-2); }
 .ix-toolbar .ix-chips { flex: 0 1 auto; min-width: 0; }
 .ix-toolbar .chip { max-width: 100%; white-space: normal; text-align: left; }
-.ix-panel > .toolbar__count { margin: 0 0 var(--s-2); }
+/* wide: quick filters and sort on one line, the count below them; phones: filters, then count and sort together */
+.ix-toolbar .toolbar__count { flex: 1 1 auto; min-width: 0; margin: 0; }
+@media (min-width: 48em) {
+  .ix-toolbar:not(.ix-toolbar--plain) .toolbar__count { order: 3; flex-basis: 100%; }
+}
+@media (max-width: 47.99em) {
+  .ix-toolbar .ix-chips { flex: 1 1 100%; }
+}
 .ix-c-vs { width: 9.5rem; font-size: var(--fs-sm); line-height: 1.35; }
 .ix-c-vs a { color: var(--ink-2); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-strong); }
 .ix-c-vs a:hover { color: var(--brand); text-decoration-color: currentColor; }

@@ -183,6 +183,7 @@ const EARLY_JS = `(function(){var d=document.documentElement;d.className+=' js';
  *   head                                extra <head> markup (Raw), e.g. a referrer policy meta
  *   staticScripts: ['/partners-ui.js']  deferred scripts that live in src/assets/static (not hashed)
  *   analytics: false                    never load the consent-gated analytics script on this page
+ *   styles: ['software']                page stylesheets (src/assets/css/pages/<name>.css); default: by module + detected from the HTML
  * }
  */
 export function renderDocument(ctx, route, page) {
@@ -260,6 +261,7 @@ ${raw(site.verificationMetaHtml)}
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/rubik-latin.woff2" crossorigin>
 ${(page.preload || []).map((p) => html`<link rel="preload"${attrs(p)}>`)}
 <link rel="stylesheet" href="${ctx.asset('site.css')}">
+${(ctx.stylesFor ? ctx.stylesFor(route.module, bodyStr, page.styles) : []).map((u) => html`<link rel="stylesheet" href="${u}">`)}
 <link rel="prefetch" as="script" href="${ctx.asset('js/search.js')}" id="sc-search-engine">
 <script>${raw(EARLY_JS)}</script>
 <script type="application/ld+json">${jsonForScript({ '@context': 'https://schema.org', '@graph': graph })}</script>

@@ -34,9 +34,12 @@
     return ' ' + norm(raw) + ' ' + norm(raw.replace(/[-.'’]/g, '')) + ' ';
   }
   /** At most 120 characters and 20 words, as on the rest of the site. */
+  var STOP = { a: 1, an: 1, and: 1, 'for': 1, 'in': 1, of: 1, or: 1, the: 1, to: 1, 'with': 1 };
   function tokens(q) {
     var n = norm(String(q || '').slice(0, 120));
-    return n ? n.split(' ').slice(0, 20) : [];
+    if (!n) return [];
+    var all = n.split(' ').slice(0, 20), words = all.filter(function (t) { return !STOP[t]; });
+    return words.length ? words : all; // "payroll for restaurants" looks for payroll + restaurants
   }
   /**
    * A word of four letters or more may match anywhere ("force" finds Salesforce). A shorter one must start a
@@ -80,7 +83,12 @@
     for (var l = 0; l < lists.length; l++) for (var i = 0; i < lists[l].length; i++) if ((!pass || pass(lists[l][i])) && matches(lists[l][i], toks, false)) return false;
     return true;
   }
-  var SIMILAR = ' · nothing matches as typed, showing similar spellings';
+  var SIMILAR = ' · nothing matches as typed, showing similar spellings', RELATED = ' · including related terms';
+  /** True when a word was found only through a synonym or alias, not in what the row shows. */
+  function viaRelated(row, toks) {
+    for (var i = 0; i < toks.length; i++) if (!hit(row.vis, toks[i])) return true;
+    return false;
+  }
 
   // ------------------------------------------------------------------ URL state + small UI helpers
   function params() { return new URLSearchParams(location.search); }
@@ -168,20 +176,21 @@
     var groups = $$('[data-ix-group]', root), blocks = $$('[data-ix-cat]', root);
     var rows = $$('[data-ix-row]', root).map(function (li) {
       var block = li.closest('[data-ix-cat]'), cat = block.getAttribute('data-ix-cat'), h = $('h3', block);
-      return { node: li, cat: cat, hay: hayOf([li.textContent, h ? h.textContent : '', cat.replace(/-/g, ' '), SYN[cat] || '', li.getAttribute('data-k') || '']) };
+      var shown = [li.textContent, h ? h.textContent : ''];
+      return { node: li, cat: cat, vis: hayOf(shown), hay: hayOf(shown.concat([cat.replace(/-/g, ' '), SYN[cat] || '', li.getAttribute('data-k') || ''])) };
     });
     function apply(push) {
       var toks = tokens(input.value), cat = sel.value, shown = 0;
-      var inCat = function (r) { return !cat || r.cat === cat; }, fuzzy = needFuzzy([rows], toks, inCat);
+      var inCat = function (r) { return !cat || r.cat === cat; }, fuzzy = needFuzzy([rows], toks, inCat), related = false;
       rows.forEach(function (r) {
         var ok = inCat(r) && matches(r, toks, fuzzy);
         r.node.hidden = !ok;
-        if (ok) shown++;
+        if (ok) { shown++; if (!fuzzy && !related && viaRelated(r, toks)) related = true; }
       });
       blocks.forEach(function (b) { b.hidden = !$('[data-ix-row]:not([hidden])', b); });
       groups.forEach(function (g) { g.hidden = !$('[data-ix-row]:not([hidden])', g); });
       syncJumpRow(groups);
-      setCount(count, shown, rows.length, toks.length > 0 || !!cat, fuzzy && shown ? SIMILAR : '');
+      setCount(count, shown, rows.length, toks.length > 0 || !!cat, fuzzy && shown ? SIMILAR : related ? RELATED : '');
       setEmpty(empty, shown === 0, input.value.trim(), 'Try a shorter word, clear the filter, or build the comparison yourself in the compare tool.');
       if (push !== false) writeParams({ find: input.value.trim(), category: cat });
     }
@@ -219,7 +228,8 @@
       var cats = catsOf(tr), link = $('a.prod', tr), idm = link ? /([a-z0-9-]+)\/(?:index\.html)?$/.exec(link.getAttribute('href')) : null;
       // what a product is — name, description, categories, aliases — not its score, price or AI label
       // (every row says "AI", "month" or "pending" somewhere; the quick filters cover those)
-      var parts = [text('.prod__name', tr), text('.prod__fit', tr), text('.ix-c-cats', tr), tr.getAttribute('data-k') || '', idm ? idm[1].replace(/-/g, ' ') : ''];
+      var seen = [text('.prod__name', tr), text('.prod__fit', tr), text('.ix-c-cats', tr)];
+      var parts = seen.concat([tr.getAttribute('data-k') || '', idm ? idm[1].replace(/-/g, ' ') : '']);
       cats.forEach(function (c) { parts.push(SYN[c] || ''); });
       var price = tr.getAttribute('data-price'), score = Number(tr.getAttribute('data-score'));
       // a product in several categories carries its score in each one: "crm:-1|project-management:92"
@@ -228,7 +238,7 @@
         var at = pair.lastIndexOf(':');
         if (at > 0) { byCat = byCat || {}; byCat[pair.slice(0, at)] = Number(pair.slice(at + 1)); }
       });
-      return { node: tr, i: i, score: score, cur: score, byCat: byCat, cell: cell, orig: null, shown: '', price: price === '' ? null : Number(price), priced: tr.hasAttribute('data-priced'), ai: tr.getAttribute('data-ai'), cats: cats, hay: hayOf(parts) };
+      return { node: tr, i: i, score: score, cur: score, byCat: byCat, cell: cell, orig: null, shown: '', price: price === '' ? null : Number(price), priced: tr.hasAttribute('data-priced'), ai: tr.getAttribute('data-ai'), cats: cats, vis: hayOf(seen), hay: hayOf(parts) };
     });
     var scoreHead = $('thead .ptable__c-score', table), scoreHeadText = scoreHead ? scoreHead.textContent : '';
     function categoryLabel() {
@@ -307,15 +317,15 @@
       }
       // similar spellings only when neither a product nor a documented supplier matches as typed
       var fuzzy = toks.length > 0 && needFuzzy([rows], toks, pass) && needFuzzy([supRows], toks, supPass);
-      var m = 0, shown = 0;
+      var m = 0, shown = 0, related = false;
       rows.forEach(function (r) {
         var good = pass(r) && matches(r, toks, fuzzy), vis = good && shown < state.n;
-        if (good) m++;
+        if (good) { m++; if (!fuzzy && !related && viaRelated(r, toks)) related = true; }
         if (vis) shown++;
         r.node.hidden = !vis;
       });
       var filtered = toks.length > 0 || !!state.category || !!state.f.scored || !!state.f.priced || !!state.ai;
-      setCount(count, m, rows.length, filtered, (fuzzy && m ? SIMILAR : '') + (state.sort === 'price' ? ' · sorted by starting price (products without a public US-dollar price last)' : state.sort === 'score' ? (state.category ? ' · sorted by score in ' + label : ' · sorted by best score') + ' (pending last)' : ''));
+      setCount(count, m, rows.length, filtered, (fuzzy && m ? SIMILAR : related ? RELATED : '') + (state.sort === 'price' ? ' · sorted by starting price (products without a public US-dollar price last)' : state.sort === 'score' ? (state.category ? ' · sorted by score in ' + label : ' · sorted by best score') + ' (pending last)' : ''));
       table.hidden = m === 0;
       if (more) { more.hidden = m <= shown; more.textContent = 'Show ' + Math.min(PAGE, m - shown) + ' more (' + shown + ' of ' + m + ')'; }
 
@@ -344,7 +354,6 @@
       if (catLink) {
         catLink.hidden = !state.category;
         if (state.category) {
-          var opt = sel.options[sel.selectedIndex], label = opt ? opt.textContent.replace(/\s*\(\d+\)\s*$/, '') : '';
           catLink.setAttribute('href', SC.url('/categories/' + state.category + '/'));
           catLink.textContent = 'See the ' + label + ' comparison';
         }

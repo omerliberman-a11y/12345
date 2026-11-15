@@ -139,6 +139,11 @@ a.cmp-slot__name:hover { color: var(--brand); }
 .cmp-count__off { display: block; margin-top: var(--s-1); font-size: var(--fs-md); color: var(--ink-2); }
 .cmp-ahead__off { padding-top: 0.7rem; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }
 .cmp-ahead__off b { font-weight: 600; color: var(--ink); }
+.cmp-ahead__off .cmp-dot { margin-right: 0.5rem; }
+/* three or four products: one list of differing checks (two columns when there is room), then a line per product */
+.cmp-ahead--many { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 56em) { .cmp-ahead__list--cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-14); } }
+.cmp-ahead--many .cmp-ahead__off { max-width: 80ch; }
 .cmp-ahead__off a, .cmp-sec > .fineprint a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .cmp-ahead__off a:hover, .cmp-sec > .fineprint a:hover { color: var(--brand); text-decoration-color: currentColor; }
 
