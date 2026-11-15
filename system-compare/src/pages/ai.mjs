@@ -215,6 +215,9 @@ function render(ctx) {
     ${levelLists}
   </section>`;
 
+  // documented head-to-heads of the dedicated AI-tool categories (this hub is their natural entry point)
+  const aiToolCatIds = new Set(aiToolGroups.flatMap(({ cats }) => cats.map((c) => c.id)));
+  const aiVs = ctx.comparisons.filter((k) => aiToolCatIds.has(k.categoryId) && ctx.comparisonKind(k) === 'factual');
   const aiTools = html`<section class="wrap section" id="ai-tools" aria-labelledby="ai-tools-h">
     ${ui.sectionHead('AI tool categories', {
       id: 'ai-tools-h',
@@ -232,6 +235,16 @@ function render(ctx) {
     <h3 class="gd-subhead" id="documentary">Other categories with AI evidence and open questions</h3>
     <p class="gd-sub">${otherDocs.length} more documentary categories${uniform ? `, ${uniform} suppliers in each` : ''}. Each page states what suppliers document about AI and what remains open; score pending.</p>
     <div class="gd-chiplinks">${ui.chipLinks(otherDocs.map((c) => ({ href: ctx.url.category(c.id), label: c.name })))}</div>
+    ${
+      aiVs.length
+        ? html`<h3 class="gd-subhead" id="ai-comparisons">AI tools head to head</h3>
+            <p class="gd-sub">${ctx.plural(aiVs.length, 'documented comparison')} of named AI offers: prices, limits and criteria side by side, with no score assigned.</p>
+            ${ui.linkList(
+              aiVs.map((k) => ({ href: ctx.url.vs(k.id), title: ctx.comparisonNames(k).map((n) => n.name).join(' vs '), meta: ctx.category(k.categoryId).name })),
+              { cols: 2 },
+            )}`
+        : ''
+    }
   </section>`;
 
   const score = html`<section class="wrap section gd-score" id="score" aria-labelledby="score-h">

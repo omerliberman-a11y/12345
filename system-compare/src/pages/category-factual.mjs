@@ -523,7 +523,19 @@ function render(ctx, category) {
     pageType: 'CollectionPage',
     dateModified: ctx.isoDate(checked) || undefined,
     accountable: Boolean(approver),
-    faq: faqItems.map((f) => ({ q: f.q, a: text(f.plain) })),
+    // One marked-up instance per question site-wide: when this page is kept out of the index and its
+    // comparison page is not, the shared decision-aid questions are marked up there (and stay visible here).
+    faq: faqItems
+      .filter(
+        (f) =>
+          !(
+            !ctx.isIndexable(path) &&
+            F.comparison &&
+            ctx.isIndexable(ctx.url.vs(F.comparison.id)) &&
+            (F.comparison.decisionAid?.rows || []).some((r) => r.question === f.q && `${r.decision} ${r.boundary}` === f.plain)
+          ),
+      )
+      .map((f) => ({ q: f.q, a: text(f.plain) })),
     jsonld: [
       ctx.seo.itemListNode(
         path,

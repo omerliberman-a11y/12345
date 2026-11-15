@@ -172,7 +172,8 @@ function render(ctx) {
     fullOrg: true,
     bodyAttrs: { 'data-hero-search': '' },
     dateModified: ctx.isoDate(ctx.catalog.researchUpdatedAt),
-    faq: homeFaq.map((f) => ({ q: f.q, a: text(f.a) })),
+    // the same questions are marked up as FAQPage on /faq/ (one instance per site); here they are visible only
+    faq: [],
     jsonld: [ctx.seo.itemListNode('/', leaders, { name: 'Popular software categories', ordered: false })],
     pageExtra: { about: { '@id': ctx.seo.SITE_ID } },
     summaryForSearch: `${ctx.vendors.length} products, ${totalSuppliers} documented suppliers`,

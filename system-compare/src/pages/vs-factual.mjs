@@ -257,7 +257,11 @@ function render(ctx, record) {
     pageType: 'WebPage',
     dateModified: ctx.isoDate(checked) || undefined,
     accountable: Boolean(approver),
-    faq: faqItems.map((f) => ({ q: f.q, a: text(f.plain) })),
+    // A decision-aid question that also appears on the category page is marked up once for the whole site:
+    // on the category page when that page is indexable, otherwise here. It stays visible on both.
+    faq: faqItems
+      .filter((f) => !(ctx.isIndexable(ctx.url.category(category.id)) && (F.decisionAid?.rows || []).some((r) => r.question === f.q && `${r.decision} ${r.boundary}` === f.plain)))
+      .map((f) => ({ q: f.q, a: text(f.plain) })),
     jsonld: [
       ctx.seo.itemListNode(
         path,

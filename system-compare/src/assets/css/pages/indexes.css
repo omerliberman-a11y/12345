@@ -89,6 +89,10 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 .ix-table td.ix-c-cats { font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-3); }
 .ix-table td.ix-c-cats a { color: var(--ink-2); }
 .ix-table td.ix-c-cats a:hover { color: var(--brand); }
+/* vendor-site link under the categories (commercial-link categories only) */
+.ix-visit { display: block; margin-top: 0.2rem; }
+.ix-visit .commercial-link { gap: 0.2rem 0.5rem; }
+.ix-table td.ix-c-cats .ix-visit a { color: var(--brand-ink); font-weight: 550; }
 .ix-table .ptable__c-score { width: 10rem; }
 .ix-table .ptable__c-price { width: 12.5rem; }
 .ix-table .score__meta { white-space: normal; }
@@ -119,8 +123,12 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
   .ix-table .prod::after { content: ""; position: absolute; inset: 0; }
   .ix-table .prod__fit { display: none; }
   .ix-table .prod__name { margin-right: 0; }
-  .ix-table td.ix-c-cats { display: block; grid-area: cats; width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--fs-xs); line-height: 1.5; }
+  .ix-table td.ix-c-cats { display: block; grid-area: cats; width: auto; font-size: var(--fs-xs); line-height: 1.5; }
+  .ix-table .ix-catlist { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ix-table td.ix-c-cats a { color: var(--ink-3); text-decoration: none; }
+  /* the whole row opens the profile; the vendor link sits above that overlay and is a full touch target */
+  .ix-visit { position: relative; z-index: 1; margin-top: 0; }
+  .ix-table td.ix-c-cats .ix-visit a { display: inline-flex; align-items: center; min-height: var(--tap); font-size: var(--fs-sm); text-decoration: underline; }
   .ix-table .ptable__c-price { width: auto; padding-left: 0 !important; }
   .ix-table .ptable__c-score { width: auto; padding-top: 0 !important; }
   .ix-table .score { flex-direction: row-reverse; align-items: baseline; gap: 0.4rem; }

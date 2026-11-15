@@ -372,7 +372,12 @@ const sitemap = new Map(); // path → { lastmod, file }
     let older = 0;
     for (const [p, e] of sitemap) {
       if (!e.lastmod) {
-        l.fail(p, 'no <lastmod>');
+        // A page without any date in the data has no lastmod: the publisher's editorial policy leaves missing
+        // dates unclaimed and never substitutes the build date. Only a page that HAS a date must carry one.
+        const page = byPath.get(p);
+        const hasDate = page && page.graph.some((node) => node && node.dateModified);
+        if (hasDate) l.fail(p, 'no <lastmod> although the page has a dateModified');
+        else l.warn(p, 'no <lastmod>: the data holds no modification date for this page (left unclaimed)');
         continue;
       }
       const d = e.lastmod.slice(0, 10);
@@ -558,7 +563,9 @@ const visibleFaq = new Map(); // path → [{q, a}]
   const rt = check('5g-no-ratings', 'No rating/review markup of any kind (JSON-LD keys, types, microdata)');
   const dt = check('5h-jsonld-dates', 'JSON-LD dates are valid ISO dates that exist in the data (never the build date)');
   const id = check('5i-id-refs', 'Every {"@id"} reference resolves inside the same graph');
-  const qaSeen = new Map();
+  const qaSeen = new Map(); // marked-up question+answer → pages that mark it up
+  const unmarked = []; // visible FAQ items without markup on their own page
+  const markedQuestions = new Set();
   let crossRefs = 0;
   const definesId = (page, wanted) => {
     let found = false;
@@ -697,10 +704,15 @@ const visibleFaq = new Map(); // path → [{q, a}]
       if (/<[a-z][^>]*>/i.test(q.a || '')) fq.fail(pg.path, `FAQPage answer contains markup: "${q.q}"`);
       if (!q.a || q.a.length < 20) fq.fail(pg.path, `FAQPage answer is empty/too short: "${q.q}"`);
     }
+    // One marked-up instance per question for the whole site (Google's FAQPage guideline): a visible item may be
+    // left out of this page's markup when the same question is marked up on another page — checked after the loop.
     for (const v of vis) {
-      if (!ldQa.some((q) => squash(q.q || '') === squash(v.q))) fq.fail(pg.path, `visible FAQ item has no FAQPage markup: "${v.q}"`);
+      if (!ldQa.some((q) => squash(q.q || '') === squash(v.q))) unmarked.push({ path: pg.path, q: v.q });
       if (v.nosnippet) fq.fail(pg.path, `FAQ item sits inside data-nosnippet: "${v.q}"`);
-      const key = squash(v.q + '|' + v.a);
+    }
+    for (const q of ldQa) {
+      markedQuestions.add(squash(q.q || ''));
+      const key = squash((q.q || '') + '|' + (q.a || ''));
       qaSeen.set(key, [...(qaSeen.get(key) || []), pg.path]);
     }
     if (new Set(ldQa.map((q) => q.q)).size !== ldQa.length) fq.fail(pg.path, 'the same question is marked up twice');
@@ -808,12 +820,18 @@ const visibleFaq = new Map(); // path → [{q, a}]
   sw.note(`${softwareNodes} SoftwareApplication nodes, ${offers} with offers`);
   id.note(`${crossRefs} references point at a node defined on another page (allowed: the id resolves in that page's graph)`);
   const dupGroups = new Map();
+  let markedElsewhere = 0;
+  for (const u of unmarked) {
+    if (markedQuestions.has(squash(u.q))) markedElsewhere++;
+    else fq.fail(u.path, `visible FAQ item has no FAQPage markup on any page: "${u.q}"`);
+  }
+  if (markedElsewhere) fq.note(`${markedElsewhere} visible FAQ items are marked up on another page only (one marked-up instance per question)`);
   for (const [, list] of qaSeen) if (list.length > 1) dupGroups.set(list.join(', '), (dupGroups.get(list.join(', ')) || 0) + 1);
   for (const [key, k] of dupGroups) fq.warn(key.split(', ')[0], `${k} question+answer pair(s) repeated verbatim on ${key.split(', ').length} pages: ${key.split(', ').slice(0, 4).join(', ')}`);
   const withFaq = pages.filter((p) => (visibleFaq.get(p.path) || []).length);
   fq.note(`${withFaq.length} pages show an FAQ (${withFaq.reduce((n, p) => n + visibleFaq.get(p.path).length, 0)} items); ${extraVisible} visible answers carry extra trailing text (source / read-more links) that is not in the markup`);
   const dupPages = new Set([...qaSeen.values()].filter((l) => l.length > 1).flat());
-  fq.note(`${[...qaSeen.values()].filter((l) => l.length > 1).length} question+answer pairs appear verbatim on more than one page (${dupPages.size} pages involved)`);
+  fq.note(`${[...qaSeen.values()].filter((l) => l.length > 1).length} question+answer pairs are marked up verbatim on more than one page (${dupPages.size} pages involved)`);
   for (const t of ['category', 'software', 'vs', 'alternatives']) {
     const missing = pages.filter((p) => p.type === t && !(visibleFaq.get(p.path) || []).length);
     if (missing.length) fq.warn(missing[0].path, `${missing.length} ${t} pages have no FAQ block (e.g. ${missing.slice(0, 3).map((p) => p.path).join(', ')})`);

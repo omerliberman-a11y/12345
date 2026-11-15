@@ -210,6 +210,8 @@ kbd {
   line-height: 1.35;
 }
 .mega__group a:hover { color: var(--brand); }
+.mega__group a.mega__more { color: var(--ink-3); }
+.mega__group a.mega__more::after { content: " →"; white-space: pre; }
 .mega__foot {
   display: flex;
   flex-wrap: wrap;

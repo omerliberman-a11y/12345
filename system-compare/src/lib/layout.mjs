@@ -36,19 +36,34 @@ export const brand = (ctx) =>
 
 // ------------------------------------------------------------------ header
 function megaMenu(ctx) {
+  // The menu on every page lists the categories that are open to search engines; the rest (documentary AI-tool
+  // categories and very small rankings under the current index policy) are one click away on /categories/.
+  const open = (c) => ctx.isIndexable(ctx.url.category(c.id));
+  const groups = ctx.groups.map((g) => ({ g, cats: g.categories.filter(open), hidden: g.categories.filter((c) => !open(c)).length }));
+  const withCats = groups.filter((x) => x.cats.length);
+  const rest = groups.filter((x) => !x.cats.length);
   return html`<details class="mega-wrap" data-mega>
     <summary class="nav__link" aria-haspopup="true">Categories ${icon('chevron')}</summary>
     <div class="mega" data-nosnippet>
       <div class="wrap">
         <div class="mega__inner">
-          ${ctx.groups.map(
-            (g) => html`<div class="mega__group" data-group="${g.id}">
+          ${withCats.map(
+            ({ g, cats, hidden }) => html`<div class="mega__group" data-group="${g.id}">
               <p class="mega__title">${g.label}</p>
               <ul>
-                ${g.categories.map((c) => html`<li><a href="${ctx.url.category(c.id)}">${c.name}</a></li>`)}
+                ${cats.map((c) => html`<li><a href="${ctx.url.category(c.id)}">${c.name}</a></li>`)}
+                ${hidden ? html`<li><a class="mega__more" href="/categories/#${g.id}">${hidden} more in ${g.label}</a></li>` : ''}
               </ul>
             </div>`,
           )}
+          ${
+            rest.length
+              ? html`<div class="mega__group" data-group="more">
+                  <p class="mega__title">More categories</p>
+                  <ul>${rest.map(({ g }) => html`<li><a href="/categories/#${g.id}">${g.label} (${g.categories.length})</a></li>`)}</ul>
+                </div>`
+              : ''
+          }
         </div>
         <div class="mega__foot">
           <a class="link-arrow" href="/categories/">All ${ctx.categories.length} categories</a>

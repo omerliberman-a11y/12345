@@ -228,7 +228,7 @@
       var cats = catsOf(tr), link = $('a.prod', tr), idm = link ? /([a-z0-9-]+)\/(?:index\.html)?$/.exec(link.getAttribute('href')) : null;
       // what a product is — name, description, categories, aliases — not its score, price or AI label
       // (every row says "AI", "month" or "pending" somewhere; the quick filters cover those)
-      var seen = [text('.prod__name', tr), text('.prod__fit', tr), text('.ix-c-cats', tr)];
+      var seen = [text('.prod__name', tr), text('.prod__fit', tr), text('.ix-catlist', tr) || text('.ix-c-cats', tr)];
       var parts = seen.concat([tr.getAttribute('data-k') || '', idm ? idm[1].replace(/-/g, ' ') : '']);
       cats.forEach(function (c) { parts.push(SYN[c] || ''); });
       var price = tr.getAttribute('data-price'), score = Number(tr.getAttribute('data-score'));

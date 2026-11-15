@@ -109,6 +109,14 @@ function render(ctx) {
       : html`<span class="score"><span class="score__value num">${s.value}<small>/100</small></span>${where}</span>`;
   };
 
+  // Vendor-site links in the directory: the same placement the live directory has — products of the
+  // publisher's commercial-link categories only, through /go/ with the affiliate label where it applies.
+  const commercialCats = new Set(ctx.content.softwareServer.directoryCommercialLinkCategoryIds || []);
+  const visit = (v) =>
+    (v.categories || []).some((id) => commercialCats.has(id))
+      ? html` <span class="ix-visit">${ui.outLink(ctx, v, { intent: 'website', from: 'decision-directory', cls: 'ix-visit__a', explain: false })}</span>`
+      : '';
+
   const table = html`<table class="ptable ix-table" id="directory" data-ix-table data-page-size="${PAGE_SIZE}">
     <caption class="sr-only">Software directory: ${total} products with their highest documented-fit score, starting price and AI level</caption>
     <thead>
@@ -150,13 +158,13 @@ function render(ctx) {
               </span>
             </a>
           </th>
-          <td class="ix-c-cats">${ui.join(
+          <td class="ix-c-cats"><span class="ix-catlist">${ui.join(
             [
               ...cats.map((c) => html`<a href="${ctx.url.category(c.id)}">${c.name}</a>`),
               ...extra.map((x) => html`<a href="${ctx.url.supplier(x.category.id, x.supplier.id)}">${x.category.name}</a>`),
             ],
             ', ',
-          )}</td>
+          )}</span>${visit(v)}</td>
           <td class="ptable__c-score">${scoreCell({ best, cats })}</td>
           <td class="ptable__c-price">${ui.priceCell(ctx, p)}</td>
           <td class="ptable__c-ai">${ui.tag(ai.label, ai.rank >= 4 && 'brand')}</td>
