@@ -65,7 +65,11 @@ function render(ctx, X) {
 
   const shortlist = html`<section class="prose fx-sec fx-sec--first" id="shortlist" aria-labelledby="shortlist-h">
     <h2 id="shortlist-h">Where to begin your shortlist</h2>
-    <p>${X.decision}</p>
+    ${ui.answer(
+      ctx,
+      html`${X.decision} This brief ${X.rows?.length ? html`compares ${ctx.plural(X.rows.length, 'decision point')} for ${shortTitle} using` : html`covers ${shortTitle} using`} ${ctx.plural((X.sources || []).length, 'official source')} checked ${ui.time(ctx, checked)}.`,
+      { label: 'In short' },
+    )}
     ${
       X.choices?.length
         ? html`<div class="fx-twocol">${X.choices.map((c) => html`<div><h3>${c.heading}</h3><p>${c.text}</p></div>`)}</div>`
@@ -78,7 +82,7 @@ function render(ctx, X) {
     ? html`<section class="fx-sec" id="decision-points" aria-labelledby="decision-points-h">
         <h2 id="decision-points-h">Decision points</h2>
         <table class="dtable fx-stack fx-decision">
-            <caption class="sr-only">${shortTitle}: decision points checked ${ctx.fmtDate(checked)}</caption>
+            <caption class="sr-only">${shortTitle}: decision points checked ${ui.time(ctx, checked)}</caption>
             <thead><tr><th scope="col">Question</th>${names.map((n) => html`<th scope="col">${n}</th>`)}</tr></thead>
             <tbody>
               ${X.rows.map((r) => html`<tr><th scope="row">${r.label}</th><td data-l="${names[0]}">${r.left}</td><td data-l="${names[1]}">${r.right}</td></tr>`)}
@@ -157,7 +161,8 @@ function render(ctx, X) {
     description,
     ogTitle: X.title,
     ogType: 'article',
-    ogImage: X.image ? { url: X.image.src, width: X.image.width, height: X.image.height, alt: X.image.alt } : undefined,
+    // 1200×630 JPEG share card of the hero (scripts/make-article-social.py): social platforms do not read WebP
+    ogImage: X.image ? { url: `/assets/articles/social/${X.image.src.split('/').pop().replace(/\.\w+$/, '')}.jpg`, width: 1200, height: 630, alt: X.image.alt } : undefined,
     nav: 'compare',
     breadcrumbs: [
       { name: 'Categories', url: '/categories/' },

@@ -187,7 +187,7 @@ export function createAnswers(ctx) {
     const p = ctx.price(vendor, category.id);
     const things = categoryThings(category);
     const scoreText = s.pending
-      ? `Its documented-fit score is pending: ${s.checked} of ${s.total} checklist items (${s.coveragePct}% of the weight) are checked, below the 80% gate.`
+      ? `Its documented-fit score is pending: ${s.checked} of ${s.total} checklist items (${s.coveragePct}% of the weight) are checked as of ${fmtDate(s.checkedAt || ctx.catalog.checkedAt)}, below the 80% gate.`
       : `It scores ${s.value}/100 for documented fit (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${fmtDate(s.checkedAt)}` : ''}).`;
     const priceText = p.hasAmount
       ? `Published pricing starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}${onPlan(p.plan)}${p.billingNote ? `, ${p.billingNote}` : ''}${p.checkedAt ? ` (price checked ${fmtDate(p.checkedAt)})` : ''}.`

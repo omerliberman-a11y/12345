@@ -98,6 +98,17 @@ function render(ctx, vendor) {
       <p class="lede">${vendor.description}</p>
       <ul class="sw-cats" aria-label="Categories and published rank">${cats.map(chip)}</ul>
     </div>
+    <div class="sw-hero__foot">
+      ${ui.trustline([
+        html`Checked ${ui.time(ctx, vendor.checkedAt)}`,
+        html`<a href="#evidence">${plural(vendor.sources.length, 'official source')}</a>`,
+        'Desk research, not a hands-on test',
+        html`<a href="/methodology/">How we score</a>`,
+      ])}
+      ${ui.answer(ctx, quick, {
+        meta: html`The documented-fit score is the share of the category checklist documented in official sources. It is not a customer rating or a hands-on test. <a href="/methodology/">How we score</a>`,
+      })}
+    </div>
     <div class="sw-hero__side">
       <div class="sw-side__score">
         <a class="sw-side__ring" href="#capabilities" title="See the capability evidence">${ui.scoreRing(ctx, s)}</a>
@@ -123,17 +134,6 @@ function render(ctx, vendor) {
         ${ui.shortlistButton(ctx, vendor, primary.id)}
         <a class="link-arrow sw-side__alts" href="${ctx.url.alternatives(vendor.id)}">${others.length === 1 ? '1 alternative' : `${others.length} alternatives`}</a>
       </div>
-    </div>
-    <div class="sw-hero__foot">
-      ${ui.trustline([
-        html`Checked ${ui.time(ctx, vendor.checkedAt)}`,
-        html`<a href="#evidence">${plural(vendor.sources.length, 'official source')}</a>`,
-        'Desk research, not a hands-on test',
-        html`<a href="/methodology/">How we score</a>`,
-      ])}
-      ${ui.answer(ctx, quick, {
-        meta: html`The documented-fit score is the share of the category checklist documented in official sources. It is not a customer rating or a hands-on test. <a href="/methodology/">How we score</a>`,
-      })}
     </div>
   </header>`;
 

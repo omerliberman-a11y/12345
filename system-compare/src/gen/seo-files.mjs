@@ -115,7 +115,7 @@ export async function generate(ctx, emit) {
           ? `Documented-fit score in ${c.name}: pending (${s.checked} of ${s.total} checklist items checked, ${s.coveragePct}% of weight)`
           : `Documented-fit score in ${c.name}: ${s.value}/100 (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${d(s.checkedAt)}` : ''}; ${s.tied ? `shared place ${s.place} (${s.tied} products with this score)` : `place ${s.place}`} of ${s.placeOf} scored products)`;
       }),
-      `Starting price: ${p.hasAmount ? `${p.headline}${p.unit ? ' ' + p.unit : ''}${p.planLabel ? ` (${p.planLabel})` : ''}${p.billingNote ? `, ${p.billingNote}` : ''}` : `no verified public starting price (${p.headline.toLowerCase()})`}${p.checkedAt ? `; price checked ${d(p.checkedAt)}` : ''}`,
+      `Starting price: ${p.hasAmount ? `${p.headline}${p.unit ? ' ' + p.unit : ''}${p.planLabel ? ` (${p.planLabel})` : ''}${p.billingNote ? `, ${p.billingNote}` : ''}` : `no verified public starting price${p.state === 'quote' || p.state === 'usage' || p.smsUnverified ? ` (${p.headline.toLowerCase()})` : ''}`}${p.checkedAt ? `; price checked ${d(p.checkedAt)}` : ''}`,
       `AI: ${ctx.aiLevel(v).label}`,
       `Best for: ${v.bestFor}`,
       `Look closely when: ${v.avoidIf}`,
@@ -128,6 +128,7 @@ export async function generate(ctx, emit) {
     head.replace('# ', '# Full data — ') +
       `## How to read this file\n\nOne block per product profile. Scores are documented-fit scores (share of a category checklist documented in official sources), not ratings. "pending" means less than 80% of the checklist weight has been checked. Prices are dated public list prices, not quotes.\n\n` +
       `## Products\n\n${blocks.join('\n\n')}\n\n` +
-      `## Categories\n\n${ctx.categories.map((c) => `${catLine(c)}${!ctx.isFactual(c) ? ` ${A.categoryQuickAnswer(c)}` : ''}`).join('\n')}\n`,
+      // the same category set as llms.txt and the sitemap: pages kept out of the index are not offered here either
+      `## Categories\n\n${indexableCats.map((c) => `${catLine(c)}${!ctx.isFactual(c) ? ` ${A.categoryQuickAnswer(c)}` : ''}`).join('\n')}\n`,
   );
 }

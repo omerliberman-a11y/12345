@@ -8,6 +8,7 @@
 import { html, raw, esc, text, cx, attrs, join } from '../lib/html.mjs';
 import * as ui from '../lib/components.mjs';
 import { title as seoTitle, describe } from '../lib/seo.mjs';
+import { fmtDate } from '../lib/format.mjs';
 
 export function routes(ctx) {
   return ctx.factualCategories.map((category) => ({ path: ctx.url.category(category.id), render: (c) => render(c, category) }));
@@ -28,7 +29,7 @@ export const fxLegend = () => html`<p class="legend" aria-label="Legend">${['yes
  */
 export const dated = (s) => {
   const parts = String(s ?? '').split(/\b(20\d\d-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01]))\b/);
-  return parts.length === 1 ? s : raw(parts.map((part, i) => (i % 2 ? `<time datetime="${part}">${part}</time>` : esc(part))).join(''));
+  return parts.length === 1 ? s : raw(parts.map((part, i) => (i % 2 ? `<time datetime="${part}">${fmtDate(part)}</time>` : esc(part))).join(''));
 };
 
 /** evidence_id → source record of a documentary category. */
@@ -147,7 +148,7 @@ function render(ctx, category) {
   const priceSentence = lowest
     ? `${numericOffers.length} of the ${nOffers} offers ${numericOffers.length === 1 ? 'has' : 'have'} a published price; ${
         numericOffers.length === 1 ? 'it is' : 'the lowest published amount is'
-      } ${priceWords(lowest)} for ${lowest.supplier.name} ${lowest.plan.name}. ${mixedCurrency ? 'Currencies, units' : 'Units'} and billing terms differ between suppliers, so this is not a like-for-like price.`
+      } ${priceWords(lowest)} for ${lowest.supplier.name} ${lowest.plan.name}.`
     : `None of the ${nOffers} offers has a published price${
         quoteOffers.length === nOffers
           ? `: all ${nOffers} are quote-only`
@@ -179,7 +180,7 @@ function render(ctx, category) {
     ])}
   </header>
   <div class="wrap cat-answer">
-    ${ui.answer(ctx, quick)}
+    ${ui.answer(ctx, quick, { meta: lowest ? `${mixedCurrency ? 'Currencies, units' : 'Units'} and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.` : null })}
     ${ui.facts(glance)}
   </div>`;
 
@@ -292,7 +293,7 @@ function render(ctx, category) {
           <p>${s.segment}</p>
         </div>
         <table class="dtable fx-stack fx-offers">
-          <caption class="sr-only">${s.name} — observed offers, checked ${ctx.fmtDate(checked)}</caption>
+          <caption class="sr-only">${s.name} — observed offers, checked ${ui.time(ctx, checked)}</caption>
           <thead>
             <tr><th scope="col">Offer</th><th scope="col">Observed price</th><th scope="col">Billing and tax</th><th scope="col">Notes</th><th scope="col">Evidence</th></tr>
           </thead>

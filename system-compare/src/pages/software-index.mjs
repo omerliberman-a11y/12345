@@ -103,7 +103,7 @@ function render(ctx) {
   // (wide screens) or that it is the best of N (phones, where the categories sit right under the name).
   const scoreCell = ({ best, cats }) => {
     const s = best.score;
-    const where = cats.length > 1 ? html`<span class="score__meta ix-in">in ${best.category.name}</span><span class="score__meta ix-of">best of ${cats.length}</span>` : '';
+    const where = cats.length > 1 ? html`<span class="score__meta ix-in">in ${best.category.name}</span><span class="score__meta ix-of">highest of ${cats.length}</span>` : '';
     return s.pending
       ? html`<span class="score score--pending"><span class="score__value">Score pending</span><span class="score__meta ix-in">${s.checked}/${s.total} checked · ${s.coveragePct}%</span></span>`
       : html`<span class="score"><span class="score__value num">${s.value}<small>/100</small></span>${where}</span>`;
@@ -115,7 +115,7 @@ function render(ctx) {
       <tr>
         <th scope="col" class="ptable__c-name">Product</th>
         <th scope="col" class="ix-c-cats">Categories</th>
-        <th scope="col" class="ptable__c-score">Best score</th>
+        <th scope="col" class="ptable__c-score">Highest score</th>
         <th scope="col" class="ptable__c-price">Starting price</th>
         <th scope="col" class="ptable__c-ai">AI</th>
       </tr>
@@ -170,7 +170,7 @@ function render(ctx) {
     ${table}
     ${emptyState('product')}
     <p class="ix-more"><button type="button" class="btn btn--ghost" data-ix-more hidden>Show ${PAGE_SIZE} more (${PAGE_SIZE} of ${total})</button></p>
-    <p class="table-note">Best score = the highest <a href="/methodology/">documented-fit score</a> (out of 100) across a product’s categories, from official documentation checked as of ${ui.time(ctx, ctx.catalog.checkedAt)} — not a customer rating or a hands-on test. “Score pending” means less than 80% of the checklist weight has been checked. Prices are dated public list prices, not quotes. No vendor pays for placement, and filters never change a published score.</p>
+    <p class="table-note">Highest score = a product’s highest <a href="/methodology/">documented-fit score</a> (out of 100) across a product’s categories, from official documentation checked as of ${ui.time(ctx, ctx.catalog.checkedAt)} — not a customer rating or a hands-on test. “Score pending” means less than 80% of the checklist weight has been checked. Prices are dated public list prices, not quotes. No vendor pays for placement, and filters never change a published score.</p>
   </section>`;
 
   const supplierBlock = html`<section class="wrap section ix-sup" id="suppliers" aria-labelledby="suppliers-h" data-ix-suppliers data-shown="${SUPPLIERS_SHOWN}">
@@ -194,7 +194,7 @@ function render(ctx) {
       a: `${total} products have a full profile, across ${ctx.scoredCategories.length} scored categories. A further ${suppliers.length} suppliers are documented inside ${ctx.factualCategories.length} category comparisons; they have no separate profile and no score.`,
     },
     {
-      q: 'Why does the directory show a “best score”?',
+      q: 'Why does the directory show a “highest score”?',
       a: `A product is scored separately in each category it belongs to, against that category’s checklist, and ${nMulti} of the ${total} products are in more than one category. The directory shows the highest published documented-fit score and names its category; the product profile lists the score in every category. ${nScored} products have at least one published score and ${total - nScored} are score-pending.`,
     },
     {

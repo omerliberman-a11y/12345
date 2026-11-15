@@ -56,6 +56,8 @@ const readMinutes = (guide) => Math.max(1, Math.round(wordCount(guide) / 200));
 /** Stored image path → the file we ship (the two 1.9 MB PNG heroes were re-encoded to WebP at the same size). */
 const REENCODED = new Set(['/assets/articles/crm-clean-data.png', '/assets/articles/email-ready-to-send.png']);
 const imageSrc = (src) => (REENCODED.has(src) ? src.replace(/\.png$/, '.webp') : src);
+/** 1200×630 JPEG share card of a hero image (scripts/make-article-social.py): social platforms do not read WebP. */
+const socialImage = (image) => ({ url: `/assets/articles/social/${image.src.split('/').pop().replace(/\.\w+$/, '')}.jpg`, width: 1200, height: 630, alt: image.alt });
 const imageType = (src) => (/\.webp$/.test(src) ? 'image/webp' : /\.png$/.test(src) ? 'image/png' : 'image/jpeg');
 
 /** Numbered sources. A source on this site is a normal internal link; every other one opens in a new tab. */
@@ -261,7 +263,7 @@ function renderGuide(ctx, guide) {
     description,
     ogTitle: shortTitle,
     ogType: 'article',
-    ogImage: image ? { url: image.src, width: image.width, height: image.height, alt: image.alt } : undefined,
+    ogImage: image ? socialImage(image) : undefined,
     preload: image ? [{ href: image.src, as: 'image', type: imageType(image.src), fetchpriority: 'high' }] : undefined,
     nav: 'guides',
     breadcrumbs: [

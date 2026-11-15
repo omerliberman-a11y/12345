@@ -505,7 +505,7 @@ function render(ctx, comparison) {
       { name: pairName, url: path },
     ],
     pageType: 'WebPage',
-    dateModified: lastEvidence || undefined,
+    dateModified: ctx.maxDate(lastEvidence, vendors.map((v) => ctx.vendorUpdated(v))) || undefined,
     accountable: true,
     faq: faqItems.map((f) => ({ q: f.q, a: text(f.a) })),
     pageExtra: {

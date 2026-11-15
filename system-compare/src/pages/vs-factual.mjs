@@ -65,7 +65,11 @@ function render(ctx, record) {
     ])}
   </header>
   <div class="wrap cat-answer">
-    ${ui.answer(ctx, X.intro, { meta: 'No /100 score has been assigned. This is an unranked comparison of documented offers, not a recommendation.' })}
+    ${ui.answer(
+      ctx,
+      html`${ctx.listText(pair.map((s) => s.name))}: ${ctx.plural(offers.length, 'named offer')} compared on ${ctx.plural(criteria.length, 'documented criterion', 'documented criteria')}, with evidence checked ${ui.time(ctx, checked)}. ${X.intro}`,
+      { meta: 'No /100 score has been assigned. This is an unranked comparison of documented offers, not a recommendation.' },
+    )}
   </div>`;
 
   const nav = ui.subnav(
@@ -207,8 +211,17 @@ function render(ctx, record) {
     ${ui.sources(sourceList.map((s) => ({ label: s.title, url: s.url, note: html`Checked ${ui.time(ctx, s.observation_date)}${s.scope ? html` · ${dated(s.scope)}` : ''}` })))}
   </section>`;
 
-  // ---------------------------------------------------------------- back to the category
+  // ---------------------------------------------------------------- back to the category + sibling comparisons
   const guide = F.guide && ctx.guide(F.guide.id);
+  // The next six documentary comparisons after this one (same business area first, wrapping around), so every
+  // such page is linked from six others instead of only from the comparison library.
+  const allFactual = ctx.comparisons
+    .filter((k) => ctx.comparisonKind(k) === 'factual')
+    .map((k) => ({ k, g: ctx.groupOf(ctx.category(k.categoryId))?.id || '' }))
+    .sort((x, y) => x.g.localeCompare(y.g) || x.k.id.localeCompare(y.k.id))
+    .map((x) => x.k);
+  const at = allFactual.findIndex((k) => k.id === X.id);
+  const moreVs = at < 0 ? [] : Array.from({ length: Math.min(6, allFactual.length - 1) }, (_, i) => allFactual[(at + 1 + i) % allFactual.length]);
   const more = html`<section class="wrap section" aria-labelledby="more-h">
     ${ui.sectionHead(`More on ${category.name}`, { id: 'more-h' })}
     ${ui.linkList(
@@ -220,6 +233,15 @@ function render(ctx, record) {
       ].filter(Boolean),
       { cols: 2 },
     )}
+    ${
+      moreVs.length
+        ? html`<h3 class="fx-also">More documented comparisons</h3>
+            ${ui.linkList(
+              moreVs.map((k) => ({ href: ctx.url.vs(k.id), title: ctx.comparisonNames(k).map((n) => n.name).join(' vs '), meta: ctx.category(k.categoryId).name })),
+              { cols: 2 },
+            )}`
+        : ''
+    }
   </section>`;
 
   return {

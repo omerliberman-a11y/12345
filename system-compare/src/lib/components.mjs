@@ -213,7 +213,7 @@ export const tableNote = (ctx) =>
 
 // ------------------------------------------------------------------ text blocks
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const DATE_RE = /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{1,2}), (\d{4})\b/g;
+const DATE_RE = /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* (\d{1,2}), (\d{4})\b/g;
 /**
  * Plain generated text → escaped HTML in which every printed date ("Nov 5, 2026") is a <time datetime>.
  * Raw fragments pass through unchanged (their author already marked up the dates).

@@ -46,7 +46,7 @@ function render(ctx) {
             ${g.items.map(
               (it) => html`<details id="${it.id}" open>
                 <summary><h3>${it.q}</h3></summary>
-                <div class="acc__body"><p>${it.a}</p>${related(it.id)}</div>
+                <div class="acc__body"><p>${ui.dated(it.a)}</p>${related(it.id)}</div>
               </details>`,
             )}
           </div>

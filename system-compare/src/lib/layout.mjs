@@ -250,6 +250,7 @@ ${page.ogType === 'article' && page.articleSection ? html`<meta property="articl
 <meta name="twitter:title" content="${ogTitle}">
 <meta name="twitter:description" content="${page.description}">
 <meta name="twitter:image" content="${ctx.abs(ogImage.url)}">
+${ogImage.alt ? html`<meta name="twitter:image:alt" content="${ogImage.alt}">` : ''}
 <link rel="alternate" type="application/rss+xml" title="${site.editionName} research updates" href="/feed.xml">
 <link rel="alternate" type="application/atom+xml" title="${site.editionName} research updates" href="/atom.xml">
 ${raw(site.verificationMetaHtml)}

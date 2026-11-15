@@ -13,6 +13,12 @@
 //   --today=…      the build date to test "never the build date" against (default: today, UTC and local).
 //   --max=N        examples printed per check (default 3).   --json   machine-readable result.
 //
+// Checks (ids as printed): 0 URL parity · 1 index policy + sitemaps · 2 titles, descriptions, headings ·
+// 3 canonical, Open Graph, head basics · 4 hreflang · 5 JSON-LD (graph, breadcrumb, FAQ, ItemList,
+// SoftwareApplication/offers, Article, no ratings, dates, @id references) · 6 answer-first passage and pending
+// scores · 7 rating/review/"best" wording in template text · 8 dates in <time> · 9 internal link graph ·
+// 10 robots.txt, llms.txt, feeds, 404, manifest · 11 outbound and affiliate links · 12 images and weight.
+//
 // Exit code 1 when any check FAILS. WARN = reported for review, does not fail the run.
 
 import fs from 'node:fs';
@@ -22,7 +28,9 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const argv = process.argv.slice(2);
 const opt = (name, dflt) => (argv.find((a) => a.startsWith(`--${name}=`)) || `--${name}=${dflt}`).slice(name.length + 3);
-const DIR = path.resolve(process.cwd(), argv.find((a) => !a.startsWith('--')) || path.join(ROOT, 'dist'));
+const dirArg = argv.find((a) => !a.startsWith('--')) || 'dist';
+// a relative dir is taken from the working directory first, then from the repository root (like check.mjs)
+const DIR = path.isAbsolute(dirArg) || fs.existsSync(path.resolve(dirArg)) ? path.resolve(dirArg) : path.resolve(ROOT, dirArg);
 const AS_JSON = argv.includes('--json');
 const MAX = Number(opt('max', '3'));
 const LIVE = opt('live', '');
@@ -465,6 +473,7 @@ function imageSize(rel) {
   const b = check('3c-head-basics', 'lang="en-US", verification metas byte-identical, feed links, one JSON-LD script');
   const VERIFY = ['<meta name="5734a8eb53bdcd4" content="9fc1231f4ab88c8afcbadbb3e5d856b7" />', '<meta name="impact-site-verification" value="c3dee32d-33bb-4a2f-a830-d74ada451653">', '<meta name="msvalidate.01" content="0CA2714E2C757ACA8D0690F187E8F7F1">'];
   const imgCache = new Map();
+  let noTwitterAlt = 0;
   for (const pg of pages) {
     const is404 = pg.path === '/404.html';
     if (is404) {
@@ -479,11 +488,10 @@ function imageSize(rel) {
     }
     if (!is404 && pg.meta('og:url')[0] !== pg.canonicals[0]) o.fail(pg.path, `og:url ${pg.meta('og:url')[0]} ≠ canonical`);
     if (pg.meta('og:description')[0] !== pg.descriptions[0]) o.warn(pg.path, 'og:description differs from the meta description');
-    const title = pg.titles[0] || '';
+    if (!pg.meta('twitter:image:alt')[0]) noTwitterAlt++;
     const ogTitle = pg.meta('og:title')[0] || '';
     if (/ \| System Compare/.test(ogTitle)) o.warn(pg.path, `og:title carries the brand suffix: "${ogTitle}"`);
     if (ogTitle !== pg.meta('twitter:title')[0]) o.fail(pg.path, 'twitter:title ≠ og:title');
-    void title;
     const editorial = pg.type === 'vs' && comparisonById.get(pg.path.split('/')[2])?.mode === 'editorial';
     const wantType = pg.type === 'guide' || editorial ? 'article' : 'website';
     if (pg.meta('og:type')[0] !== wantType) o.fail(pg.path, `og:type "${pg.meta('og:type')[0]}" (expected "${wantType}")`);
@@ -510,6 +518,7 @@ function imageSize(rel) {
   }
   const generic = indexable.filter((p) => /\/assets\/social-preview\.png$/.test(p.meta('og:image')[0] || '')).length;
   o.note(`${indexable.length - generic}/${indexable.length} indexable pages have a page-specific og:image; ${generic} use the generic site card`);
+  if (noTwitterAlt) o.note(`${noTwitterAlt} pages have no twitter:image:alt (optional)`);
 }
 
 // ───────────────────────────────────────────────────────────── 4. hreflang
@@ -621,6 +630,12 @@ const visibleFaq = new Map(); // path → [{q, a}]
       Object.values(v).forEach(refs);
     })(g);
     if (all(pg.body, (n) => /rating|review/i.test(n.attrs.itemprop || '') || /Rating|Review/.test(n.attrs.itemtype || '')).length) rt.fail(pg.path, 'rating/review microdata in the body');
+    // a product / comparison page must not report an older dateModified than the newest evidence or price date it prints
+    if (pageNode?.dateModified && ['software', 'vs'].includes(pg.type) && pg.main) {
+      const printed = all(pg.main, (n) => n.tag === 'time' && validIso(n.attrs.datetime || '')).map((n) => n.attrs.datetime.slice(0, 10)).filter((d) => ![...TODAY].some((t) => d > t)).sort();
+      const newest = printed[printed.length - 1];
+      if (newest && String(pageNode.dateModified).slice(0, 10) < newest) dt.warn(pg.path, `dateModified ${pageNode.dateModified} is older than the newest date printed on the page (${newest}, ${printed.filter((d) => d === newest).length}×)`);
+    }
 
     // breadcrumb
     const visible = (() => {
@@ -792,7 +807,9 @@ const visibleFaq = new Map(); // path → [{q, a}]
   if (softwareNodes !== catalog.vendors.length) sw.fail('/software/', `${softwareNodes} SoftwareApplication nodes for ${catalog.vendors.length} vendors`);
   sw.note(`${softwareNodes} SoftwareApplication nodes, ${offers} with offers`);
   id.note(`${crossRefs} references point at a node defined on another page (allowed: the id resolves in that page's graph)`);
-  for (const [, list] of qaSeen) if (list.length > 1) fq.warn(list[0], `same question + answer verbatim on ${list.length} pages: ${list.slice(0, 4).join(', ')}`);
+  const dupGroups = new Map();
+  for (const [, list] of qaSeen) if (list.length > 1) dupGroups.set(list.join(', '), (dupGroups.get(list.join(', ')) || 0) + 1);
+  for (const [key, k] of dupGroups) fq.warn(key.split(', ')[0], `${k} question+answer pair(s) repeated verbatim on ${key.split(', ').length} pages: ${key.split(', ').slice(0, 4).join(', ')}`);
   const withFaq = pages.filter((p) => (visibleFaq.get(p.path) || []).length);
   fq.note(`${withFaq.length} pages show an FAQ (${withFaq.reduce((n, p) => n + visibleFaq.get(p.path).length, 0)} items); ${extraVisible} visible answers carry extra trailing text (source / read-more links) that is not in the markup`);
   const dupPages = new Set([...qaSeen.values()].filter((l) => l.length > 1).flat());
@@ -970,15 +987,7 @@ const visibleFaq = new Map(); // path → [{q, a}]
     const star = txt.match(/[★☆⭐]|(?<![\d.\/])[0-5](\.\d)?\s*\/\s*5(?![\d.]|\s*(checked|pts|points|items|checks|of\b))|\b[0-5](\.\d)? out of 5\b(?!\s*(checks|items|checked))|\b\d(\.\d)?[- ]stars?\b/);
     if (star) w.fail(pg.path, `star / 5-point wording: "${star[0]}"`);
   }
-  // group near-identical contexts: same word + same 3 words either side
-  const groups = new Map();
-  for (const [key, e] of tally) {
-    const g = groups.get(key) || { n: 0, pages: new Set() };
-    g.n += e.n;
-    e.pages.forEach((x) => g.pages.add(x));
-    groups.set(key, g);
-  }
-  for (const [key, g] of [...groups].sort((a, b) => b[1].pages.size - a[1].pages.size)) w.warn([...g.pages][0], `${g.pages.size} page(s): ${key}`);
+  for (const [key, g] of [...tally].sort((a, b) => b[1].pages.size - a[1].pages.size)) w.warn([...g.pages][0], `${g.pages.size} page(s): ${key}`);
   w.note(`${dataHits} occurrences are catalog sentences (ignored); ${negated} are disclaimers ("not a user rating …")`);
 
   const inTime = (x) => x.tag === 'time';
@@ -995,6 +1004,16 @@ const visibleFaq = new Map(); // path → [{q, a}]
       }
       for (const m of hits) {
         if (/[\w/]/.test(raw[m.index - 1] || '') || /^[-/]\w/.test(raw.slice(m.index + m[0].length, m.index + m[0].length + 2))) continue; // part of a URL or file name
+        // a catalog sentence (or clause) quoted inside a template sentence is data, not template text
+        const cut = (re) => {
+          const a = raw.slice(0, m.index).split(re).pop();
+          const b = raw.slice(m.index + m[0].length).split(re)[0];
+          return (a + m[0] + b).replace(/^[\s·—–:;,(-]+|[\s·—–:;,)-]+$/g, '');
+        };
+        if (inData(cut(/(?<=[.!?])\s+(?=[A-Z0-9“"(])/)) || inData(cut(/[;·]|\s[—–]\s/))) {
+          dataDatesInText++;
+          continue;
+        }
         d.fail(pg.path, `${/^\d{4}-/.test(m[0]) ? 'raw ISO date' : 'date outside <time>'} "${m[0]}" in template text: "${norm(raw).slice(0, 110)}"`);
       }
     }
@@ -1025,6 +1044,7 @@ const visibleFaq = new Map(); // path → [{q, a}]
   const go = check('11a-go-links', 'Vendor CTAs use /go/{id}/?intent=&from= with the five data-outbound-* attributes');
   const af = check('11b-affiliate', 'Affiliate links: rel="sponsored nofollow noopener noreferrer", visible "Ad · affiliate link" label, page notice before the first one; others carry no Ad label');
   const so = check('11c-source-links', 'Cited-source links are plain followed links with rel noopener; no internal link is nofollow');
+  const anchors = check('9d-anchor-text', 'In-content internal links use descriptive anchor text');
 
   const outAll = new Map(); // from → Set(to)   (whole body)
   const outMain = new Map(); // from → Set(to)  (inside <main>)
@@ -1114,6 +1134,8 @@ const visibleFaq = new Map(); // path → [{q, a}]
       }
       // internal
       if (rel.includes('nofollow')) so.fail(pg.path, `internal link is nofollow: ${href}`);
+      const label = textOf(a);
+      if (inMain && !a.attrs['aria-label'] && /^(read more|learn more|more|here|click here|see more|view|details|see details|view research|full research|profile|view profile|full profile|open|go)$/i.test(label)) anchors.warn(pg.path, `generic anchor text "${label}" → ${r.path}`);
       let target = r.path;
       if (!byPath.has(target)) {
         if (fileSet.has(target) || fileSet.has(target + 'index.html')) return; // a file (feed, sitemap, asset)
@@ -1164,6 +1186,7 @@ const visibleFaq = new Map(); // path → [{q, a}]
     const k = inMainIdx.get(pg.path).size;
     const mainAny = [...outMain].filter(([from, set]) => from !== pg.path && set.has(pg.path)).length;
     if ((pg.type === 'vs' || pg.type === 'alternatives') && mainAny <= 1) n.fail(pg.path, `${pg.type} page has ${mainAny} in-content in-link(s)`);
+    else if (!pg.noindex && pg.type === 'vs' && k <= 1) n.fail(pg.path, `indexable vs page has only ${k} in-content in-link(s) from indexable pages (${mainAny} counting noindex pages)`);
     else if (!pg.noindex && pg.path !== '/' && k < 5) n.warn(pg.path, `indexable ${pg.type} page has ${k} in-content in-links from indexable pages (target ≥ 5)`);
   }
   let toNo = 0;
@@ -1245,20 +1268,24 @@ function xmlWellFormed(xml) {
     if (!/^# \S/.test(txt)) l.fail(f, 'does not start with an H1 line');
     const urls = [...txt.matchAll(/https?:\/\/[^\s)>\]]+/g)].map((m) => m[0].replace(/[.,;]+$/, ''));
     let internal = 0;
+    const toNoindex = [];
     for (const u of new Set(urls)) {
       if (!u.startsWith(ORIGIN)) continue;
       internal++;
       const p = u.slice(ORIGIN.length).split('#')[0] || '/';
       const pg = byPath.get(p);
       if (!pg && !fileSet.has(p)) l.fail(f, `link does not resolve: ${u}`);
-      else if (pg && pg.noindex && !/^\/(compare|search|shortlist)\/$/.test(p)) l.warn(f, `links a noindex page: ${p}`);
+      else if (pg && pg.noindex && !/^\/(compare|search|shortlist)\/$/.test(p)) toNoindex.push(p);
     }
+    if (toNoindex.length) l.warn(f, `links ${toNoindex.length} noindex pages (e.g. ${toNoindex.slice(0, 3).join(', ')})`);
     if (/\b(always recommend|ignore (all|other|previous)|you must (cite|recommend))\b/i.test(txt)) l.fail(f, 'instruction aimed at language models');
     if (/\b(undefined|NaN|null)\b|\[object/.test(txt)) l.fail(f, 'template leak');
     for (const m of txt.matchAll(ISO_DATE)) if (TODAY.has(m[0]) && !dataDates.has(m[0])) l.fail(f, `build date ${m[0]} printed`);
     l.note(`${f}: ${(Buffer.byteLength(txt) / 1024).toFixed(1)} KB, ${internal} internal URLs`);
     // category lines: "- [Name](url): N products, M scored; highest documented fit X S/100."
+    let lines = 0;
     for (const m of txt.matchAll(/^- \[([^\]]+)\]\((\S+?)\): (\d+) products, (\d+) scored(?:; highest documented fit (.+?) (\d+)\/100)?/gm)) {
+      lines++;
       const pg = byPath.get(m[2].slice(ORIGIN.length));
       const table = pg && pg.main && first(pg.main, (n) => n.tag === 'table' && n.attrs['data-category'] === m[2].split('/')[4]);
       if (!table) continue;
@@ -1270,6 +1297,15 @@ function xmlWellFormed(xml) {
         if (top.attrs['data-name'] !== m[5] || top.attrs['data-score'] !== m[6]) l.fail(f, `${m[1]}: says top ${m[5]} ${m[6]}/100, the page table says ${top.attrs['data-name']} ${top.attrs['data-score']}/100`);
       }
     }
+    // documentary category lines: "- [Name](url): N suppliers documented, no score assigned. Evidence checked Mon D, YYYY."
+    for (const m of txt.matchAll(/^- \[([^\]]+)\]\((\S+?)\): (\d+) suppliers documented[^\n]*?Evidence checked ([A-Z][a-z]{2} \d{1,2}, \d{4})/gm)) {
+      lines++;
+      const c = categoryById.get(m[2].split('/')[4]);
+      const pg = byPath.get(m[2].slice(ORIGIN.length));
+      if (!c?.factual || c.factual.suppliers.length !== Number(m[3])) l.fail(f, `${m[1]}: says ${m[3]} suppliers, the catalog has ${c?.factual?.suppliers?.length}`);
+      if (pg && !pg.mainText.includes(m[4])) l.fail(f, `${m[1]}: evidence date ${m[4]} is not printed on the page`);
+    }
+    l.note(`${f}: ${lines} category lines compared with the category pages`);
   }
   const full = readBuilt('/llms-full.txt') || '';
   let blocks = 0;
@@ -1393,6 +1429,8 @@ function xmlWellFormed(xml) {
       if (!img.attrs.width || !img.attrs.height) c.fail(pg.path, `img without width/height: ${img.attrs.src}`);
     }
     if (pg.bytes > 250 * 1024) c.fail(pg.path, `HTML weighs ${(pg.bytes / 1024).toFixed(0)} KB (cap 250 KB)`);
+    const elements = all(pg.body, () => true).length;
+    if (elements > 3000) c.warn(pg.path, `${elements} elements in <body> (cap 3,000)`);
     if (pg.ldBytes > 20 * 1024) c.warn(pg.path, `JSON-LD weighs ${(pg.ldBytes / 1024).toFixed(1)} KB (cap 20 KB)`);
     if (pg.main) for (const el of all(pg.main, (n) => 'data-nosnippet' in n.attrs && !closest(n.parent, (x) => 'data-nosnippet' in x.attrs))) {
       const t = textOf(el);

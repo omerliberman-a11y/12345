@@ -326,7 +326,9 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
   const year = (catalog.researchUpdatedAt || catalog.checkedAt || '2026').slice(0, 4);
   /** Latest evidence/price/content date that concerns a vendor (for "Updated" lines and sitemap lastmod). */
   function vendorUpdated(vendor) {
-    return maxDate(vendor.modifiedAt, vendor.checkedAt, vendor.pricing?.verifiedAt, vendor.researchReview?.observedAt);
+    // capability rows carry their own check dates (deep checks are often newer than the product-level date)
+    const rowDates = vendorCategories(vendor).filter((c) => !isFactual(c)).flatMap((c) => (fit(c.id, vendor.id)?.rows || []).map((r) => r.evidence?.checkedAt));
+    return maxDate(vendor.modifiedAt, vendor.checkedAt, vendor.pricing?.verifiedAt, vendor.researchReview?.observedAt, rowDates);
   }
   function categoryUpdated(category) {
     if (isFactual(category)) return maxDate(category.factual?.checkedAt, category.checkedAt);

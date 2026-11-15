@@ -54,7 +54,7 @@ function render(ctx, vendor) {
       sortable: false,
       lazyFrom: isDefault ? 1 : 0,
       caption: `${vendor.name} in ${category.name}: the product the alternatives are compared with`,
-      action: () => html`<a class="link-arrow" href="${profile}">Profile</a>`,
+      action: () => html`<a class="link-arrow" href="${profile}">${vendor.name} profile</a>`,
       actionLabel: html`<span class="sr-only">Links</span>`,
       actionClass: 'ix-c-vs',
     });
@@ -193,6 +193,12 @@ function render(ctx, vendor) {
               vsPages.map((x) => ({ href: ctx.url.vs(x.id), title: ctx.comparisonNames(x).map((nm) => nm.name).join(' vs '), meta: ctx.category(x.categoryId).name })),
               { cols: 2 },
             )}`
+        : ''
+    }
+    ${
+      mf.others.length
+        ? html`<h3 class="ix-subhead">Alternatives to other ${main.name} products</h3>
+            ${ui.chipLinks(mf.others.map((v) => ({ href: ctx.url.alternatives(v.id), label: `${v.name} alternatives` })))}`
         : ''
     }
   </section>`;
