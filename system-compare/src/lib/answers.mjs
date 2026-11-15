@@ -268,7 +268,7 @@ export function createAnswers(ctx) {
           ? `${a.name} starts at ${f.pa.headline} ${f.pa.unit}; ${b.name} starts at ${f.pb.headline} ${f.pb.unit}. Units and plan limits differ, so compare a full quote for the same team size and term.`
           : `A like-for-like price cannot be stated: ${listText([!f.pa.hasAmount && a.name, !f.pb.hasAmount && b.name].filter(Boolean))} ${!f.pa.hasAmount && !f.pb.hasAmount ? 'have' : 'has'} no verified public starting price. Ask both vendors to quote the same scope.`,
     });
-    const aiLine = (x) => `${x.name}: ${ctx.aiLevel(x).label.toLowerCase()}${x.ai?.summary ? ` — ${firstSentence(x.ai.summary)}` : '.'}`;
+    const aiLine = (x) => `${x.name}: ${lowerFirst(ctx.aiLevel(x).label)}${x.ai?.summary ? ` — ${firstSentence(x.ai.summary)}` : '.'}`;
     out.push({ q: `Do ${a.name} and ${b.name} both include AI?`, a: `${aiLine(a)} ${aiLine(b)} Documented does not mean included in every plan.` });
     return out;
   }

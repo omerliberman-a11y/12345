@@ -116,3 +116,16 @@ caption { text-align: left; }
   font-weight: 600;
 }
 .skip-link:focus { top: var(--s-3); color: var(--ink-inverse); }
+
+/* Print: content only — no navigation, no floating layers, nothing sticky. */
+@media print {
+  .site-header, .site-footer, .skip-link, .subnav, .tray, .toasts, .consent, .crumbs, dialog, [data-nosnippet].toolbar, .pick, .ptable__c-pick { display: none !important; }
+  body { display: block; color: #000; background: #fff; }
+  * { position: static !important; box-shadow: none !important; }
+  a { color: inherit; text-decoration: underline; }
+  main a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; word-break: break-all; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: block; }
+  tr, li, h2, h3 { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+}

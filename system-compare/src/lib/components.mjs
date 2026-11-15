@@ -67,8 +67,10 @@ export function breakdown(ctx, s) {
 }
 
 /** The published method sentence (verbatim wording, date from the catalog). Print once per page/table. */
-export const methodSentence = (ctx) =>
-  ctx.scoring.LABELS.methodSentence.replace('<date>', ctx.isoDate(ctx.catalog.checkedAt));
+export function methodSentence(ctx) {
+  const [before, after = ''] = ctx.scoring.LABELS.methodSentence.split('<date>');
+  return html`${before}${time(ctx, ctx.catalog.checkedAt)}${after}`;
+}
 
 /** "How is this scored?" popover used next to a score heading. */
 export function scoreHelp(ctx, { align } = {}) {

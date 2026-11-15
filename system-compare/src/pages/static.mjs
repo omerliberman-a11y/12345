@@ -353,7 +353,7 @@ function renderMethodology(ctx) {
   // ---- the published one-sentence method (verbatim), with its date as <time>
   const sentence = sc.LABELS.methodSentence;
   const [sBefore, sAfter] = sentence.split('<date>');
-  const methodSentence = html`${sBefore}<time datetime="${ctx.isoDate(checkedAt)}">${ctx.isoDate(checkedAt)}</time>${sAfter}`;
+  const methodSentence = html`${sBefore}${ui.time(ctx, checkedAt)}${sAfter}`;
 
   // ---- group descriptions and item values, read from the publisher's own text (fallback: labels only)
   const groupText = [...page.html.matchAll(/<li>\s*<strong>([^:<]+):\s*(\d+)\.<\/strong>\s*([\s\S]*?)<\/li>/g)].map((m) => ({ weight: Number(m[2]), desc: text(m[3]) }));
