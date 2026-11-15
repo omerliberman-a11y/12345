@@ -32,7 +32,7 @@ export const icon = (name, { size } = {}) =>
 const MARK = `<svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="6.5" y="19" width="11" height="15" rx="3.5" fill="#4a3aff"/><rect x="22.5" y="10" width="11" height="24" rx="3.5" fill="#ff6a3d"/><rect x="3" y="35.5" width="34" height="2.6" rx="1.3" fill="#11131f"/><path d="M12 13.2 28 4.2" fill="none" stroke="#11131f" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="13.2" r="2.6" fill="#11131f"/><circle cx="28" cy="4.2" r="2.6" fill="#11131f"/></svg>`;
 
 export const brand = (ctx) =>
-  html`<a class="brand" href="/" aria-label="${ctx.site.editionName} home">${raw(MARK)}<span class="brand__word">system<i></i><b>compare</b></span></a>`;
+  html`<a class="brand" href="/" aria-label="${ctx.site.editionName} home">${raw(MARK)}<span class="brand__word">system<i></i> <b>compare</b></span></a>`;
 
 // ------------------------------------------------------------------ header
 function megaMenu(ctx) {
