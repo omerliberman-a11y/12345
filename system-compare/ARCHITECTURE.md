@@ -77,12 +77,18 @@ Rules that keep every page consistent:
   affiliate notice automatically when a page contains an affiliate link. Never link `vendor.url` directly as a CTA.
   Links to cited sources are plain followed links: `ui.sourceLink(url, label)` / `ui.sources(list)`.
 - **Scores**: use `ctx.score(categoryId, vendorId)` (`value`, `pending`, `checked`, `total`, `coveragePct`,
-  `rank`, `recommended`, `groups`, `rows`, verbatim `valueText`/`coverageText`/`documentedText`). Never compute a
+  `recommended`, `groups`, `rows`, verbatim `valueText`/`coverageText`/`documentedText`). Never compute a
   score yourself, never print a number for a pending score, never show stars or "rating"/"review" wording, and
   never emit rating/review JSON-LD. Say "documented-fit score" at least once per page that shows scores, with a
-  check date nearby and the "not a user rating or hands-on test" framing (ui.tableNote does this for tables).
+  check date nearby and the "not a customer rating or hands-on test" framing (ui.tableNote does this for tables).
+- **Places and ties**: products with the same published score share a place, and score-pending products have
+  none. Print `score.placeText` ("3", "=1", "") or `score.placeLabel` ("#3 of 7 scored", "Tied #1 of 12"),
+  never `score.rank` (that is only the listing order, alphabetical inside a tie). Sentences about who leads
+  come from `ctx.answers.leaders(categoryId, vendors)`, which names or counts a whole tie group; a "top 5"
+  list is cut with `ctx.topWithTies(categoryId, list, 5)` so a tie is never split.
 - **Prices**: use `ctx.price(vendor, categoryId)` (`headline`, `unit`, `billingNote`, `plan`, `checkedAt`,
-  `sourceUrl`, `summary`, `extras`, `hasAmount`, `state`). Render with `ui.priceCell`. In the `sms-marketing`
+  `sourceUrl`, `summary`, `extras`, `hasAmount`, `state`, `basis`). Render with `ui.priceCell` (it prints the
+  recorded pricing basis under "Custom quote" / "Usage-based" / "Price not verified"). In the `sms-marketing`
   context some vendors intentionally show "SMS price not verified" — always pass the category id.
 - **Category-specific data**: a vendor has a different score per category. The price context and default
   comparison scope of a vendor is `ctx.primaryCategory(vendor)`; sections per category use
@@ -123,7 +129,10 @@ Rules that keep every page consistent:
 `ui.statusLegend()` · `ui.logo` · `ui.pick` / `ui.shortlistButton` · `ui.outLink` · `ui.sourceLink` ·
 `ui.sources` · `ui.answer` · `ui.trustline` · `ui.sectionHead` · `ui.faq` · `ui.linkList` · `ui.tile` ·
 `ui.facts` · `ui.subnav` · `ui.toc` · `ui.chipLinks` · `ui.ticks(items, 'ticks'|'crosses'|'dots')` ·
-`ui.searchField` · `ui.time` · `ui.tag` · `ui.tableNote` · `ui.methodSentence` · `ui.icon(name)`.
+`ui.searchField` · `ui.time` · `ui.tag` · `ui.tableNote` · `ui.methodSentence` · `ui.icon(name)` ·
+`ui.dated(text)` (plain generated text → HTML with every printed date in `<time>`; `ui.answer` and `ui.faq`
+apply it to string input). `ui.productTable` options: `action(vendor)` + `actionLabel` + `actionClass` add a
+trailing column; `focalId`/`focalTag` mark the reference row; `priceChecked` prints the price-check date.
 
 CSS building blocks: `.wrap`, `.wrap--narrow`, `.section`, `.section--tint`, `.section-head`, `.page-head`,
 `.eyebrow`, `.lede`, `.trustline`, `.btn` (`--ghost --quiet --soft --sm --lg`), `.chip` / `.chips`, `.tag`,
@@ -135,7 +144,7 @@ CSS building blocks: `.wrap`, `.wrap--narrow`, `.section`, `.section--tint`, `.s
 ## Client runtime (`SC`, from core.js)
 
 `SC.url(path)` · `SC.load(name)` → data from `/data/<name>.js` (e.g. `cat-crm`, `vendors`, `search-index`) ·
-`SC.shortlist.{get,has,toggle,remove,clear,replace,compareUrl}` (localStorage `sc-us-shortlist`, same shape
+`SC.shortlist.{get,has,toggle,remove,clear,replace,setPlan,compareUrl}` (localStorage `sc-us-shortlist`, same shape
 as the previous site) · `SC.toast(msg, actions)` · `SC.openSearch(q)` · `SC.el(spec, props, kids)` (build DOM
 with `textContent` — never `innerHTML` with data) · `SC.$`, `SC.$$`, `SC.store`, `SC.save`.
 Events: `sc:shortlist-updated`, `sc:comparison-add`, `sc:cost-calculation`.

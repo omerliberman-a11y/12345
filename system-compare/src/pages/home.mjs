@@ -73,7 +73,7 @@ function render(ctx) {
         </div>
         ${spotlights.map((c, i) => {
           const s = ctx.summary(c.id);
-          const rows = s.ranked.slice(0, 5).map((vendor) => ({ vendor }));
+          const rows = ctx.topWithTies(c.id, s.ranked, 5).map((vendor) => ({ vendor }));
           return html`<div class="tabs__panel" role="tabpanel" id="panel-${c.id}" aria-labelledby="tab-${c.id}"${raw(i === 0 ? '' : ' hidden')}>
             ${ui.productTable(ctx, c.id, rows, { id: `top-${c.id}`, sortable: false, lazyFrom: i === 0 ? 5 : 0, caption: `${c.name}: top ${rows.length} by documented-fit score` })}
             <p class="tabs__more"><a class="link-arrow" href="${ctx.url.category(c.id)}">See all ${s.total} ${A.categoryThings(c)}</a></p>

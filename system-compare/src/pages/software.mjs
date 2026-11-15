@@ -492,7 +492,7 @@ function render(ctx, vendor) {
     : '';
 
   // ---------------------------------------------------------------- alternatives (rows) + published comparisons
-  const top = others.slice(0, 5);
+  const top = ctx.topWithTies(primary.id, others, 5);
   const altRows = summary.ranked.filter((v) => v.id === vendor.id || top.includes(v)).map((v) => ({ vendor: v }));
   // per row: the published comparison when one exists, else the comparison tool with both products selected
   const vsLink = (other) => {

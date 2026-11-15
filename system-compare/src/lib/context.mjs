@@ -169,6 +169,19 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
     };
   }
 
+  /**
+   * First n of a list in published order, extended (up to max) so that products sharing a published score
+   * are never cut apart — a "top 5" must not show five of six tied products.
+   */
+  const topWithTies = (categoryId, list, n = 5, max = 8) => {
+    if (list.length <= n) return list;
+    const val = (v) => fit(categoryId, v.id)?.score ?? null;
+    const last = val(list[n - 1]);
+    let end = n;
+    if (last !== null) while (end < list.length && val(list[end]) === last) end++;
+    return end <= max ? list.slice(0, end) : list.slice(0, n);
+  };
+
   // ------------------------------------------------------------------ score view-model
   /** Printable place: place 3 → "3" / "#3 of 7 scored"; a shared place → "=1" / "Tied #1 of 12"; pending → "". */
   function placeView(categoryId, vendorId) {
@@ -350,6 +363,7 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
     fit,
     score,
     rankOf,
+    topWithTies,
     isRecommended,
     price,
     aiLevel,
