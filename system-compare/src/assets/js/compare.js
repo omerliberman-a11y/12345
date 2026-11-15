@@ -466,7 +466,10 @@
       name.appendChild(el('span.prod__fit', { text: v.bf }));
       tbody.appendChild(el('tr', { 'data-id': v.id }, [
         el('td.ptable__c-pick', null, [btn]),
-        el('td.ptable__c-rank.num', { text: String(v.rk || i + 1) }),
+        el('td.ptable__c-rank.num', null, [
+          el('span', { 'aria-hidden': 'true', text: v.pl || '–' }),
+          el('span.sr-only', { text: v.pl ? (v.pl.charAt(0) === '=' ? 'Tied ' + v.pl.slice(1) : v.pl) : 'Not ranked: score pending' }),
+        ]),
         el('th.ptable__c-name', { scope: 'row' }, [el('span.prod', null, [logo(v, '', i > 5), name])]),
         el('td.ptable__c-score', null, [scoreToken(v)]),
         el('td.ptable__c-price', null, [priceCell(v)]),
@@ -700,7 +703,7 @@
       el('div.cmp-sec__head', null, [el('h2', { id: 'glance-h', text: 'At a glance' }), help]),
       tableEl(m, '.cmp-table--glance', pairName + ': score, evidence coverage, price, AI and fit at a glance', 'Key fact', glanceRows),
       el('p.table-note', null, ['Score = ', el('a', { href: SC.url('/methodology/'), text: 'documented-fit score' }), ' out of 100, from official documentation checked as of ', timeEl(data.asOf),
-        ' — not a user rating or a hands-on test. “Score pending” means less than 80% of the checklist weight has been checked. Prices are dated observations of public list prices, not quotes. No vendor pays for placement.']),
+        ' — not a customer rating or a hands-on test. “Score pending” means less than 80% of the checklist weight has been checked. Prices are dated observations of public list prices, not quotes. No vendor pays for placement.']),
     ]));
 
     // ---- where they differ

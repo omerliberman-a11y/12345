@@ -3,7 +3,7 @@
 // Rules baked in here (see docs/SEO-GEO.md):
 //  - titles ≤ 60 chars, descriptions ≤ 155 chars, picked from the first variant that fits
 //  - one JSON-LD @graph per page: Organization + WebSite(SearchAction) + page node + BreadcrumbList
-//  - the documented-fit score is NEVER marked up as a rating/review (it is not a user rating)
+//  - the documented-fit score is NEVER marked up as a rating/review (it is not a customer rating)
 
 import { clip } from './html.mjs';
 
@@ -154,7 +154,7 @@ export function createSeo(ctx) {
 
   /**
    * SoftwareApplication for a vendor profile. No rating/review properties — the documented-fit score
-   * is documentation coverage, not a user rating. `offers` only for a verified, non-zero-base price.
+   * is documentation coverage, not a customer rating. `offers` only for a verified, non-zero-base price.
    */
   function softwareNode(vendor, { path = ctx.url.software(vendor.id), categoryNames = [], featureList = [] } = {}) {
     const p = ctx.price(vendor);
@@ -200,7 +200,7 @@ export function createSeo(ctx) {
       maxValue: 100,
       ...(s.checkedAt ? { observationDate: s.checkedAt } : {}),
       measurementMethod: `${site.origin}/methodology/`,
-      description: `${s.value}/100. ${s.coverageText}. Share of the ${category.name} checklist documented in official sources. Not a user rating, review or performance test.`,
+      description: `${s.value}/100. ${s.coverageText}. Share of the ${category.name} checklist documented in official sources. Not a customer rating, review or performance test.`,
     };
   }
 

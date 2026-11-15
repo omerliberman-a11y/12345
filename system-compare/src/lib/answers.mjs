@@ -15,7 +15,7 @@ function lowerFirst(s) {
   if (!s) return s;
   // "Product-led" is judged by its first part; "Zoho-centered" stays because Zoho is a product name
   const first = String(s).split(/[\s,;:]/)[0].replace(/['’]s$/, '').split('-')[0];
-  if (!/^[A-Z][a-z]+$/.test(first)) return s;
+  if (!/^[A-Z][a-z]*$/.test(first)) return s;
   if (first !== 'Teams' && (PROPER_WORDS.has(first) || properNames.has(first))) return s;
   return s[0].toLowerCase() + s.slice(1);
 }
@@ -29,13 +29,19 @@ const firstSentence = (s) => {
 /** Noun phrase for questions: "CRM & sales software", "Payroll software", "Business phone systems". */
 export function categoryNoun(category) {
   const n = category.name;
-  return /(software|systems|platforms|tools|agents|assistants|hosting)$/i.test(n) ? n : `${n} software`;
+  if (/(software|systems|platforms|tools|agents|assistants|hosting)$/i.test(n)) return n;
+  const m = n.match(/^(.+?) for (.+)$/); // "VPN for individual professionals" → "VPN software for individual professionals"
+  if (m) return `${m[1]} software for ${m[2]}`;
+  return /\bsoftware\b/i.test(n) ? `${n} tools` : `${n} software`; // "AI software development tools"
 }
 /** Plural phrase used inside sentences: "CRM & sales tools", "HR tools", "Business phone systems". */
 export function categoryThings(category) {
   const n = category.name;
   if (/software$/i.test(n)) return n.replace(/\s*software$/i, ' tools');
   if (/(systems|platforms|tools|agents|assistants)$/i.test(n)) return n;
+  if (/hosting$/i.test(n)) return `${n} providers`;
+  const m = n.match(/^(.+?) for (.+)$/); // "VPN tools for individual professionals"
+  if (m) return `${m[1]} tools for ${m[2]}`;
   return `${n} tools`;
 }
 
@@ -49,6 +55,8 @@ export function createAnswers(ctx) {
   ctx.vendors.forEach((v) => addName(v.name));
   ctx.factualCategories.forEach((c) => (c.factual?.suppliers || []).forEach((sup) => addName(sup.name)));
   const onPlan = (plan) => (plan ? ` on the ${planLabel(plan)}` : '');
+  // " (custom quote)" / " (usage-based)" — nothing when the headline would only repeat "price not verified"
+  const noPriceWhy = (p) => (p.state === 'quote' || p.state === 'usage' || p.smsUnverified ? ` (${p.headline.toLowerCase()})` : '');
   const priceFrom = (vendor, categoryId) => {
     const p = ctx.price(vendor, categoryId);
     return p.hasAmount ? `from ${p.headline}${p.unit ? ' ' + p.unit : ''}` : null;
@@ -59,6 +67,48 @@ export function createAnswers(ctx) {
     return `${vendor.name} (${s.value}/100${p ? `, ${p}` : ''})`;
   };
   const asOf = () => fmtDate(ctx.catalog.checkedAt);
+  // vendor.avoidIf is "You need …" (133 of 149), a clause ("… is required") or a buyer description ("A team assuming …")
+  const BUYER_PHRASE = /^An? (?:[a-z-]+ )?(?:buyer|team|company|employer|site|business|organi[sz]ation|agency|merchant|store)\b/i;
+  const lookCloser = (vendor) => `Look more closely ${BUYER_PHRASE.test(vendor.avoidIf) ? 'if you are' : 'when'}: ${lowerFirst(sentence(vendor.avoidIf))}`;
+  // What the score is not — the publisher's own wording ("not a customer rating or a hands-on … test")
+  const NOT_RATINGS = 'not customer ratings or hands-on tests';
+
+  /** Scored products grouped by published score (the list is already in published order). */
+  const scoreGroups = (categoryId, vendors) => {
+    const groups = [];
+    for (const v of vendors) {
+      const value = ctx.score(categoryId, v.id).value;
+      const last = groups[groups.length - 1];
+      if (last && last.value === value) last.items.push(v);
+      else groups.push({ value, items: [v] });
+    }
+    return groups;
+  };
+  /**
+   * Truthful "who leads" parts for a list of scored products. Products with the same published score are
+   * always named together (or counted) — part of a tie is never presented as if it led the rest.
+   *   lead      "A (100/100, from $15 per user/month)" when one product has the highest score, else null
+   *   top       the group with the highest score ({ value, items })
+   *   topNames  "A, B and C"
+   *   followers "B (95/100) and C (93/100)" | "B, C, D and E (92/100 each)" | "7 products at 89/100" | ''
+   */
+  function leaders(categoryId, vendors, { withPrice = true } = {}) {
+    const groups = scoreGroups(categoryId, vendors);
+    if (!groups.length) return null;
+    const names = (g) => listText(g.items.map((v) => v.name));
+    const groupText = (g) =>
+      g.items.length === 1 ? scoredName(g.items[0], categoryId, { withPrice }) : g.items.length <= 6 ? `${names(g)} (${g.value}/100 each)` : `${g.items.length} products at ${g.value}/100`;
+    const rest = [];
+    let n = 0;
+    for (const g of groups.slice(1)) {
+      if (n >= 2) break;
+      rest.push(g);
+      n += g.items.length;
+    }
+    const followers = rest.every((g) => g.items.length === 1) ? listText(rest.map(groupText)) : rest.map(groupText).join(', then ');
+    const top = groups[0];
+    return { tie: top.items.length > 1, top, topNames: names(top), lead: top.items.length === 1 ? scoredName(top.items[0], categoryId, { withPrice }) : null, followers };
+  }
 
   // ---------------------------------------------------------------- category (scored)
   function categoryQuickAnswer(category) {
@@ -66,20 +116,18 @@ export function createAnswers(ctx) {
     const things = categoryThings(category);
     const scored = s.ranked.filter((v) => !s.results.get(v.id).isPending);
     const pendingText = s.pending ? ` ${s.pending} ${s.pending === 1 ? 'is' : 'are'} still score-pending.` : '';
-    const tail = ` Scores reflect official documentation checked as of ${asOf()}, not user reviews.`;
+    const tail = ` Scores reflect official documentation checked as of ${asOf()}, ${NOT_RATINGS}.`;
     if (!scored.length) {
       const closest = [...s.ranked].sort((a, b) => s.results.get(b.id).coverage - s.results.get(a.id).coverage).slice(0, 2);
-      return `No ${category.name} product has a published documented-fit score yet: all ${s.total} are below the 80% checked-evidence gate. The furthest along are ${listText(
+      return `No product we researched in ${category.name} has a published documented-fit score yet: ${s.total === 2 ? 'both' : `all ${s.total}`} are below the 80% checked-evidence gate. The furthest along are ${listText(
         closest.map((v) => `${v.name} (${Math.floor(s.results.get(v.id).coverage)}% checked)`),
       )}. Evidence checked ${asOf()}.`;
     }
-    if (s.recommended.length > 3) {
-      const top = s.results.get(s.recommended[0].id).score;
-      return `${s.recommended.length} of the ${s.total} ${things} we researched tie for the highest documented-fit score (${top}/100): ${listText(s.recommended.map((v) => v.name))}.${pendingText}${tail}`;
+    const L = leaders(category.id, scored);
+    if (L.tie) {
+      return `${L.top.items.length} of the ${s.total} ${things} we researched tie for the highest documented-fit score (${L.top.value}/100): ${L.topNames}.${pendingText}${tail}`;
     }
-    const lead = scoredName(scored[0], category.id);
-    const next = scored.slice(1, 3).map((v) => scoredName(v, category.id));
-    return `Of the ${s.total} ${things} we researched, ${lead} has the highest documented-fit score${next.length ? `, followed by ${listText(next)}` : ''}.${pendingText}${tail}`;
+    return `Of the ${s.total} ${things} we researched, ${L.lead} has the highest documented-fit score${L.followers ? `, followed by ${L.followers}` : ''}.${pendingText}${tail}`;
   }
 
   function categoryPriceFacts(category) {
@@ -143,7 +191,7 @@ export function createAnswers(ctx) {
       : `It scores ${s.value}/100 for documented fit (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${fmtDate(s.checkedAt)}` : ''}).`;
     const priceText = p.hasAmount
       ? `Published pricing starts at ${p.headline}${p.unit ? ' ' + p.unit : ''}${onPlan(p.plan)}${p.billingNote ? `, ${p.billingNote}` : ''}${p.checkedAt ? ` (price checked ${fmtDate(p.checkedAt)})` : ''}.`
-      : `No verified public starting price is recorded (${p.headline.toLowerCase()}).`;
+      : `No verified public starting price is recorded${noPriceWhy(p)}.`;
     return `${vendor.name} is one of ${total} ${things} we researched. ${scoreText} ${priceText} Best for: ${lowerFirst(sentence(vendor.bestFor))}`;
   }
 
@@ -160,7 +208,7 @@ export function createAnswers(ctx) {
           }
         : {
             q: `How much does ${vendor.name} cost?`,
-            a: `${vendor.name} has no verified public starting price for US buyers (${p.headline.toLowerCase()}). ${sentence(p.summary)}`.trim(),
+            a: `${vendor.name} has no verified public starting price for US buyers${noPriceWhy(p)}. ${sentence(p.summary)}`.trim(),
           },
     );
     if (p.extras.length) {
@@ -174,27 +222,32 @@ export function createAnswers(ctx) {
     });
     out.push({
       q: `What is ${vendor.name}’s documented-fit score?`,
-      a: `For ${vendor.name}, ${listText(scoreLines)}. The score is the share of the category checklist documented in official sources. It is not a user rating or a hands-on test.`,
+      a: `For ${vendor.name}, ${listText(scoreLines)}. The score is the share of the category checklist documented in official sources. It is not a customer rating or a hands-on test.`,
     });
     const ai = vendor.ai || {};
     out.push(
       ai.level && ai.level !== 'not-verified'
         ? {
             q: `Does ${vendor.name} include AI?`,
-            a: `${sentence(ai.summary)}${ai.capabilities?.length ? ` Documented capabilities include ${listText(ai.capabilities.slice(0, 3).map((c) => lowerFirst(stripDot(c))))}.` : ''}${ai.limits?.length ? ` Check before buying: ${lowerFirst(sentence(ai.limits[0]))}` : ''}`,
+            a: `${sentence(ai.summary)}${ai.capabilities?.length ? ` Documented capabilities include: ${ai.capabilities.slice(0, 3).map(stripDot).join('; ')}.` : ''}${ai.limits?.length ? ` Check before buying: ${sentence(ai.limits[0])}` : ''}`,
           }
         : {
             q: `Does ${vendor.name} include AI?`,
             a: `We have not verified AI capabilities for ${vendor.name} in official documentation. Not verified does not mean the product has no AI; ask the vendor which plan includes any AI features.`,
           },
     );
-    out.push({ q: `Who is ${vendor.name} best for?`, a: `${sentence(vendor.bestFor)} Look more closely when: ${lowerFirst(sentence(vendor.avoidIf))}` });
+    out.push({ q: `Who is ${vendor.name} best for?`, a: `${sentence(vendor.bestFor)}${vendor.avoidIf ? ` ${lookCloser(vendor)}` : ''}` });
     const s = ctx.summary(primary.id);
-    const alts = s.ranked.filter((v) => v.id !== vendor.id && !s.results.get(v.id).isPending).slice(0, 3);
+    const alts = s.ranked.filter((v) => v.id !== vendor.id && !s.results.get(v.id).isPending);
     if (alts.length >= 2) {
+      const L = leaders(primary.id, alts);
       out.push({
         q: `What are the alternatives to ${vendor.name}?`,
-        a: `In ${primary.name}, the researched alternatives with the highest documented-fit scores are ${listText(alts.map((v) => scoredName(v, primary.id)))}. ${s.total - 1} alternatives are listed in total.`,
+        a: `${
+          L.tie
+            ? `In ${primary.name}, ${L.top.items.length} researched alternatives tie for the highest documented-fit score (${L.top.value}/100): ${L.topNames}.`
+            : `In ${primary.name}, the researched alternative with the highest documented-fit score is ${L.lead}${L.followers ? `, followed by ${L.followers}` : ''}.`
+        } ${s.total - 1} alternatives are listed in total.`,
       });
     }
     if (vendor.integrations?.length) {
@@ -223,7 +276,7 @@ export function createAnswers(ctx) {
       ? `They differ on ${f.diff.length} of ${f.active.length} scored checks (${f.diff.slice(0, 3).map((r) => r.feature.label).join('; ')}).`
       : `Their documented status is the same on all ${f.active.length} scored checks.`;
     const dates = [f.sa.checkedAt, f.sb.checkedAt].filter(Boolean).sort();
-    return `On the same ${category.name} checklist, ${side(a, f.sa, f.pa)}; ${side(b, f.sb, f.pb)}. ${diffText} Scores reflect official documentation${dates.length ? ` as of ${fmtDate(dates[0])}` : ''}, not user reviews or hands-on tests.`;
+    return `On the same ${category.name} checklist, ${side(a, f.sa, f.pa)}; ${side(b, f.sb, f.pb)}. ${diffText} Scores reflect official documentation${dates.length ? ` as of ${fmtDate(dates[0])}` : ''}, ${NOT_RATINGS}.`;
   }
 
   /** Rule-based verdict line for a pair. Never invents a winner when the data does not support one. */
@@ -289,10 +342,20 @@ export function createAnswers(ctx) {
   function alternativesQuickAnswer(vendor, category) {
     const f = alternativesFacts(vendor, category);
     const fs = ctx.score(category.id, vendor.id);
-    const top = f.scored.slice(0, 3).map((v) => scoredName(v, category.id));
+    const n = f.others.length;
     const focalText = fs.pending ? `${vendor.name} itself is score-pending` : `${vendor.name} itself scores ${fs.value}/100`;
-    if (!top.length) return `We researched ${plural(f.others.length, 'alternative')} to ${vendor.name} in ${category.name}. None has a published documented-fit score yet; ${focalText}. Evidence checked ${asOf()}.`;
-    return `The ${f.others.length === 1 ? 'one alternative' : `${f.others.length} alternatives`} to ${vendor.name} we researched in ${category.name} ${f.others.length === 1 ? 'is' : 'are'} led by ${listText(top)} on documented fit. ${focalText}. Scores reflect official documentation checked as of ${asOf()}, not user reviews.`;
+    const L = leaders(category.id, f.scored);
+    if (!L) {
+      return n === 1
+        ? `We researched one alternative to ${vendor.name} in ${category.name}: ${f.others[0].name}. It has no published documented-fit score yet; ${focalText}. Evidence checked ${asOf()}.`
+        : `We researched ${n} alternatives to ${vendor.name} in ${category.name}. None has a published documented-fit score yet; ${focalText}. Evidence checked ${asOf()}.`;
+    }
+    const tail = `${focalText}. Scores reflect official documentation checked as of ${asOf()}, ${NOT_RATINGS}.`;
+    if (n === 1) return `The one alternative to ${vendor.name} we researched in ${category.name} is ${L.lead}. ${tail}`;
+    const intro = `Of the ${n} alternatives to ${vendor.name} we researched in ${category.name}`;
+    if (L.tie) return `${intro}, ${L.top.items.length} tie for the highest documented-fit score (${L.top.value}/100): ${L.topNames}. ${tail}`;
+    if (f.scored.length === 1) return `${intro}, only ${L.lead} has a published documented-fit score so far. ${tail}`;
+    return `${intro}, ${L.lead} has the highest documented-fit score${L.followers ? `, followed by ${L.followers}` : ''}. ${tail}`;
   }
 
   function alternativesFaq(vendor, category) {
@@ -310,7 +373,7 @@ export function createAnswers(ctx) {
     if (vendor.avoidIf) {
       out.push({
         q: `Why look for an alternative to ${vendor.name}?`,
-        a: `Look more closely when: ${lowerFirst(sentence(vendor.avoidIf))}${vendor.tradeoffs?.length ? ` Documented trade-offs include: ${vendor.tradeoffs.slice(0, 2).map((t) => lowerFirst(stripDot(t))).join('; ')}.` : ''}`,
+        a: `${lookCloser(vendor)}${vendor.tradeoffs?.length ? ` Documented trade-offs include: ${vendor.tradeoffs.slice(0, 2).map(stripDot).join('; ')}.` : ''}`,
       });
     }
     return out;
@@ -331,6 +394,8 @@ export function createAnswers(ctx) {
     alternativesFacts,
     alternativesQuickAnswer,
     alternativesFaq,
+    leaders,
+    scoreGroups,
     firstSentence,
     sentence,
     stripDot,

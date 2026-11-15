@@ -128,7 +128,7 @@ function render(ctx) {
       </section>`,
     )}
     ${emptyState('category')}
-    <p class="table-note">“Top fit” is the highest <a href="/methodology/">documented-fit score</a> in the category, out of 100: the share of that category’s checklist documented in official sources as of ${ui.time(ctx, ctx.catalog.checkedAt)}. It is not a user rating or a hands-on test. “Scores pending” means no product has 80% of the checklist weight checked yet. Documented comparisons carry no score.</p>
+    <p class="table-note">“Top fit” is the highest <a href="/methodology/">documented-fit score</a> in the category, out of 100: the share of that category’s checklist documented in official sources as of ${ui.time(ctx, ctx.catalog.checkedAt)}. It is not a customer rating or a hands-on test. “Scores pending” means no product has 80% of the checklist weight checked yet. Documented comparisons carry no score.</p>
   </div>`;
 
   const faqItems = [
@@ -142,7 +142,7 @@ function render(ctx) {
     },
     {
       q: 'What does “Top fit” mean on this page?',
-      a: 'It names the product with the highest documented-fit score in that category. Every product that shares the highest score counts, so a category can show several products tied. The score describes how much of the category checklist is documented in official sources; it is not a user rating and no vendor pays for placement.',
+      a: 'It names the product with the highest documented-fit score in that category. Every product that shares the highest score counts, so a category can show several products tied. The score describes how much of the category checklist is documented in official sources; it is not a customer rating and no vendor pays for placement.',
     },
   ];
   const faq = html`<section class="section ix-faq" aria-label="Questions about the categories">

@@ -12,25 +12,6 @@ export function routes(ctx) {
   return ctx.vendors.map((v) => ({ path: ctx.url.alternatives(v.id), render: (c) => render(c, v) }));
 }
 
-/**
- * Adds one trailing column to a ui.productTable() result (the shared table has no slot for it).
- * Fails the build if the table markup ever stops matching, instead of silently dropping the links.
- */
-function addColumn(table, rowCount, headCell, cellFor) {
-  let heads = 0;
-  let cells = 0;
-  let s = String(table).replace(/<\/tr>\s*<\/thead>/, (m) => {
-    heads++;
-    return `${headCell}${m}`;
-  });
-  s = s.replace(/(<tr[^>]*\sdata-id="([^"]+)"[^>]*>)([\s\S]*?)<\/tr>/g, (m, open, id, inner) => {
-    cells++;
-    return `${open}${inner}${cellFor(id)}</tr>`;
-  });
-  if (heads !== 1 || cells !== rowCount) throw new Error(`alternatives: could not extend the product table (${heads} header, ${cells}/${rowCount} rows)`);
-  return raw(s);
-}
-
 function render(ctx, vendor) {
   const A = ctx.answers;
   const path = ctx.url.alternatives(vendor.id);
@@ -41,10 +22,7 @@ function render(ctx, vendor) {
   const profile = ctx.url.software(vendor.id);
   const usd = (p) => p.hasAmount && p.currency === 'USD';
 
-  // The shared generator lower-cases the first letter of "{Name} itself is score-pending" after a semicolon,
-  // which turns "NordVPN" into "nordVPN"; restore the brand's own spelling.
-  const lowered = vendor.name[0].toLowerCase() + vendor.name.slice(1);
-  const quickAnswer = (category) => A.alternativesQuickAnswer(vendor, category).split(`; ${lowered} itself`).join(`; ${vendor.name} itself`);
+  const quickAnswer = (category) => A.alternativesQuickAnswer(vendor, category);
 
   // ---------------------------------------------------------------- one panel per category
   const panel = (category, isDefault) => {
@@ -56,7 +34,7 @@ function render(ctx, vendor) {
       const s = ctx.score(category.id, v.id);
       return !s.pending && s.value > fs.value;
     }).length;
-    const priced = f.others.filter((v) => usd(ctx.price(v, category.id))).length;
+    const priced = f.others.filter((v) => ctx.price(v, category.id).hasAmount).length; // any currency, as on the category page
     const chips = [
       !fs.pending && higher > 0 && { f: 'higher', label: `Higher score than ${vendor.name}`, n: higher },
       fs.pending && f.scored.length > 0 && f.scored.length < n && { f: 'scored', label: 'Scored only', n: f.scored.length },
@@ -64,36 +42,31 @@ function render(ctx, vendor) {
       priced > 0 && priced < n && { f: 'priced', label: 'Public price', n: priced },
     ].filter(Boolean);
 
-    const vsCell = (otherId) => {
-      const other = ctx.vendor(otherId);
-      const pair = ctx.pairPage(category.id, vendor.id, otherId);
-      const href = pair ? ctx.url.vs(pair.id) : ctx.url.compare({ scope: category.id, ids: [vendor.id, otherId] });
-      return String(html`<td class="ix-c-vs"><a href="${href}" aria-label="${other.name} vs ${vendor.name}">vs ${vendor.name}</a></td>`);
+    const vsLink = (other) => {
+      const pair = ctx.pairPage(category.id, vendor.id, other.id);
+      const href = pair ? ctx.url.vs(pair.id) : ctx.url.compare({ scope: category.id, ids: [vendor.id, other.id] });
+      return html`<a href="${href}" aria-label="${other.name} vs ${vendor.name}">vs ${vendor.name}</a>`;
     };
 
-    const refTable = addColumn(
-      ui.productTable(ctx, category.id, [{ vendor }], {
-        id: `ref-${category.id}`,
-        focalId: vendor.id,
-        sortable: false,
-        lazyFrom: isDefault ? 1 : 0,
-        caption: `${vendor.name} in ${category.name}: the product the alternatives are compared with`,
-      }),
-      1,
-      String(html`<th scope="col" class="ix-c-vs"><span class="sr-only">Links</span></th>`),
-      () => String(html`<td class="ix-c-vs"><a class="link-arrow" href="${profile}">Profile</a></td>`),
-    );
-    const altTable = addColumn(
-      ui.productTable(ctx, category.id, f.others.map((v) => ({ vendor: v })), {
-        id: `alts-${category.id}`,
-        sortable: false,
-        lazyFrom: isDefault ? 5 : 0,
-        caption: `Alternatives to ${vendor.name} in ${category.name}, ranked by documented-fit score`,
-      }),
-      n,
-      String(html`<th scope="col" class="ix-c-vs">Head-to-head</th>`),
-      vsCell,
-    );
+    const refTable = ui.productTable(ctx, category.id, [{ vendor }], {
+      id: `ref-${category.id}`,
+      focalId: vendor.id,
+      sortable: false,
+      lazyFrom: isDefault ? 1 : 0,
+      caption: `${vendor.name} in ${category.name}: the product the alternatives are compared with`,
+      action: () => html`<a class="link-arrow" href="${profile}">Profile</a>`,
+      actionLabel: html`<span class="sr-only">Links</span>`,
+      actionClass: 'ix-c-vs',
+    });
+    const altTable = ui.productTable(ctx, category.id, f.others.map((v) => ({ vendor: v })), {
+      id: `alts-${category.id}`,
+      sortable: false,
+      lazyFrom: isDefault ? 5 : 0,
+      caption: `Alternatives to ${vendor.name} in ${category.name}, ranked by documented-fit score`,
+      action: vsLink,
+      actionLabel: 'Head-to-head',
+      actionClass: 'ix-c-vs',
+    });
 
     // The old cards printed a check date under every score and price. The shared row has no room for them,
     // so the panel states the span of those dates once (the per-check dates are in each score breakdown).
@@ -153,7 +126,7 @@ function render(ctx, vendor) {
       <div class="ix-ref">${refTable}</div>
       <div class="ix-alts">${altTable}</div>
       <p class="empty" data-ix-empty hidden><b>No alternative matches these filters.</b> <button type="button" class="btn btn--quiet btn--sm" data-ix-reset>Clear filters</button></p>
-      <p class="fineprint ix-panel__note">Ranked on the ${category.name} checklist, highest documented-fit score first; “#” is the published rank in the category. Product-wide evidence can span multiple plans. Check the price, usage limits and exact plan before choosing.${datesLine}</p>
+      <p class="fineprint ix-panel__note">Ranked on the ${category.name} checklist, highest documented-fit score first; “#” is the place by published score in the category; “=” marks a place shared by products with the same score. Product-wide evidence can span multiple plans. Check the price, usage limits and exact plan before choosing.${datesLine}</p>
       <p class="cluster ix-panel__links">
         <a class="btn btn--ghost" href="${ctx.url.compare({ scope: category.id, ids: [vendor.id] })}">Compare with ${vendor.name}</a>
         <a class="link-arrow" href="${ctx.url.category(category.id)}">See the full ${category.name} ranking and sources</a>

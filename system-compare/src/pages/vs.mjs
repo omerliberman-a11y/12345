@@ -38,19 +38,7 @@ function render(ctx, comparison) {
   const quick = A.pairQuickAnswer(category, a, b);
   const verdict = A.pairVerdict(category, a, b);
   const pt = S.pointText;
-  // Workaround for two casing slips in the shared FAQ generator (answers.mjs pairFaq lower-cases the first letter
-  // of bestFor and the whole AI label: "uS employers", "native ai"). Remove once the generator is fixed.
-  const faqItems = A.pairFaq(category, a, b).map((f) => {
-    if (typeof f.a !== 'string') return f;
-    let answer = f.a;
-    for (const v of vendors) {
-      const bf = v.bestFor || '';
-      if (/^[A-Z](?:[A-Z0-9]|[a-z0-9]+[A-Z])/.test(bf)) answer = answer.replace(`${v.name} suits: ${bf[0].toLowerCase()}${bf.slice(1, 16)}`, `${v.name} suits: ${bf.slice(0, 16)}`);
-      const label = ctx.aiLevel(v).label;
-      answer = answer.replace(`${v.name}: ${label.toLowerCase()}`, `${v.name}: ${label.replace(/^[A-Z](?=[a-z])/, (c) => c.toLowerCase())}`);
-    }
-    return { ...f, a: answer };
-  });
+  const faqItems = A.pairFaq(category, a, b);
 
   // one record per compared product, in the published (vendorIds) order
   const items = vendors.map((v, i) => ({ i, v, s: ctx.score(category.id, v.id), p: ctx.price(v, category.id), ai: ctx.aiLevel(v) }));

@@ -95,7 +95,7 @@ function render(ctx) {
       </section>`,
     )}
     ${emptyState('comparison')}
-    <p class="table-note">Numbers are <a href="/methodology/">documented-fit scores</a> out of 100 on the category checklist, from official documentation checked on the date shown — not user ratings or hands-on tests. “pending” means less than 80% of the checklist weight has been checked for that product. “Documented plans” compares named plans from dated sources without a score. “Editorial” is a buying brief with its own sources.</p>
+    <p class="table-note">Numbers are <a href="/methodology/">documented-fit scores</a> out of 100 on the category checklist, from official documentation checked on the date shown — not customer ratings or hands-on tests. “pending” means less than 80% of the checklist weight has been checked for that product. “Documented plans” compares named plans from dated sources without a score. “Editorial” is a buying brief with its own sources.</p>
   </div>`;
 
   const faqItems = [

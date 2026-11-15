@@ -41,29 +41,6 @@ const PLAN_BILLING = { annual: 'Annual commitment / prepayment', monthly: 'Month
 const REVIEW_STATUS = { partial: 'Scoped check with open questions', verified: 'Scoped source check complete' };
 const REVIEW_FIELDS = { pricing: 'pricing and billing', tradeoffs: 'limitations', ai: 'AI scope and limits', strengths: 'documented strengths', description: 'product summary' };
 
-// The answer generators lower-case the first letter of a quoted field; restore it where that breaks an
-// acronym or a product name ("sEO teams", "aI deal scoring"). Text itself is never rewritten.
-const PROPER = /^(?:[A-Z][A-Za-z]*[A-Z0-9]|(?:Zoho|Shopify|HubSpot|Salesforce|Microsoft|Google|WordPress)\b)/;
-const lowerFirst = (s) => (s ? s[0].toLowerCase() + s.slice(1) : s);
-const stripDot = (s) => String(s || '').trim().replace(/[.\s]+$/, '');
-function restoreCase(answer, originals, always = false) {
-  let out = answer;
-  for (const o of originals.filter(Boolean)) {
-    const clean = stripDot(o);
-    if (always || PROPER.test(clean)) out = out.replace(lowerFirst(clean), clean);
-  }
-  return out;
-}
-// The shared plan label reads every name with a comma or a slash as a list ("Starter, 5,000 emails plans",
-// "Essentials AP/AR plans"). A name with one qualifier, or a slash inside a word, is a single plan.
-const planPhrase = (plan, shared) => {
-  if (!/ plans$/.test(shared) || / plans$/i.test(plan)) return shared;
-  if (/ \/ | and | or /.test(plan)) return shared; // real lists: "Gateway / All-in-One"
-  if (plan.includes(', ')) return plan.split(', ').length === 2 ? `“${plan}” plan` : shared; // "5,000" is not a separator
-  return `${plan} plan`;
-};
-const fixPlanPhrase = (answer, plan, shared) => (plan && shared ? answer.replace(` on the ${shared}`, ` on the ${planPhrase(plan, shared)}`) : answer);
-
 function render(ctx, vendor) {
   const A = ctx.answers;
   const L = ctx.scoring.LABELS;
@@ -102,17 +79,14 @@ function render(ctx, vendor) {
   ]);
 
   // ---------------------------------------------------------------- answers (generated from data)
-  const quick = fixPlanPhrase(restoreCase(A.productQuickAnswer(vendor), [vendor.bestFor]), p.plan, p.planLabel);
-  const faqItems = A.productFaq(vendor).map((f) => ({
-    ...f,
-    a: fixPlanPhrase(restoreCase(restoreCase(f.a, [...(ai.capabilities || []).slice(0, 3), (ai.limits || [])[0]], true), [vendor.bestFor]), p.plan, p.planLabel),
-  }));
+  const quick = A.productQuickAnswer(vendor);
+  const faqItems = A.productFaq(vendor);
 
   // ---------------------------------------------------------------- hero
   const chip = (c) => {
     const sc = scores.get(c.id);
     const total = ctx.summary(c.id).total;
-    return html`<li><a class="chip chip--link" href="${ctx.url.category(c.id)}">${sc.pending ? html`${c.name} <span class="n">score pending</span>` : html`<b>#${sc.rank} of ${total}</b> in ${c.name}`}</a>${sc.recommended ? html` ${ui.tag('Recommended', 'top')}` : ''}</li>`;
+    return html`<li><a class="chip chip--link" href="${ctx.url.category(c.id)}">${sc.pending ? html`${c.name} <span class="n">score pending</span>` : html`<b>${sc.placeLabel}</b> in ${c.name}`}</a>${sc.recommended ? html` ${ui.tag('Recommended', 'top')}` : ''}</li>`;
   };
   const planLine = p.plan ? html`<span class="price__unit">Plan: ${p.plan}</span>` : '';
   const hero = html`<header class="wrap sw-hero">
@@ -158,7 +132,7 @@ function render(ctx, vendor) {
         html`<a href="/methodology/">How we score</a>`,
       ])}
       ${ui.answer(ctx, quick, {
-        meta: html`The documented-fit score is the share of the category checklist documented in official sources. It is not a user rating or a hands-on test. <a href="/methodology/">How we score</a>`,
+        meta: html`The documented-fit score is the share of the category checklist documented in official sources. It is not a customer rating or a hands-on test. <a href="/methodology/">How we score</a>`,
       })}
     </div>
   </header>`;
@@ -397,7 +371,7 @@ function render(ctx, vendor) {
             <p class="sw-score__lines"><span>${sc.coverageText}</span><span>${sc.documentedText}</span>${sc.checkedAt ? html`<span>Checked ${ui.time(ctx, sc.checkedAt)}</span>` : ''}</p>
             ${sc.pending ? html`<p class="sw-score__gate">${L.scoreGate}</p>` : ''}
             <p class="sw-score__links">
-              <a class="link-arrow" href="${ctx.url.category(c.id)}">${sc.pending ? `${c.name} ranking` : `#${sc.rank} of ${total} in ${c.name}`}</a>
+              <a class="link-arrow" href="${ctx.url.category(c.id)}">${sc.pending ? `${c.name} ranking` : `${sc.placeLabel} in ${c.name}`}</a>
               <a class="link-arrow" href="${ctx.url.compare({ scope: c.id, ids: [vendor.id] })}">Compare in ${c.name}</a>
             </p>
           </div>

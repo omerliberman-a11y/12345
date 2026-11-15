@@ -98,6 +98,14 @@
     remove: function (id) { var o = readList(); o.ids = o.ids.filter(function (x) { return x !== id; }); if (o.plans) delete o.plans[id]; writeList(o); },
     clear: function () { writeList({ ids: [], category: '', plans: {}, weights: {} }); },
     replace: function (ids, category) { writeList({ ids: ids.slice(0, MAX), category: category, plans: {}, weights: {} }); },
+    /** Remember a researched plan for a shortlisted product ('' clears it). Returns false when it could not be saved. */
+    setPlan: function (id, plan) {
+      var o = readList();
+      if (o.ids.indexOf(id) < 0) return false;
+      if (plan) o.plans[id] = String(plan); else delete o.plans[id];
+      writeList(o);
+      return (readList().plans[id] || '') === (plan || '');
+    },
     /** Returns 'added' | 'removed' | 'full' | 'other-category'. */
     toggle: function (id, category, name) {
       var o = readList();
@@ -416,8 +424,12 @@
       on(t, 'keydown', function (e) {
         var k = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
         if (k) { e.preventDefault(); select(tabs[(i + k + tabs.length) % tabs.length], true); }
+        else if (e.key === 'Home') { e.preventDefault(); select(tabs[0], true); }
+        else if (e.key === 'End') { e.preventDefault(); select(tabs[tabs.length - 1], true); }
       });
     });
+    // panels are hidden by attribute (not only by CSS), so exactly one shows from the start
+    tabs.forEach(function (t) { var p = d.getElementById(t.getAttribute('aria-controls')); if (p) p.hidden = t.getAttribute('aria-selected') !== 'true'; });
   });
 
   // ------------------------------------------------------------------ popovers: one open at a time, close on outside click / Esc
@@ -428,6 +440,18 @@
     if (e.key !== 'Escape') return;
     $$('details[data-pop][open]').forEach(function (p) { p.open = false; var s = $('summary', p); if (s) s.focus(); });
   });
+  // keep an opened panel inside the viewport: at tablet widths its trigger can sit near either edge
+  d.addEventListener('toggle', function (e) {
+    var p = e.target;
+    if (!p || !p.matches || !p.matches('details[data-pop]')) return;
+    var panel = $('.pop__panel', p);
+    if (!panel) return;
+    panel.style.transform = '';
+    if (!p.open || getComputedStyle(panel).position === 'fixed') return;
+    var r = panel.getBoundingClientRect(), vw = d.documentElement.clientWidth, dx = 0;
+    if (r.left < 12) dx = 12 - r.left; else if (r.right > vw - 12) dx = vw - 12 - r.right;
+    if (dx) panel.style.transform = 'translateX(' + Math.round(dx) + 'px)';
+  }, true);
 
   // ------------------------------------------------------------------ score breakdown ("why this score?")
   // Any element with data-score-pop="<categoryId>:<vendorId>" opens the breakdown: the weighted groups,
@@ -484,7 +508,7 @@
       links.appendChild(d.createTextNode(' · '));
       links.appendChild(el('a', { href: SC.url('/methodology/'), text: 'How we score' }));
       box.appendChild(links);
-      box.appendChild(el('p.evpop__meta', { text: 'Research, not a user rating or hands-on test.' }));
+      box.appendChild(el('p.evpop__meta', { text: 'Research, not a customer rating or hands-on test.' }));
       SC.float.place();
     }).catch(function () { if (floatPop) floatPop.textContent = 'The breakdown could not load. Open the product profile for the evidence.'; });
   });

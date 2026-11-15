@@ -170,7 +170,7 @@ function render(ctx) {
     ${table}
     ${emptyState('product')}
     <p class="ix-more"><button type="button" class="btn btn--ghost" data-ix-more hidden>Show ${PAGE_SIZE} more (${PAGE_SIZE} of ${total})</button></p>
-    <p class="table-note">Best score = the highest <a href="/methodology/">documented-fit score</a> (out of 100) across a product’s categories, from official documentation checked as of ${ui.time(ctx, ctx.catalog.checkedAt)} — not a user rating or a hands-on test. “Score pending” means less than 80% of the checklist weight has been checked. Prices are dated public list prices, not quotes. No vendor pays for placement, and filters never change a published score.</p>
+    <p class="table-note">Best score = the highest <a href="/methodology/">documented-fit score</a> (out of 100) across a product’s categories, from official documentation checked as of ${ui.time(ctx, ctx.catalog.checkedAt)} — not a customer rating or a hands-on test. “Score pending” means less than 80% of the checklist weight has been checked. Prices are dated public list prices, not quotes. No vendor pays for placement, and filters never change a published score.</p>
   </section>`;
 
   const supplierBlock = html`<section class="wrap section ix-sup" id="suppliers" aria-labelledby="suppliers-h" data-ix-suppliers data-shown="${SUPPLIERS_SHOWN}">

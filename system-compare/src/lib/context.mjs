@@ -85,6 +85,21 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
     return i < 0 ? null : i + 1;
   };
   const isRecommended = (categoryId, vendorId) => summary(categoryId).recommended.some((v) => v.id === vendorId);
+  /**
+   * Published place inside the category. Products with the same published score share a place (the order
+   * inside a tie is unrounded score, coverage, then name — not a ranking), and score-pending products have none.
+   */
+  const places = new Map();
+  const placeOf = (categoryId, vendorId) => {
+    if (!places.has(categoryId)) {
+      const s = summary(categoryId);
+      const scored = s.ranked.filter((v) => !s.results.get(v.id).isPending).map((v) => [v.id, s.results.get(v.id).score]);
+      const m = new Map();
+      for (const [id, value] of scored) m.set(id, { place: 1 + scored.filter((o) => o[1] > value).length, tied: scored.filter((o) => o[1] === value).length, of: scored.length });
+      places.set(categoryId, m);
+    }
+    return places.get(categoryId).get(vendorId) || { place: null, tied: 0, of: places.get(categoryId).size };
+  };
 
   /** Categories of a vendor in catalog order (the order the live site uses for sections). */
   const vendorCategories = (vendor) => catalog.categories.filter((c) => vendor.categories?.includes(c.id));
@@ -155,6 +170,18 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
   }
 
   // ------------------------------------------------------------------ score view-model
+  /** Printable place: place 3 → "3" / "#3 of 7 scored"; a shared place → "=1" / "Tied #1 of 12"; pending → "". */
+  function placeView(categoryId, vendorId) {
+    const { place, tied, of } = placeOf(categoryId, vendorId);
+    const total = summary(categoryId).total;
+    return {
+      place, // number | null (score pending)
+      tied: tied > 1 ? tied : 0, // how many products share this place (0 = not shared)
+      placeOf: of, // number of scored products in the category
+      placeText: place ? `${tied > 1 ? '=' : ''}${place}` : '',
+      placeLabel: place ? `${tied > 1 ? 'Tied ' : ''}#${place} of ${of}${of < total ? ' scored' : ''}` : '',
+    };
+  }
   function score(categoryId, vendorId) {
     const r = fit(categoryId, vendorId);
     if (!r) return null;
@@ -169,7 +196,8 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
       checkedAt: r.checkedAt,
       groups: r.groupScores,
       rows: r.rows,
-      rank: rankOf(categoryId, vendorId),
+      rank: rankOf(categoryId, vendorId), // position in the published order (sorting only — never print it)
+      ...placeView(categoryId, vendorId),
       recommended: isRecommended(categoryId, vendorId),
       // verbatim strings of the published method
       valueText: r.score === null ? 'Score pending' : `${r.score}/100`,

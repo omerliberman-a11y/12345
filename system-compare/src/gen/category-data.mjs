@@ -39,6 +39,7 @@ export function categoryData(ctx, category) {
         sc: sc.value,
         pe: sc.pending ? 1 : 0,
         rk: sc.rank,
+        pl: sc.placeText, // "3", "=1" or "" (score pending)
         rec: sc.recommended ? 1 : 0,
         ck: sc.checked,
         to: sc.total,

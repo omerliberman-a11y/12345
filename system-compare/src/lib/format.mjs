@@ -30,13 +30,17 @@ export const listText = (items, conj = 'and') =>
   items.length <= 1 ? items.join('') : items.length === 2 ? items.join(` ${conj} `) : `${items.slice(0, -1).join(', ')} ${conj} ${items[items.length - 1]}`;
 
 /**
- * "Plus" → "Plus plan"; names that already carry their noun ("Base plan", "Starter Suite", "Configured plan")
- * are left alone; lists ("Free, Starter, Professional and Enterprise") become "… plans".
+ * "Plus" → "Plus plan". Names that already carry their noun ("Base plan", "Starter Suite", "Free and paid CRM
+ * editions") are left alone; real lists ("Free, Starter, Professional and Enterprise", "Basic / Core / Plus")
+ * become "… plans"; a name with a qualifier ("Starter, 5,000 emails", "Premium — displayed renewal") is one
+ * plan and is quoted so the sentence stays readable. A slash inside a word ("Essentials AP/AR") is not a list.
  */
 export function planLabel(plan) {
   const p = String(plan || '').trim();
   if (!p) return '';
-  if (/\b(plan|plans|tier|tiers|edition|package|suite|bundle|subscription|offer)\b/i.test(p)) return p;
-  if (/,|\band\b|\bor\b|\//i.test(p)) return `${p} plans`;
+  if (/\b(plans?|tiers?|editions?|packages?|packs?|suites?|bundles?|subscriptions?|offers?)\b/i.test(p)) return p;
+  const isList = / \/ | and | or /i.test(p) || p.split(/, (?=\D)/).length > 2;
+  if (isList) return `${p} plans`;
+  if (/, | — | \+ /.test(p)) return `“${p}” plan`;
   return `${p} plan`;
 }

@@ -409,7 +409,7 @@
       if (f.higher && !(P.fscore !== null && s > P.fscore)) return false;
       if (f.scored && s < 0) return false;
       if (f.cheaper && !(P.fprice !== null && price !== '' && Number(price) < P.fprice)) return false;
-      if (f.priced && price === '') return false;
+      if (f.priced && tr.getAttribute('data-pstate') !== 'amount') return false; // any public amount, any currency
       return true;
     }
     function rank(tr) { return Number(tr.getAttribute('data-rank')); }

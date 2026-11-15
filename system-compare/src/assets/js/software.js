@@ -110,10 +110,7 @@
         return;
       }
       var removing = o.plans[id] === plan;
-      if (removing) delete o.plans[id]; else o.plans[id] = plan;
-      o.at = new Date().toISOString();
-      if (!SC.save('sc-us-shortlist', o)) { SC.toast('This browser could not save your shortlist.'); return; }
-      d.dispatchEvent(new CustomEvent('sc:shortlist-updated', { detail: SC.shortlist.get() }));
+      if (!SC.shortlist.setPlan(id, removing ? '' : plan)) { SC.toast('This browser could not save your shortlist.'); return; }
       SC.toast(removing ? name + ' now uses product-wide evidence in your shortlist.' : name + ' ' + planName + ' plan saved to your shortlist.');
     });
     d.addEventListener('sc:shortlist-updated', syncPlans);

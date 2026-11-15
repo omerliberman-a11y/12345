@@ -41,7 +41,13 @@ function render(ctx, category) {
 
   // ---- head
   const scoredList = ranked.filter((v) => !ctx.fit(category.id, v.id).isPending);
-  const top = scoredList.slice(0, 3).map((v) => `${v.name} ${ctx.fit(category.id, v.id).score}/100`);
+  // products that share the highest published score are named together, never one of them alone
+  const topScore0 = scoredList.length ? ctx.fit(category.id, scoredList[0].id).score : null;
+  const topTied = scoredList.filter((v) => ctx.fit(category.id, v.id).score === topScore0);
+  const top =
+    topTied.length > 1
+      ? [topTied.length <= 3 ? `${ctx.listText(topTied.map((v) => v.name))} (${topScore0}/100 each)` : `${topTied.length} products tied at ${topScore0}/100`]
+      : scoredList.slice(0, 2).map((v) => `${v.name} ${ctx.fit(category.id, v.id).score}/100`);
   const base = category.description.replace(/\.$/, '');
   const live = ctx.liveHead(path) || {};
   const title = seoTitle(`${category.name}: ${s.total} tools compared`, year);

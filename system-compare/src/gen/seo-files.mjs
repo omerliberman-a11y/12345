@@ -65,8 +65,10 @@ export async function generate(ctx, emit) {
   const catLine = (c) => {
     if (ctx.isFactual(c)) return `- [${c.name}](${abs(ctx.url.category(c.id))}): ${c.factual.suppliers.length} suppliers documented, no score assigned. Evidence checked ${d(c.factual.checkedAt || c.checkedAt)}.`;
     const s = ctx.summary(c.id);
-    const lead = s.ranked.find((v) => !s.results.get(v.id).isPending);
-    return `- [${c.name}](${abs(ctx.url.category(c.id))}): ${s.total} products, ${s.scored} scored${lead ? `; highest documented fit ${lead.name} ${s.results.get(lead.id).score}/100` : '; scores pending'}.`;
+    const rec = s.recommended; // every product that shares the highest published score
+    const topValue = rec.length ? s.results.get(rec[0].id).score : null;
+    const lead = !rec.length ? '; scores pending' : rec.length === 1 ? `; highest documented fit ${rec[0].name} ${topValue}/100` : `; highest documented fit ${topValue}/100, shared by ${ctx.listText(rec.map((v) => v.name))}`;
+    return `- [${c.name}](${abs(ctx.url.category(c.id))}): ${s.total} products, ${s.scored} scored${lead}.`;
   };
   const head =
     `# ${site.name} — ${site.country}\n\n` +
@@ -111,7 +113,7 @@ export async function generate(ctx, emit) {
         const s = ctx.score(c.id, v.id);
         return s.pending
           ? `Documented-fit score in ${c.name}: pending (${s.checked} of ${s.total} checklist items checked, ${s.coveragePct}% of weight)`
-          : `Documented-fit score in ${c.name}: ${s.value}/100 (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${d(s.checkedAt)}` : ''}; rank ${s.rank} of ${ctx.summary(c.id).total})`;
+          : `Documented-fit score in ${c.name}: ${s.value}/100 (${s.checked} of ${s.total} checklist items checked${s.checkedAt ? `, evidence from ${d(s.checkedAt)}` : ''}; ${s.tied ? `shared place ${s.place} (${s.tied} products with this score)` : `place ${s.place}`} of ${s.placeOf} scored products)`;
       }),
       `Starting price: ${p.hasAmount ? `${p.headline}${p.unit ? ' ' + p.unit : ''}${p.planLabel ? ` (${p.planLabel})` : ''}${p.billingNote ? `, ${p.billingNote}` : ''}` : `no verified public starting price (${p.headline.toLowerCase()})`}${p.checkedAt ? `; price checked ${d(p.checkedAt)}` : ''}`,
       `AI: ${ctx.aiLevel(v).label}`,

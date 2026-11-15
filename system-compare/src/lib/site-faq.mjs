@@ -26,7 +26,7 @@ export function siteFaq(ctx) {
         {
           id: 'score-meaning',
           q: 'What is the documented-fit score?',
-          a: `A whole number from 0 to 100 showing the weighted share of a category’s checklist that official vendor documentation supports. It describes documented support for that checklist. It is not a measure of product quality, customer satisfaction or hands-on performance, and it is not a user rating. The published method version is ${ctx.catalog.scoringVersion}.`,
+          a: `A whole number from 0 to 100 showing the weighted share of a category’s checklist that official vendor documentation supports. It describes documented support for that checklist. It is not a measure of product quality, customer satisfaction or hands-on performance, and it is not a customer rating. The published method version is ${ctx.catalog.scoringVersion}.`,
           home: true,
         },
         {

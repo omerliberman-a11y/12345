@@ -368,7 +368,7 @@ function renderMethodology(ctx) {
   const oneMinute = html`<section class="doc-sec" id="score-in-one-minute" aria-labelledby="score-in-one-minute-h">
     <h2 id="score-in-one-minute-h">The score in one minute</h2>
     <p id="documented-fit-score" class="doc-def">
-      The <dfn>documented-fit score</dfn> is a whole number from 0 to 100: the weighted share of a category’s checklist that official vendor documentation supports. It describes documented support, not product quality — it is not a user rating and not a hands-on test.
+      The <dfn>documented-fit score</dfn> is a whole number from 0 to 100: the weighted share of a category’s checklist that official vendor documentation supports. It describes documented support, not product quality — it is not a customer rating and not a hands-on test.
     </p>
 
     <h3 id="weights">Four groups, 100 points</h3>
@@ -505,8 +505,13 @@ function renderMethodology(ctx) {
           }
         </li>
         <li>
-          <b>Rank.</b>
-          ${exVendor.name} is number ${s.rank} of ${exRanked.length} in ${exCat.name}.
+          <b>Place.</b>
+          ${
+            s.tied
+              ? html`${exVendor.name} shares place ${s.place} of ${s.placeOf} scored products in ${exCat.name} with ${s.tied - 1} other ${s.tied - 1 === 1 ? 'product' : 'products'} at ${s.valueText}. Products with the same published score share a place; inside a tie the listing order is unrounded score, then evidence coverage, then name.`
+              : html`${exVendor.name} is number ${s.place} of ${s.placeOf} scored products in ${exCat.name}.`
+          }
+          ${exRanked.length > s.placeOf ? html`The ${exRanked.length - s.placeOf} score-pending products have no place.` : ''}
           ${
             tied.length > 1
               ? html`${tied.length} products share the top score of ${leaderScore.valueText} and all carry the Recommended label.`
@@ -645,7 +650,7 @@ function renderMethodology(ctx) {
         '@type': 'DefinedTerm',
         '@id': termId,
         name: 'Documented-fit score',
-        description: `A 0–100 score: the weighted share of a category checklist that is documented in official vendor sources (${activeBits}; empty groups omitted and weights normalised). Unverified items score zero. Shown only when at least ${sc.SCORE_GATE_PERCENT}% of the checklist weight has been checked. Not a user rating or performance test.`,
+        description: `A 0–100 score: the weighted share of a category checklist that is documented in official vendor sources (${activeBits}; empty groups omitted and weights normalised). Unverified items score zero. Shown only when at least ${sc.SCORE_GATE_PERCENT}% of the checklist weight has been checked. Not a customer rating or performance test.`,
         termCode: `documented-fit-score-v${version}`,
         url: ctx.abs(path),
         inDefinedTermSet: { '@type': 'DefinedTermSet', name: `System Compare methodology ${version}`, url: ctx.abs(path) },

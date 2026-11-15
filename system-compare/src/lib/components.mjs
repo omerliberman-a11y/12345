@@ -90,7 +90,8 @@ export function priceCell(ctx, p, { size, plan = false, checked = false } = {}) 
   const main = p.hasAmount
     ? html`<span class="price__main num">${p.headline}</span>`
     : html`<span class="price__main price__main--text">${p.headline}</span>`;
-  const unit = [p.unit, p.billingNote].filter(Boolean).join(' · ');
+  // with an amount: unit + billing; without one: the pricing basis as recorded ("per sales seat/month, plus usage")
+  const unit = p.hasAmount ? [p.unit, p.billingNote].filter(Boolean).join(' · ') : p.basis;
   return html`<span class="${cx('price', size && `price--${size}`)}">
     ${main}
     ${unit ? html`<span class="price__unit">${unit}</span>` : ''}
@@ -144,11 +145,11 @@ export const sourceLink = (url, label = 'Source') =>
 /**
  * Ranked product table. `rows` = [{ vendor, note? }], all scored in `categoryId`.
  * opts: { id, caption, rank: true, pickable: true, focalId, focalTag, sortable: true, ai: true, priceChecked: false,
- *         action: (vendor) => Raw (adds a trailing column), actionLabel }
+ *         action: (vendor) => Raw (adds a trailing column), actionLabel, actionClass }
  * Each <tr> carries data-* used by js/table.js for instant sort + filter (never changes the score).
  */
 export function productTable(ctx, categoryId, rows, opts = {}) {
-  const { id = 'products', caption, rank = true, pickable = true, focalId, sortable = true, ai = true, featureIndex = null, lazyFrom = 6, action = null, actionLabel = '', focalTag = 'You are comparing against this', priceChecked = false } = opts;
+  const { id = 'products', caption, rank = true, pickable = true, focalId, sortable = true, ai = true, featureIndex = null, lazyFrom = 6, action = null, actionLabel = '', actionClass = 'ptable__c-go', focalTag = 'You are comparing against this', priceChecked = false } = opts;
   const category = ctx.category(categoryId);
   const th = (key, label, cls, sortKey) =>
     sortable && sortKey
@@ -159,12 +160,12 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
     <thead>
       <tr>
         ${pickable ? html`<th scope="col" class="ptable__c-pick"><span class="sr-only">Shortlist</span></th>` : ''}
-        ${rank ? html`<th scope="col" class="ptable__c-rank"><span class="sr-only">Rank</span>#</th>` : ''}
+        ${rank ? html`<th scope="col" class="ptable__c-rank"><span class="sr-only">Place by score</span><span aria-hidden="true">#</span></th>` : ''}
         ${th('name', 'Product', 'ptable__c-name', 'name')}
         ${th('score', 'Score', 'ptable__c-score', 'score')}
         ${th('price', 'Starting price', 'ptable__c-price', 'price')}
         ${ai ? html`<th scope="col" class="ptable__c-ai">AI</th>` : ''}
-        ${action ? html`<th scope="col" class="ptable__c-go">${actionLabel ? actionLabel : html`<span class="sr-only">Actions</span>`}</th>` : ''}
+        ${action ? html`<th scope="col" class="${actionClass}">${actionLabel ? actionLabel : html`<span class="sr-only">Actions</span>`}</th>` : ''}
       </tr>
     </thead>
     <tbody>
@@ -186,7 +187,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
           'data-feat': feat,
         })}>
           ${pickable ? html`<td class="ptable__c-pick">${pick(ctx, vendor, categoryId)}</td>` : ''}
-          ${rank ? html`<td class="ptable__c-rank num">${s.rank}</td>` : ''}
+          ${rank ? html`<td class="ptable__c-rank num">${s.place ? html`${s.tied ? html`<span class="sr-only">Tied </span>` : ''}${s.placeText}` : html`<span aria-hidden="true">–</span><span class="sr-only">Not ranked: score pending</span>`}</td>` : ''}
           <th scope="row" class="ptable__c-name">
             <a class="prod" href="${ctx.url.software(vendor.id)}">
               ${logo(ctx, vendor, { lazy: i >= lazyFrom })}
@@ -199,7 +200,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
           <td class="ptable__c-score"><button type="button" class="scorebtn" data-score-pop="${categoryId}:${vendor.id}" aria-haspopup="dialog" aria-expanded="false" title="Why this score?">${scoreToken(ctx, s)}<span class="sr-only"> — open the score breakdown</span></button></td>
           <td class="ptable__c-price">${priceCell(ctx, p, { checked: priceChecked })}</td>
           ${ai ? html`<td class="ptable__c-ai">${aiTag(ctx, vendor)}</td>` : ''}
-          ${action ? html`<td class="ptable__c-go">${action(vendor)}</td>` : ''}
+          ${action ? html`<td class="${actionClass}">${action(vendor)}</td>` : ''}
         </tr>`;
       })}
     </tbody>
@@ -208,12 +209,24 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
 
 /** The one-line footnote under any scored table. */
 export const tableNote = (ctx) =>
-  html`<p class="table-note">Score = <a href="/methodology/">documented-fit score</a> out of 100, from official documentation checked as of ${time(ctx, ctx.catalog.checkedAt)} — not a user rating or a hands-on test. “Score pending” means less than 80% of the checklist weight has been checked. Prices are dated observations of public list prices, not quotes. No vendor pays for placement.</p>`;
+  html`<p class="table-note">Score = <a href="/methodology/">documented-fit score</a> out of 100, from official documentation checked as of ${time(ctx, ctx.catalog.checkedAt)} — not a customer rating or a hands-on test. Products with the same score share a place (=); “Score pending” means less than 80% of the checklist weight has been checked, so no score or place is shown. Prices are dated observations of public list prices, not quotes. No vendor pays for placement.</p>`;
 
 // ------------------------------------------------------------------ text blocks
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DATE_RE = /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{1,2}), (\d{4})\b/g;
+/**
+ * Plain generated text → escaped HTML in which every printed date ("Nov 5, 2026") is a <time datetime>.
+ * Raw fragments pass through unchanged (their author already marked up the dates).
+ */
+export function dated(value) {
+  if (typeof value !== 'string') return value;
+  return raw(
+    String(html`${value}`).replace(DATE_RE, (m, mon, day, year) => `<time datetime="${year}-${String(MON.indexOf(mon) + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}">${m}</time>`),
+  );
+}
 /** Answer-first summary. `text` may be a Raw fragment with <strong>. */
 export const answer = (ctx, text, { label = 'Quick answer', meta } = {}) =>
-  html`<div class="answer"><span class="answer__label">${label}</span><p>${text}</p>${meta ? html`<p class="fineprint">${meta}</p>` : ''}</div>`;
+  html`<div class="answer"><span class="answer__label">${label}</span><p>${dated(text)}</p>${meta ? html`<p class="fineprint">${meta}</p>` : ''}</div>`;
 
 /** Trust strip under a title. items: array of strings / Raw fragments. */
 export const trustline = (items) => html`<p class="trustline">${items.filter(Boolean).map((i) => html`<span>${i}</span>`)}</p>`;
@@ -240,7 +253,7 @@ export function faq(ctx, items, { id = 'faq', heading = 'Questions buyers ask', 
       ${items.map(
         (f, i) => html`<details${attrs({ open: i < open, id: f.id || null })}>
           <summary><${qh}>${f.q}</${qh}></summary>
-          <div class="acc__body">${typeof f.a === 'string' ? html`<p>${f.a}</p>` : f.a}${f.more ? html`<p>${f.more}</p>` : ''}</div>
+          <div class="acc__body">${typeof f.a === 'string' ? html`<p>${dated(f.a)}</p>` : f.a}${f.more ? html`<p>${dated(f.more)}</p>` : ''}</div>
         </details>`,
       )}
     </div>
@@ -250,7 +263,7 @@ export function faq(ctx, items, { id = 'faq', heading = 'Questions buyers ask', 
 /** Dense list of links. items: [{href, title, sub?, meta?}] */
 export const linkList = (items, { cols = 2 } = {}) =>
   html`<ul class="${cx('linklist', cols > 1 && `linklist--${cols}`)}">
-    ${items.map((it) => html`<li><a href="${it.href}"><span>${it.title}${it.sub ? html`<small>${it.sub}</small>` : ''}</span>${it.meta ? html`<span>${it.meta}</span>` : ''}</a></li>`)}
+    ${items.map((it) => html`<li><a href="${it.href}"><span>${it.title}${it.sub ? html` <small>${it.sub}</small>` : ''}</span>${it.meta ? html` <span>${it.meta}</span>` : ''}</a></li>`)}
   </ul>`;
 
 /** Navigation tile (index pages only). */
