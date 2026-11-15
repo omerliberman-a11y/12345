@@ -7,6 +7,8 @@
 //   node build.mjs --links=absolute --base=/        root-absolute links (classic production output)
 //   node build.mjs --links=portable     relative links ending in index.html (works from file:// and zip previews)
 //   node build.mjs --strict             exit 1 on any page error
+//   node build.mjs --outbound=direct    vendor links go straight to the vendor (hosts without the /go/ service)
+//   node build.mjs --index=gated        also index generated /vs/ and /alternatives/ pages that pass the quality gate
 //
 // Page modules live in src/pages/*.mjs and export `routes(ctx)` → [{ path, render(ctx) → page }].
 // Generators live in src/gen/*.mjs and export `generate(ctx, emit)`.
@@ -129,7 +131,10 @@ async function main() {
   const { manifest, cssBytes } = await buildAssets();
 
   const { createContext } = await import(pathToFileURL(path.join(ROOT, 'src/lib/context.mjs')).href);
-  const ctx = await createContext({ root: ROOT, manifest, links: LINKS, base: BASE });
+  const overrides = {};
+  if (args.outbound) overrides.outbound = String(args.outbound); // go | direct
+  if (args.index) overrides.indexPolicy = String(args.index); // parity | gated
+  const ctx = await createContext({ root: ROOT, manifest, links: LINKS, base: BASE, overrides });
 
   const written = [];
   const errors = [];
