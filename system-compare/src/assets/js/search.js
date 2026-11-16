@@ -17,6 +17,10 @@
  *   "attio vs", "attio or", "compare attio"
  *                                → the compare tool with that product chosen (a documentary supplier: the
  *                                  criteria comparison on its category page), then its head-to-heads
+ *   "crm pricing", "crm alternatives", "best crm", "crm score", "crm vs"
+ *                                → a category's own words and nothing else lead with that category: its costs
+ *                                  section (a documentary category: its plans and prices), its ranking, its
+ *                                  compare tool and head-to-heads — never one product's page
  *   "how we score", "corrections", "how do you make money"
  *                                → the site's own page or FAQ answer as the best match
  *
@@ -168,10 +172,12 @@
       return (fuzzyCache[t] = out.slice(0, 3));
     }
 
-    function resolveProduct(text) {
-      var q = words(text).join(' ');
-      if (!q) return null;
-      var qt = toks(text), best = null;
+    /** Every product these words can mean, in index order: { x, t: 100 its name or alias, 70 their start, 60 all its
+     *  words, 40 the same with typos; s: t + 5 for a profile + its best score / 100 }. */
+    function resolveAll(text) {
+      var q = words(text).join(' '), out = [];
+      if (!q) return out;
+      var qt = toks(text);
       docs.forEach(function (x) {
         if (x.type !== 'product') return;
         var s = 0, al = [x.nameNorm].concat(x.al);
@@ -179,12 +185,34 @@
         else if (al.some(function (a) { return a.indexOf(q + ' ') === 0 || a.indexOf(q) === 0; })) s = 70;
         else if (qt.length && qt.every(function (t) { return x.f.n[t] || (x.f.a && x.f.a[t]); })) s = 60;
         else if (qt.length && qt.every(function (t) { return x.f.n[t] || fuzzy(t).some(function (p) { return x.f.n[p[0]] || (x.f.a && x.f.a[p[0]]); }); })) s = 40;
-        if (s) {
-          s += (x.profile ? 5 : 0) + (x.best || 0) / 100;
-          if (!best || s > best.s) best = { s: s, x: x };
-        }
+        if (s) out.push({ x: x, t: s, s: s + (x.profile ? 5 : 0) + (x.best || 0) / 100 });
       });
+      return out;
+    }
+    function resolveProduct(text) {
+      var best = null;
+      resolveAll(text).forEach(function (c) { if (!best || c.s > best.s) best = c; });
       return best ? best.x : null;
+    }
+    /**
+     * "quickbooks vs zoho", "microsoft vs zendesk": the two names resolve to products that cannot be compared (Zoho
+     * CRM is no accounting product). The strongest pair of what the names can also mean that can be (Zoho Books;
+     * Microsoft Copilot Studio), or null. Only as strong a match as the names allow (a name's start or all its words;
+     * typos only where nothing better matches).
+     */
+    function comparablePair(ta, tb) {
+      var pick = function (text) {
+        var l = resolveAll(text), top = l.reduce(function (m, c) { return Math.max(m, c.t); }, 0);
+        return l.filter(function (c) { return c.t >= Math.min(60, top); }).sort(function (a, b) { return b.s - a.s; }).slice(0, 24);
+      };
+      var A = pick(ta), B = pick(tb), best = null;
+      A.forEach(function (ca) {
+        B.forEach(function (cb) {
+          var lv = ca.x === cb.x ? 0 : pairLevel(ca.x, cb.x);
+          if (lv && (!best || lv > best.lv || (lv === best.lv && ca.s + cb.s > best.s))) best = { lv: lv, s: ca.s + cb.s, a: ca.x, b: cb.x };
+        });
+      });
+      return best;
     }
 
     /**
@@ -232,6 +260,29 @@
       if (exact.length) return exact.length === 1 ? exact[0] : null;
       var k = key(text);
       return k && q.length >= 4 ? namedProduct(text, !!phrase[k]) : null; // "fin" is no product's start
+    }
+    /**
+     * These words are a category's name or synonym and nothing else but generic words ("crm", "email marketing
+     * software", "ERP & Business Management", "help desk"), and no product's exact name or alias ("bill" is BILL):
+     * { id, ids, sure }. sure: one category's own words ("crm"; "help desk" is Customer support's), not words several
+     * categories share ("marketing": ids lists them).
+     */
+    function categoryOf(text) {
+      var all = words(text).filter(function (w) { return !STOP[w]; }), seq = all.map(stem), n, i, ids = null, own1 = '';
+      // the longest category phrase in the words (as parse() finds them); every word outside it is generic
+      for (n = Math.min(4, seq.length); n >= 1 && !ids; n--) {
+        for (i = 0; i + n <= seq.length && !ids; i++) {
+          var k = seq.slice(i, i + n).join(' '), a0 = i, a1 = i + n;
+          if (phrase[k] && all.every(function (w, j) { return (j >= a0 && j < a1) || GENERIC[w]; })) { ids = phrase[k]; own1 = all.slice(a0, a1).join(' '); }
+        }
+      }
+      if (!ids || !ids.length) return null;
+      var typed = [words(text).join(' '), all.join(' '), own1, all.filter(function (w) { return !GENERIC[w]; }).join(' ')];
+      if (docs.some(function (x) { return x.type === 'product' && typed.some(function (t) { return x.nameNorm === t || x.al.indexOf(t) >= 0; }); })) return null;
+      var id = ids.length === 1 ? ids[0] : own[typed[0]] || own[typed[1]] || own[typed[2]] || null;
+      // words that also start a product's name ("gemini": the Gemini app) lead with the category, as a suggestion
+      var named = docs.some(function (x) { return x.type === 'product' && [x.nameNorm].concat(x.al).some(function (n) { return n.indexOf(typed[3] + ' ') === 0; }); });
+      return { id: id || ids[0], ids: ids, sure: !!id && !named };
     }
     var SEP = /(\s*,\s*|\s+(?:vs\.?|versus|v\.?|or|and|&|\/|compared (?:to|with)|against)\s+)/;
     var SEP_AFTER_COMPARE = /(\s*,\s*|\s+(?:vs\.?|versus|v\.?|or|and|&|\/|with|to|compared (?:to|with)|against)\s+)/;
@@ -302,10 +353,21 @@
     function alternativesRow(f) {
       return { type: 'alternatives', id: f.id, name: f.name + ' alternatives', url: f.profile ? '/alternatives/' + f.id + '/' : '/categories/' + f.cats[0] + '/', sub: 'Researched alternatives to ' + f.name + (cats[f.cats[0]] ? ' in ' + cats[f.cats[0]][0] : ''), why: 'Alternatives' };
     }
-    /** A published head-to-head exists, or both have a profile in one scored category (a live comparison). */
-    function pairable(a, b) {
-      return docs.some(function (x) { return x.type === 'comparison' && x.pair && x.pair.indexOf(a.id) >= 0 && x.pair.indexOf(b.id) >= 0; }) ||
-        (a.profile && b.profile && a.cats.some(function (id) { return b.cats.indexOf(id) >= 0 && cats[id] && cats[id][1] === 's'; }));
+    /** The published head-to-heads by pair ("idA|idB", both orders). */
+    var pairs = Object.create(null);
+    docs.forEach(function (x) { if (x.type === 'comparison' && x.pair && x.pair.length === 2) { pairs[x.pair[0] + '|' + x.pair[1]] = x; pairs[x.pair[1] + '|' + x.pair[0]] = x; } });
+    /** How a and b can be compared here: 3 a published head-to-head, 2 both with a profile in one scored category (a
+     *  live comparison), 1 both suppliers of one documentary category (its criteria table), 0 not at all. */
+    function pairLevel(a, b) {
+      if (pairs[a.id + '|' + b.id]) return 3;
+      var shared = a.cats.filter(function (id) { return b.cats.indexOf(id) >= 0 && cats[id]; });
+      if (a.profile && b.profile && shared.some(function (id) { return cats[id][1] === 's'; })) return 2;
+      return shared.some(function (id) { return cats[id][1] === 'f'; }) ? 1 : 0;
+    }
+    function pairable(a, b) { return pairLevel(a, b) > 0; }
+    /** The documentary category both (or all) are suppliers of, or null. */
+    function sharedFactual(list) {
+      return list[0].cats.filter(function (id) { return cats[id] && cats[id][1] === 'f' && list.every(function (x) { return x.cats.indexOf(id) >= 0; }); })[0] || null;
     }
     /** "Compare X with another product": the compare tool with X chosen, in X's first scored category; for a
      *  documentary supplier, the criteria comparison of the suppliers on its category page. */
@@ -322,11 +384,28 @@
       return docs.filter(function (x) { return x.type === 'comparison' && x.pair && x.pair.indexOf(f.id) >= 0; })
         .sort(function (a, b) { return other(b) - other(a) || a.name.localeCompare(b.name); });
     }
+    /** What leads a query about category c on its own (parse() q.catq): its costs section ("crm pricing"; a
+     *  documentary category: its plans and prices), its compare tool ("crm vs"), else its ranking ("crm
+     *  alternatives", "best crm", "crm score"). */
+    function categoryRow(kind, c) {
+      var scored = c.mode !== 'f';
+      if (kind === 'pricing') return { type: 'category', id: 'pricing:' + c.id, name: c.name + ' pricing', url: c.url + (scored ? '#costs' : '#plans'), sub: scored ? 'Starting prices and cost drivers · ' + c.count + ' products' : 'Plans and prices of ' + c.count + ' suppliers', why: 'Pricing' };
+      if (kind !== 'vs') return ext(c, { why: 'Ranking' });
+      return scored
+        ? { type: 'compare', id: 'compare:' + c.id, name: 'Compare products in ' + c.name, url: '/compare/?scope=' + c.id, sub: 'Pick 2–4 of its ' + c.count + ' products', why: 'Compare tool' }
+        : { type: 'compare', id: 'compare:' + c.id, name: 'Compare the ' + c.name + ' suppliers', url: c.url + '#factual-comparison', sub: 'Criteria table · ' + c.count + ' suppliers', why: 'Criteria comparison' };
+    }
+    /** The published head-to-heads of category id, the best-documented pairs first. */
+    function categoryComparisons(id) {
+      var best = function (c) { return Math.max.apply(null, c.pair.map(function (p) { var o = byId('product', p); return o && o.best != null ? o.best : -1; })); };
+      return docs.filter(function (x) { return x.type === 'comparison' && x.pair && x.cats[0] === id; })
+        .sort(function (a, b) { return best(b) - best(a) || a.name.localeCompare(b.name); });
+    }
 
     function parse(raw) {
-      var q = { raw: raw, filters: {}, sort: null, intent: null, boost: {}, integration: null, suffix: null };
+      var q = { raw: raw, filters: {}, sort: null, intent: null, boost: {}, integration: null, suffix: null, catq: null };
       var s = ' ' + fold(raw).toLowerCase().replace(/\s+/g, ' ').trim() + ' ';
-      var m, a, b, typedAll = words(s).join(' ');
+      var m, a, b, cq, typedAll = words(s).join(' ');
       // the exact title of a published head-to-head ("Intercom and Fin vs Freshdesk") is that comparison
       docs.forEach(function (x) {
         if (q.intent || x.type !== 'comparison' || !x.pair || x.nameNorm !== typedAll) return;
@@ -338,24 +417,31 @@
         // one or two letters after "vs" are the start of a name ("pipedrive vs s"): unless they already point
         // at a product that can be compared with the first one, list the first product's comparisons instead
         if (a && m[2].trim().length < 3 && !(b && b !== a && pairable(a, b))) { q.vsOf = a; q.vsSure = strictProduct(m[1]) === a; q.vsNext = m[2].trim(); s = ' ' + m[1] + ' '; }
-        else if (a && b && a !== b) q.intent = { kind: 'vs', a: a, b: b };
+        else if (a && b && a !== b) {
+          // a name several products share ("zoho", "microsoft") means the one that can be compared with the other
+          var cp = pairable(a, b) ? null : comparablePair(m[1], m[2]);
+          q.intent = cp ? { kind: 'vs', a: cp.a, b: cp.b } : { kind: 'vs', a: a, b: b };
+        }
       }
       if (!q.intent && ((m = s.match(/^\s*(.+?)\s+(?:alternatives?|competitors?|replacements?|substitutes?)\s*$/)) ||
           (m = s.match(/^\s*(?:alternatives?|competitors?) (?:to|for|of)\s+(.+?)\s*$/)) ||
           (m = s.match(/^\s*(?:similar to|like|instead of|replace|switch from)\s+(.+?)\s*$/)))) {
-        a = resolveProduct(m[1]);
-        if (a) q.intent = { kind: 'alternatives', a: a };
+        // "crm alternatives": the category's own words are a question about its ranking, not about the product
+        // the words happen to resolve to (HubSpot through its "HubSpot CRM" alias)
+        if ((cq = categoryOf(m[1]))) { cq.kind = 'alternatives'; q.catq = cq; s = ' ' + m[1] + ' '; }
+        else if ((a = resolveProduct(m[1]))) q.intent = { kind: 'alternatives', a: a };
       }
       // "pipedrive v" / "hubspot vs" while the second name is still being typed: a comparison is coming,
       // so list that product's comparisons (and match on the name alone).
-      if (!q.intent && !q.vsOf && (m = s.match(/^\s*(.+?)\s+(?:vs?\.?|versus|compared(?: to| with)?|against)\s*$/))) {
-        a = resolveProduct(m[1]);
+      if (!q.intent && !q.catq && !q.vsOf && (m = s.match(/^\s*(.+?)\s+(?:vs?\.?|versus|compared(?: to| with)?|against)\s*$/))) {
+        // "crm vs": comparing within a category (its compare tool), not the product its words resolve to
+        if ((cq = categoryOf(m[1]))) { cq.kind = 'vs'; q.catq = cq; s = ' ' + m[1] + ' '; }
         // vsSure: the name is typed exactly or names one product only ("zoho vs" could be Zoho Books or Zoho CRM)
-        if (a) { q.vsOf = a; q.vsSure = strictProduct(m[1]) === a; s = ' ' + m[1] + ' '; }
+        else if ((a = resolveProduct(m[1]))) { q.vsOf = a; q.vsSure = strictProduct(m[1]) === a; s = ' ' + m[1] + ' '; }
       }
       // "attio or", "attio compare", "compare attio", "compare attio with": the same, for a product named exactly
       // ("email or" stays a search for email tools; "compare attio and folk" is read below)
-      if (!q.intent && !q.vsOf) {
+      if (!q.intent && !q.vsOf && !q.catq) {
         [/^\s*compare\s+(.+?)(?:\s+(?:with|to|and|or|&|vs\.?|versus|v\.?|against))?\s*$/, /^\s*(.+?)\s+(?:or|compare|comparisons?)\s*$/].some(function (re) {
           var mm = s.match(re), p = mm && strictProduct(mm[1]);
           if (p) { q.vsOf = p; q.vsSure = true; s = ' ' + mm[1] + ' '; }
@@ -363,7 +449,7 @@
         });
       }
       // "a vs b vs c", "compare a and b", "a or b", "a, b and c": two products are a head-to-head, more go to the tool
-      if (!q.intent && !q.vsOf) {
+      if (!q.intent && !q.vsOf && !q.catq) {
         var many = productList(s);
         if (many && many.length === 2) q.intent = { kind: 'vs', a: many[0], b: many[1] };
         else if (many) q.intent = { kind: 'multi', items: many };
@@ -385,8 +471,13 @@
       [['pricing', /\b(pricing|price|cost|plans?)\s*$/], ['score', /\b(reviews?|rating|score)\s*$/]].forEach(function (x) {
         if (!x[1].test(s)) return;
         var rest = s.replace(x[1], ' ');
-        if (namesSomething(rest)) { q.suffix = x[0]; s = rest; }
+        if (!namesSomething(rest)) return;
+        q.suffix = x[0]; s = rest;
+        // "crm pricing", "payroll software cost", "email marketing score": the category's costs section or ranking
+        if (!q.intent && !q.vsOf && !q.catq && !q.integration && !q.filters.free && q.filters.maxPrice == null && (cq = categoryOf(rest))) { cq.kind = x[0]; q.catq = cq; }
       });
+      // "best crm", "top email marketing software": the category's ranking
+      if (q.sort === 'score' && !q.intent && !q.vsOf && !q.catq && !q.suffix && !q.integration && !q.filters.free && q.filters.maxPrice == null && (cq = categoryOf(s))) { cq.kind = 'best'; q.catq = cq; }
       var all = words(s).filter(function (w) { return !STOP[w]; });
       q.soft = all.filter(function (w) { return GENERIC[w]; }).map(stem);
       q.terms = all.filter(function (w) { return !GENERIC[w]; }).map(stem);
@@ -435,7 +526,10 @@
         if (published) top.push(ext(published, { why: 'Head-to-head comparison' }));
         else {
           var shared = a.cats.filter(function (id) { return b.cats.indexOf(id) >= 0 && cats[id] && cats[id][1] === 's' && a.profile && b.profile; });
+          var fx = shared.length ? null : sharedFactual([a, b]);
           if (shared.length) top.push({ type: 'compare', name: a.name + ' vs ' + b.name, url: '/compare/?scope=' + shared[0] + '&a=' + a.id + '&b=' + b.id, sub: 'Side-by-side comparison in ' + cats[shared[0]][0], why: 'Live comparison' });
+          // two suppliers of one documentary category: its criteria table sets them side by side
+          else if (fx) top.push({ type: 'compare', id: 'compare:' + a.id + '+' + b.id, name: a.name + ' vs ' + b.name, url: '/categories/' + fx + '/#factual-comparison', sub: 'Criteria table · ' + cats[fx][0], why: 'Criteria comparison' });
           else top.push({ type: 'notice', name: a.name + ' and ' + b.name + ' are researched in different categories', url: a.url, sub: 'Open each profile to compare them yourself' });
         }
         top.push(ext(a), ext(b));
@@ -446,7 +540,9 @@
         var common = its.every(function (x) { return x.profile; }) ? its[0].cats.filter(function (id) {
           return cats[id] && cats[id][1] === 's' && its.every(function (x) { return x.cats.indexOf(id) >= 0; });
         }) : [];
+        var fxm = common.length ? null : sharedFactual(its);
         if (common.length) top.push({ type: 'compare', id: 'compare:' + its.map(function (x) { return x.id; }).join('+'), name: nms.join(' vs '), url: '/compare/?scope=' + common[0] + its.map(function (x, i) { return '&' + 'abcd'[i] + '=' + x.id; }).join(''), sub: 'Side-by-side comparison in ' + cats[common[0]][0], why: 'Live comparison' });
+        else if (fxm) top.push({ type: 'compare', id: 'compare:' + its.map(function (x) { return x.id; }).join('+'), name: nms.join(' vs '), url: '/categories/' + fxm + '/#factual-comparison', sub: 'Criteria table · ' + cats[fxm][0], why: 'Criteria comparison' });
         else top.push({ type: 'notice', name: listText(nms) + ' are not researched in one category', url: its[0].url, sub: 'Open each profile to compare them yourself' });
         its.forEach(function (x) { top.push(ext(x)); });
       }
@@ -555,13 +651,27 @@
         var topCat = groups.category[0].score;
         groups.category = groups.category.filter(function (c) { return c.score >= topCat * (strongCat ? 0.35 : 0.2); });
       }
+      // A category's own words and nothing else ("crm pricing", "crm alternatives", "best crm", "crm vs"): that category
+      // leads, not the product its words happen to resolve to. Words several categories share ("marketing pricing")
+      // list up to three of them, in the order of the results.
+      var catLead = q.catq && !top.length ? q.catq : null;
+      if (catLead) {
+        var order = (groups.category || []).map(function (c) { return c.id; }), rank = function (id) { var i = order.indexOf(id); return i < 0 ? 99 : i; };
+        (catLead.sure ? [catLead.id] : catLead.ids.slice().sort(function (x, y) { return rank(x) - rank(y); }).slice(0, 3)).forEach(function (id) {
+          var c = byId('category', id);
+          if (c) top.push(categoryRow(catLead.kind, c));
+        });
+        if (catLead.kind === 'vs' && catLead.sure && top.length) categoryComparisons(catLead.id).slice(0, 5).forEach(function (c) { top.push(ext(c, { why: 'Head-to-head comparison' })); });
+      }
       // "X pricing" / "X score" → send the first product hit to the right section of its profile
       if (q.suffix && groups.product && groups.product.length && groups.product[0].profile && !top.length) {
         var p0 = groups.product[0];
         top.push({ type: 'product', name: p0.name + (q.suffix === 'pricing' ? ' pricing' : ' score and evidence'), url: p0.url + (q.suffix === 'pricing' ? '#pricing' : '#capabilities'), sub: q.suffix === 'pricing' ? (p0.priceText || 'Pricing details and sources') : 'Documented-fit score and capability evidence', logo: p0.logo, dark: p0.dark, wide: p0.wide, why: q.suffix === 'pricing' ? 'Pricing' : 'Score' });
       }
-      // direct: the first "best match" answers the query ("X vs Y", "X alternatives", "X pricing"), so Enter opens it
+      // direct: the first "best match" answers the query ("X vs Y", "X alternatives", "X pricing"), so Enter opens it;
+      // a category's row only when the words are that one category's own ("crm pricing", not "marketing pricing")
       var direct = top.length > 0;
+      if (catLead && top.length) direct = catLead.sure;
       if (focus && !top.length) {
         var mine = comparisonsOf(focus);
         if (q.vsNext) {
@@ -610,7 +720,7 @@
       return r;
     }
 
-    api.query = query; api.parse = parse; api.resolveProduct = resolveProduct; api.docs = docs; api.cats = cats; api.size = docs.length; api.extend = extend;
+    api.query = query; api.parse = parse; api.resolveProduct = resolveProduct; api.pairLevel = pairLevel; api.docs = docs; api.cats = cats; api.size = docs.length; api.extend = extend;
     return api;
   }
 

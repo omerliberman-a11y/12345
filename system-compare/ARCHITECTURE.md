@@ -92,7 +92,8 @@ Rules that keep every page consistent:
   Links to cited sources are plain followed links: `ui.sourceLink(url, label)` / `ui.sources(list)`.
   A `.ext` link shows "↗"; when it opens a new tab (`target="_blank"`) screen readers hear ", opens in a new tab" in
   the arrow's place (CSS alternative text in components.css). That is the one way the site says it: never add the
-  words to a link's text, or they are read twice.
+  words to a link's text, or they are read twice. Source lists are no exception: `ui.sources` writes `.ext` links, and
+  any new-tab link in an `ol.sources` (guides build their own) gets the same arrow, kept with its last word.
 - **Scores**: use `ctx.score(categoryId, vendorId)` (`value`, `pending`, `checked`, `total`, `coveragePct`,
   `recommended`, `groups`, `rows`, verbatim `valueText`/`coverageText`/`documentedText`). Never compute a
   score yourself, never print a number for a pending score, never show stars or "rating"/"review" wording, and
@@ -111,7 +112,8 @@ Rules that keep every page consistent:
   recorded pricing basis under "Custom quote" / "Usage-based" / "Price not verified"; options `plan`, `checked` and
   `source: vendor.name` add the plan, the check date and "Source ↗", a direct, followed new-tab link to `sourceUrl`
   — a cited source like the live cards' "Official pricing source", never `/go/`; a plan named after the product keeps
-  its name, "RingEX plan", never a bare "plan"; "billed annually" is not added to a unit that already says it). In the
+  its name, "RingEX plan", never a bare "plan"). `billingNote` ("billed annually") is empty where the unit already says
+  annual billing, billed annually or per year, so no table, profile, data file or llms.txt line says it twice. In the
   `sms-marketing` context some vendors intentionally show "SMS price not verified" — always pass the category id.
 - **Category-specific data**: a vendor has a different score per category. The price context and default
   comparison scope of a vendor is `ctx.primaryCategory(vendor)`; sections per category use
@@ -137,20 +139,35 @@ Rules that keep every page consistent:
   card grid. One row component is reused everywhere.
 - Type: `--fs-xs` (12px, captions only) … `--fs-3xl`; body 16px; weights 400/600/700 (the word-mark keeps its
   own). One heading scale in base.css (h2 28px → 22px on phones, h3 18px, h4 16px). Headings use
-  `--font-display`. Use the tokens in `tokens.css` — never raw colours, sizes or radii in page CSS. The fonts are
-  not preloaded: `--font` and `--font-display` start with metric-matched fallback faces (Inter local, Inter
-  fallback, SC Rubik fallback in tokens.css) so nothing moves when the web fonts arrive — if the fonts or their
-  weights change, re-measure `size-adjust` as the tokens.css comment describes (including the digits faces that
-  keep `ch` widths stable).
+  `--font-display`. Use the tokens in `tokens.css` — never raw colours, sizes or radii in page CSS. Fonts: the two
+  web fonts (Inter, SC Rubik) are not preloaded and use `font-display: optional`, so a page view never switches face
+  and nothing moves when a font arrives (with `swap`, late fonts re-wrapped breadcrumbs, answers and notes: up to 0.33
+  layout shift). The cost: a first visit shows the metric-matched fallback faces (`--font`/`--font-display` fall back to
+  Inter local, Inter fallback, SC Rubik fallback in tokens.css) for that page view — in Chromium on every first page
+  view, because a non-preloaded optional font is used only if it has loaded before the page first renders, fast
+  connection or not — while the files download into the HTTP cache (hashed, immutable), and every later page renders
+  in Inter and Rubik. A preview server that sends `no-store` (scripts/serve.mjs) therefore shows the fallback faces on
+  every page in Chromium. The fallback faces carry the web fonts' widths (`size-adjust`) and ascent/descent, so first
+  and later visits are laid out alike; if the fonts or their weights change, re-measure `size-adjust` as the tokens.css
+  comment describes (including the digits faces that keep `ch` widths stable).
 - Text-size preference (`html[data-a11y-size]`): the compact header is used at every width and stacked table rows
   wrap by word. Product tables stay stacked until their scaled columns fit (125%: below 75em, 150%: below 90em; from
   48em the score, price and AI tag share the line under the product); `.dtable` column heads, button, chip, tag and
   status labels, score notes, a link list's end note (it moves under the title first) and long host names in vendor
   links may wrap. Reduce-motion preference: no smooth scrolling, no animation.
+- Wrapping without the preference (a reader's own letter/word spacing, WCAG 1.4.12): chips and buttons in `main` wrap
+  at every width; tags, score notes, status labels and `.dtable` heads wrap below 48em; a link list's end note stays
+  beside a one-line title until even the title's longest word does not fit beside it, then goes under it (a title with
+  a sub-line keeps the page's own layout). Each only takes effect where the text is wider than its room: measured on
+  every page at 320/390/820/1440, no default layout changes. From 48em, labels in table cells stay on one line —
+  wrappable ones narrow their columns and re-flow every ranking and comparison table at the default size — so a wide
+  table under a reader's spacing belongs in a `.scroller` (or is stacked by its page CSS).
 - Header (layout.css): from 62em the brand keeps its size and the search field takes the room left (icon only below
   6.5rem, which only a reader's extra letter spacing reaches); a word-mark wider than its room is clipped at the brand's
   edge, never drawn over a button. A `.note` is one paragraph (links stay in its sentence); a leading `.tag` is a column
-  beside the text from 48em and runs into the first line on phones.
+  beside the text from 48em and runs into the first line on phones. Write a space between the tag and the text span
+  (copied text and line-by-line screen-reader reading keep "Ad" apart from the sentence); the phone margin is one space
+  short of the 0.5rem gap, so it looks the same.
 - Plain words in the interface: "Score", "checked", "Score pending", "Shortlist", "Source", "How we score".
 - Every interactive target ≥ 44px tall on touch; visible focus; no horizontal page scroll at 390px (wide
   tables go inside `<div class="scroller">`); no nested vertical scrolling ever.
@@ -159,9 +176,9 @@ Rules that keep every page consistent:
   above it, `margin-top: -(3rem + 1px)` on the menu) and comes into view, sticky, as the head scrolls away; keyboard
   focus raises it at once (category.css, so it also works without script) and table.js then scrolls the page until
   the menu sits where it sticks, so it never covers the end of the head (smooth, or instant with reduced motion;
-  documentary category pages load table.js for this alone). The menu's links carry `scroll-margin-top: -4.5rem`:
-  stuck inside the page's `scroll-padding-top`, they were taken for hidden and every Tab scrolled the page ~430px up
-  (the same rule would help the shared `.subnav` on other templates).
+  documentary category pages load table.js for this alone). Every section menu's links and buttons carry
+  `scroll-margin-top: -4.5rem` (components.css `.subnav`): stuck inside the page's `scroll-padding-top` (header +
+  4.5rem, base.css), they were taken for hidden and every Tab scrolled the page ~430px up; change both together.
 - Page CSS goes in `src/assets/css/pages/<module>.css` and must be namespaced with a page prefix
   (`.sw-…`, `.vs-…`). Do not edit tokens/base/layout/components CSS or the shared lib files from a page task;
   if a shared change is needed, note it in your report.
@@ -180,7 +197,8 @@ trailing column; `focalId`/`focalTag` mark the reference row; `priceChecked` pri
 plan (from 48em always on the line under the amount, the unit under it; without an amount the plan list and the pricing
 basis share one quieter line; screen-reader text on phones, where a row keeps one price line when it fits), "Checked
 <date> · Source ↗" whole on a line (category pages, as the live category cards; other tables show the price only, as
-theirs did) — the table carries `ptable--dated`, whose price column is 16.75rem from 75em;
+theirs did) — the table carries `ptable--dated`, whose price column is 16.75rem from 75em, where its fit sentence
+may take three lines instead of two (none is cut at 1200-1440px);
 `lazyFrom` (default 4) lazy-loads row logos after the rows a first screen shows; `eagerIds` (a Set) keeps the
 first rows of a table the script re-orders eager.
 - `ui.answer(ctx, text, { label, meta, more })`: with `more: true` the passage is clamped to 3 lines on phones with a
@@ -206,9 +224,13 @@ Layout rules learned the hard way:
   when it reappears — with a 2.5s CSS fallback if the script never runs. Its sticky totals bar shares a grid cell
   with the inputs, so it can grow (names wrap, amounts never shorten; with the text-size preference a phone shows
   one product per line) without taking room in the page.
-- Text that only just fits a line can wrap with the fallback face and not with the web font: re-run a fallback-vs-
-  web-font row-height comparison after changing table text (the price cell's end padding and the dated ranking's
-  16.75rem price column were chosen that way).
+- Text that only just fits a line can wrap with the fallback face and not with the web font. Within a page view that
+  no longer moves anything (`font-display: optional`), but a first visit and later visits are laid out in different
+  faces: re-run a fallback-vs-web-font row-height comparison after changing table text, so neither face cuts or
+  crowds a row (the price cell's end padding and the dated ranking's 16.75rem price column were chosen that way).
+  Where Inter is installed locally (as on the verification machines) the fallback stack uses it first ("Inter
+  local"): measure the Arial-metric fallback with the local Inter hidden (on Linux a fontconfig file that rejects it,
+  passed to the browser as FONTCONFIG_FILE).
 - The compare tray is filled while it is still below the screen and slides in a frame later (core.js
   `renderTray`): growing and appearing in the same frame counted as a layout shift on every page. A closed tray is
   `visibility: hidden` once it has slid away, so Tab never reaches its old buttons.
@@ -228,13 +250,25 @@ Layout rules learned the hard way:
   `--fitbN` (at most that wide it surely takes N), compared with the line's width in CSS (`.cat-fitline`, container
   units; up to 3% short of fewer lines, the text is set up to 3% smaller instead; the evidence line breaks after its
   second item, and after its fourth where five items do not fit two lines, `--tfit`/`--tfit2`/`--tfit3`). Re-measure
-  those tables if a font, a fallback face or the heading letter-spacing changes. Only the answer paragraph (4-6
-  lines of running text) can still gain or lose a line at some widths. The sort is a native `<select>` laid over a
+  those tables if a font, a fallback face or the heading letter-spacing changes. Those values come in a style
+  attribute; every `var()` that reads them has a neutral fallback, so where a policy blocks style attributes (CSP
+  `style-src-attr`) the head keeps its normal size and simply wraps. Only the answer paragraph (4-6 lines of running
+  text) can still gain or lose a line at some widths; its phone clamp (three lines, `max-height: 3lh`) ends in a fade
+  into "…" until "Show the full answer" opens it. The sort is a native `<select>` laid over a
   chip-sized face that table.js keeps in step; the face holds every order's short label stacked in one cell (one
   shown) and has a min-width over the longest, so a new order or the web font never resizes or moves it (phones
-  show "Sort" only; the count's "· sorted by …" is then screen-reader text). Phones: the filter chips are one row
+  show the order in one word, "Score", "Price", "A–Z" or "Checked", the same way; the count's "· sorted by …" is then
+  screen-reader text). "Must-have capabilities" (the panel with every capability filter; a chevron like the sort's)
+  comes first in the filter row at every width, the quick filters after it. Phones: the filter chips are one row
   from edge to edge that scrolls sideways (right edge faded), and the count line under it (44px) holds the sort and
-  the help. A chip reached by keyboard is scrolled fully into view (table.js). The must-have panel is a disclosure (no focus
+  the help. Up to 28.5em the must-have button is as wide as the screen less 8.75rem (its own width where that is
+  more), so the first quick filter always runs past the edge with about 5rem of it clear of the fade: with
+  content-sized chips some chip ends within 4rem of the edge at some phone width on every page, and the next one then
+  starts under the fade. "Clear filters" follows the live count (outside its live region) where the count shares its
+  line with the sort (48-75em, and any width with the text-size preference), so the wrapping filter row never changes
+  when it appears; on phones (the row scrolls, the count line has no room) and from 75em (the row has room, the count
+  line is under the sort) it ends the filter row, so focus order stays the visual order. When it clears, focus moves
+  to "Must-have capabilities". A chip reached by keyboard is scrolled fully into view (table.js). The must-have panel is a disclosure (no focus
   trap): a popover on wide screens (fitted to the room below its chip), a full-width bottom sheet over a dimmed page on phones (the backdrop is the
   toolbar's `::after`, so a tap on it counts as outside), with a footer holding the live "n of N match" count and a
   Done button that closes it and returns focus to its chip.

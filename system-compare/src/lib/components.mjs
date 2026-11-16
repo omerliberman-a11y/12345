@@ -125,10 +125,9 @@ export function priceCell(ctx, p, { size, plan = false, checked = false, source 
   const main = p.hasAmount
     ? html`<span class="price__main num">${p.headline}</span>`
     : html`<span class="price__main price__main--text">${p.headline}</span>`;
-  // with an amount: unit + billing (not twice: "per month, annual billing; 10 users" says it already); without one: the
+  // with an amount: unit + billing (ctx.price leaves the note out where the unit says it already); without one: the
   // pricing basis as recorded ("per sales seat/month, plus usage")
-  const billing = /\b(annual billing|billed annually)\b/i.test(p.unit) ? '' : p.billingNote;
-  const unit = p.hasAmount ? [p.unit, billing].filter(Boolean).join(' · ') : p.basis;
+  const unit = p.hasAmount ? [p.unit, p.billingNote].filter(Boolean).join(' · ') : p.basis;
   // the plan without the product name it repeats ("Plus plan"); a plan named after the product keeps its name
   // ("RingEX plan" in the RingCentral RingEX row, as the live card printed it), never a bare "plan"
   const shortPlan = plan && p.plan && !p.smsUnverified ? (source ? ctx.dropNamePrefix(source, p.planLabel) : p.planLabel) : '';
@@ -337,10 +336,11 @@ export const facts = (items, { cols } = {}) =>
     ${items.filter(Boolean).map((f) => html`<div><dt>${f.label}</dt><dd>${f.value}${f.sub ? html`<small>${f.sub}</small>` : ''}</dd></div>`)}
   </dl>`;
 
-/** Numbered list of cited sources. sources: [{label, url}] */
+/** Numbered list of cited sources. sources: [{label, url}]. Each opens in a new tab and is an .ext link like every other
+ *  external link: the arrow, and ", opens in a new tab" for screen readers (CSS, never in the link text). */
 export const sources = (list, { cols = 2 } = {}) =>
   html`<ol class="${cx('sources', cols > 1 && 'sources--2')}">
-    ${list.map((s) => html`<li>${s.url ? html`<a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label || s.title || s.url}</a>` : s.label || s.title}${s.note ? html` — ${s.note}` : ''}</li>`)}
+    ${list.map((s) => html`<li>${s.url ? html`<a class="ext" href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label || s.title || s.url}</a>` : s.label || s.title}${s.note ? html` — ${s.note}` : ''}</li>`)}
   </ol>`;
 
 /** Sticky in-page section tabs. items: [{href:'#pricing', label}] */

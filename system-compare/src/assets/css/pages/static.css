@@ -224,6 +224,20 @@ html:not(.js) .doc-jump { display: none; }
   .st-pg-ed tbody td.st-pg-ed__site { flex: 0 0 100%; margin-top: 0; text-align: left; font-size: var(--fs-sm); }
   .st-pg-ed__label { display: inline; color: var(--ink-3); }
   .st-pg-ed__site a { display: inline-flex; align-items: center; min-height: var(--tap); padding-block: 0; margin-block: 0; }
+  /* a larger text size: the currency may wrap after its label, and the arrow goes under an address that fills the line */
+  html[data-a11y-size] .st-pg-ed tbody td.st-pg-ed__cur { white-space: normal; }
+  html[data-a11y-size] .st-pg-ed__site a { flex-wrap: wrap; }
+}
+/* a larger text size on a phone: the details take the row's full width (beside the code they were a column too narrow
+   for "Market currency: USD" and the longest addresses at 320px); the code runs in before the country's name */
+@media (max-width: 29.99em) {
+  html[data-a11y-size] .st-pg-ed tbody tr { --ed-indent: 0rem; }
+  html[data-a11y-size] .st-pg-ed__wrap { display: block; }
+  html[data-a11y-size] .st-pg-ed__code { margin-right: var(--s-2); }
+  html[data-a11y-size] .st-pg-ed__country { display: inline; }
+  /* the arrow may hang into the gutter, so an address that just fills the line ("systemcompare.com.ph" at 150% and
+     320px) keeps its arrow on its line */
+  html[data-a11y-size] .st-pg-ed__site a::after { margin-right: -0.75em; }
 }
 
 /* ---------------------------------------------------------------- /contact/ */

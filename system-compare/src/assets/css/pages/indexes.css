@@ -216,6 +216,11 @@ html[data-a11y-size] .ix-cmp .linklist a > .ix-vsmeta { flex: 0 1 auto; min-widt
 .ix-alt .seg button { min-height: var(--tap); }
 .ix-alt .answer { margin-bottom: var(--s-8); }
 .ix-panel__head { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-2); }
+/* the help button stays beside the heading, which wraps first (it grows to its one-line width, no further); only where
+   even the heading's longest word and the button do not fit one line (a larger text size on a narrow phone: "1 researched
+   alternative in VPN for individual professionals" at 150% and 320px) does the button go under the heading */
+.ix-panel__head { flex-wrap: wrap; }
+.ix-panel__head > h2 { flex: 1 1 0; max-width: max-content; }
 .ix-toolbar { padding-bottom: var(--s-2); }
 .ix-toolbar .ix-chips { flex: 0 1 auto; min-width: 0; }
 .ix-toolbar .chip { max-width: 100%; white-space: normal; text-align: left; }

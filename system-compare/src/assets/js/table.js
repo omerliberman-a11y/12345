@@ -154,7 +154,16 @@
       else if (e.target.matches('[data-sort-select]')) { state.sort = e.target.value; apply(); }
     });
     d.addEventListener('click', function (e) {
-      if (e.target.closest('[data-filter-reset]')) { state.f = {}; state.must = {}; apply(); }
+      // "Clear filters" (after the live count, and under an empty table) hides itself once nothing is filtered; if it
+      // had focus, focus goes to the start of the filters (the must-have button), where the next filter is chosen,
+      // instead of falling back to the page. The live count announces the result.
+      var reset = e.target.closest('[data-filter-reset]');
+      if (reset) {
+        var had = d.activeElement === reset;
+        state.f = {}; state.must = {}; apply();
+        var first = had && $('.cat-chips summary, .cat-chips [data-filter]', controls);
+        if (first) first.focus();
+      }
       var sb = e.target.closest('[data-sort]');
       if (sb && table.contains(sb)) { state.sort = sb.getAttribute('data-sort'); apply(); }
     });

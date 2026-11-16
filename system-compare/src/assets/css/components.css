@@ -32,9 +32,9 @@
 .btn--block { width: 100%; }
 .btn[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-ink); }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
-/* a reader text-size preference: a label that no longer fits the column ("See the full data comparison" at 320px)
+/* a label that does not fit its column (larger text, a reader's letter spacing: "See the full data comparison" at 320px)
    wraps inside its button instead of pushing the page sideways; one that fits keeps its line */
-html[data-a11y-size] main .btn { max-width: 100%; white-space: normal; }
+main .btn { max-width: 100%; white-space: normal; }
 
 /* wraps like text when the line is short (320px), the arrow stays with the last word */
 .link-arrow { font-weight: 600; max-width: 100%; }
@@ -60,7 +60,7 @@ html[data-a11y-size] main .btn { max-width: 100%; white-space: normal; }
   font-size: var(--fs-sm);
   font-weight: 400;
   line-height: 1.2;
-  white-space: nowrap;
+  white-space: normal; /* one line wherever it fits; see the wrap note below */
   transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
 .chip:hover { border-color: var(--ink-3); color: var(--ink); text-decoration: none; }
@@ -73,9 +73,9 @@ html[data-a11y-size] main .btn { max-width: 100%; white-space: normal; }
 .chip[aria-pressed="true"] .n { color: #c9ccdb; }
 .chip svg { width: 0.95rem; height: 0.95rem; }
 .chip--link { max-width: 100%; white-space: normal; background: var(--bg-subtle); border-color: transparent; color: var(--ink); }
-/* a reader text-size preference: a chip, tag or score note wider than its column wraps its words instead of pushing
-   the page sideways (a row of chips that scrolls sideways keeps each chip whole: its items do not shrink) */
-html[data-a11y-size] :is(.chip, .tag, .score__meta) { white-space: normal; }
+/* a chip is not nowrap: one wider than its whole row (larger text, a reader's letter spacing) wraps its words instead of
+   pushing the page sideways, and one that fits keeps its line (measured on every page at 320-1440px: no default layout
+   changes). A row of chips that scrolls sideways keeps each chip whole: its items do not shrink (flex: none, category.css). */
 .chip--link:hover { background: var(--brand-soft); color: var(--brand-ink); border-color: transparent; }
 
 .tag {
@@ -89,7 +89,7 @@ html[data-a11y-size] :is(.chip, .tag, .score__meta) { white-space: normal; }
   font-size: var(--fs-xs);
   font-weight: 600;
   line-height: 1.4;
-  white-space: nowrap;
+  white-space: nowrap; /* may wrap on phones and with larger text (below .st) */
   vertical-align: middle;
 }
 .tag--top { background: var(--accent-soft); color: var(--accent-ink); }
@@ -149,7 +149,7 @@ html[data-a11y-size] :is(.chip, .tag, .score__meta) { white-space: normal; }
   font-variant-numeric: tabular-nums;
 }
 .score__value small { font-family: var(--font); font-size: var(--fs-xs); font-weight: 400; color: var(--ink-3); letter-spacing: 0; margin-left: 0.1em; }
-.score__meta { font-size: var(--fs-xs); color: var(--ink-3); white-space: nowrap; }
+.score__meta { font-size: var(--fs-xs); color: var(--ink-3); white-space: nowrap; } /* may wrap: below .st */
 .score--pending .score__value {
   font-family: var(--font);
   font-size: var(--fs-sm);
@@ -224,7 +224,14 @@ html[data-a11y-size] :is(.chip, .tag, .score__meta) { white-space: normal; }
 .st--no::before { background-color: var(--bad-soft); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 4.5l7 7m0-7l-7 7' fill='none' stroke='%23b3261e' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
 .st--unknown { color: var(--unknown); }
 .st--unknown::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8h7' fill='none' stroke='%235d6274' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
-html[data-a11y-size] .st { white-space: normal; } /* large text in a narrow column: "Not verified" wraps beside its icon */
+/* tags, score notes and status labels ("Not verified" beside its icon) wrap their words where one is wider than its whole
+   column — on phones at every text size (a reader's letter spacing at 320px), and with a reader text-size preference at
+   every width — and keep their line where they fit. From 48em at the default size they stay on one line: in a table
+   with columns, wrappable labels would narrow those columns and re-flow the rows of every ranking and comparison. */
+@media (max-width: 47.99em) {
+  :is(.tag, .score__meta, .st) { white-space: normal; }
+}
+html[data-a11y-size] :is(.tag, .score__meta, .st) { white-space: normal; }
 .st--icon { gap: 0; }
 .st--icon > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 
@@ -350,10 +357,10 @@ html[data-a11y-size] .st { white-space: normal; } /* large text in a narrow colu
 /* wide screens: one fact per line — the amount (or the state), the plan always on the line under it, the unit, and the
    provenance whole on a line of its own. Without an amount the plan list and the recorded pricing basis are one
    quieter run ("Free, Starter … plans · per sales seat/month …"). The lines sit tight, so a dated price is about as
-   tall as the row's name and two-line fit, and from 75em, where the product column has room to spare, the dated
-   ranking's price column is wider, so no row of it is taller than 100px at 1440px. Its width was chosen so that no
-   row changes height when the web font replaces its fallback (measured on all 33 rankings from 1200 to 1440px);
-   re-check it after a catalog refresh, with the end padding above. */
+   tall as the row's name and two-line fit, and from 75em the dated ranking's price column is wider, so a price cell
+   stays under 100px at 1440px. Its width was chosen so that price cells keep their height in the web font and in its
+   fallback (measured on all 33 rankings from 1200 to 1440px); re-check it after a catalog refresh, with the end
+   padding above. */
 @media (min-width: 48em) {
   .ptable .price--detail { display: block; font-size: var(--fs-xs); line-height: 1.2; }
   .ptable .price--detail > * { display: block; }
@@ -363,6 +370,11 @@ html[data-a11y-size] .st { white-space: normal; } /* large text in a narrow colu
 }
 @media (min-width: 75em) {
   html:not([data-a11y-size]) .ptable--dated .ptable__c-price { width: 16.75rem; }
+  /* it leaves the product column 500-600px wide: there the fit sentence may take a third line, so no ranking row cuts its
+     "who it is for" short (0 of 239 rows at 1200-1440px in the web font and in its fallback; a row with three lines is up
+     to 103px tall, and a few sentences take three lines in one face and two in the other: the first page of a visit is in
+     the fallback, later pages in the web font, and neither ever switches while it is shown) */
+  .ptable--dated .prod__fit { -webkit-line-clamp: 3; line-clamp: 3; }
 }
 /* touch: the small link answers a larger hit area drawn as ::before under the cell's words (the cell is its own
    stacking context, so the price text above it keeps its taps). In a dense row a full 44px would reach the next row's
@@ -542,7 +554,8 @@ html[data-a11y-size] .st { white-space: normal; } /* large text in a narrow colu
 @media (max-width: 47.99em) {
   .dtable thead th, .dtable thead th.num { white-space: normal; }
 }
-/* and so may they at any width with a reader text-size preference (a profile's plans table was 116px too wide at 820px) */
+/* and so may they at any width with a reader text-size preference (a profile's plans table was 116px too wide at 820px).
+   Not from 48em at the default size: wrappable heads narrow their columns and re-flow the table (see .st above). */
 html[data-a11y-size] .dtable thead th { white-space: normal; }
 
 /* capability matrix: sticky first column, icon cells (the page scrolls vertically; only the table scrolls sideways) */
@@ -865,9 +878,18 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 .linklist a:hover { color: var(--brand); text-decoration: none; }
 .linklist a > span:last-child:not(:first-child) { flex: none; color: var(--ink-3); font-size: var(--fs-sm); font-weight: 400; white-space: nowrap; }
 .linklist small { display: block; font-weight: 400; color: var(--ink-3); font-size: var(--fs-sm); margin-top: 0.1rem; }
-/* a reader text-size preference: the note at the end ("100 vs 91", a category's name) goes under the title when both do
-   not fit a line, and wraps if it is longer than the line */
+/* a one-line title: the note at the end ("100 vs 91", a category's name) stays whole beside it and the title wraps first
+   (it takes the free space, so a note sharing its line never shrinks: the same layout as a plain flex row); only where
+   even the title's longest word does not fit beside the note (a reader's letter spacing on a phone) does the note go
+   under the title, and wrap if longer than the line. A title with a sub-line (<small>) keeps its own layout (a page
+   may send the note under it, software.css). */
+.linklist a:not(:has(small)) { flex-wrap: wrap; }
+.linklist a:not(:has(small)) > span:first-child:not(:last-child) { flex: 1 1 0; }
+.linklist a:not(:has(small)) > span:last-child:not(:first-child) { flex: 0 1 auto; white-space: normal; }
+/* a reader text-size preference: the note goes under the title as soon as both do not fit a line, and wraps if it is
+   longer than the line */
 html[data-a11y-size] .linklist a { flex-wrap: wrap; column-gap: var(--s-3); }
+html[data-a11y-size] .linklist a > span:first-child:not(:last-child) { flex: 0 1 auto; }
 html[data-a11y-size] .linklist a > span:last-child:not(:first-child) { flex: 0 1 auto; white-space: normal; }
 
 .tile {
@@ -951,6 +973,9 @@ html[data-a11y-size] .linklist a > span:last-child:not(:first-child) { flex: 0 1
 .sources li::before { content: counter(src); position: absolute; left: 0; top: 0.5rem; width: 1.4rem; text-align: right; color: var(--ink-3); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
 .sources a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .sources a:hover { color: var(--brand); }
+/* a cited source opens in a new tab: the .ext arrow and words (above), the arrow kept with the last word of a long title;
+   a list built without the class (guides) gets the same. :where() leaves the print rule (base.css) in charge. */
+:where(.sources) :is(a, .ext):where([target="_blank"])::after { content: "\00a0↗"; content: "\00a0↗" / ", opens in a new tab"; font-size: 0.85em; }
 
 /* ---------------------------------------------------------------- notes and disclosures */
 /* A note is one paragraph in a tinted box: a link stays inside its sentence (as a flex row, every link and every run
@@ -972,8 +997,10 @@ html[data-a11y-size] .linklist a > span:last-child:not(:first-child) { flex: 0 1
 .note > .tag:first-child { float: left; margin: 0.1rem var(--s-3) 0 0; }
 .note > .tag:first-child + * { display: flow-root; }
 @media (max-width: 47.99em) {
-  /* the tag's box is a little taller than the line: its margins give that back, so the first line keeps its height */
-  .note > .tag:first-child { float: none; margin: -0.125rem var(--s-2) -0.125rem 0; vertical-align: baseline; }
+  /* the tag's box is a little taller than the line: its margins give that back, so the first line keeps its height.
+     The markup has a space after the tag (copied text and screen readers' line reading keep "Ad" and the text apart):
+     the margin is one space (0.28125em of Inter, at the note's size) short of the 0.5rem gap, so the gap stays 0.5rem */
+  .note > .tag:first-child { float: none; margin: -0.125rem calc(var(--s-2) - 0.28125 * var(--fs-sm)) -0.125rem 0; vertical-align: baseline; }
   .note > .tag:first-child + * { display: inline; }
 }
 .fineprint { font-size: var(--fs-sm); color: var(--ink-3); max-width: 80ch; }
@@ -1006,6 +1033,11 @@ html[data-a11y-size] .linklist a > span:last-child:not(:first-child) { flex: 0 1
 }
 .subnav a:hover { color: var(--ink); text-decoration: none; }
 .subnav a.is-active { color: var(--brand-ink); border-bottom-color: var(--brand); }
+/* a stuck menu sits inside the page's scroll-padding-top (header + 4.5rem, base.css), so Chrome took a focused item there
+   for hidden and scrolled the page about 430px up at every Tab. Each item's own area starts 4.5rem lower: stuck, it is on
+   the padding line (in view, so Tab leaves the page where it is); a menu below the screen or scrolled away with the end
+   of its section is still brought into view. */
+.subnav :is(a, button) { scroll-margin-top: -4.5rem; }
 /* the tab rows scroll sideways, which clips anything drawn outside them: the focus ring goes inside the tab */
 .subnav a:focus-visible, .tabs__list :focus-visible { outline-offset: -2px; }
 

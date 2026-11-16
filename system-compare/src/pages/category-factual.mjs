@@ -331,7 +331,9 @@ function render(ctx, category) {
           <h3>${s.name}</h3>
           <p>${s.segment}</p>
         </div>
-        <table class="dtable fx-stack fx-offers">
+        ${/* in a scroller: a reader's letter spacing can make a note's slash compound ("Implementation/services") wider
+            than its column, and the five columns then no longer fit (nothing scrolls at the default spacing) */ ''}
+        <div class="scroller"><table class="dtable fx-stack fx-offers">
           <caption class="sr-only">${s.name} — observed offers, checked ${ui.time(ctx, checked)}</caption>
           <thead>
             <tr><th scope="col">Offer</th><th scope="col">Observed price</th><th scope="col">Billing and tax</th><th scope="col">Notes</th><th scope="col">Evidence</th></tr>
@@ -350,7 +352,7 @@ function render(ctx, category) {
               </tr>`;
             })}
           </tbody>
-        </table>
+        </table></div>
         ${planFacts(s)}
       </div>`;
     })}

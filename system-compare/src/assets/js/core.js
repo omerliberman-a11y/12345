@@ -549,6 +549,41 @@
   }
   // the words around product names in "X vs Y", "X alternatives", "alternatives to X", "X pricing" …
   var INTENT_WORD = /^(?:vs|v|versus|compared?|comparisons?|to|with|against|and|or|alternatives?|competitors?|replacements?|substitutes?|for|of|similar|like|instead|replace|switch|from|pricing|prices?|costs?|plans?|reviews?|ratings?|score)$/;
+  /**
+   * For SC.search.answers, once per engine: every product's names as typed — its name in plain lower-case words
+   * ("quickbooks online", never the "quick books" of its capitals) and its aliases —, its brand words (the first word
+   * of its name, its one-word aliases) with the products that have each, and claim(run): the products with a name or
+   * alias that is these words or starts with them as whole words.
+   */
+  var namesOf = { engine: null, data: null };
+  function productNames(engine) {
+    if (namesOf.engine === engine) return namesOf.data;
+    var E = SC.searchEngine, doc = Object.create(null), names = Object.create(null), brands = Object.create(null);
+    var brandOf = Object.create(null), byFirst = Object.create(null), claims = Object.create(null);
+    engine.docs.forEach(function (x) {
+      if (x.type !== 'product' || doc[x.id]) return;
+      doc[x.id] = x; names[x.id] = [E.words(String(x.name).toLowerCase()).join(' ')].concat(x.al || []); brands[x.id] = [];
+      names[x.id].forEach(function (n, i) {
+        var first = n.split(' ')[0];
+        (byFirst[first] = byFirst[first] || []).push([x.id, n]);
+        if ((i === 0 || n.indexOf(' ') < 0) && brands[x.id].indexOf(first) < 0) {
+          brands[x.id].push(first);
+          (brandOf[first] = brandOf[first] || []).push(x.id);
+        }
+      });
+    });
+    function claim(run) {
+      if (!(run in claims)) {
+        claims[run] = [];
+        (byFirst[run.split(' ')[0]] || []).forEach(function (p) {
+          if ((p[1] === run || p[1].indexOf(run + ' ') === 0) && claims[run].indexOf(p[0]) < 0) claims[run].push(p[0]);
+        });
+      }
+      return claims[run];
+    }
+    namesOf = { engine: engine, data: { doc: doc, names: names, brands: brands, brandOf: brandOf, claim: claim } };
+    return namesOf.data;
+  }
   // The previous site's limits for a search, and its message (search.js reads at most this much)
   SC.searchLimit = {
     chars: 120, words: 20, message: 'Use at most 120 characters and 20 words, then search again.',
@@ -594,12 +629,15 @@
     },
     /**
      * Does the first group of results answer the query, so that it is the "Best match" (the palette's Enter opens
-     * it), or is it "Suggestions"? Not when the engine says so (r.direct === false: "crm vs", "zoho vs"), and not
-     * when that row is about particular products (a head-to-head, the compare tool, alternatives, a product's
-     * pricing or score) that the query does not name: "crm pricing", "crm alternatives", "phone alternatives",
-     * "crm vs pipedrive". A product is named by its name or an alias, by words that a search on their own reads as
-     * that product ("monday"), or by its brand word, typed or misspelt ("malchimp pricing"), unless that word is a
-     * category's own ("crm", "chat"). The palette and /search/ use this one rule.
+     * it), or is it "Suggestions"? Not when the engine says so (r.direct === false: "crm vs", "marketing pricing"),
+     * and not when that row is about particular products (a head-to-head, the compare tool, alternatives, a
+     * product's pricing or score) that the query does not name: "phone alternatives", "crm vs pipedrive", "sales
+     * pricing", "zoho vs". A product is named by its name or an alias, or by their first words when a search for
+     * those words alone opens it ("monday"; never a word inside a name: "quick" of QuickBooks, and never a generic
+     * word alone: "sales" of "Sales Cloud"), or by its brand word misspelt ("malchimp pricing"), unless that word is
+     * a category's own ("crm", "chat"). Words that start several products' names ("zoho", "google", "microsoft")
+     * name none of them, unless the other products of the query single one out ("zoho vs freshsales": Zoho CRM is
+     * the one that can be compared with Freshsales). The palette and /search/ use this one rule.
      */
     answers: function (engine, r, q) {
       if (!r.top.length || r.direct === false) return false;
@@ -608,11 +646,13 @@
       if (it && it.kind === 'vs') ids = [it.a.id, it.b.id];
       else if (it && it.kind === 'multi') ids = it.items.map(function (x) { return x.id; });
       else if (it && it.kind === 'alternatives') ids = [it.a.id];
+      else if (r.q.vsOf && r.top[0].type === 'compare') ids = [r.q.vsOf.id]; // "attio vs": the compare tool with Attio chosen
       else if (r.q.suffix && r.top[0].type === 'product' && r.groups.product && r.groups.product[0]) ids = [r.groups.product[0].id];
-      if (!ids.length) return true; // a product named on its own, the site's own page: the engine read the words
+      // a product named on its own, a category's own words ("crm pricing"), the site's own page: the engine read them
+      if (!ids.length) return true;
       // the words that can name a product: runs of up to four words between "vs", "alternatives", "pricing" …
-      var runs = [], seg = [], plainOf = Object.create(null), E = SC.searchEngine;
-      E.words(E.capped(q)).concat(['vs']).forEach(function (x) {
+      var runs = [], seg = [], plainOf = Object.create(null), E = SC.searchEngine, N = productNames(engine);
+      E.words(E.capped(q).toLowerCase()).concat(['vs']).forEach(function (x) {
         if (!INTENT_WORD.test(x)) { seg.push(x); return; }
         for (var i = 0; i < seg.length; i++) for (var j = i + 1; j <= Math.min(seg.length, i + 4); j++) runs.push(seg.slice(i, j).join(' '));
         seg = [];
@@ -624,14 +664,44 @@
         }
         return plainOf[run];
       }
+      // how well a product compares with every other product the query names (engine.pairLevel: 3 a published
+      // head-to-head … 1 a documentary criteria table, 0 not at all); 0 when the query names no other product
+      function fit(w, id) {
+        var others = ids.filter(function (o) { return o !== id; });
+        if (!others.length || !engine.pairLevel) return 0;
+        return others.reduce(function (m, o) { return N.doc[o] ? Math.min(m, engine.pairLevel(N.doc[w], N.doc[o])) : 0; }, 3);
+      }
+      // the one of the products that share these words ("zoho") that compares best with the other products of the query
+      // ("zoho vs freshsales": Zoho CRM, a published head-to-head), or null
+      function single(who, id) {
+        var lv = who.map(function (w) { return fit(w, id); }), max = Math.max.apply(null, lv);
+        return max > 0 && lv.filter(function (x) { return x === max; }).length === 1 ? who[lv.indexOf(max)] : null;
+      }
+      // the whole name or alias; its first words only when a search for them alone opens it ("monday", not "sales"), or
+      // when they are its brand word and it compares with the other products of the query ("ahrefs vs se")
+      function whole(run, id) {
+        var who = N.claim(run);
+        return who.length === 1 && who[0] === id && (N.names[id].indexOf(run) >= 0 || plain(run) === id || (N.brands[id].indexOf(run) >= 0 && fit(id, id) > 0));
+      }
+      // a brand word misspelt or typed apart ("malchimp", "quick books"; never a category's word): the first word of this
+      // product's name or a one-word alias of it, as if typed right; or misspelt before the rest of a name ("elvenlabs
+      // agents": ElevenLabs Agents, whole)
+      function misspelt(run, id) {
+        var ws = run.split(' ');
+        if (Object.keys(engine.parse(ws[0]).cats).length) return false;
+        return N.names[id].some(function (n) {
+          var b = n.split(' ')[0], who;
+          if (N.brands[id].indexOf(b) >= 0 && nearWord(ws.join(''), b)) { who = N.claim(b); return who.length > 1 ? single(who, id) === id : who[0] === id; }
+          return ws.length > 1 && nearWord(ws[0], b) && whole([b].concat(ws.slice(1)).join(' '), id);
+        });
+      }
       return ids.every(function (id) {
-        var x = engine.docs.filter(function (y) { return y.type === 'product' && y.id === id; })[0];
-        var names = x ? [x.nameNorm].concat(x.al) : [];
-        // a search can only read the words as x when they start one of its names or are all words of them
-        var could = function (run) { var ts = E.toks(run); return names.some(function (n) { return n.indexOf(run) === 0; }) || (ts.length > 0 && ts.every(function (t) { return x.f.n[t] || (x.f.a && x.f.a[t]); })); };
-        return !!x && runs.some(function (run) {
-          if (names.indexOf(run) >= 0 || (could(run) && plain(run) === id)) return true;
-          return run.indexOf(' ') < 0 && !Object.keys(engine.parse(run).cats).length && names.some(function (n) { return nearWord(run, n.split(' ')[0]); });
+        return !!N.doc[id] && runs.some(function (run) {
+          var who = N.claim(run);
+          // shared by several products: this one's own name (or alias), or the start of its name — "power" of the
+          // aliases "Power BI" and "Power Automate" is not —, and the other products of the query single it out
+          if (who.length > 1) return who.indexOf(id) >= 0 && (N.names[id].indexOf(run) >= 0 || N.names[id][0].indexOf(run + ' ') === 0) && single(who, id) === id;
+          return who.length ? whole(run, id) : misspelt(run, id);
         });
       });
     },

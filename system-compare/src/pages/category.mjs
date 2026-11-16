@@ -46,7 +46,8 @@ const SLACK = { title: 0.985, body: 1.003 };
 export function textEm(text, role) {
   return Math.max(...ADV[role].map((t) => faceEm(text, t))) / 1000;
 }
-const faceEm = (text, t, other = 1000) => [...String(text)].reduce((n, ch) => n + (ADV_CHARS.includes(ch) ? t[ADV_CHARS.indexOf(ch)] : other), 0);
+// a no-break space (the title's "18 tools") is as wide as a space
+const faceEm = (text, t, other = 1000) => [...String(text).replace(/\u00a0/g, ' ')].reduce((n, ch) => n + (ADV_CHARS.includes(ch) ? t[ADV_CHARS.indexOf(ch)] : other), 0);
 const emUp = (x, role) => (Math.ceil(x * SLACK[role] * 100) / 100).toFixed(2);
 // for lines narrower than the text: a short run of words strays further from its sums than a whole text (every word
 // and run of two or three words of the 66 titles and ledes, both faces, at 390 and 1440 px: a title is drawn at
@@ -188,7 +189,8 @@ function render(ctx, category) {
   // a column beside the answer (category.css). The head is one opaque block (.cat-top): the section menu after it
   // waits underneath and only comes into view, sticky, as the head scrolls away. The title, the buyer's question and
   // the evidence line break where their text says, not where the font does (see "line breaks in the page head").
-  const h1 = `${noun}: ${s.total} tools compared`;
+  // the count and its noun never split across lines ("18 tools": a no-break space, measured as a space by fitStyle)
+  const h1 = `${noun}: ${s.total}\u00a0tools compared`;
   // the evidence line's words, as ui.trustline prints them below (wide screens show every item)
   const trustText = [`Evidence checked ${ctx.fmtDate(ctx.catalog.checkedAt)}`, `${nScored} scored · ${s.pending} pending`, 'Desk research, not hands-on testing', 'How we score'];
   const head = html`<div class="cat-top">
@@ -227,23 +229,24 @@ function render(ctx, category) {
   const mustGroups = GROUP_ORDER.map((gid) => ({ gid, label: groupMeta[gid].label, items: features.filter((f) => f.group === gid) })).filter((g) => g.items.length);
   // The filters, the live count, then the sort and the score help: the order on screen and for the keyboard. Two rows
   // at every width (category.css lays them out as a grid, so no line break depends on the width of a text, which
-  // changes a little when the web font replaces its fallback): the filters on top; under them the count on the left
+  // differs a little between the web font and its fallback): the filters on top; under them the count on the left
   // and the sort with the help at the right end (from 75em the sort and the help end the filter row and the count is
-  // the line right above the table). The sort is a native <select> laid over a chip-sized face; every option's short
-  // label sits in the face, one shown at a time (js/table.js), so the face is always as wide as its widest label and
-  // a new order never moves it. Phones show "Sort" only. A filter that would match nothing is not offered. The
-  // must-have panel takes focus itself (tabindex -1, as in ui.scoreHelp), so a press on its text does not move focus
-  // out and close it mid-press.
+  // the line right above the table). "Must-have capabilities", the panel with every capability filter, comes first
+  // (the "all filters" place); the quick filters follow. "Clear filters" follows the live count (outside its live
+  // region) where the count shares its line with the sort (48-75em), so using a filter never re-wraps the filter row
+  // there; on phones (the row scrolls) and from 75em (the row has room; the count line is under the sort) it ends the
+  // filter row, so the keyboard meets it where it is on screen (CSS shows one of the two copies). The sort is a
+  // native <select> laid over a chip-sized face; every option's short label sits in the face, one shown at a time
+  // (js/table.js), so the face is always as wide as its widest label and a new order never moves it; phones show the
+  // order in one word ("Score", "Price", "A–Z"). A filter that would match nothing is not offered. The must-have panel takes focus itself (tabindex -1, as in
+  // ui.scoreHelp), so a press on its text does not move focus out and close it mid-press.
   const sortOptions = [
-    unscored ? { v: 'cov', label: 'Sort: share checked', short: 'share checked' } : { v: 'score', label: 'Sort: score', short: 'score' },
-    { v: 'price', label: 'Sort: price, low to high', short: 'lowest price' },
-    { v: 'name', label: 'Sort: name A–Z', short: 'name A–Z' },
+    unscored ? { v: 'cov', label: 'Sort: share checked', short: 'share checked', phone: 'Checked' } : { v: 'score', label: 'Sort: score', short: 'score', phone: 'Score' },
+    { v: 'price', label: 'Sort: price, low to high', short: 'lowest price', phone: 'Price' },
+    { v: 'name', label: 'Sort: name A–Z', short: 'name A–Z', phone: 'A–Z' },
   ];
   const controls = html`<div class="toolbar cat-toolbar" data-table-controls="products"${attrs({ 'data-sort-default': unscored ? 'cov' : null })} data-nosnippet>
     <div class="cat-chips"><div class="chips" role="group" aria-label="Filter products">
-      ${nScored ? html`<button type="button" class="chip" data-filter="scored" aria-pressed="false">Scored only <span class="n">${nScored}</span></button>` : ''}
-      ${nPriced ? html`<button type="button" class="chip" data-filter="priced" aria-pressed="false">Public price <span class="n">${nPriced}</span></button>` : ''}
-      ${nAi ? html`<button type="button" class="chip" data-filter="ai" aria-pressed="false">Native AI or agents <span class="n">${nAi}</span></button>` : ''}
       <details class="pop mustpop" data-pop>
         <summary class="chip">${ui.icon('filter')} Must-have capabilities <span class="n" data-must-count hidden></span></summary>
         <div class="pop__panel mustpop__panel" role="group" aria-labelledby="must-h" tabindex="-1">
@@ -265,13 +268,16 @@ function render(ctx, category) {
           </div>
         </div>
       </details>
-      <button type="button" class="chip chip--link" data-filter-reset hidden>Clear filters</button>
+      ${nScored ? html`<button type="button" class="chip" data-filter="scored" aria-pressed="false">Scored only <span class="n">${nScored}</span></button>` : ''}
+      ${nPriced ? html`<button type="button" class="chip" data-filter="priced" aria-pressed="false">Public price <span class="n">${nPriced}</span></button>` : ''}
+      ${nAi ? html`<button type="button" class="chip" data-filter="ai" aria-pressed="false">Native AI or agents <span class="n">${nAi}</span></button>` : ''}
+      <button type="button" class="chip chip--link cat-clear-chip" data-filter-reset hidden>Clear filters</button>
     </div></div>
-    <p class="toolbar__count" role="status" aria-live="polite" data-count data-total="${s.total}"><b>${s.total}</b> ${things}</p>
+    <div class="cat-count"><p class="toolbar__count" role="status" aria-live="polite" data-count data-total="${s.total}"><b>${s.total}</b> ${things}</p> <button type="button" class="cat-clear" data-filter-reset hidden>Clear filters</button></div>
     <div class="cat-toolbar__end">
-      <label class="${cx('cat-sort', unscored && 'cat-sort--cov')}"><span class="cat-sort__face" aria-hidden="true">Sort<span class="cat-sort__v">: <span class="cat-sort__faces" data-sort-face>${sortOptions.map(
-        (o, i) => html`<b data-face="${o.v}"${attrs({ class: i ? null : 'is-on' })}>${o.short}</b>`,
-      )}</span></span></span>
+      <label class="${cx('cat-sort', unscored && 'cat-sort--cov')}"><span class="cat-sort__face" aria-hidden="true"><span class="cat-sort__k">Sort: </span><span class="cat-sort__faces" data-sort-face>${sortOptions.map(
+        (o, i) => html`<b data-face="${o.v}"${attrs({ class: i ? null : 'is-on' })}><span class="cat-sort__l">${o.short}</span><span class="cat-sort__p">${o.phone}</span></b>`,
+      )}</span></span>
         <select class="cat-sort__select" data-sort-select aria-label="Sort products">
           ${sortOptions.map((o) => html`<option value="${o.v}" data-short="${o.short}">${o.label}</option>`)}
         </select>
@@ -483,7 +489,7 @@ function render(ctx, category) {
 
   const partnerBlock = partner
     ? html`<aside class="wrap section--tight" data-partner-ad data-nosnippet aria-label="Advertisement">
-        <p class="note"><span class="tag tag--ad">Ad · Partner link</span><span>${partner.name} is an advertising partner and is not one of the ranked products above. <a class="ext" href="${partner.url}" target="_blank" rel="sponsored nofollow noopener noreferrer" data-partner-link="${partner.name}">${partner.label}</a> We may earn a commission; it never changes a score.</span></p>
+        <p class="note"><span class="tag tag--ad">Ad · Partner link</span> <span>${partner.name} is an advertising partner and is not one of the ranked products above. <a class="ext" href="${partner.url}" target="_blank" rel="sponsored nofollow noopener noreferrer" data-partner-link="${partner.name}">${partner.label}</a> We may earn a commission; it never changes a score.</span></p>
       </aside>`
     : '';
 

@@ -168,7 +168,7 @@ export function crumbs(ctx, items) {
 }
 
 const AFFILIATE_NOTICE = html`<div class="wrap" data-nosnippet>
-  <p class="note" role="note"><span class="tag tag--ad">Ad</span><span><strong>Affiliate advertising.</strong> Some links on this page are marked “Ad · affiliate link”. We may earn a commission if you buy through them. Commissions never change a score or a ranking. <a href="/how-we-make-money/">How we make money</a></span></p>
+  <p class="note" role="note"><span class="tag tag--ad">Ad</span> <span><strong>Affiliate advertising.</strong> Some links on this page are marked “Ad · affiliate link”. We may earn a commission if you buy through them. Commissions never change a score or a ranking. <a href="/how-we-make-money/">How we make money</a></span></p>
 </div>`;
 
 // Applied before first paint: reader preferences + the saved-shortlist count (avoids a flash of "0").

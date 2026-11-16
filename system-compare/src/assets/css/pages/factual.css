@@ -4,7 +4,9 @@
 .fx-ev { display: block; margin-top: 0.2rem; font-size: var(--fs-xs); line-height: 1.45; color: var(--ink-3); }
 .fx-ev a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .fx-ev a:hover { color: var(--brand); }
-.fx-ev__date { white-space: nowrap; }
+/* the date stays whole; "Observed" goes on the line above where the column is narrower than the phrase (a reader's
+   letter spacing in the offer tables' Evidence column) */
+.fx-ev__date time { white-space: nowrap; }
 .fx-links { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-5); font-size: var(--fs-sm); font-weight: 600; }
 .fx-links a { display: inline-flex; align-items: center; min-height: 1.5rem; text-decoration: none; }
 /* target sizes: source links inside evidence captions and the supplier names in offer tables are at least 24px
@@ -67,7 +69,8 @@
   .fx-related .chip { min-height: var(--tap); }
 }
 /* large text (html[data-a11y-size]) on a tablet: the offer tables stack as on phones (their five columns no longer fit
-   the width), and the criteria marks show their icon only — the label stays for assistive technology */
+   the width), and the marks of the criteria tables (suppliers, and offers side by side) show their icon only — the
+   label stays for assistive technology; the legend above the table names the icons */
 @media (min-width: 48em) and (max-width: 61.99em) {
   html[data-a11y-size] .fx-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
   html[data-a11y-size] :is(.fx-stack, .fx-stack tbody, .fx-stack tr, .fx-stack tbody th, .fx-stack td) { display: block; width: auto !important; }
@@ -77,8 +80,8 @@
   html[data-a11y-size] .fx-stack td { margin-top: var(--s-3); }
   html[data-a11y-size] .fx-stack td[data-l]::before { content: attr(data-l); display: block; margin-bottom: 0.1rem; font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
   html[data-a11y-size] .fx-stack td.fx-empty { display: none; }
-  html[data-a11y-size] .fx-cmp .fx-row td .st { gap: 0; }
-  html[data-a11y-size] .fx-cmp .fx-row td .st > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  html[data-a11y-size] :is(.fx-cmp .fx-row, .fx-cells tbody) td .st { gap: 0; }
+  html[data-a11y-size] :is(.fx-cmp .fx-row, .fx-cells tbody) td .st > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 }
 
 /* ---------------------------------------------------------------- plans and prices */
@@ -283,7 +286,9 @@ html:not(.js) .fx-cmp .fx-row th, html:not(.js) .fx-cmp .fx-row td { border-bott
 .fx-aside .dots { color: var(--ink-2); }
 
 /* ---------------------------------------------------------------- documentary /vs/ */
-.fx-vs-offers { padding-top: var(--s-8); padding-bottom: var(--s-10); }
+/* the offers table scrolls inside its section where it cannot fit (a reader's letter spacing makes a note's slash
+   compound, "Implementation/services", wider than its column); at the default spacing nothing scrolls */
+.fx-vs-offers { padding-top: var(--s-8); padding-bottom: var(--s-10); overflow-x: auto; }
 .fx-choices { display: grid; gap: var(--s-8) var(--s-10); grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 62em) {
   .fx-choices--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }

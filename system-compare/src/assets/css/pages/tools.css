@@ -260,6 +260,109 @@ html:not(.js) .tl-app { display: none; }
   /* with the reader's text-size preference every fact takes its own line (the price right under the name) */
   html[data-a11y-size] .tl-ready tbody tr > * { flex: 1 0 100%; max-width: none; margin-left: 0; text-align: left; }
 }
+
+/* ---- a reader text-size preference on wider screens, until the scaled columns fit (125%: below 75em; 150%: below
+   90em — the product tables' ranges, components.css). The totals are one row per product as on phones (in columns,
+   "Remove" ran over the next product's logo and a total over the next column at 820-1024px), so each product's block
+   shows its name, its Remove button and what its total covers, as on phones; the inputs are one block per product as
+   on tablets (not three narrow columns); the calculator-ready prices are a list, one fact per line, as on phones (the
+   table scrolled sideways). The two blocks are the same rules for the two ranges. */
+@media (min-width: 48em) and (max-width: 74.99em) {
+  html[data-a11y-size] .tl-totals { display: grid; grid-template-columns: minmax(0, 1fr) fit-content(56%); }
+  html[data-a11y-size] .tl-totals :is(thead, tbody, tr) { display: contents; }
+  html[data-a11y-size] .tl-totals tr > :first-child { position: absolute; width: 1px; height: 1px; padding: 0; border: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  html[data-a11y-size] .tl-totals :is(.tl-fill, tr[data-row="inc"], tr[data-row="exc"], .tl-remove, .tl-pending__why, .tl-dash) { display: none; }
+  html[data-a11y-size] .tl-totals :is(th, td) { padding: 0; border: 0; }
+  html[data-a11y-size] .tl-totals thead th:not(:first-child) { display: flex; align-items: center; grid-column: 1; padding-block: 0.7rem; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size] .tl-totals thead th:nth-child(2) { grid-row: 1 / span 2; }
+  html[data-a11y-size] .tl-totals thead th:nth-child(3) { grid-row: 3 / span 2; }
+  html[data-a11y-size] .tl-totals thead th:nth-child(4) { grid-row: 5 / span 2; }
+  html[data-a11y-size] .tl-totals tbody td { grid-column: 2; padding-left: var(--s-4); text-align: right; }
+  html[data-a11y-size] .tl-totals [data-row="total"] td { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 0 0.5rem; align-self: end; padding-top: 0.7rem; }
+  html[data-a11y-size] .tl-totals [data-row="avg"] td { padding-bottom: 0.7rem; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size] .tl-totals [data-row="total"] td:nth-child(2) { grid-row: 1; }
+  html[data-a11y-size] .tl-totals [data-row="avg"] td:nth-child(2) { grid-row: 2; }
+  html[data-a11y-size] .tl-totals [data-row="total"] td:nth-child(3) { grid-row: 3; }
+  html[data-a11y-size] .tl-totals [data-row="avg"] td:nth-child(3) { grid-row: 4; }
+  html[data-a11y-size] .tl-totals [data-row="total"] td:nth-child(4) { grid-row: 5; }
+  html[data-a11y-size] .tl-totals [data-row="avg"] td:nth-child(4) { grid-row: 6; }
+  html[data-a11y-size] .tl-cap { display: inline-block; white-space: nowrap; }
+  html[data-a11y-size] .tl-cap--pre { order: -1; }
+  html[data-a11y-size] .tl-totals [data-row="avg"] .tl-cap { margin-left: 0.35rem; }
+  html[data-a11y-size] .tl-pending { padding-block: 0; }
+  html[data-a11y-size] .tl-pending ~ .tl-cap { flex-basis: 100%; }
+  html[data-a11y-size] .tl-prod__scope { display: grid; }
+  html[data-a11y-size] .tl-prod__head .tl-remove { display: inline-block; }
+  html[data-a11y-size] .tl-per__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
+  html[data-a11y-size] .tl-per__label { padding-right: 0; }
+  html[data-a11y-size] .tl-per__label .tl-step { align-items: center; }
+  html[data-a11y-size] .tl-products { grid-template-columns: minmax(0, 1fr); padding-top: 0; }
+  html[data-a11y-size] .tl-prod { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); padding: var(--s-6) 0; border-top: 1px solid var(--line); }
+  html[data-a11y-size] .tl-prod:first-child { border-top: 0; }
+  html[data-a11y-size] .tl-prod > :is(.tl-prod__head, .tl-prod__scope, .tl-rate, .tl-own, .hint, .tl-adv, .tl-evidence, .tl-assume) { grid-column: 1 / -1; }
+  html[data-a11y-size] .tl-prod__head { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; }
+  html[data-a11y-size] .tl-bar { padding-left: var(--gutter); }
+  html[data-a11y-size] .tl-bar__item { padding-inline: 0 var(--s-2); }
+  html[data-a11y-size] .tl-bar b { font-size: var(--fs-sm); }
+  html[data-a11y-size] .tl-ready thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  html[data-a11y-size] :is(.tl-ready, .tl-ready tbody) { display: block; }
+  html[data-a11y-size] .tl-ready tbody tr { display: flex; flex-wrap: wrap; gap: 0.15rem var(--s-4); padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size] .tl-ready tbody tr > * { display: block; flex: 1 0 100%; padding: 0; border: 0; text-align: left; }
+  html[data-a11y-size] .tl-ready tbody td:not(.tl-ready__price) { order: 1; }
+  html[data-a11y-size] .tl-ready tbody td.tl-ready__price { color: var(--ink); white-space: normal; }
+  html[data-a11y-size] .tl-ready tbody td[data-label]::before { content: attr(data-label) ": "; color: var(--ink-3); }
+  html[data-a11y-size] .tl-ready tbody td small { display: inline; margin: 0; }
+  html[data-a11y-size] .tl-ready tbody td small::before { content: " · "; }
+  html[data-a11y-size] .tl-ready tbody tr > :nth-last-child(-n + 2) { padding-top: 0.3rem; }
+}
+@media (min-width: 75em) and (max-width: 89.99em) {
+  html[data-a11y-size="150"] .tl-totals { display: grid; grid-template-columns: minmax(0, 1fr) fit-content(56%); }
+  html[data-a11y-size="150"] .tl-totals :is(thead, tbody, tr) { display: contents; }
+  html[data-a11y-size="150"] .tl-totals tr > :first-child { position: absolute; width: 1px; height: 1px; padding: 0; border: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  html[data-a11y-size="150"] .tl-totals :is(.tl-fill, tr[data-row="inc"], tr[data-row="exc"], .tl-remove, .tl-pending__why, .tl-dash) { display: none; }
+  html[data-a11y-size="150"] .tl-totals :is(th, td) { padding: 0; border: 0; }
+  html[data-a11y-size="150"] .tl-totals thead th:not(:first-child) { display: flex; align-items: center; grid-column: 1; padding-block: 0.7rem; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size="150"] .tl-totals thead th:nth-child(2) { grid-row: 1 / span 2; }
+  html[data-a11y-size="150"] .tl-totals thead th:nth-child(3) { grid-row: 3 / span 2; }
+  html[data-a11y-size="150"] .tl-totals thead th:nth-child(4) { grid-row: 5 / span 2; }
+  html[data-a11y-size="150"] .tl-totals tbody td { grid-column: 2; padding-left: var(--s-4); text-align: right; }
+  html[data-a11y-size="150"] .tl-totals [data-row="total"] td { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 0 0.5rem; align-self: end; padding-top: 0.7rem; }
+  html[data-a11y-size="150"] .tl-totals [data-row="avg"] td { padding-bottom: 0.7rem; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size="150"] .tl-totals [data-row="total"] td:nth-child(2) { grid-row: 1; }
+  html[data-a11y-size="150"] .tl-totals [data-row="avg"] td:nth-child(2) { grid-row: 2; }
+  html[data-a11y-size="150"] .tl-totals [data-row="total"] td:nth-child(3) { grid-row: 3; }
+  html[data-a11y-size="150"] .tl-totals [data-row="avg"] td:nth-child(3) { grid-row: 4; }
+  html[data-a11y-size="150"] .tl-totals [data-row="total"] td:nth-child(4) { grid-row: 5; }
+  html[data-a11y-size="150"] .tl-totals [data-row="avg"] td:nth-child(4) { grid-row: 6; }
+  html[data-a11y-size="150"] .tl-cap { display: inline-block; white-space: nowrap; }
+  html[data-a11y-size="150"] .tl-cap--pre { order: -1; }
+  html[data-a11y-size="150"] .tl-totals [data-row="avg"] .tl-cap { margin-left: 0.35rem; }
+  html[data-a11y-size="150"] .tl-pending { padding-block: 0; }
+  html[data-a11y-size="150"] .tl-pending ~ .tl-cap { flex-basis: 100%; }
+  html[data-a11y-size="150"] .tl-prod__scope { display: grid; }
+  html[data-a11y-size="150"] .tl-prod__head .tl-remove { display: inline-block; }
+  html[data-a11y-size="150"] .tl-per__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
+  html[data-a11y-size="150"] .tl-per__label { padding-right: 0; }
+  html[data-a11y-size="150"] .tl-per__label .tl-step { align-items: center; }
+  html[data-a11y-size="150"] .tl-products { grid-template-columns: minmax(0, 1fr); padding-top: 0; }
+  html[data-a11y-size="150"] .tl-prod { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); padding: var(--s-6) 0; border-top: 1px solid var(--line); }
+  html[data-a11y-size="150"] .tl-prod:first-child { border-top: 0; }
+  html[data-a11y-size="150"] .tl-prod > :is(.tl-prod__head, .tl-prod__scope, .tl-rate, .tl-own, .hint, .tl-adv, .tl-evidence, .tl-assume) { grid-column: 1 / -1; }
+  html[data-a11y-size="150"] .tl-prod__head { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; }
+  html[data-a11y-size="150"] .tl-bar { padding-left: var(--gutter); }
+  html[data-a11y-size="150"] .tl-bar__item { padding-inline: 0 var(--s-2); }
+  html[data-a11y-size="150"] .tl-bar b { font-size: var(--fs-sm); }
+  html[data-a11y-size="150"] .tl-ready thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  html[data-a11y-size="150"] :is(.tl-ready, .tl-ready tbody) { display: block; }
+  html[data-a11y-size="150"] .tl-ready tbody tr { display: flex; flex-wrap: wrap; gap: 0.15rem var(--s-4); padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size="150"] .tl-ready tbody tr > * { display: block; flex: 1 0 100%; padding: 0; border: 0; text-align: left; }
+  html[data-a11y-size="150"] .tl-ready tbody td:not(.tl-ready__price) { order: 1; }
+  html[data-a11y-size="150"] .tl-ready tbody td.tl-ready__price { color: var(--ink); white-space: normal; }
+  html[data-a11y-size="150"] .tl-ready tbody td[data-label]::before { content: attr(data-label) ": "; color: var(--ink-3); }
+  html[data-a11y-size="150"] .tl-ready tbody td small { display: inline; margin: 0; }
+  html[data-a11y-size="150"] .tl-ready tbody td small::before { content: " · "; }
+  html[data-a11y-size="150"] .tl-ready tbody tr > :nth-last-child(-n + 2) { padding-top: 0.3rem; }
+}
 .tl-two { display: grid; gap: var(--s-10); grid-template-columns: minmax(0, 1fr); align-items: start; }
 @media (min-width: 62em) { .tl-two { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-14); } }
 .tl-how, .tl-scope { max-width: 70ch; color: var(--ink-2); }
@@ -278,6 +381,8 @@ html:not(.js) .tl-app { display: none; }
 .js .tl-sl[data-state="loading"] > :not([data-sl-status]) { visibility: hidden; }
 .js body:has(.tl-sl[data-state="loading"]) .site-footer { visibility: hidden; }
 html:not(.js) .tl-sl__status { display: none; }
+/* without JavaScript the note stands where the status line would be: a section's space before "Nothing saved yet" */
+.tl-sl > noscript > .note { margin-bottom: var(--s-8); }
 .tl-sl__status { margin-bottom: var(--s-5); max-width: 70ch; font-size: var(--fs-sm); color: var(--ink-2); }
 .tl-sl__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s-4) var(--s-6); margin-bottom: var(--s-4); }
 .tl-sl__head h2 { margin: 0; }

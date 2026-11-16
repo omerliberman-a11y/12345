@@ -164,6 +164,10 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
     const unitPhrase = hasAmount ? sentenceUnit(unit) : '';
     // "billed annually" is part of the price: it is said wherever the amount is said, unless the unit already says it
     const billingPhrase = annual && !/annual|per year|\/year/i.test(unit) ? 'billed annually' : '';
+    // the note printed after the unit in tables, profiles, data files and llms.txt: not when the unit says it already
+    // ("per month, annual billing; 10 users/10 GB", "per year, starting contract"); an "annual commitment" is a term,
+    // not the billing, so that unit keeps the note (sentences drop it there, billingPhrase)
+    const billingNote = annual && !/\b(annual billing|billed annually|per year)\b|\/year\b/i.test(unit) ? 'billed annually' : '';
     return {
       state, // amount | quote | usage | unverified
       hasAmount,
@@ -173,7 +177,7 @@ export async function createContext({ root, manifest = {}, links = 'relative', b
       unit: hasAmount ? unit : '',
       // the pricing basis as recorded, also when no amount is verified ("per sales seat/month, plus usage")
       basis: p.smsUnverified ? '' : normUnit(p.unit),
-      billingNote: annual ? 'billed annually' : '',
+      billingNote,
       plan: p.plan || '',
       planLabel: planLabel(p.plan),
       model: p.model || null,

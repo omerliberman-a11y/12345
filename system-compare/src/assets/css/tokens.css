@@ -1,10 +1,15 @@
 /* Design tokens — the only place raw colours, sizes and radii are defined. */
 
+/* The two web fonts are not preloaded and use font-display: optional: a page uses them only if they are ready when it
+   first renders (the spec allows a short block period; Chromium uses a non-preloaded optional font only once it has
+   loaded, in practice from the cache) and never swaps them in later, so nothing on a page moves when a font arrives.
+   The first page of a visit therefore shows the metric-matched faces below; the fonts still download and are cached
+   (hashed names, immutable), so every later page uses them. */
 @font-face {
   font-family: "Inter";
   font-style: normal;
   font-weight: 100 900;
-  font-display: swap;
+  font-display: optional;
   src: url("fonts/inter-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
@@ -12,21 +17,21 @@
   font-family: "SC Rubik";
   font-style: normal;
   font-weight: 500 800;
-  font-display: swap;
+  font-display: optional;
   src: url("fonts/rubik-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* While the web fonts load: Inter itself if the visitor has it installed (nothing moves at the swap) … */
+/* Without the web fonts: Inter itself if the visitor has it installed … */
 @font-face { font-family: "Inter local"; font-weight: 100 450; src: local("Inter Regular"), local("Inter-Regular"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "Inter local"; font-weight: 451 550; src: local("Inter Medium"), local("Inter-Medium"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "Inter local"; font-weight: 551 650; src: local("Inter SemiBold"), local("Inter-SemiBold"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "Inter local"; font-weight: 651 900; src: local("Inter Bold"), local("Inter-Bold"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
-/* … otherwise metric-matched stand-ins, shown until the web fonts arrive (they are not preloaded): Arial, or a font with Arial's
+/* … otherwise metric-matched stand-ins (a first, slow page view): Arial, or a font with Arial's
    widths (Helvetica, Liberation Sans, Arimo), scaled to the width of the text this site renders in that face and
    weight (Inter 400 body, 600 labels, 700 uppercase labels; Rubik 500/800 the wordmark, 600 headings, 700 score
-   digits), with the web font's ascent and descent, so the swap moves almost nothing.
+   digits), with the web font's ascent and descent, so a page laid out in them looks like the one in the web fonts.
    ascent-override = ascent ÷ size-adjust (Inter 1984 and 494 of 2048 units, Rubik 935 and 250 of 1000).
    Where text blocks are sized in ch (body text, headings) the digits get their own face, scaled so "0" — and with
    it the ch unit — is as wide as in the web font; otherwise every ch-sized block would narrow and rewrap.
