@@ -186,24 +186,28 @@ function render(ctx, category) {
     { label: 'Criteria compared', value: html`<a href="#factual-comparison">${criteria.length}</a>`, sub: `${F.sources.length} dated official sources` },
   ];
 
-  const head = html`<header class="wrap page-head page-head--wide">
-    <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
-    <h1>${F.heading || category.name}</h1>
-    <p class="lede">${category.description}</p>
-    ${ui.trustline(
-      [
-        html`Evidence checked ${ui.time(ctx, checked)}`,
-        // phones: the counts are in the answer and the facts below; the approver is named again further down the page
-        { more: `${ctx.plural(suppliers.length, 'supplier')} · ${ctx.plural(nOffers, 'offer')}` },
-        NO_SCORE_LABEL,
-        approver && { more: `${approver.name}, ${String(approver.role || '').toLowerCase()}` },
-        html`<a href="/methodology/">How we score</a>`,
-      ],
-      { compact: true },
-    )}
-  </header>
-  <div class="wrap cat-answer">
-    ${ui.answer(ctx, quick, { meta: lowest ? 'Units and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.' : null, more: true })}
+  // Same first screen as the scored category page (category.mjs, category.css): one opaque head block (.cat-top) with
+  // the trust strip and the answer side by side on wide screens; the section menu waits under it until it scrolls away.
+  const head = html`<div class="cat-top">
+    <header class="wrap page-head page-head--wide cat-head">
+      <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
+      <h1>${F.heading || category.name}</h1>
+      <p class="lede">${category.description}</p>
+      <div class="cat-sum">
+        ${ui.trustline(
+          [
+            html`Evidence checked ${ui.time(ctx, checked)}`,
+            // phones: the counts are in the answer and the facts below; the approver is named again further down the page
+            { more: `${ctx.plural(suppliers.length, 'supplier')} · ${ctx.plural(nOffers, 'offer')}` },
+            NO_SCORE_LABEL,
+            approver && { more: `${approver.name}, ${String(approver.role || '').toLowerCase()}` },
+            html`<a href="/methodology/">How we score</a>`,
+          ],
+          { compact: true },
+        )}
+        ${ui.answer(ctx, quick, { meta: lowest ? 'Units and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.' : null, more: true })}
+      </div>
+    </header>
   </div>`;
 
   const hasAid = Boolean(F.decisionAid?.rows?.length);

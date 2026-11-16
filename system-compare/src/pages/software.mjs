@@ -106,12 +106,19 @@ function render(ctx, vendor) {
   const glanceLine = html`<p class="sw-glance" aria-hidden="true">${
     s.pending ? html`<span class="score">Score pending</span> in ${primary.name}` : html`<span class="score"><b>${s.value}</b>/100</span> documented fit in ${primary.name}`
   }<span class="sw-glance__sep"> · </span><span class="price">${p.hasAmount ? html`from <b>${p.headline}</b>${p.unitPhrase ? ` ${A.proseUnit(p.unitPhrase)}` : ''}` : p.headline}</span></p>`;
+  // The two primary actions. Below 62em they sit under the score line (.sw-act, right after the name in the source,
+  // so focus follows what is on screen); from 62em they close the decision block (.sw-side__cta). No single source
+  // order keeps focus in visual order in both layouts, so both copies are in the HTML and CSS shows exactly one at any
+  // width (the other is display:none, out of the accessibility tree). Same ui.outLink call, so the same /go/ href,
+  // data-outbound-* attributes (placement "profile") and, for an affiliate vendor, its own visible label.
+  const visitLink = () => ui.outLink(ctx, vendor, { intent: 'website', from: 'profile', cls: 'btn' });
   const hero = html`<header class="wrap sw-hero">
     <div class="sw-hero__main">
       <div class="sw-hero__id">
         <span class="sw-logo">${ui.logo(ctx, vendor, { size: 'lg', wide: true, lazy: false })}</span>
         <h1>${name}</h1>
       </div>
+      <div class="sw-act" data-nosnippet>${visitLink()}${ui.shortlistButton(ctx, vendor, primary.id)}</div>
       <p class="lede">${vendor.description}</p>
       <ul class="sw-cats" aria-label="Categories and published rank">${cats.map(chip)}</ul>
     </div>
@@ -153,7 +160,7 @@ function render(ctx, vendor) {
         <p class="sw-side__more">${ui.outLink(ctx, vendor, { intent: 'pricing', from: 'profile-pricing', cls: 'sw-link' })}</p>
       </div>
       <div class="sw-side__cta">
-        ${ui.outLink(ctx, vendor, { intent: 'website', from: 'profile', cls: 'btn' })}
+        ${visitLink()}
         ${ui.shortlistButton(ctx, vendor, primary.id)}
         <a class="link-arrow sw-side__alts" href="${ctx.url.alternatives(vendor.id)}">${others.length === 1 ? '1 alternative' : `${others.length} alternatives`}</a>
       </div>
@@ -355,11 +362,15 @@ function render(ctx, vendor) {
   // ---------------------------------------------------------------- capabilities (one panel per category)
   const groupMeta = Object.fromEntries(ctx.scoring.SCORE_GROUPS.map((g) => [g.id, g]));
   const pt = ctx.scoring.pointText;
+  // Every check row names its tier ("Foundation check" / "Shared deep check", the live profile's labels) as the
+  // first words of its meta line: text in an existing element, because the longest profiles are at the element
+  // budget. The demo question sits directly in its <details> (no wrapper paragraph) for the same reason.
   const evRow = (c, row) => {
     const ev = row.evidence;
+    const meta = [L.tier[row.tier], row.description].filter(Boolean).join(' · ');
     return html`<tr id="cap-${c.id}-${row.id}">
-      <th scope="row">${row.label}${row.description ? html` <small>${row.active && row.tier === 'advanced' ? `${L.tier.advanced} · ` : ''}${row.description}</small>` : ''}${
-        row.demoQuestion && row.demoQuestion !== row.description ? html` <details class="sw-demo"><summary>How to test this</summary><p>${row.demoQuestion}</p></details>` : ''
+      <th scope="row">${row.label}${meta ? html` <small>${meta}</small>` : ''}${
+        row.demoQuestion && row.demoQuestion !== row.description ? html` <details class="sw-demo"><summary>How to test this</summary>${row.demoQuestion}</details>` : ''
       }</th>
       <td>${ui.status(row.effectiveStatus)}</td>
       ${row.active ? html`<td class="num">${ctx.scoring.contributionText(row)}</td>` : html`<td class="num sw-ns">Not scored</td>`}

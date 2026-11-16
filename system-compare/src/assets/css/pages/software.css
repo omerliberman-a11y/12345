@@ -5,7 +5,7 @@
 .sw-hero__foot .trustline { margin-top: 0; }
 .sw-hero__foot .answer { margin-top: var(--s-6); }
 .sw-hero__id { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-3); }
-.sw-hero__id h1 { min-width: 0; }
+.sw-hero__id h1 { min-width: 0; max-width: 100%; } /* a capped width lets a one-word name ("ActiveCampaign") wrap at large text sizes */
 .sw-logo { display: inline-flex; }
 .sw-logo .logo--lg { height: 3.5rem; min-width: 3.5rem; }
 .sw-logo .logo--wide { max-width: 10rem; }
@@ -13,7 +13,11 @@
 .sw-cats { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); margin-top: var(--s-5); }
 .sw-cats li { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.4rem; max-width: 100%; }
 .sw-cats .chip { min-height: var(--tap); max-width: 100%; white-space: normal; }
-.sw-cats .chip b { font-weight: 600; margin-right: 0.1rem; }
+/* a block box, so a long "Tied #1 of 4 scored in ERP & Business Management" wraps as one sentence (in the flex
+   .chip the place and the category wrapped as two columns); one line stays 44px tall with centred text */
+.sw-cats .chip { display: block; align-content: center; }
+.sw-cats .chip .n { margin-left: 0.15rem; }
+.sw-cats .chip b { font-weight: 600; margin-right: 0.25rem; }
 
 .sw-hero__side { display: grid; gap: var(--s-5); padding-top: var(--s-6); border-top: 1px solid var(--line); }
 .sw-side__score { display: flex; align-items: center; gap: var(--s-4); }
@@ -57,18 +61,20 @@
 @media (min-width: 48em) and (max-width: 61.99em) {
   .sw-side__label .pop--right .pop__panel { left: -8rem; right: auto; }
 }
-/* narrow phones (320px): the label next to the ring wraps instead of pushing the score block out */
+/* narrow phones (320px): the label next to the ring wraps instead of pushing the score block out; with a larger text
+   size the ring alone nearly fills the line, so the label moves under it */
 @media (max-width: 47.99em) {
   .sw-side__score > div { min-width: 0; }
   .sw-side__label { flex-wrap: wrap; white-space: normal; }
+  html[data-a11y-size] .sw-side__score { flex-wrap: wrap; }
 }
-/* phones from 360px: score and starting price side by side (the ring over its label), then the actions — the
-   decision block keeps its order (score, price, Visit) and "Visit" comes about a screen down */
+/* phones from 360px: score and starting price side by side (the ring over its label), then the alternatives link
+   (the Visit / shortlist pair shows under the score line at the top of the page, .sw-act) */
 @media (min-width: 22.5em) and (max-width: 39.99em) {
   .sw-hero__side { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); }
   .sw-side__score { flex-direction: column; align-items: flex-start; gap: var(--s-2); }
   .sw-side__score .ring { width: 4.5rem; height: 4.5rem; }
-  .sw-side__score .ring__num { font-size: var(--fs-xl); }
+  .sw-side__score .ring:not(.ring--pending) .ring__num { font-size: var(--fs-xl); } /* "Score pending" keeps its small size */
   /* the label wraps inside its column and keeps the help button beside it */
   .sw-side__label { flex-wrap: nowrap; }
   .sw-side__cta { grid-column: 1 / -1; }
@@ -90,20 +96,46 @@
   .sw-hero__side { grid-area: 1 / 2 / 3 / 3; padding: 0 0 0 var(--s-10); border-top: 0; border-left: 1px solid var(--line); gap: var(--s-6); }
   .sw-glance { display: none; }
 }
-/* below 62em the decision block (score, price, actions) follows the answer, so a one-line summary of the score
-   and the starting price stands under the name. It is presentational (aria-hidden, no links) and the only item
-   placed out of source order: the links and buttons keep their source order, so focus follows what you see. */
+/* below 62em the decision block (score, price, details) follows the answer, so a one-line summary of the score
+   and the starting price stands under the name, with the two primary actions (.sw-act) right under it. The summary
+   is presentational (aria-hidden, no links) and the only item placed out of source order: the links and buttons
+   keep their source order (.sw-act follows the name in the source), so focus follows what you see. */
 @media (max-width: 61.99em) {
   .sw-hero { row-gap: 0; }
   .sw-hero__main { display: contents; }
   .sw-hero__id { order: 1; }
   .sw-glance { order: 2; margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
-  .sw-hero .lede { order: 3; }
-  .sw-cats { order: 4; }
-  .sw-hero__foot { order: 5; margin-top: var(--s-6); }
-  .sw-hero__side { order: 6; margin-top: var(--s-6); }
+  .sw-act { order: 3; margin-top: var(--s-4); }
+  .sw-hero .lede { order: 4; }
+  .sw-cats { order: 5; }
+  .sw-hero__foot { order: 6; margin-top: var(--s-6); }
+  .sw-hero__side { order: 7; margin-top: var(--s-6); }
   .sw-glance .score, .sw-glance .price { display: inline; }
   .sw-glance b { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  /* the decision block keeps its details and the alternatives link; its Visit / shortlist copy is the one above */
+  .sw-side__cta > :not(.sw-side__alts) { display: none; }
+}
+/* the primary actions under the score line. From 62em the decision block shows its own copy (only one copy is ever
+   rendered; see software.mjs) */
+.sw-act { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); }
+.sw-act .commercial-link { display: contents; }
+.sw-act .btn { flex: 0 1 auto; white-space: normal; }
+/* tablets: [Visit] [Ad · affiliate link] [Add to shortlist], the commission note under them */
+.sw-act .commercial-link > .fineprint { order: 1; flex: 1 1 100%; margin-top: calc(-1 * var(--s-1)); }
+@media (min-width: 62em) { .sw-act { display: none; } }
+/* phones: two equal buttons on one line (one per line under 360px or with a larger text size); an affiliate label and
+   its note run under the Visit button */
+@media (max-width: 39.99em) {
+  .sw-act { align-items: stretch; gap: var(--s-2); }
+  .sw-act .btn { flex: 1 1 100%; min-width: 0; padding-inline: var(--s-3); }
+  /* a long "Visit …" label wraps: a block box keeps the ↗ after its last word (in the flex .btn it would stand apart) */
+  .sw-act a.btn { display: block; padding-block: calc((var(--tap) - 1.2em - 2px) / 2); text-wrap: balance; }
+  .sw-act .commercial-link > :not(a) { align-self: center; }
+  .sw-act .commercial-link > .fineprint { order: 0; flex: 1 1 12rem; margin-top: 0; }
+}
+@media (min-width: 22.5em) and (max-width: 39.99em) {
+  html:not([data-a11y-size]) .sw-act .btn { flex-basis: calc(50% - var(--s-2)); }
+  html:not([data-a11y-size]) .sw-act .commercial-link > :not(a) { order: 1; }
 }
 /* phones: the summary paragraph at body size (it runs to ten lines on some profiles) and tighter steps between the
    chips, the strip, the answer and the decision block */
@@ -125,6 +157,12 @@
 .sw-kf td { color: var(--ink); }
 .sw-kf td a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .sw-kf td a:hover { color: var(--brand); }
+/* phones with a larger text size: the label column would take most of the line, so each label sits above its value */
+@media (max-width: 47.99em) {
+  html[data-a11y-size] .sw-kf, html[data-a11y-size] .sw-kf tbody { display: block; }
+  html[data-a11y-size] .sw-kf tr { display: block; padding: 0.6rem 0; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size] .sw-kf th, html[data-a11y-size] .sw-kf td { display: block; width: auto; padding: 0; border: 0; }
+}
 @media (min-width: 62em) {
   /* two facts per line; long sentences span the full width */
   .sw-kf { display: block; }
@@ -267,6 +305,11 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-score__gate { margin-top: 0.2rem; font-size: var(--fs-sm); color: var(--ink-3); }
 .sw-score__links { display: flex; flex-wrap: wrap; gap: 0 var(--s-6); margin-top: var(--s-2); font-size: var(--fs-sm); }
 .sw-score__links a { display: inline-flex; align-items: center; min-height: var(--tap); }
+/* phones with a larger text size: the score lines move under the ring when they do not fit beside it */
+@media (max-width: 47.99em) {
+  .sw-score__main > div { min-width: 0; }
+  html[data-a11y-size] .sw-score__main { flex-wrap: wrap; }
+}
 @media (min-width: 62em) {
   .sw-score { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-14); align-items: center; }
   .sw-score__lines span { display: inline; }
@@ -286,12 +329,13 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-ev tr:target th, .sw-ev tr:target td { background: var(--brand-softer); }
 .sw-ev td small a, .sw-claims a, .sw-cite a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .sw-ev td small a:hover, .sw-claims a:hover, .sw-cite a:hover { color: var(--brand); }
-.sw-demo { margin-top: 0.3rem; font-size: var(--fs-xs); font-weight: 400; color: var(--ink-2); }
-.sw-demo summary { display: inline-flex; align-items: center; list-style: none; color: var(--brand); font-weight: 600; }
+/* the question is the disclosure's own text (no wrapper paragraph): a block-level summary keeps it on the next line */
+.sw-demo { margin-top: 0.3rem; font-size: var(--fs-xs); font-weight: 400; line-height: 1.45; color: var(--ink-2); }
+.sw-demo summary { display: flex; width: fit-content; align-items: center; list-style: none; line-height: 1.4; color: var(--brand); font-weight: 600; }
 .sw-demo summary::-webkit-details-marker { display: none; }
 .sw-demo summary::after { content: "+"; margin-left: 0.3rem; font-weight: 700; }
 .sw-demo[open] summary::after { content: "–"; }
-.sw-demo p { margin-top: 0.15rem; line-height: 1.45; }
+.sw-demo[open] > summary { margin-bottom: 0.15rem; }
 @media (max-width: 47.99em), (pointer: coarse) {
   .sw-demo summary { min-height: var(--tap); }
   .sw-demo { margin-top: 0; }
@@ -356,7 +400,7 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-ev-foot { margin-top: var(--s-8); }
 
 /* ---------------------------------------------------------------- AI */
-.sw-ai-lists { display: grid; gap: var(--s-8); }
+.sw-ai-lists { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); }
 .sw-ai-lists h3 { margin-bottom: var(--s-3); }
 
 /* ---------------------------------------------------------------- source check */
@@ -381,6 +425,11 @@ html:not(.js) .sw-tablist { display: none; }
   .sw-alts .ptable__c-go { width: 6rem; white-space: normal; }
 }
 .sw-alts .scorebtn { min-height: var(--tap); }
+/* published comparisons: the score pair ("pending vs pending") moves under the title when both do not fit on a line
+   (narrow screens with a larger text size) */
+.sw-alts .linklist a { flex-wrap: wrap; }
+/* a larger text size on wide screens: "Read comparison →" may wrap, so the table keeps to the page width */
+html[data-a11y-size] .sw-alts .ptable__c-go { white-space: normal; }
 @media (max-width: 47.99em) {
   /* phones: the shared table drops its action column; here the comparison link stays, under the price */
   .sw-alts .ptable tbody tr { grid-template-areas: "pick name score" "pick price price" "pick vs vs"; row-gap: 0.2rem; }

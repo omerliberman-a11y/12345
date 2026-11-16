@@ -56,11 +56,36 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
   .ix-cats .linklist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* comparisons: category blocks flow in columns; each pair is one line */
-.ix-cmp__cols { columns: 1; column-gap: var(--s-10); }
-@media (min-width: 44em) { .ix-cmp__cols { columns: 2; } }
-@media (min-width: 68em) { .ix-cmp__cols { columns: 3; } }
-@media (min-width: 75em) { .ix-cmp__cols { columns: 4; column-gap: var(--s-8); } .ix-cmp .ix-group { padding-block: var(--s-8) var(--s-4); } }
+/* comparisons: a group's first categories (whole, at most four pairs: comparisons.mjs LEAD) fill one row — a
+   category of several pairs spans that many columns and lists them side by side under one heading; the other
+   categories fold into "N more comparisons in …" and flow in the same columns when opened. Each pair is one list
+   row: its name, what a documented or editorial comparison covers, then the scores (or kind) and the date. */
+.ix-cmp__lead { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--s-8); }
+.ix-cmp__cols { columns: 1; column-gap: var(--s-8); }
+@media (min-width: 44em) {
+  .ix-cmp__lead { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ix-cmp__lead > :not([data-span="1"]) { grid-column: 1 / -1; }
+  .ix-cmp__lead > :not([data-span="1"]) > .linklist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ix-cmp__cols { columns: 2; }
+}
+/* four columns on wide screens; a larger text size (html[data-a11y-size]) keeps two */
+@media (min-width: 68em) {
+  html:not([data-a11y-size]) .ix-cmp__lead { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  html:not([data-a11y-size]) .ix-cmp__lead > [data-span="2"] { grid-column: span 2; }
+  html:not([data-a11y-size]) .ix-cmp__lead > [data-span="3"] { grid-column: span 3; }
+  html:not([data-a11y-size]) .ix-cmp__lead > [data-span="3"] > .linklist { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  html:not([data-a11y-size]) .ix-cmp__lead > [data-span="4"] > .linklist { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  html:not([data-a11y-size]) .ix-cmp__cols { columns: 4; }
+  html:not([data-a11y-size]) .ix-cmp__lead > .ix-cmp__cat { padding-top: var(--s-1); } /* one row: its labels sit close to the group heading */
+  /* a quarter of the width is too narrow for a name beside its score: the score and date go under the name */
+  html:not([data-a11y-size]) .ix-cmp .linklist a { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0.2rem; }
+  html:not([data-a11y-size]) .ix-cmp .linklist a > span:first-child { max-width: 100%; }
+  html:not([data-a11y-size]) .ix-vsmeta { flex-direction: row; align-items: baseline; gap: 0.5rem; text-align: left; }
+}
+/* a larger text size: a pair's score and date go under its name, on one line, when both do not fit beside it */
+html[data-a11y-size] .ix-cmp .linklist a { flex-wrap: wrap; column-gap: var(--s-3); row-gap: 0.15rem; }
+html[data-a11y-size] .ix-cmp .linklist a > .ix-vsmeta { flex: 0 1 auto; min-width: 0; flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 0.5rem; text-align: left; }
+@media (min-width: 75em) { .ix-cmp .ix-group { padding-block: var(--s-8) var(--s-4); } }
 .ix-cmp__cat { break-inside: avoid; padding-top: var(--s-4); }
 .ix-cmp__cat h3 { font-family: var(--font); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.4; }
 .ix-cmp__cat h3 a { display: inline-flex; align-items: center; min-height: 2rem; color: var(--ink-3); }
@@ -69,8 +94,11 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
 .ix-cmp .linklist a { gap: var(--s-3); }
 .ix-cmp .linklist a > span:first-child { min-width: 0; }
 .ix-cmp .linklist small { line-height: 1.35; }
-/* a category's further pairs fold into "N more …" (the filter opens these while it is on and hides the toggle) */
-.ix-cmp__more > summary { display: flex; align-items: center; gap: 0.5rem; min-height: var(--tap); padding: 0.2rem 0; list-style: none; font-size: var(--fs-sm); font-weight: 600; color: var(--brand); cursor: pointer; }
+/* a group's further categories fold into "N more comparisons in A, B and C" (the filter opens the fold while it is
+   on and hides the toggle) */
+.ix-cmp__more { margin-top: var(--s-2); }
+.ix-cmp__more > summary { display: flex; align-items: flex-start; gap: 0.5rem; min-height: var(--tap); padding: 0.6rem 0; list-style: none; font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-3); cursor: pointer; }
+.ix-cmp__more > summary b { font-weight: 600; color: var(--brand); }
 .ix-cmp__more > summary::-webkit-details-marker { display: none; }
 .ix-cmp__more > summary::before {
   content: "";
@@ -82,19 +110,19 @@ html:not(.js) .ix-bar, html:not(.js) .ix-toolbar, html:not(.js) [data-ix-count],
   transition: transform var(--dur) var(--ease);
 }
 .ix-cmp__more[open] > summary::before { transform: rotate(45deg); }
-.ix-cmp__more > summary:hover { text-decoration: underline; }
-.ix-cmp__more > .linklist { border-top: 0; }
-.ix-cmp__more[open] > summary { border-bottom: 1px solid var(--line); }
+.ix-cmp__more > summary:hover b { text-decoration: underline; }
 .ix-cmp:has([data-ix-row][hidden]) .ix-cmp__more > summary { display: none; }
 /* mouse and trackpad on wide screens: denser lines (touch keeps the 44px targets) */
 @media (min-width: 48em) and (pointer: fine) {
   .ix-cmp .linklist a { min-height: 2.75rem; padding-block: 0.45rem; }
-  .ix-cmp__more > summary { min-height: 2.25rem; }
+  .ix-cmp__more > summary { min-height: 2.25rem; padding-block: 0.4rem; }
   .ix-cmp__cat { padding-top: var(--s-3); }
 }
 .ix-vsmeta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.05rem; line-height: 1.3; text-align: right; }
 .ix-vsmeta b { font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .ix-vsmeta time { font-size: var(--fs-xs); color: var(--ink-3); }
+/* the closing "Compare any two products" button wraps rather than run off a narrow screen at a larger text size */
+.ix-cmp__after .btn { max-width: 100%; white-space: normal; text-align: center; }
 @media (max-width: 47.99em) {
   .ix-cmp .linklist a { min-height: 3rem; padding-block: 0.4rem; }
   .ix-cmp__cat h3 a { min-height: var(--tap); }

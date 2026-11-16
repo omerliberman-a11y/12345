@@ -103,12 +103,15 @@ html:not(.js) .tl-app { display: none; }
 }
 
 /* ---- per-product inputs, evidence and assumptions */
-.tl-per { position: relative; margin-top: var(--s-8); }
+/* the compact totals bar shares its grid cell with the inputs: it takes no room in the page at any height */
+.tl-per { position: relative; margin-top: var(--s-8); display: grid; grid-template-columns: minmax(0, 1fr); }
+.tl-per > * { grid-area: 1 / 1; }
 .tl-per__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
 .tl-per__label .tl-step { margin-top: 0; margin-bottom: var(--s-2); }
 .tl-per__label .hint { font-size: var(--fs-sm); color: var(--ink-3); max-width: 60ch; }
 .tl-products { display: grid; grid-template-columns: minmax(0, 1fr); }
-.tl-prod { display: grid; gap: var(--s-4); align-content: start; min-width: 0; padding-block: var(--s-6); border-top: 1px solid var(--line); }
+/* one column that never outgrows the block: an unbreakable token ("Professional/Enterprise.") wraps instead */
+.tl-prod { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); align-content: start; min-width: 0; padding-block: var(--s-6); border-top: 1px solid var(--line); }
 .tl-prod:first-child { border-top: 0; }
 .tl-prod__head { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
 .tl-prod__head h4 { flex: 1; min-width: 0; font-size: var(--fs-md); overflow-wrap: anywhere; }
@@ -138,9 +141,10 @@ html:not(.js) .tl-app { display: none; }
 .tl-assume { margin-top: calc(-1 * var(--s-2)); }
 .tl-assume__body { padding-bottom: var(--s-2); font-size: var(--fs-sm); color: var(--ink-2); }
 .tl-assume__pending { color: var(--ink-2); }
-.tl-dl > div { display: flex; justify-content: space-between; gap: var(--s-4); padding: 0.4rem 0; border-bottom: 1px solid var(--line); }
+/* a value that does not fit beside its label (large text on a narrow phone) moves under it, still on the right */
+.tl-dl > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.1rem var(--s-4); padding: 0.4rem 0; border-bottom: 1px solid var(--line); }
 .tl-dl dt { color: var(--ink-2); }
-.tl-dl dd { margin: 0; font-weight: 600; color: var(--ink); text-align: right; white-space: nowrap; }
+.tl-dl dd { margin: 0 0 0 auto; font-weight: 600; color: var(--ink); text-align: right; white-space: nowrap; }
 .tl-months { margin-top: var(--s-3); }
 .tl-months > summary { display: flex; align-items: center; min-height: var(--tap); font-weight: 600; color: var(--ink); }
 .tl-months li { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr) auto; align-items: center; gap: var(--s-3); padding: 0.15rem 0; font-size: var(--fs-xs); color: var(--ink-2); }
@@ -168,17 +172,19 @@ html:not(.js) .tl-app { display: none; }
   .tl-products { padding-top: var(--s-1); }
 }
 
-/* compact totals that stick under the header while the per-product inputs are on screen */
+/* compact totals that stick under the header while the per-product inputs are on screen. Nothing in it is cut off:
+   a long name wraps (the totals stay on one line, at the bottom), an amount never breaks or shortens to "…", and with
+   the reader's text-size preference a phone shows one product per line with its full amount. */
 .tl-bar {
   position: sticky;
   top: var(--header-h);
   z-index: 50;
+  align-self: start;
   display: flex;
-  align-items: center;
-  height: 3.25rem;
-  margin-bottom: -3.25rem;
+  align-items: flex-end;
+  min-height: 3.25rem;
   margin-inline: calc(-1 * var(--gutter));
-  padding-inline: var(--gutter);
+  padding: 0.55rem var(--gutter);
   background: var(--bg);
   border-bottom: 1px solid var(--line);
   opacity: 0;
@@ -187,14 +193,24 @@ html:not(.js) .tl-app { display: none; }
   transition: opacity var(--dur) var(--ease);
 }
 .tl-bar.is-stuck { opacity: 1; visibility: visible; }
-.tl-bar__item { flex: 0 0 calc(100% / 3); min-width: 0; display: grid; padding-right: var(--s-2); line-height: 1.2; }
-.tl-bar__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-xs); color: var(--ink-3); }
-.tl-bar b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-sm); font-weight: 600; color: var(--ink); }
+.tl-bar__item { flex: 0 0 calc(100% / 3); min-width: 0; display: grid; align-content: end; padding-right: var(--s-2); line-height: 1.2; }
+.tl-bar__name { font-size: var(--fs-xs); color: var(--ink-3); overflow-wrap: break-word; }
+.tl-bar b { white-space: nowrap; font-size: var(--fs-sm); font-weight: 600; color: var(--ink); }
+.tl-bar b.is-text { white-space: normal; }
 .tl-bar__short { display: none; }
 @media (max-width: 47.99em) {
+  /* a third each while they fit; an item never gets narrower than its amount (the row wraps instead) */
+  .tl-bar { flex-wrap: wrap; row-gap: 0.5rem; }
+  .tl-bar__item { flex: 1 1 0; min-width: min-content; }
   .tl-bar__full { display: none; }
   .tl-bar__short { display: inline; }
   .tl-bar b.is-text { font-size: var(--fs-xs); }
+  html[data-a11y-size] .tl-bar { flex-direction: column; align-items: stretch; row-gap: 0.2rem; }
+  html[data-a11y-size] .tl-bar__item { flex: none; display: flex; align-items: baseline; justify-content: space-between; gap: 0 var(--s-3); padding-right: 0; }
+  html[data-a11y-size] .tl-bar__name { flex: 1 1 auto; min-width: 0; }
+  html[data-a11y-size] .tl-bar b { flex: none; text-align: right; white-space: nowrap; }
+  html[data-a11y-size] .tl-bar__full { display: inline; }
+  html[data-a11y-size] .tl-bar__short { display: none; }
 }
 @media (min-width: 62em) {
   .tl-bar { padding-left: calc(var(--gutter) + 11rem); }
@@ -203,8 +219,22 @@ html:not(.js) .tl-app { display: none; }
 }
 
 .tl-actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-8); padding-top: var(--s-6); border-top: 1px solid var(--line); }
+.tl-actions .btn { max-width: 100%; white-space: normal; }
 .tl-status { margin-top: var(--s-6); font-size: var(--fs-sm); font-weight: 400; color: var(--ink-2); }
 .tl-app > .fineprint { margin-top: var(--s-2); }
+/* no layout shift while the calculator draws itself. js/cost.js sets data-state="ready" on the tool ([data-cost]) once
+   its first state is drawn: at once for an empty calculator, after the data for a scenario from a link or the saved
+   shortlist ("loading" until then). Until that, the status line takes no room (the empty state keeps it for screen
+   readers only), the empty-state text hides while a scenario loads, and the fine print and everything after the
+   calculator stay unpainted from the first paint, so they appear once, in their final place, instead of moving when the
+   totals appear above them. If the script never runs they appear after 2.5s anyway: a visibility switch, not motion, so
+   it runs with reduced motion too. */
+@keyframes tl-reveal { to { visibility: visible; } }
+.js .tl-tool:not([data-state="ready"]) .tl-status { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.js .tl-tool[data-state="loading"] .tl-empty { visibility: hidden; }
+.js .tl-tool:not([data-state="ready"]) .tl-app > .fineprint,
+.js main:has(> .tl-tool:not([data-state="ready"])) > .tl-tool ~ *,
+.js body:has(.tl-tool:not([data-state="ready"])) .site-footer { visibility: hidden; animation: tl-reveal 0s 2.5s forwards !important; }
 
 /* ---- static explanation below the tool */
 .tl-ready small { max-width: 30ch; }
@@ -212,18 +242,23 @@ html:not(.js) .tl-app { display: none; }
 .tl-ready tr > :first-child { padding-left: 0; }
 .tl-ready tr > :last-child { padding-right: 0; text-align: right; }
 @media (max-width: 47.99em) {
-  /* five rows read better as a list than as a sideways-scrolling table */
+  /* five rows read better as a list than as a sideways-scrolling table: the name with the price beside it (at most
+     60% of the line: its unit wraps, never the amount), the facts, then the source and "Model it" on a line of their own */
   .tl-ready thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
   .tl-ready, .tl-ready tbody { display: block; }
-  .tl-ready tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.15rem var(--s-4); padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+  .tl-ready tbody tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.15rem var(--s-4); padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
   .tl-ready tbody th, .tl-ready tbody td { display: block; padding: 0; border: 0; }
-  .tl-ready tbody td { grid-column: 1 / -1; }
-  .tl-ready tbody td.tl-ready__price { grid-column: 2; grid-row: 1; text-align: right; color: var(--ink); }
+  .tl-ready tbody th { flex: 1 1 0; }
+  .tl-ready tbody td { flex: 1 0 100%; order: 1; }
+  .tl-ready tbody td.tl-ready__price { flex: 0 0 auto; order: 0; max-width: 60%; margin-left: auto; text-align: right; color: var(--ink); white-space: normal; }
+  .tl-ready tbody td.tl-ready__price b { white-space: nowrap; }
   .tl-ready tbody td[data-label]::before { content: attr(data-label) ": "; color: var(--ink-3); }
   .tl-ready tbody td small { display: inline; margin: 0; }
   .tl-ready tbody td small::before { content: " · "; }
-  .tl-ready tbody td:nth-last-child(2) { grid-column: 1; padding-top: 0.3rem; }
-  .tl-ready tbody tr > :last-child { grid-column: 2; text-align: right; padding-top: 0.3rem; }
+  .tl-ready tbody td:nth-last-child(2) { flex: 1 1 auto; padding-top: 0.3rem; }
+  .tl-ready tbody tr > :last-child { flex: none; margin-left: auto; text-align: right; padding-top: 0.3rem; }
+  /* with the reader's text-size preference every fact takes its own line (the price right under the name) */
+  html[data-a11y-size] .tl-ready tbody tr > * { flex: 1 0 100%; max-width: none; margin-left: 0; text-align: left; }
 }
 .tl-two { display: grid; gap: var(--s-10); grid-template-columns: minmax(0, 1fr); align-items: start; }
 @media (min-width: 62em) { .tl-two { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-14); } }

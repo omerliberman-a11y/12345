@@ -323,6 +323,34 @@
 .price__main { font-weight: 600; font-size: var(--fs-md); color: var(--ink); font-variant-numeric: tabular-nums; }
 .price__main--text { font-weight: 600; font-size: var(--fs-sm); color: var(--ink-2); }
 .price__unit { font-size: var(--fs-xs); color: var(--ink-3); }
+/* a price with its provenance (category ranking): the plan beside the amount, then the unit, then "Checked <date> ·
+   Source ↗" — a direct, followed link to the official pricing source that opens in a new tab (said to screen readers
+   in the link text; the arrow is decoration). Wide screens: the plan shares the amount's line when it fits. */
+/* the bit of air at their ends is invisible; it moves the points where these lines wrap off the catalog's current
+   prices, so (measured over every category at nine common widths) no more rows change height when the web font
+   replaces its metric-matched fallback than before this line existed. Re-check after a catalog refresh. */
+.price__plan, .price__src { font-size: var(--fs-xs); color: var(--ink-3); }
+.price__plan { padding-right: 0.125rem; }
+.price__src { padding-right: 0.25rem; }
+.price__chk { white-space: nowrap; }
+.price__src a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
+.price__src a:hover { color: var(--brand-strong); text-decoration-color: currentColor; }
+.price__src .ext::after { content: "\00a0↗"; content: "\00a0↗" / ""; }
+@media (min-width: 48em) {
+  .ptable .price--detail { flex-flow: row wrap; align-items: baseline; column-gap: 0.4rem; }
+  .ptable .price--detail > .price__unit, .ptable .price--detail > .price__src { flex-basis: 100%; }
+}
+/* touch: the small link answers a larger hit area drawn as ::before under the cell's words (the cell is its own
+   stacking context, so the price text above it keeps its taps). In a dense row a full 44px would reach the next row's
+   checkbox and score, so it takes the room the row has: 0.25rem above the words (inside the gap to the row's name) and
+   1rem below (inside the row's bottom padding) — about 35px at the default text size, more with larger text. */
+@media (pointer: coarse), (max-width: 47.99em) {
+  .price--detail { isolation: isolate; }
+  .price__src a { position: relative; }
+  .price__src a::before { content: ""; position: absolute; inset: -0.25rem -0.25rem -1rem; z-index: -1; }
+  /* with larger text the stacked row puts the score button right above the price: nothing above the words */
+  html[data-a11y-size] .price__src a::before { top: 0; }
+}
 .price--lg .price__main { font-family: var(--font-display); font-size: var(--fs-2xl); letter-spacing: -0.02em; }
 .price--lg .price__main--text { font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 600; color: var(--ink); }
 .price--lg .price__unit { font-size: var(--fs-sm); }
@@ -380,6 +408,9 @@
   .ptable .score--pending .score__value { font-size: var(--fs-xs); }
   .ptable .price { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0.1rem 0.4rem; }
   .ptable .price__main { font-size: var(--fs-sm); }
+  /* the plan is read out but not shown: "Checked <date> · Source" joins the price's line where it fits, and a phone
+     row grows by no more than that line (the plan is shown from 48em and on the product's profile) */
+  .ptable .price__plan { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
   /* compact plate (64 × 28px, artwork box 56 × 20px) floated beside the name: the name's line is as tall as the
      plate, a second name line stays beside it, and the fit line clears it to use the row's full width. A one-word
      name too long for the space beside the plate moves below it whole (never broken letter by letter). */
@@ -517,12 +548,20 @@ html:not(.js) .matrix__what { text-decoration: none; cursor: default; pointer-ev
   padding-block: 0.6rem;
   padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
   transform: translateY(110%);
-  transition: transform 220ms var(--ease);
+  /* closed: once it has slid away it is hidden, so Tab and screen readers never reach its last chips */
+  visibility: hidden;
+  transition: transform 220ms var(--ease), visibility 0s linear 220ms;
 }
-.tray.is-open { transform: none; }
-.tray__inner { display: flex; align-items: center; gap: var(--s-3); }
+.tray.is-open { transform: none; visibility: visible; transition: transform 220ms var(--ease); }
+/* the actions move under the chips (right-aligned) when one row would leave the chips less than 6rem: on a
+   narrow phone or at a large text size, nothing is pushed out of the bar */
+.tray__inner { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); }
 .tray__label { display: none; font-size: var(--fs-sm); font-weight: 600; color: var(--ink-2); white-space: nowrap; }
-.tray__items { display: flex; gap: var(--s-2); min-width: 0; flex: 1; overflow-x: auto; scrollbar-width: none; }
+.tray__items { display: flex; gap: var(--s-2); min-width: 0; flex: 1 1 6rem; overflow-x: auto; scrollbar-width: none; }
+html[data-a11y-size] .tray__items { flex-basis: 8rem; } /* a larger text size: room for one whole chip, or a row of its own */
+/* the browser refused to store the list (private mode, blocked site data): a line of its own above the chips
+   below 48em, where the label (which then ends "· this page only") is not shown */
+.tray__note { flex: 1 0 100%; font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-2); }
 .tray__item {
   display: inline-flex;
   align-items: center;
@@ -541,11 +580,18 @@ html:not(.js) .matrix__what { text-decoration: none; cursor: default; pointer-ev
 .tray__item .logo { width: 1.75rem; height: 1.75rem; border-radius: 50%; }
 .tray__x { display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: var(--ink-2); flex: none; font-size: var(--fs-lg); line-height: 1; }
 .tray__x:hover { background: var(--line-strong); color: var(--ink); }
-.tray__actions { display: flex; align-items: center; gap: var(--s-2); flex: none; }
+.tray__actions { display: flex; align-items: center; gap: var(--s-2); flex: none; margin-left: auto; }
 .tray__clear { font-size: var(--fs-sm); color: var(--ink-2); padding: 0.5rem; min-height: var(--tap); }
 .tray__clear:hover { color: var(--ink); text-decoration: underline; }
+@media (max-width: 47.99em) {
+  /* one product: its × already clears the list, and "Add one more to compare" takes two short lines, so the
+     product stays readable beside them at 320px */
+  .tray__actions--one .tray__clear { display: none; }
+  .tray__hint { max-width: 7.75rem; padding-inline: 0.6rem; white-space: normal; text-wrap: balance; line-height: 1.15; }
+}
 @media (min-width: 48em) {
   .tray__label { display: block; }
+  .tray__note { display: none; }
   /* names are cut only when the bar is actually full */
   .tray__item { flex: 0 1 auto; min-width: 7rem; max-width: 22rem; }
 }

@@ -93,23 +93,27 @@ function render(ctx, category) {
   // ---------------------------------------------------------------- page head
   // The first screen leads to the ranking: on phones the trust strip keeps the date and the method link on one line
   // (the counts and the desk-research note are in the answer and under the table) and the answer shows three lines
-  // with a "Show the full answer" disclosure; every word stays in the HTML.
-  const head = html`<header class="wrap page-head page-head--wide cat-head">
-    <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
-    <h1>${noun}: ${s.total} tools compared</h1>
-    ${category.buyerQuestion ? html`<p class="lede">${category.buyerQuestion}</p>` : ''}
-    ${ui.trustline(
-      [
-        html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
-        { more: `${nScored} scored · ${s.pending} pending` },
-        { more: 'Desk research, not hands-on testing' },
-        html`<a href="/methodology/">How we score</a>`,
-      ],
-      { compact: true },
-    )}
-  </header>
-  <div class="wrap cat-answer">
-    ${ui.answer(ctx, quick, { more: true })}
+  // with a "Show the full answer" disclosure; every word stays in the HTML. On wide screens the trust strip becomes
+  // a column beside the answer (category.css). The head is one opaque block (.cat-top): the section menu after it
+  // waits underneath and only comes into view, sticky, as the head scrolls away.
+  const head = html`<div class="cat-top">
+    <header class="wrap page-head page-head--wide cat-head">
+      <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
+      <h1>${noun}: ${s.total} tools compared</h1>
+      ${category.buyerQuestion ? html`<p class="lede">${category.buyerQuestion}</p>` : ''}
+      <div class="cat-sum">
+        ${ui.trustline(
+          [
+            html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
+            { more: `${nScored} scored · ${s.pending} pending` },
+            { more: 'Desk research, not hands-on testing' },
+            html`<a href="/methodology/">How we score</a>`,
+          ],
+          { compact: true },
+        )}
+        ${ui.answer(ctx, quick, { more: true })}
+      </div>
+    </header>
   </div>`;
 
   const nav = ui.subnav(
@@ -126,8 +130,18 @@ function render(ctx, category) {
 
   // ---------------------------------------------------------------- ranking table + filters
   const mustGroups = GROUP_ORDER.map((gid) => ({ gid, label: groupMeta[gid].label, items: features.filter((f) => f.group === gid) })).filter((g) => g.items.length);
-  // one row on wide screens: filters, then the live count, the score help and the sort; a filter that would match
-  // nothing is not offered. On phones the filters are one row that scrolls sideways.
+  // Filters, then the sort, then the live count and the score help (in this order for the keyboard, too). Wide
+  // screens: one row, the sort and the count at its right end. Phones: the filters are one row that scrolls sideways with a short
+  // "Sort" chip pinned at its end, and the count is the line under them, right above the first row (it names any order
+  // other than the default). The sort is a native <select> laid over a chip-sized face that shows the current order
+  // on wider screens (js/table.js keeps the face in step), so it takes the room of its short label, not of its
+  // longest option. A filter that would match nothing is not offered. The must-have panel takes focus itself
+  // (tabindex -1, as in ui.scoreHelp), so a press on its text does not move focus out and close it mid-press.
+  const sortOptions = [
+    unscored ? { v: 'cov', label: 'Sort: share checked', short: 'share checked' } : { v: 'score', label: 'Sort: score', short: 'score' },
+    { v: 'price', label: 'Sort: price, low to high', short: 'lowest price' },
+    { v: 'name', label: 'Sort: name A–Z', short: 'name A–Z' },
+  ];
   const controls = html`<div class="toolbar cat-toolbar" data-table-controls="products"${attrs({ 'data-sort-default': unscored ? 'cov' : null })} data-nosnippet>
     <div class="cat-chips"><div class="chips" role="group" aria-label="Filter products">
       ${nScored ? html`<button type="button" class="chip" data-filter="scored" aria-pressed="false">Scored only <span class="n">${nScored}</span></button>` : ''}
@@ -135,30 +149,35 @@ function render(ctx, category) {
       ${nAi ? html`<button type="button" class="chip" data-filter="ai" aria-pressed="false">Native AI or agents <span class="n">${nAi}</span></button>` : ''}
       <details class="pop mustpop" data-pop>
         <summary class="chip">${ui.icon('filter')} Must-have capabilities <span class="n" data-must-count hidden></span></summary>
-        <div class="pop__panel mustpop__panel">
-          <p class="fineprint">Show only products where the capability is fully documented. Filters change what you see, never the published score.</p>
-          ${mustGroups.map(
-            (g) => html`<fieldset>
-              <legend>${g.label}</legend>
-              ${g.items.map(
-                (f) => html`<label class="check"><input type="checkbox" data-must="${f.i}"${raw(yesCount[f.i] ? '' : ' disabled')}><span>${f.label}</span><span class="n">${yesCount[f.i]}</span></label>`,
-              )}
-            </fieldset>`,
-          )}
+        <div class="pop__panel mustpop__panel" role="group" aria-labelledby="must-h" tabindex="-1">
+          <div class="mustpop__body">
+            <p class="pop__title mustpop__title" id="must-h">Must-have capabilities</p>
+            <p class="fineprint">Show only products where the capability is fully documented. Filters change what you see, never the published score.</p>
+            ${mustGroups.map(
+              (g) => html`<fieldset>
+                <legend>${g.label}</legend>
+                ${g.items.map(
+                  (f) => html`<label class="check"><input type="checkbox" data-must="${f.i}"${raw(yesCount[f.i] ? '' : ' disabled')}><span>${f.label}</span><span class="n">${yesCount[f.i]}</span></label>`,
+                )}
+              </fieldset>`,
+            )}
+          </div>
+          <div class="mustpop__foot">
+            <p class="mustpop__n"><b data-must-n>${s.total}</b> of ${s.total} match</p>
+            <button type="button" class="btn btn--sm" data-must-done>Done</button>
+          </div>
         </div>
       </details>
       <button type="button" class="chip chip--link" data-filter-reset hidden>Clear filters</button>
     </div></div>
+    <label class="cat-sort"><span class="cat-sort__face" aria-hidden="true">Sort<span class="cat-sort__v">: <b data-sort-face>${sortOptions[0].short}</b></span></span>
+      <select class="cat-sort__select" data-sort-select aria-label="Sort products">
+        ${sortOptions.map((o) => html`<option value="${o.v}" data-short="${o.short}">${o.label}</option>`)}
+      </select>
+    </label>
     <div class="cat-toolbar__end">
       <p class="toolbar__count" role="status" aria-live="polite" data-count data-total="${s.total}"><b>${s.total}</b> ${things}</p>
       ${ui.scoreHelp(ctx, { align: 'right' })}
-      <label class="toolbar__sort"><span class="sr-only">Sort products</span>
-        <select class="select select--sm" data-sort-select aria-label="Sort products">
-          ${unscored ? html`<option value="cov">Sort: share checked</option>` : html`<option value="score">Sort: score</option>`}
-          <option value="price">Sort: price, low to high</option>
-          <option value="name">Sort: name A–Z</option>
-        </select>
-      </label>
     </div>
   </div>`;
 
@@ -184,8 +203,8 @@ function render(ctx, category) {
   );
 
   // the "at a glance" figures follow the ranking (the answer above already names the leader and the pending count).
-  // The section heading is for screen readers and the outline: on screen the section menu ("Ranking") and the table
-  // header already label it, so the filters follow the menu directly.
+  // The section heading is for screen readers and the outline: on screen the count line, the section menu ("Ranking",
+  // once it is in view) and the table header already label it, so the filters follow the answer directly.
   const products = html`<section class="wrap cat-products" aria-labelledby="products-h">
     <h2 id="products-h" class="sr-only">${unscored ? things[0].toUpperCase() + things.slice(1) : `${category.name} ranking`}</h2>
     ${controls}
@@ -327,7 +346,7 @@ function render(ctx, category) {
         <p>In ${category.name}, ${activeCount} of ${features.length} checklist items are scored today${features.length > activeCount ? `; the other ${features.length - activeCount} are deep checks that join the score once they have been checked for every listed product` : ''}. Every product that shares the highest published score is marked “Recommended”.</p>
       </div>
       <div>
-        <table class="dtable">
+        <table class="dtable cat-weights">
           <caption class="sr-only">Score groups and their weight in ${category.name}</caption>
           <thead><tr><th scope="col">Score group</th><th scope="col" class="num">Scored checks</th><th scope="col" class="num">Points</th></tr></thead>
           <tbody>
@@ -343,7 +362,7 @@ function render(ctx, category) {
   const faq = html`<div class="wrap wrap--narrow section">${ui.faq(ctx, faqItems, { heading: `${category.name}: questions buyers ask` })}</div>`;
 
   const comparisons = vsPages.length
-    ? html`<section class="wrap section" id="comparisons" aria-labelledby="vs-h">
+    ? html`<section class="wrap section cat-vs" id="comparisons" aria-labelledby="vs-h">
         ${ui.sectionHead(`${category.name} head-to-head comparisons`, { id: 'vs-h', link: { href: `/compare/?scope=${category.id}`, label: 'Compare any products' } })}
         ${ui.linkList(
           vsPages.map((x) => {

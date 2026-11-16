@@ -565,6 +565,7 @@
     }
     update();
     if (active) { var again = d.getElementById(active); if (again && again !== d.activeElement) again.focus(); }
+    if (data || !S.scope) app.setAttribute('data-state', 'ready'); // not while a category's data is still on its way
   }
 
   /** Shared inputs appear only when a selected product uses them (paid seats: seat prices and per-seat quotes). */
@@ -828,6 +829,9 @@
     startedFromShortlist = list.ids.length;
   }
   app.setAttribute('data-ready', '');
+  // a scenario from the link or the saved shortlist is drawn once its data has loaded: tools.css keeps what would move
+  // unseen until then (render() sets "ready")
+  app.setAttribute('data-state', S.scope || S.slots.length ? 'loading' : 'ready');
   if (!S.scope && S.slots.length) {
     // a deep link with products but no category: use the first product's main category
     SC.load('vendors').then(function (v) { var hit = v.vendors[S.slots[0].id]; S.scope = hit && hit[3] ? hit[3] : ''; if (!S.scope) S.slots = []; loadCategory(); }).catch(function () { S.slots = []; render(); });

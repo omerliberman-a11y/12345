@@ -76,7 +76,13 @@
     var mustN = Object.keys(state.must).length, mc = $('[data-must-count]', controls), ms = $('.mustpop > summary', controls);
     if (mc) { mc.hidden = !mustN; mc.textContent = mustN || ''; }
     if (ms) ms.setAttribute('data-on', mustN ? '1' : '0');
-    var sel = $('[data-sort-select]', controls); if (sel) sel.value = state.sort;
+    var sel = $('[data-sort-select]', controls);
+    if (sel) {
+      sel.value = state.sort;
+      // the chip-sized face over the select shows the current order in a few words ("lowest price")
+      var face = $('[data-sort-face]', controls), opt = sel.options[sel.selectedIndex];
+      if (face && opt) face.textContent = opt.getAttribute('data-short') || opt.textContent;
+    }
     $$('[data-sort-col]', table).forEach(function (th) {
       var k = th.getAttribute('data-sort-col');
       if (k === state.sort) th.setAttribute('aria-sort', k === 'score' ? 'descending' : 'ascending'); else th.removeAttribute('aria-sort');
@@ -89,6 +95,9 @@
       count.appendChild(el('b', { text: filtered ? visible.length + ' of ' + total : String(total) }));
       count.appendChild(d.createTextNode(' ' + (count.getAttribute('data-noun') || 'products') + (state.sort === 'price' ? ' · sorted by starting price (products without a public price last)' : state.sort === 'name' ? ' · sorted by name' : '')));
     }
+    // the must-have panel repeats the count in its footer, so the effect of a box is visible while the sheet covers
+    // the page (not a live region: the count above already announces it)
+    var mustMatch = $('[data-must-n]', controls); if (mustMatch) mustMatch.textContent = String(visible.length);
     var empty = $('[data-empty]'); if (empty) empty.hidden = visible.length > 0;
     table.hidden = visible.length === 0;
     syncMatrixColumns();
@@ -101,7 +110,38 @@
     controls.addEventListener('click', function (e) {
       var b = e.target.closest('[data-filter]');
       if (b) { var k = b.getAttribute('data-filter'); if (state.f[k]) delete state.f[k]; else state.f[k] = 1; apply(); }
+      // "Done" in the must-have panel closes it and returns focus to its chip
+      var done = e.target.closest('[data-must-done]'), pop = done && done.closest('details');
+      if (pop) { pop.open = false; var sum = $('summary', pop); if (sum) sum.focus(); }
     });
+    // Wide screens: the must-have popover opens under its chip and could reach past the bottom of the window. It is
+    // fitted to the room below the chip instead (its list scrolls inside; the footer with the live count and Done
+    // stays in view); only when that room is too small does the page scroll to show it. (Phones: a fixed bottom sheet.)
+    var mustPop = $('.mustpop', controls);
+    if (mustPop) {
+      mustPop.addEventListener('toggle', function () {
+        var panel = $('.mustpop__panel', mustPop);
+        if (!panel) return;
+        panel.style.maxHeight = '';
+        if (!mustPop.open || getComputedStyle(panel).position === 'fixed') return;
+        var r = panel.getBoundingClientRect(), room = Math.floor(window.innerHeight - r.top - 12);
+        if (r.bottom <= window.innerHeight - 12) return;
+        if (room >= 240) panel.style.maxHeight = room + 'px';
+        else panel.scrollIntoView({ block: 'nearest' });
+      });
+    }
+    // A chip reached with the keyboard comes fully into view in the sideways-scrolling filter row (phones, or a desktop
+    // window at 400% zoom), clear of the faded edge: the row's scroll-padding keeps it off the fade.
+    var chipRow = $('.cat-chips > .chips', controls);
+    if (chipRow) {
+      chipRow.addEventListener('focusin', function (e) {
+        var t = e.target, own = t.parentNode === chipRow || (t.tagName === 'SUMMARY' && t.parentNode.parentNode === chipRow);
+        if (!own || chipRow.scrollWidth <= chipRow.clientWidth + 1) return;
+        var kbd = true;
+        try { kbd = t.matches(':focus-visible'); } catch (err) { /* older browsers: always */ }
+        if (kbd) t.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      });
+    }
     controls.addEventListener('change', function (e) {
       if (e.target.matches('[data-must]')) { var k = e.target.getAttribute('data-must'); if (e.target.checked) state.must[k] = 1; else delete state.must[k]; apply(); }
       else if (e.target.matches('[data-sort-select]')) { state.sort = e.target.value; apply(); }

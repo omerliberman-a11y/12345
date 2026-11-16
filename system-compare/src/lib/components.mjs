@@ -98,11 +98,13 @@ export function methodSentence(ctx) {
   return html`${before}${time(ctx, ctx.catalog.checkedAt)}${after}`;
 }
 
-/** "How is this scored?" popover used next to a score heading. */
+/** "How is this scored?" popover used next to a score heading. The panel takes focus itself (tabindex -1): a press on
+ *  its text would otherwise move focus to <main tabindex="-1">, outside the popover, and core.js closes a popover that
+ *  focus leaves — in the middle of the press (Chromium's renderer crashed on that). */
 export function scoreHelp(ctx, { align } = {}) {
   return html`<details class="${cx('pop', align === 'right' && 'pop--right')}" data-pop>
     <summary aria-label="How the score works"><i class="info" aria-hidden="true">i</i></summary>
-    <div class="pop__panel">
+    <div class="pop__panel" tabindex="-1">
       <p class="pop__title">Documented-fit score</p>
       <p>How much of this category’s checklist is documented in official sources, from 0 to 100. It is research, not a customer rating or a hands-on test.</p>
       <p>Unverified items score zero. No score is shown until 80% of the checklist weight has been checked — that is what “Score pending” means.</p>
@@ -112,17 +114,30 @@ export function scoreHelp(ctx, { align } = {}) {
 }
 
 // ------------------------------------------------------------------ price
-export function priceCell(ctx, p, { size, plan = false, checked = false } = {}) {
+/**
+ * The price as published. `plan`: the plan the price is for, beside the amount from 48em (phones keep it for screen
+ * readers only, so a row keeps one price line where it fits); `checked`: the price-check date; `source` (the product's
+ * name): a direct link to the official pricing source, as the live site's cards linked it. That link is a cited source,
+ * not a vendor CTA, so it is the vendor's own URL, never /go/. No plan is printed for "SMS price not verified" (the
+ * recorded plan then only says "SMS-specific plan not verified"), and no link where no source is recorded.
+ */
+export function priceCell(ctx, p, { size, plan = false, checked = false, source = '' } = {}) {
   const main = p.hasAmount
     ? html`<span class="price__main num">${p.headline}</span>`
     : html`<span class="price__main price__main--text">${p.headline}</span>`;
   // with an amount: unit + billing; without one: the pricing basis as recorded ("per sales seat/month, plus usage")
   const unit = p.hasAmount ? [p.unit, p.billingNote].filter(Boolean).join(' · ') : p.basis;
-  return html`<span class="${cx('price', size && `price--${size}`)}">
+  const planText = plan && p.plan && !p.smsUnverified ? (source ? ctx.dropNamePrefix(source, p.planLabel) : p.planLabel) : '';
+  const date = checked && p.checkedAt ? html`<span class="price__chk">Checked ${time(ctx, p.checkedAt)}</span>` : '';
+  const link =
+    source && p.sourceUrl
+      ? html`<a class="ext" href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Source<span class="sr-only"> of the ${source} price (opens in a new tab)</span></a>`
+      : '';
+  return html`<span class="${cx('price', size && `price--${size}`, (planText || link) && 'price--detail')}">
     ${main}
+    ${planText ? html`<span class="price__plan">${planText}</span>` : ''}
     ${unit ? html`<span class="price__unit">${unit}</span>` : ''}
-    ${plan && p.plan ? html`<span class="price__unit">${p.planLabel || p.plan}</span>` : ''}
-    ${checked && p.checkedAt ? html`<span class="price__unit">Checked ${time(ctx, p.checkedAt)}</span>` : ''}
+    ${date || link ? html`<span class="price__src">${date}${date && link ? ' · ' : ''}${link}</span>` : ''}
   </span>`;
 }
 
@@ -172,6 +187,8 @@ export const sourceLink = (url, label = 'Source') =>
  * Ranked product table. `rows` = [{ vendor, note? }], all scored in `categoryId`.
  * opts: { id, caption, rank: true, pickable: true, focalId, focalTag, sortable: true, ai: true, priceChecked: false,
  *         action: (vendor) => Raw (adds a trailing column), actionLabel, actionClass }
+ * priceChecked: every price carries its provenance — the plan, the check date and the official pricing source (the
+ * category ranking, as on the live category cards; the other tables show the price only, as their live cards did).
  * Each <tr> carries data-* used by js/table.js for instant sort + filter (never changes the score).
  */
 export function productTable(ctx, categoryId, rows, opts = {}) {
@@ -227,7 +244,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
             </a>
           </th>
           <td class="ptable__c-score"><button type="button" class="scorebtn" data-score-pop="${categoryId}:${vendor.id}" aria-haspopup="dialog" aria-expanded="false" title="Why this score?">${scoreToken(ctx, s)}<span class="sr-only"> — open the score breakdown</span></button></td>
-          <td class="ptable__c-price">${priceCell(ctx, p, { checked: priceChecked })}</td>
+          <td class="ptable__c-price">${priceCell(ctx, p, priceChecked ? { checked: true, plan: true, source: vendor.name } : {})}</td>
           ${ai ? html`<td class="ptable__c-ai">${aiTag(ctx, vendor)}</td>` : ''}
           ${action ? html`<td class="${actionClass}">${action(vendor)}</td>` : ''}
         </tr>`;

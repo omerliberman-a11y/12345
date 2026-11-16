@@ -86,6 +86,9 @@ Rules that keep every page consistent:
   It writes the `/go/{id}/?intent=&from=` URL, the five `data-outbound-*` attributes analytics reads, the right
   `rel`, and — for affiliate vendors — the visible "Ad · affiliate link" label. The layout adds the page-level
   affiliate notice automatically when a page contains an affiliate link. Never link `vendor.url` directly as a CTA.
+  When one action has to sit in two places for two layouts (the product profile's Visit / shortlist pair: under the
+  name below 62em, in the decision block from 62em), both copies come from the same call and CSS renders exactly one
+  at any width (`display: none` on the other), so tracking, `rel` and the label stay identical.
   Links to cited sources are plain followed links: `ui.sourceLink(url, label)` / `ui.sources(list)`.
 - **Scores**: use `ctx.score(categoryId, vendorId)` (`value`, `pending`, `checked`, `total`, `coveragePct`,
   `recommended`, `groups`, `rows`, verbatim `valueText`/`coverageText`/`documentedText`). Never compute a
@@ -102,7 +105,9 @@ Rules that keep every page consistent:
   desktop are preloaded, with a desktop media query.
 - **Prices**: use `ctx.price(vendor, categoryId)` (`headline`, `unit`, `billingNote`, `plan`, `checkedAt`,
   `sourceUrl`, `summary`, `extras`, `hasAmount`, `state`, `basis`). Render with `ui.priceCell` (it prints the
-  recorded pricing basis under "Custom quote" / "Usage-based" / "Price not verified"). In the `sms-marketing`
+  recorded pricing basis under "Custom quote" / "Usage-based" / "Price not verified"; options `plan`, `checked` and
+  `source: vendor.name` add the plan, the check date and "Source ↗", a direct, followed new-tab link to `sourceUrl`
+  — a cited source like the live cards' "Official pricing source", never `/go/`). In the `sms-marketing`
   context some vendors intentionally show "SMS price not verified" — always pass the category id.
 - **Category-specific data**: a vendor has a different score per category. The price context and default
   comparison scope of a vendor is `ctx.primaryCategory(vendor)`; sections per category use
@@ -138,7 +143,10 @@ Rules that keep every page consistent:
 - Plain words in the interface: "Score", "checked", "Score pending", "Shortlist", "Source", "How we score".
 - Every interactive target ≥ 44px tall on touch; visible focus; no horizontal page scroll at 390px (wide
   tables go inside `<div class="scroller">`); no nested vertical scrolling ever.
-- Sticky chrome budget: header (56/64px) + optional `.subnav` (48px) + compare tray when non-empty.
+- Sticky chrome budget: header (56/64px) + optional `.subnav` (48px) + compare tray when non-empty. On category
+  pages the `.subnav` takes no room in the first screen: it waits under the opaque page head (`.cat-top`, stacked
+  above it, `margin-top: -(3rem + 1px)` on the menu) and comes into view, sticky, as the head scrolls away; keyboard
+  focus raises it at once (category.css; CSS only, so it also works without script).
 - Page CSS goes in `src/assets/css/pages/<module>.css` and must be namespaced with a page prefix
   (`.sw-…`, `.vs-…`). Do not edit tokens/base/layout/components CSS or the shared lib files from a page task;
   if a shared change is needed, note it in your report.
@@ -153,7 +161,9 @@ Rules that keep every page consistent:
 `ui.searchField` · `ui.time` · `ui.tag` · `ui.tableNote` · `ui.methodSentence` · `ui.icon(name)` ·
 `ui.dated(text)` (plain generated text → HTML with every printed date in `<time>`; `ui.answer` and `ui.faq`
 apply it to string input). `ui.productTable` options: `action(vendor)` + `actionLabel` + `actionClass` add a
-trailing column; `focalId`/`focalTag` mark the reference row; `priceChecked` prints the price-check date;
+trailing column; `focalId`/`focalTag` mark the reference row; `priceChecked` prints each price's provenance —
+plan (beside the amount from 48em; screen-reader text on phones, where a row keeps one price line when it fits),
+"Checked <date> · Source ↗" (category pages, as the live category cards; other tables show the price only, as theirs did);
 `lazyFrom` (default 4) lazy-loads row logos after the rows a first screen shows; `eagerIds` (a Set) keeps the
 first rows of a table the script re-orders eager.
 - `ui.answer(ctx, text, { label, meta, more })`: with `more: true` the passage is clamped to 3 lines on phones with a
@@ -171,9 +181,28 @@ Layout rules learned the hard way:
 - Phone product rows: a compact plate floated beside the name, the fit line and price at full width under it.
 - Script-rendered tools reserve their space before the first paint (compare mount min-height while empty or
   loading; the shortlist paints only its status line while `data-state="loading"`; `/search/` results keep a
-  min-height) — target CLS under 0.1, also when the script arrives late.
+  min-height) — target CLS under 0.1, also when the script arrives late. The cost calculator (`[data-cost]`,
+  js/cost.js sets `data-state` "loading" → "ready") keeps its fine print and everything after it unpainted from the
+  first paint until its first state is drawn — an element hidden only after it was painted still counts as moved
+  when it reappears — with a 2.5s CSS fallback if the script never runs. Its sticky totals bar shares a grid cell
+  with the inputs, so it can grow (names wrap, amounts never shorten; with the text-size preference a phone shows
+  one product per line) without taking room in the page.
+- Text that only just fits a line can wrap with the fallback face and not with the web font: re-run a fallback-vs-
+  web-font row-height comparison after changing table text (the price cell's end padding was chosen that way).
+- The compare tray is filled while it is still below the screen and slides in a frame later (core.js
+  `renderTray`): growing and appearing in the same frame counted as a layout shift on every page. A closed tray is
+  `visibility: hidden` once it has slid away, so Tab never reaches its old buttons.
 - Do not use `content-visibility` on blocks above anchored sections: placeholder heights moved 434 deep links
   under the sticky header.
+- Category first screen (category.mjs, category-factual.mjs): head → quick answer (with the evidence line as a
+  column beside it from 75em) → filters. The sort is a native `<select>` laid over a chip-sized face that table.js
+  keeps in step (phones show "Sort" only); it is placed from the right so the filter chips' widths, which change a
+  little when the web font replaces its fallback, never move it (a 3px move counts as layout shift). Phones: the
+  filter chips scroll sideways with the sort pinned at the end, and the live count is its own line above the rows.
+  A chip reached by keyboard is scrolled fully into view (table.js). The must-have panel is a disclosure (no focus
+  trap): a popover on wide screens (fitted to the room below its chip), a full-width bottom sheet over a dimmed page on phones (the backdrop is the
+  toolbar's `::after`, so a tap on it counts as outside), with a footer holding the live "n of N match" count and a
+  Done button that closes it and returns focus to its chip.
 
 CSS building blocks: `.wrap`, `.wrap--narrow`, `.section`, `.section--tint`, `.section-head`, `.page-head`,
 `.eyebrow`, `.lede`, `.trustline`, `.btn` (`--ghost --quiet --soft --sm --lg`), `.chip` / `.chips`, `.tag`,
@@ -196,15 +225,25 @@ prices, logos — about 35 KB gzip, loaded after the palette has painted); `SC.s
 resolves after part 2 (descriptions, features, integrations, best-for, AI capabilities, guide headings) is merged.
 Entries carry no URL when `urlOf(type, id, …)` in search.js can rebuild it. The palette's Enter opens the Best
 match (`data-top`): "X vs Y", "A vs B vs C", "compare A and B", "X alternatives", "X pricing", a product's name, a
-category's exact name or synonym, or the site's own page / FAQ answer for questions about the site; Shift+Enter
-opens /search/. `SC.searchLimit` (120 characters, 20 words) and its message are shared by the palette, /search/
-and the directory filters. The site's own vocabulary lives in `data/content/search-aliases.json` under `pages`
+category's exact name or synonym, or the site's own page / FAQ answer for questions about the site; "X vs", "X v",
+"X or", "compare X" (X named exactly, no second product yet) open the compare tool with X chosen
+(`/compare/?scope=<category>&a=<id>`; a documentary supplier: its category's `#factual-comparison`), listed above
+X's head-to-heads. When nothing answers the query outright (`r.direct === false`, e.g. a loosely typed "crm vs") the
+first group is titled "Suggestions" and has no `data-top`; Enter then opens /search/, and the palette footer says
+so ("Enter for all results"). Shift+Enter always opens /search/. `SC.searchLimit` (120 characters, 20 words) and
+its message are shared by the palette, /search/ and the directory filters. The site's own vocabulary lives in
+`data/content/search-aliases.json` under `pages`
 (by URL) and `faq` (by /faq/ item id); avoid words that also name software.
 
 Shortlist storage: `replace`, `remove`, `clear` and `setPlan` return `true` once saved and `false` when the
 browser refused (private mode, blocked storage); the list is then kept in memory for the page view,
-`SC.shortlist.saved()` is `false`, and nothing says "saved". Every page repairs the saved list against
-`vendors.js` (rows `[name, logo, darkSurface, primaryCategoryId, wideWordmark, [indexes into scored]]`): unknown
+`SC.shortlist.saved()` is `false`, and nothing says "saved". The tray then says so for as long as it shows: its
+label ends "· this page only" from 48em, and below 48em a "Not saved · Kept only until you leave this page" line
+sits above the chips (the full sentence is the `aria-describedby` of that tag and of the tray's compare link); the
+header link's hidden "saved" after the count then reads "not saved".
+On phones a one-product tray drops "Clear" (the chip's × does the same) and wraps "Add one more to compare" in
+two lines; at any width the actions move under the chips rather than push them out. Every page repairs the saved
+list against `vendors.js` (rows `[name, logo, darkSurface, primaryCategoryId, wideWordmark, [indexes into scored]]`): unknown
 products and products from another category are dropped, a list with an unknown or documentary category is
 dropped, a missing category is inferred, and the list is written back in the old shape. `SC.shortlist.ready()`
 resolves after that check; `SC.shortlist.repairNote()` returns what was removed (shown once on /shortlist/).
@@ -222,8 +261,9 @@ Messages and focus (keyboard and screen-reader users must be able to reach every
   (class `.evpop`, role dialog). Tab past its last link continues after the trigger; Shift+Tab before its first
   link closes it and returns to the trigger. Title it with `<p class="evpop__title">`, not a heading.
 - `SC.syncBottomPad()` keeps `scroll-padding-bottom` on `<html>` equal to the tray, consent panel or toast that is
-  showing, so a focused control is never hidden under them. `SC.focusAfter(el)` moves focus to the next focusable
-  element after `el`.
+  showing, so a focused control is never hidden under them; a tray taller than the 4.5rem `body.has-tray` keeps
+  free (the "Not saved" line, wrapped rows at a large text size) also sets the body's bottom padding and lifts the
+  toasts above it. `SC.focusAfter(el)` moves focus to the next focusable element after `el`.
 - The hero search field opens the palette on click, typing, Enter, ArrowDown or `/` — never on focus — so Tab
   passes through it. `a[role=button]` triggers (`data-search-open`, `data-menu-open`) answer to Space and carry
   `aria-haspopup="dialog"` + `aria-expanded`.
@@ -231,7 +271,9 @@ Messages and focus (keyboard and screen-reader users must be able to reach every
 Any element with `data-shortlist="<vendorId>" data-category="<categoryId>" data-name="…"` is a working
 shortlist toggle. Any element with `data-score-pop="<categoryId>:<vendorId>"` opens the score breakdown
 ("Why not 100?") — `ui.productTable` already does this for every score cell. `data-search-open`,
-`data-copy="url"`, `data-pop` (popover `<details>`, closes when focus leaves it), `data-tabs`, `data-subnav`,
+`data-copy="url"`, `data-pop` (popover `<details>`, closes when focus leaves it — give its panel `tabindex="-1"` as
+`ui.scoreHelp` and the must-have panel do, or a press on the panel's text moves focus to `<main tabindex="-1">` and
+closes it mid-press, which crashed Chromium's renderer), `data-tabs`, `data-subnav`,
 `data-toc` and `data-mega` (closes when focus leaves it) are wired automatically. On category pages every
 capability-matrix cell button gets an accessible name built from its row and column headers
 ("Pipedrive, Contacts and relationship records: Supported").

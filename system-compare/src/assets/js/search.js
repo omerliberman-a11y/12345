@@ -14,6 +14,9 @@
  *   "helpdesk", "newsletter"     → synonyms → category
  *   "a vs b vs c", "compare a and b", "a or b", "a, b and c"
  *                                → the published head-to-head (two products) or the compare tool (2–4)
+ *   "attio vs", "attio or", "compare attio"
+ *                                → the compare tool with that product chosen (a documentary supplier: the
+ *                                  criteria comparison on its category page), then its head-to-heads
  *   "how we score", "corrections", "how do you make money"
  *                                → the site's own page or FAQ answer as the best match
  *
@@ -304,6 +307,15 @@
       return docs.some(function (x) { return x.type === 'comparison' && x.pair && x.pair.indexOf(a.id) >= 0 && x.pair.indexOf(b.id) >= 0; }) ||
         (a.profile && b.profile && a.cats.some(function (id) { return b.cats.indexOf(id) >= 0 && cats[id] && cats[id][1] === 's'; }));
     }
+    /** "Compare X with another product": the compare tool with X chosen, in X's first scored category; for a
+     *  documentary supplier, the criteria comparison of the suppliers on its category page. */
+    function compareWith(f) {
+      var s = f.profile ? f.cats.filter(function (id) { return cats[id] && cats[id][1] === 's'; })[0] : null;
+      if (s) return { type: 'compare', id: 'compare:' + f.id, name: 'Compare ' + f.name + ' with another product', url: '/compare/?scope=' + s + '&a=' + f.id, sub: 'Choose from ' + cats[s][2] + ' ' + cats[s][0] + ' products', why: 'Compare tool' };
+      var c = f.cats.filter(function (id) { return cats[id] && cats[id][1] === 'f'; })[0];
+      if (c) return { type: 'compare', id: 'compare:' + f.id, name: 'Compare ' + f.name + ' with the other suppliers', url: '/categories/' + c + '/#factual-comparison', sub: 'Criteria table · ' + cats[c][0], why: 'Criteria comparison' };
+      return null;
+    }
     /** The published head-to-heads that include product f, against the best-documented products first. */
     function comparisonsOf(f) {
       var other = function (c) { var id = c.pair[0] === f.id ? c.pair[1] : c.pair[0], o = byId('product', id); return o && o.best != null ? o.best : -1; };
@@ -325,7 +337,7 @@
         a = resolveProduct(m[1]); b = resolveProduct(m[2]);
         // one or two letters after "vs" are the start of a name ("pipedrive vs s"): unless they already point
         // at a product that can be compared with the first one, list the first product's comparisons instead
-        if (a && m[2].trim().length < 3 && !(b && b !== a && pairable(a, b))) { q.vsOf = a; q.vsNext = m[2].trim(); s = ' ' + m[1] + ' '; }
+        if (a && m[2].trim().length < 3 && !(b && b !== a && pairable(a, b))) { q.vsOf = a; q.vsSure = strictProduct(m[1]) === a; q.vsNext = m[2].trim(); s = ' ' + m[1] + ' '; }
         else if (a && b && a !== b) q.intent = { kind: 'vs', a: a, b: b };
       }
       if (!q.intent && ((m = s.match(/^\s*(.+?)\s+(?:alternatives?|competitors?|replacements?|substitutes?)\s*$/)) ||
@@ -338,7 +350,17 @@
       // so list that product's comparisons (and match on the name alone).
       if (!q.intent && !q.vsOf && (m = s.match(/^\s*(.+?)\s+(?:vs?\.?|versus|compared(?: to| with)?|against)\s*$/))) {
         a = resolveProduct(m[1]);
-        if (a) { q.vsOf = a; s = ' ' + m[1] + ' '; }
+        // vsSure: the name is typed exactly or names one product only ("zoho vs" could be Zoho Books or Zoho CRM)
+        if (a) { q.vsOf = a; q.vsSure = strictProduct(m[1]) === a; s = ' ' + m[1] + ' '; }
+      }
+      // "attio or", "attio compare", "compare attio", "compare attio with": the same, for a product named exactly
+      // ("email or" stays a search for email tools; "compare attio and folk" is read below)
+      if (!q.intent && !q.vsOf) {
+        [/^\s*compare\s+(.+?)(?:\s+(?:with|to|and|or|&|vs\.?|versus|v\.?|against))?\s*$/, /^\s*(.+?)\s+(?:or|compare|comparisons?)\s*$/].some(function (re) {
+          var mm = s.match(re), p = mm && strictProduct(mm[1]);
+          if (p) { q.vsOf = p; q.vsSure = true; s = ' ' + mm[1] + ' '; }
+          return !!p;
+        });
       }
       // "a vs b vs c", "compare a and b", "a or b", "a, b and c": two products are a head-to-head, more go to the tool
       if (!q.intent && !q.vsOf) {
@@ -548,10 +570,13 @@
           mine = mine.filter(opp).concat(mine.filter(function (c) { return !opp(c); }));
         }
         if (q.vsOf) {
+          // "X vs", "X or", "compare X" with no second product yet: comparing X with one still to choose leads
+          // (Enter opens it when X is named exactly), then X's published head-to-heads
+          var tool = compareWith(focus);
+          if (tool) top.push(tool);
           mine.slice(0, 6).forEach(function (c) { top.push(ext(c, { why: 'Head-to-head comparison' })); });
-          var scope = focus.profile ? focus.cats.filter(function (id) { return cats[id] && cats[id][1] === 's'; })[0] : null;
-          if (scope) top.push({ type: 'compare', id: 'compare:' + focus.id, name: 'Compare ' + focus.name + ' with another product', url: '/compare/?scope=' + scope + '&a=' + focus.id, sub: 'Choose from ' + cats[scope][2] + ' ' + cats[scope][0] + ' products', why: 'Compare tool' });
           if (!top.length) top.push(ext(focus));
+          direct = !!(tool && q.vsSure);
         } else {
           top.push(ext(focus));
           mine.slice(0, 3).forEach(function (c) { top.push(ext(c, { why: 'Head-to-head comparison' })); });

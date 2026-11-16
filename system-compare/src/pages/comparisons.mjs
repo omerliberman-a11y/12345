@@ -1,7 +1,8 @@
-// /comparisons/ — the comparison library: every published head-to-head on ONE line, grouped by the 10
+// /comparisons/ — the comparison library: every published head-to-head as ONE list row, grouped by the 10
 // groups and then by category, with an instant filter. Scored pairs show both scores, documentary pairs
 // say "Documented plans", the three editorial briefs say "Editorial". A pair is listed under its own
-// category only (the checklist it was compared on).
+// category only (the checklist it was compared on). Each group shows its first categories on one row and
+// folds the rest into one "N more comparisons in …" disclosure (see LEAD).
 
 import { html, text, attrs } from '../lib/html.mjs';
 import * as ui from '../lib/components.mjs';
@@ -13,9 +14,20 @@ export function routes(ctx) {
   return [{ path: ctx.url.comparisons(), render }];
 }
 
-// Pairs listed per category before the rest folds into "N more …" (every link stays in the HTML; the filter
-// opens the folded lists while it is on — js/directory.js).
-const SHOWN = 1;
+// A group opens with its first categories, whole and in the published order, up to LEAD pairs (always at least
+// the first category: one row of four on wide screens); its other categories fold into one native <details>.
+// Every link stays in the HTML (crawlable, and it opens without JavaScript); the filter opens the folds while
+// it is on (js/directory.js, details[data-ix-fold]).
+const LEAD = 4;
+/** Splits a group's categories into the shown lead and the folded rest, without changing their order. */
+function splitLead(categories) {
+  let k = 0;
+  let n = 0;
+  while (k < categories.length && (k === 0 || n + categories[k].items.length <= LEAD)) n += categories[k++].items.length;
+  return { lead: categories.slice(0, k), rest: categories.slice(k) };
+}
+/** "A, B and C" */
+const andList = (names) => (names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`);
 
 function render(ctx) {
   const path = ctx.url.comparisons();
@@ -84,28 +96,29 @@ function render(ctx) {
     { label: 'Category groups' },
   );
 
+  /** A category: its heading (a link to the category page) and all of its pairs. `span` = columns it takes in the lead row. */
+  const block = ({ category: c, items }, span) => html`<div${attrs({ class: 'ix-cmp__cat', 'data-ix-cat': c.id, 'data-span': span ? Math.min(items.length, LEAD) : null })}>
+    <h3><a href="${ctx.url.category(c.id)}">${c.name}</a></h3>
+    <ul class="linklist">${items.map(row)}</ul>
+  </div>`;
+
   const body = html`<div class="wrap ix-groups ix-cmp" data-ix="comparisons">
-    ${groups.map(
-      ({ group: g, categories }) => html`<section class="ix-group" id="${g.id}" aria-labelledby="${g.id}-h" data-ix-group>
+    ${groups.map(({ group: g, categories }) => {
+      const { lead, rest } = splitLead(categories);
+      const more = rest.reduce((n, c) => n + c.items.length, 0);
+      return html`<section class="ix-group" id="${g.id}" aria-labelledby="${g.id}-h" data-ix-group>
         <div class="ix-group__head"><h2 id="${g.id}-h">${g.label}</h2><p>${g.blurb}</p></div>
-        <div class="ix-cmp__cols">
-          ${categories.map(
-            ({ category: c, items }) => html`<div class="ix-cmp__cat" data-ix-cat="${c.id}">
-              <h3><a href="${ctx.url.category(c.id)}">${c.name}</a></h3>
-              <ul class="linklist">${items.slice(0, SHOWN).map(row)}</ul>
-              ${
-                items.length > SHOWN
-                  ? html`<details class="ix-cmp__more" data-ix-fold>
-                      <summary>${items.length - SHOWN} more ${items.length - SHOWN === 1 ? 'comparison' : 'comparisons'}<span class="sr-only"> in ${c.name}</span></summary>
-                      <ul class="linklist">${items.slice(SHOWN).map(row)}</ul>
-                    </details>`
-                  : ''
-              }
-            </div>`,
-          )}
-        </div>
-      </section>`,
-    )}
+        <div class="ix-cmp__lead">${lead.map((c) => block(c, true))}</div>
+        ${
+          rest.length
+            ? html`<details class="ix-cmp__more" data-ix-fold>
+                <summary><span><b>${more} more ${more === 1 ? 'comparison' : 'comparisons'}</b> in ${andList(rest.map((c) => c.category.name))}</span></summary>
+                <div class="ix-cmp__cols">${rest.map((c) => block(c, false))}</div>
+              </details>`
+            : ''
+        }
+      </section>`;
+    })}
     ${emptyState('comparison')}
     <p class="table-note">Numbers are <a href="/methodology/">documented-fit scores</a> out of 100 on the category checklist, from official documentation checked on the date shown — not customer ratings or hands-on tests. “pending” means less than 80% of the checklist weight has been checked for that product. “Documented plans” compares named plans from dated sources without a score. “Editorial” is a buying brief with its own sources.</p>
   </div>`;
@@ -128,7 +141,7 @@ function render(ctx) {
   const faq = html`<div class="section ix-faq">
     <div class="wrap wrap--narrow">
       ${ui.faq(ctx, faqItems, { heading: 'Questions about the comparisons', open: 0 })}
-      <p class="ix-after"><a class="btn btn--ghost" href="/compare/">Compare any two products</a></p>
+      <p class="ix-after ix-cmp__after"><a class="btn btn--ghost" href="/compare/">Compare any two products</a></p>
     </div>
   </div>`;
 

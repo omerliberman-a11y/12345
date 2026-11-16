@@ -1,38 +1,90 @@
-/* Category page */
-/* the first screen leads to the ranking: tight steps from the title to the answer, the section menu and the filters */
-.page-head.cat-head { padding-block: var(--s-4) var(--s-5); }
+/* Category page (scored and documentary: category.mjs, category-factual.mjs) */
+/* ---------------------------------------------------------------- first screen
+   The page head is one opaque block (.cat-top: title, buyer question, evidence line, quick answer) and the ranking's
+   filters follow it directly. The section menu after it (.subnav, sticky under the site header) is drawn under the
+   head's last 3rem while the head is in view, so it takes no room in the first screen; as the head scrolls away the
+   menu comes out from under it and stays sticky as before. Keyboard focus brings it forward at once. This is plain
+   sticky positioning and stacking: no script, nothing moves, and without CSS the menu is simply in the flow. */
+.cat-top { position: relative; z-index: 61; background: var(--bg); }
+.cat-top + .subnav { margin-top: calc(-3rem - 1px); } /* the menu's own height: 3rem links + the 1px rule */
+.cat-top + .subnav:focus-within { z-index: 62; }
+.page-head.cat-head { padding-block: var(--s-4) var(--s-6); }
 /* "{Category} software: N tools compared" fits one line in the 75rem column (all 66 titles at 1440px): no early wrap */
 .cat-head h1 { max-width: none; }
+/* the buyer's question shares the answer's measure (54rem), so most fit one line and the two share a right edge */
+.cat-head .lede { max-width: 54rem; }
+.cat-sum > .answer { margin-top: var(--s-5); }
+/* wide screens: the run-in "Quick answer" float is a hair shorter than the answer's 1.8rem line (rounding made it
+   indent the second line too at 150% text); the offset keeps the two baselines together */
+@media (min-width: 48em) { .cat-sum .answer__label { top: 0.175rem; line-height: 1.7rem; } }
+/* wide screens: the evidence line is a short column beside the answer instead of a row above it */
+@media (min-width: 75em) {
+  .cat-sum { display: grid; grid-template-columns: minmax(0, 54rem) minmax(13rem, 1fr); column-gap: var(--s-10); align-items: start; margin-top: var(--s-5); }
+  .cat-sum > .answer { grid-area: 1 / 1; margin-top: 0; }
+  .cat-sum > .trustline { grid-area: 1 / 2; flex-direction: column; row-gap: 0.3rem; margin-top: 0; padding: 0.45rem 0 0 var(--s-6); border-left: 1px solid var(--line); }
+  .cat-sum > .trustline > * { margin: 0; padding: 0; }
+  .cat-sum > .trustline > *::before { content: none; }
+}
+/* the answer block under a plain page head (documentary /vs/ pages, vs-factual.mjs) */
 .cat-answer { padding-bottom: var(--s-5); }
-.cat-products { padding-top: var(--s-4); padding-bottom: var(--s-10); }
+@media (max-width: 47.99em) { .cat-answer { padding-bottom: var(--s-4); } }
+.cat-products { padding-top: var(--s-1); padding-bottom: var(--s-10); }
 .cat-products .toolbar { padding-top: 0; padding-bottom: var(--s-2); }
-/* filters left; the live count, the score help and the sort share the row on the right (their own line on phones) */
-.cat-toolbar__end { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--s-2) var(--s-3); margin-left: auto; min-width: 0; }
-.cat-products .toolbar__count { margin: 0; min-width: 0; }
+/* filters left; the sort, the live count and the score help at the right end of the row (the sort is placed from the
+   right, so the filters' widths never move it, also not when the web font replaces its fallback) */
 .cat-chips { min-width: 0; }
-.toolbar__sort { margin-left: auto; }
+.cat-toolbar__end { display: flex; align-items: center; gap: var(--s-2); min-width: 0; }
+.cat-products .toolbar__count { margin: 0; min-width: 0; }
+/* the sort: a chip-sized face showing the current order, with the native <select> laid over it (it gets the taps,
+   the keyboard and the screen reader; the face is hidden from assistive technology) */
+.cat-sort {
+  position: relative;
+  flex: none;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.35rem 2.1rem 0.35rem 0.85rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6.5l4 4 4-4' fill='none' stroke='%233a3e50' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 0.75rem center / 0.95rem;
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  color: var(--ink-2);
+  white-space: nowrap;
+  transition: border-color var(--dur) var(--ease);
+}
+.cat-sort:hover { border-color: var(--ink-3); }
+.cat-sort__face b { font-weight: 600; color: var(--ink); }
+.cat-sort__select { position: absolute; top: -1px; left: -1px; width: calc(100% + 2px); height: calc(100% + 2px); margin: 0; padding: 0; border: 0; border-radius: inherit; opacity: 0; font-size: 1rem; cursor: pointer; appearance: none; -webkit-appearance: none; }
+.cat-sort:has(> .cat-sort__select:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (pointer: coarse), (max-width: 47.99em) { .cat-sort { min-height: var(--tap); } }
 @media (max-width: 47.99em) {
-  .cat-toolbar__end { flex: 1 1 100%; flex-wrap: nowrap; justify-content: space-between; }
-  /* the count keeps room for whole words; the sort gives way first, and under 375px the count takes its own line */
-  .cat-toolbar__end .toolbar__count { flex: 1 1 auto; min-width: 6rem; }
-  .cat-toolbar__end .pop { flex: none; margin-left: 0; }
-  .cat-toolbar__end .toolbar__sort { flex: 0 1 auto; min-width: 0; margin-left: 0; }
-  .cat-toolbar__end .toolbar__sort .select { width: 100%; }
-  /* phones: the filters are one row that scrolls sideways from edge to edge; the right edge fades to show there is
-     more (the must-have panel is a bottom sheet here, so the scroller never clips it) */
-  .cat-chips { position: relative; flex: 1 1 100%; margin-inline: calc(-1 * var(--gutter)); }
+  /* the buyer's question at body size, and slightly tighter steps down to the filters */
+  .cat-head .lede { margin-top: var(--s-3); font-size: var(--fs-md); line-height: 1.5; }
+  .cat-sum > .trustline { margin-top: var(--s-3); }
+  .cat-sum > .answer { margin-top: var(--s-4); }
+  .page-head.cat-head { padding-bottom: var(--s-5); }
+  .cat-products { padding-top: 0; }
+  /* phones: the filters are one row that scrolls sideways from the left edge, with the sort pinned at its end; the
+     row's right edge fades to show there is more (the must-have panel is a bottom sheet here, so the scroller never
+     clips it). The count is the line under them, right above the first product. */
+  .cat-toolbar { column-gap: var(--s-2); row-gap: var(--s-1); }
+  .cat-chips { position: relative; flex: 1 1 0; margin-left: calc(-1 * var(--gutter)); }
   .cat-chips .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 0.3rem 2rem 0.3rem var(--gutter); scroll-padding-inline: var(--gutter) 2rem; }
   .cat-chips .chips::-webkit-scrollbar { display: none; }
   .cat-chips::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2rem; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; }
-  .cat-toolbar { row-gap: var(--s-1); }
-  /* the buyer's question at body size, and slightly tighter steps down to the filters */
-  .cat-head .lede { margin-top: var(--s-3); font-size: var(--fs-md); line-height: 1.5; }
-  .page-head.cat-head { padding-bottom: var(--s-4); }
-  .cat-answer { padding-bottom: var(--s-4); }
-  .cat-products { padding-top: var(--s-3); }
+  .cat-sort__v { display: none; }
+  .cat-toolbar__end { flex: 1 1 100%; }
+  /* the score help keeps its 44px target without making the count line 44px tall */
+  .cat-toolbar__end .pop > summary { margin-block: -0.6rem; }
 }
-@media (max-width: 23.4em) {
-  .cat-toolbar__end { flex-wrap: wrap; row-gap: var(--s-1); }
+/* phones (the answer is 16px / 1.55 below 40em, components.css): the "Quick answer" label runs into the first of the
+   three lines, as it does on wide screens. Its text is 6.5em of the answer text wide (12px uppercase against 16px),
+   so the first line starts after it and a gap; its line box matches the answer's, nudged so the baselines meet. */
+@media (max-width: 39.99em) {
+  .cat-sum .answer__label { position: absolute; top: calc(var(--s-1) + 0.09rem); left: var(--s-5); margin: 0; line-height: 1.55rem; }
+  .cat-sum .answer > p:first-of-type { text-indent: calc(6.5em + 0.6rem); }
 }
 /* wide screens: ranking rows no taller than their content needs (name, two-line fit, dated price) */
 @media (min-width: 48em) {
@@ -41,10 +93,30 @@
   .cat-products .prod__fit { line-height: 1.35; }
 }
 
-/* must-have capabilities popover */
+/* must-have capabilities: a popover under its chip on wide screens, a full-width bottom sheet over a dimmed page on
+   phones. Its footer keeps the live match count and a Done button in view while the list scrolls. It stays a
+   disclosure (no focus trap): Done, Escape, a tap outside or tabbing past it close it (core.js, js/table.js). */
 .mustpop > summary.chip { cursor: pointer; }
 .mustpop[open] > summary.chip { border-color: var(--ink); }
-.mustpop__panel { width: min(26rem, calc(100vw - 2 * var(--gutter))); max-height: min(28rem, 70vh); overflow: auto; overscroll-behavior: contain; }
+.mustpop .mustpop__panel { display: flex; flex-direction: column; width: min(26rem, calc(100vw - 2 * var(--gutter))); max-height: min(30rem, 70vh); padding: 0; overflow: hidden; }
+.mustpop__body { flex: 1 1 auto; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: var(--s-4); }
+.mustpop__title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.mustpop__title + p { margin-top: 0; }
+.mustpop__foot { flex: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-top: 1px solid var(--line); background: var(--bg); }
+.mustpop__n { margin: 0; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.mustpop__n b { color: var(--ink); }
+.mustpop__foot .btn { min-width: 5.5rem; }
+/* without a script the filters cannot act, so nothing promises they do: no count, no Done button */
+html:not(.js) .mustpop__foot { display: none; }
+@media (max-width: 47.99em) {
+  .mustpop .mustpop__panel { left: 0; right: 0; bottom: 0; width: auto; max-height: min(70dvh, 40rem); border-width: 1px 0 0; border-radius: var(--r-surface) var(--r-surface) 0 0; }
+  .mustpop__title { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; font-size: var(--fs-md); }
+  .mustpop__title + p { margin-top: var(--s-1); }
+  .mustpop__body { padding: var(--s-5) var(--gutter) var(--s-4); }
+  .mustpop__foot { padding: var(--s-3) var(--gutter) max(var(--s-3), env(safe-area-inset-bottom)); }
+  /* the page behind the sheet is dimmed: a tap there closes the sheet (core.js closes a popover on any tap outside it) */
+  .js .cat-toolbar:has(.mustpop[open])::after { content: ""; position: fixed; inset: 0; z-index: 129; background: rgba(17, 19, 31, 0.45); }
+}
 .mustpop fieldset { border: 0; padding: 0; margin: var(--s-3) 0 0; }
 .mustpop legend { padding: 0; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
 .mustpop .check { min-height: 2.5rem; padding: 0.35rem 0; font-size: var(--fs-sm); }
@@ -52,6 +124,8 @@
 .chip[data-on="1"] .n { color: #c9ccdb; }
 
 .cat-matrix .toolbar { justify-content: space-between; }
+/* large text on a narrow screen: the matrix's view chips wrap their words instead of pushing the page sideways */
+.cat-matrix .toolbar .chip { white-space: normal; text-align: left; }
 .matrix thead th a span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-weight: 600; }
 .matrix thead th a:hover { color: var(--brand); text-decoration: none; }
 
@@ -63,6 +137,10 @@
   .cat-two .dtable th, .cat-two .dtable td { padding-inline: 0.4rem; }
   .cat-two .dtable tr > :first-child { padding-left: 0; }
   .cat-two .dtable tr > :last-child { padding-right: 0; }
+  /* large text (html[data-a11y-size]): the score-weights table keeps to the column (a long word may hyphenate) */
+  html[data-a11y-size] .cat-weights { table-layout: fixed; }
+  html[data-a11y-size] .cat-weights thead th:first-child { width: 46%; }
+  html[data-a11y-size] .cat-weights :is(th, td) { overflow-wrap: anywhere; hyphens: auto; }
 }
 @media (min-width: 62em) { .cat-two { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-14); } }
 .cat-aside h3 { font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; margin-bottom: var(--s-3); }
@@ -72,6 +150,8 @@
 .cat-criteria b { display: block; font-weight: 600; }
 .cat-criteria span { display: block; font-size: var(--fs-sm); color: var(--ink-2); }
 .cat-demo { max-width: 70ch; }
+/* large text (html[data-a11y-size]): a comparison's scores ("100 vs pending") go under its name when both do not fit */
+html[data-a11y-size] .cat-vs .linklist a { flex-wrap: wrap; column-gap: var(--s-3); }
 
 /* the "at a glance" figures under the first table (scored and documentary categories) */
 .cat-glance { margin-top: var(--s-8); padding-top: var(--s-6); border-top: 1px solid var(--line); }

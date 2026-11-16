@@ -266,14 +266,24 @@
       else b.setAttribute('aria-label', (onNow ? 'Remove ' + name + ' from' : 'Add ' + name + ' to') + ' shortlist');
       var row = b.closest('tr'); if (row) row.classList.toggle('is-picked', onNow);
     });
-    $$('[data-shortlist-count]').forEach(function (c) { c.textContent = o.ids.length; c.setAttribute('data-n', o.ids.length); });
+    $$('[data-shortlist-count]').forEach(function (c) {
+      c.textContent = o.ids.length; c.setAttribute('data-n', o.ids.length);
+      // the header link reads "Shortlist 2 saved"; while the browser refuses to store the list it must not say so
+      var s = c.nextElementSibling;
+      if (s && s.classList.contains('sr-only')) s.textContent = memList && o.ids.length ? ' not saved' : ' saved';
+    });
   }
 
   // Fixed bars at the bottom of the screen (the tray, the privacy choices) must never hide the focused
-  // element: while they show, their height is reserved as scroll padding (WCAG 2.4.11).
+  // element: while they show, their height is reserved as scroll padding (WCAG 2.4.11). A tray taller than the
+  // 4.5rem the page keeps free for it (the "Not saved" line, or its rows wrapped at a large text size) also
+  // keeps the end of the page and the toasts clear of it.
   function syncBottomPad() {
     var h = 0, cp = d.getElementById('sc-privacy-panel');
-    if (tray && tray.classList.contains('is-open')) h = tray.offsetHeight;
+    if (tray && d.body.classList.contains('has-tray')) h = tray.offsetHeight; // open, or sliding in on the next frame
+    var tall = h > parseFloat(getComputedStyle(root).fontSize) * 4.5;
+    d.body.style.paddingBottom = tall ? h + 8 + 'px' : '';
+    toastBox.style.bottom = tall ? h + 16 + 'px' : '';
     if (cp && !cp.hidden && cp.getClientRects().length) h = Math.max(h, w.innerHeight - cp.getBoundingClientRect().top);
     if (toastNow && toastNow.node.getClientRects().length) h = Math.max(h, w.innerHeight - toastNow.node.getBoundingClientRect().top);
     root.style.scrollPaddingBottom = h > 0 ? Math.ceil(h + 12) + 'px' : '';
@@ -340,8 +350,10 @@
   SC.shortlist.ready = function () { return readList().ids.length ? vendorsChecked().then(function () {}, function () {}) : Promise.resolve(); };
 
   var tray, trayFocus = null; // trayFocus: index of the tray button that had focus before a re-render (-1: Clear)
+  var traySeq = 0; // a newer render (or closing) cancels a slide-in still waiting for its frame
   function renderTray() {
     var o = readList();
+    traySeq++;
     if (PAGE === 'shortlist' || PAGE === 'compare' || !o.ids.length) {
       if (tray) tray.classList.remove('is-open');
       d.body.classList.remove('has-tray');
@@ -365,17 +377,20 @@
         if (v[1] && v[4]) SC.monogram(logo, v[0]); // a wide wordmark would be unreadable in the small chip
         items.appendChild(el('span.tray__item', null, [logo, el('span', { text: v[0] }), el('button.tray__x', { type: 'button', 'aria-label': 'Remove ' + v[0] + ' from shortlist', text: '×', on: { click: function () { trayFocus = i; SC.shortlist.remove(id); announce(v[0], false); } } })]));
       });
-      var canCompare = o2.ids.length >= 2;
-      var cmp = el('a.btn.btn--sm', { href: canCompare ? SC.shortlist.compareUrl(o2) : SC.url('/shortlist/'), text: canCompare ? 'Compare ' + o2.ids.length : 'Add one more to compare' });
-      if (!canCompare) { cmp.className = 'btn btn--sm btn--ghost'; cmp.setAttribute('aria-disabled', 'true'); cmp.removeAttribute('href'); }
+      var canCompare = o2.ids.length >= 2, mem = !!memList; // mem: the browser refused to store it (this page view only)
+      var cmp = el('a.btn.btn--sm', { href: canCompare ? SC.shortlist.compareUrl(o2) : SC.url('/shortlist/'), text: canCompare ? 'Compare ' + o2.ids.length : 'Add one more to compare', 'aria-describedby': mem ? 'sc-tray-why' : null });
+      if (!canCompare) { cmp.className = 'btn btn--sm btn--ghost tray__hint'; cmp.setAttribute('aria-disabled', 'true'); cmp.removeAttribute('href'); }
       var inner = el('div.wrap.tray__inner', null, [
-        el('span.tray__label', { text: 'Shortlist' + (data.categories[o2.category] ? ' · ' + data.categories[o2.category] : '') + (memList ? ' · this page only' : '') }),
+        // Not saved: the toast that said why is gone after a few seconds; below 48em, where the label is not
+        // shown, this line stays for as long as the tray does (the full sentence is its description)
+        mem ? el('p.tray__note', null, [el('span.tag.tag--warn', { 'aria-describedby': 'sc-tray-why', text: 'Not saved' }), ' Kept only until you leave this page']) : null,
+        el('span.tray__label', { text: 'Shortlist' + (data.categories[o2.category] ? ' · ' + data.categories[o2.category] : '') + (mem ? ' · this page only' : '') }),
         items,
-        el('div.tray__actions', null, [el('button.tray__clear', { type: 'button', text: 'Clear', on: { click: function () { trayFocus = -1; SC.shortlist.clear(); SC.announce('Shortlist cleared.'); } } }), cmp]),
+        el('div.tray__actions' + (canCompare ? '' : '.tray__actions--one'), null, [el('button.tray__clear', { type: 'button', text: 'Clear', on: { click: function () { trayFocus = -1; SC.shortlist.clear(); SC.announce('Shortlist cleared.'); } } }), cmp]),
+        mem ? el('span', { id: 'sc-tray-why', hidden: true, text: BLOCKED }) : null,
       ]);
       tray.textContent = '';
       tray.appendChild(inner);
-      tray.classList.add('is-open');
       d.body.classList.add('has-tray');
       syncBottomPad();
       if (trayFocus != null) {
@@ -383,6 +398,9 @@
         trayFocus = null;
         next.focus();
       }
+      // opening: the new rows are painted below the screen first and slide in from the next frame, so the tray's
+      // appearance is a transform and never a layout shift (it used to grow and show up in the same frame)
+      if (!tray.classList.contains('is-open')) { var seq = traySeq; afterPaint(function () { if (seq === traySeq) tray.classList.add('is-open'); }); }
     }).catch(function () {});
   }
 
@@ -539,7 +557,7 @@
     },
   };
 
-  var pal, palInput, palResults, palEmpty, palStatus, palIndex = -1, palTimer, palFrom = null;
+  var pal, palInput, palResults, palEmpty, palStatus, palHint, palFound = 1, palIndex = -1, palTimer, palFrom = null;
   function buildPalette() {
     pal = dialog('dialog.dialog--top.palette', 'Search');
     palInput = el('input', { type: 'search', name: 'q', maxlength: 120, autocomplete: 'off', spellcheck: 'false', placeholder: 'Search software, categories, comparisons…', 'aria-label': 'Search', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': 'palette-results', 'aria-autocomplete': 'list' });
@@ -547,7 +565,8 @@
     palResults = el('div.palette__results', { id: 'palette-results', role: 'listbox', 'aria-label': 'Search results' });
     palEmpty = el('div.palette__empty', { hidden: true }); // the "no results" note sits outside the listbox
     palStatus = el('p.sr-only', { role: 'status', 'aria-live': 'polite' }); // "7 results", "No results for …"
-    var foot = el('div.palette__foot', null, [el('span', { text: '↑↓ to move' }), el('span', { text: 'Enter to open' }), el('span', { text: 'Esc to close' }), el('span', { text: 'Searches stay in your browser' })]);
+    palHint = el('span', { text: 'Enter to open' }); // says what Enter does right now (syncHint)
+    var foot = el('div.palette__foot', null, [el('span', { text: '↑↓ to move' }), palHint, el('span', { text: 'Esc to close' }), el('span', { text: 'Searches stay in your browser' })]);
     pal.appendChild(form); pal.appendChild(palEmpty); pal.appendChild(palResults); pal.appendChild(palStatus); pal.appendChild(foot);
     on(pal, 'close', function () {
       setExpanded('[data-search-open]', false);
@@ -566,6 +585,7 @@
         hits.forEach(function (h, i) { h.setAttribute('aria-selected', i === palIndex ? 'true' : 'false'); });
         hits[palIndex].scrollIntoView({ block: 'nearest' });
         palInput.setAttribute('aria-activedescendant', hits[palIndex].id);
+        syncHint();
       } else if (e.key === 'Enter') {
         var q = palInput.value.trim();
         if (!q && palIndex < 0) e.preventDefault();
@@ -584,6 +604,12 @@
   }
   function group(title) { return el('div.palette__group', { text: title, role: 'presentation' }); }
   function setPalStatus(text) { if (palStatus.textContent !== text) palStatus.textContent = text; }
+  /** The footer's Enter hint: Enter opens the highlighted row or the best match (data-top); otherwise it opens
+   *  the search page for what was typed. */
+  function syncHint() {
+    var t = !palInput.value.trim() || palIndex >= 0 || $('.hit[data-top]', palResults) ? 'Enter to open' : palFound ? 'Enter for all results' : 'Enter to open the search page';
+    if (palHint.textContent !== t) palHint.textContent = t;
+  }
   var palSig = ''; // the rows on screen: refined results (second part of the index) replace them only when they differ
   function renderPalette() {
     var q = palInput.value.trim();
@@ -607,6 +633,7 @@
       palEmpty.appendChild(el('p', { text: 'Search could not load. Press Enter to open the search page.' }));
       palEmpty.hidden = false;
       setPalStatus('Search could not load. Press Enter to open the search page.');
+      palFound = 0; syncHint();
     });
   }
   function paintResults(engine, q, refine) {
@@ -617,9 +644,11 @@
       sig.push(h.getAttribute('href') + (opts && opts.top ? '*' : ''));
       frag.appendChild(h);
     }
-    // data-top: Enter opens the first best match directly ("X vs Y", "X alternatives", "X pricing", a product's
-    // name, the site's own page for a question about it)
-    if (r.top.length) { frag.appendChild(group('Best match')); r.top.forEach(function (t, i) { add(t, { top: i === 0 && r.direct !== false }); }); }
+    // data-top: Enter opens the first best match directly ("X vs Y", "X alternatives", "X pricing", "X vs", a
+    // product's name, the site's own page for a question about it). Rows that do not answer the query outright
+    // ("zoho vs": which Zoho?) are only suggestions: Enter then opens the search page, and the heading says so.
+    var direct = r.direct !== false;
+    if (r.top.length) { frag.appendChild(group(direct ? 'Best match' : 'Suggestions')); r.top.forEach(function (t, i) { add(t, { top: i === 0 && direct }); }); }
     var shown = {}; r.top.forEach(function (t) { shown[t.type + ':' + t.id] = 1; });
     // products that only list the named product as an integration: their own small, labelled group
     var via = r.via && r.via.items.length ? r.via : null;
@@ -657,6 +686,7 @@
     }
     palResults.textContent = '';
     palResults.appendChild(frag);
+    palFound = found; syncHint();
   }
   function popularCategories(engine) {
     var ids = ['crm', 'email-marketing', 'accounting', 'payroll', 'customer-service', 'project-management'];
@@ -681,6 +711,7 @@
     palResults.textContent = '';
     palResults.appendChild(frag);
     palSig = '';
+    syncHint();
     // the palette paints first; the engine and the first part of the index load after that frame
     (SC.search.ready ? function (fn) { fn(); } : afterPaint)(function () {
       SC.search.engine().then(function (engine) {
@@ -967,6 +998,7 @@
   function applyA11y(p) {
     if (p.size && p.size !== 100) root.setAttribute('data-a11y-size', p.size); else root.removeAttribute('data-a11y-size');
     ['contrast', 'spacing', 'links', 'motion'].forEach(function (k) { if (p[k]) root.setAttribute('data-a11y-' + k, '1'); else root.removeAttribute('data-a11y-' + k); });
+    syncBottomPad(); // the tray's height follows the text size
   }
   var a11yDlg;
   function openA11y() {

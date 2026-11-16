@@ -20,7 +20,8 @@
 .price .fx-p-cur { color: var(--partial); }
 
 /* ---------------------------------------------------------------- suppliers at a glance */
-.fx-suppliers { padding-top: var(--s-8); padding-bottom: var(--s-10); }
+/* the suppliers table follows the page head directly (the section menu waits under the head, category.css) */
+.fx-suppliers { padding-top: var(--s-3); padding-bottom: var(--s-10); }
 .fx-head { margin-bottom: var(--s-4); }
 .fx-head p, .fx-scope { margin-top: var(--s-2); max-width: 78ch; color: var(--ink-2); }
 .fx-scope { margin-top: var(--s-5); }
@@ -64,6 +65,20 @@
   .fx-stack tbody th { font-size: var(--fs-md); }
   .fx-glance__go a { display: inline-block; padding-block: 0.7rem; }
   .fx-related .chip { min-height: var(--tap); }
+}
+/* large text (html[data-a11y-size]) on a tablet: the offer tables stack as on phones (their five columns no longer fit
+   the width), and the criteria marks show their icon only — the label stays for assistive technology */
+@media (min-width: 48em) and (max-width: 61.99em) {
+  html[data-a11y-size] .fx-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  html[data-a11y-size] :is(.fx-stack, .fx-stack tbody, .fx-stack tr, .fx-stack tbody th, .fx-stack td) { display: block; width: auto !important; }
+  html[data-a11y-size] .fx-stack tr { padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size] .fx-stack tbody tr:first-child { border-top: 1px solid var(--line-strong); }
+  html[data-a11y-size] :is(.fx-stack tbody th, .fx-stack td) { padding: 0 !important; border: 0; text-align: left !important; }
+  html[data-a11y-size] .fx-stack td { margin-top: var(--s-3); }
+  html[data-a11y-size] .fx-stack td[data-l]::before { content: attr(data-l); display: block; margin-bottom: 0.1rem; font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+  html[data-a11y-size] .fx-stack td.fx-empty { display: none; }
+  html[data-a11y-size] .fx-cmp .fx-row td .st { gap: 0; }
+  html[data-a11y-size] .fx-cmp .fx-row td .st > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 }
 
 /* ---------------------------------------------------------------- plans and prices */
@@ -119,6 +134,8 @@
 
 /* ---------------------------------------------------------------- comparison tables: shared header (sticks under the section tabs) */
 .fx-controls { justify-content: space-between; padding-top: 0; }
+/* a long supplier name wraps inside its chip (large text, narrow screens) instead of pushing the page sideways */
+.fx-controls .chip { white-space: normal; text-align: left; }
 .fx-compare__meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-2) var(--s-6); padding-block: var(--s-2) var(--s-3); }
 .fx-compare__meta .toolbar__count { margin: 0; }
 .fx-compare__meta .fx-controls { padding: 0; }
@@ -156,6 +173,7 @@
   font-weight: 400;
   line-height: 1.35;
   color: var(--ink);
+  overflow-wrap: anywhere; /* "Programmable/embedded" has no break: under large text it would push the page sideways */
 }
 .fx-rowbtn::before, .fx-rowlabel::before {
   content: "";
