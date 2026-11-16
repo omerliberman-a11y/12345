@@ -103,9 +103,10 @@
 .gd-sec .sources, .gd-sec .linklist { margin-top: var(--s-3); }
 /* touch: the shared .sources rule makes the rows 44px apart and gives each link a hit area as tall as its row */
 .gd-sec .linklist a > span:last-child:not(:first-child) { font-size: var(--fs-xs); letter-spacing: 0.04em; text-transform: uppercase; }
-.gd-host { margin-left: 0.35rem; font-size: var(--fs-xs); color: var(--ink-3); }
-/* a host name goes under its title whole when it does not fit after it; one longer than the whole line (a larger text
-   size on a narrow phone: "knowledge.workspace.google.com") breaks at the line's end (the list's overflow-wrap) */
+/* one piece: a host name goes under its title whole when it does not fit after it ("system-compare.com" never splits at
+   its hyphen); only one longer than a whole line (a larger text size on a narrow phone: "knowledge.workspace.google.com")
+   breaks, at the line's end (the list's overflow-wrap) */
+.gd-host { display: inline-block; max-width: 100%; margin-left: 0.35rem; font-size: var(--fs-xs); color: var(--ink-3); }
 .gd-more { margin-top: var(--s-3); }
 .gd-more a { display: inline-flex; align-items: center; min-height: var(--tap); }
 .gd-more a::after { white-space: pre; }
@@ -151,7 +152,10 @@
 .gd-list__c2 { width: 19rem; }
 .gd-list__c3 { width: 13.5rem; }
 .gd-list td.gd-list__cat { padding-right: var(--s-6); }
-.gd-list td.gd-list__date { text-align: right; white-space: nowrap; }
+/* the date stays whole; "Sources checked" goes on a line above it only where the line is too short (a reader's letter
+   spacing at 1024px: the fixed column is 13.5rem) */
+.gd-list td.gd-list__date { text-align: right; }
+.gd-list td.gd-list__date time { white-space: nowrap; }
 .gd-faq { border-top: 1px solid var(--line); }
 
 @media (max-width: 61.99em) {
@@ -165,8 +169,7 @@
   .gd-list td.gd-list__cat { margin-right: 0.6rem; }
   /* the date line is one piece, on the category's line or the next; only one longer than a whole line (a larger text
      size on a narrow phone) wraps, before its date */
-  .gd-list td.gd-list__date { display: inline-block; max-width: 100%; white-space: normal; }
-  .gd-list td.gd-list__date time { white-space: nowrap; }
+  .gd-list td.gd-list__date { display: inline-block; max-width: 100%; }
 }
 
 /* ---------------------------------------------------------------- shared by the AI hub and research updates */
@@ -286,7 +289,12 @@
 @media (max-width: 61.99em) {
   .gd-upd, .gd-upd tbody { display: block; }
   .gd-upd thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
-  .gd-upd tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--s-4); padding-block: var(--s-4); border-bottom: 1px solid var(--line); }
+  /* the date stays beside the product while both fit, else it goes under it (a larger text size or a reader's letter
+     spacing on a narrow phone: "ActiveCampaign" ran into "Nov 6, 2026"); the change notes take full lines */
+  .gd-upd tr { display: flex; flex-wrap: wrap; gap: 0 var(--s-4); padding-block: var(--s-4); border-bottom: 1px solid var(--line); }
+  .gd-upd tbody th { flex: 1 1 0; }
+  .gd-upd__when { flex: none; }
+  .gd-upd__what, .gd-upd__limits { flex: 0 0 100%; }
   .gd-upd tbody th, .gd-upd td { display: block; width: auto; padding: 0; border: 0; }
   .gd-upd__when { text-align: right; }
   .gd-upd__when .tag { margin-left: auto; }

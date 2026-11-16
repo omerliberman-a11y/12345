@@ -79,6 +79,13 @@
   .sw-side__label { flex-wrap: nowrap; }
   .sw-side__cta { grid-column: 1 / -1; }
 }
+/* tablets with a larger text size: the ring and its label share the half-width column only while both fit, then the
+   label goes under the ring and wraps (at 150% and 820px it ran into the starting price beside it) */
+@media (min-width: 48em) and (max-width: 61.99em) {
+  html[data-a11y-size] .sw-side__score { flex-wrap: wrap; }
+  html[data-a11y-size] .sw-side__score > div { min-width: 0; }
+  html[data-a11y-size] .sw-side__label { flex-wrap: wrap; white-space: normal; }
+}
 @media (min-width: 40em) and (max-width: 61.99em) {
   .sw-hero__side { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-8); }
   .sw-side__cta { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
@@ -205,6 +212,8 @@
 .sw-rows--wide dt { font-weight: 600; color: var(--ink); }
 .sw-rows--wide dd { color: var(--ink-2); }
 @media (max-width: 47.99em) { .sw-rows--wide > div { grid-template-columns: minmax(0, 1fr); } }
+/* phones with a larger text size: each label above its value (the 9rem label column left "Subscription" a letter per line) */
+@media (max-width: 47.99em) { html[data-a11y-size] .sw-rows > div { grid-template-columns: minmax(0, 1fr); } }
 @media (min-width: 48em) { .sw-rows--wide > div { grid-template-columns: 14rem minmax(0, 1fr); gap: var(--s-8); } }
 .sw-inline-list li { display: inline; }
 .sw-inline-list li + li::before { content: " · "; color: var(--ink-3); }
@@ -305,6 +314,12 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-score__gate { margin-top: 0.2rem; font-size: var(--fs-sm); color: var(--ink-3); }
 .sw-score__links { display: flex; flex-wrap: wrap; gap: 0 var(--s-6); margin-top: var(--s-2); font-size: var(--fs-sm); }
 .sw-score__links a { display: inline-flex; align-items: center; min-height: var(--tap); }
+/* score groups: the group and its points share a line while both fit, else the points go under the name, at the right
+   (the shared two-column grid squeezed "Core capabilities" to a word per line, "capabilit-ies" at 320px, and to a letter
+   per line with a larger text size or a reader's letter spacing) */
+.sw-score .breakdown__row { display: flex; flex-wrap: wrap; align-items: baseline; }
+.sw-score .breakdown__row > span:not(.meter) { margin-left: auto; }
+.sw-score .breakdown__row > .meter { flex: 1 0 100%; }
 /* phones with a larger text size: the score lines move under the ring when they do not fit beside it */
 @media (max-width: 47.99em) {
   .sw-score__main > div { min-width: 0; }
@@ -323,6 +338,9 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-ev tbody th[scope="row"] { font-size: var(--fs-md); line-height: 1.4; }
 .sw-ev td { line-height: 1.5; }
 .sw-ev td.num { color: var(--ink); font-weight: 600; }
+/* the columns are fixed: points wider than their column (a reader's letter spacing: "12.5 / 12.5 pts") wrap inside it
+   instead of running into the evidence note */
+@media (min-width: 48em) { .sw-ev td.num { white-space: normal; } }
 .sw-ev td.sw-ns { color: var(--ink-3); font-weight: 400; }
 .sw-ev tr.is-group th { padding-top: var(--s-5); }
 .sw-ev tr.is-group th span { float: right; margin-left: var(--s-4); font-weight: 400; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums; }
@@ -353,7 +371,12 @@ html:not(.js) .sw-tablist { display: none; }
   .sw-ev tr.is-group th { padding: 0; }
   .sw-ev tr.is-group th span { float: none; display: block; margin: 0.15rem 0 0; }
   .sw-ev tr:target { background: var(--brand-softer); }
+  html[data-a11y-size] .sw-ev td.num { white-space: normal; }
 }
+/* stacked check rows with a larger text size: the status keeps its width and the points take the rest of the line,
+   wrapping if they must ("Supported" ran under "9.4 / 9.4 pts" at 150% and 320px) */
+html[data-a11y-size] .sw-ev tr { grid-template-columns: auto minmax(0, 1fr); }
+html[data-a11y-size] .sw-plan .sw-ev td.num { white-space: normal; }
 
 /* plan-level evidence sits in a half-width column: always the stacked row layout
    (the four-column grid leaves the evidence text a ~6rem column there, and breaks below 75em) */
@@ -430,6 +453,22 @@ html:not(.js) .sw-tablist { display: none; }
 .sw-alts .linklist a { flex-wrap: wrap; }
 /* a larger text size on wide screens: "Read comparison →" may wrap, so the table keeps to the page width */
 html[data-a11y-size] .sw-alts .ptable__c-go { white-space: normal; }
+/* the table does not push the page sideways: where its columns need more than the page's width (a reader's own letter
+   and word spacing: up to 75px at 820px) it scrolls inside its own width, as a .scroller would (its markup has none);
+   where it fits, nothing changes. Only where every profile's table fits at the default size (measured on all 149 from
+   768 to 1440px): at the narrow end of each layout (768-799 and 992-1023px) a pending product's coverage note makes two
+   tables up to 25px wider than the column, and a scroller there would cut off their "Compare →" links. Not while a
+   text-size preference stacks its rows (components.css: 125% below 75em, 150% below 90em): a stacked row's shortlist
+   box reaches outside the row. */
+@media (min-width: 50em) and (max-width: 61.99em), (min-width: 64em) {
+  html:not([data-a11y-size]) .sw-alts .ptable { display: block; position: relative; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+}
+@media (min-width: 75em) {
+  html[data-a11y-size="125"] .sw-alts .ptable { display: block; position: relative; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+}
+@media (min-width: 90em) {
+  html[data-a11y-size="150"] .sw-alts .ptable { display: block; position: relative; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+}
 @media (max-width: 47.99em) {
   /* phones: the shared table drops its action column; here the comparison link stays, under the price */
   .sw-alts .ptable tbody tr { grid-template-areas: "pick name score" "pick price price" "pick vs vs"; row-gap: 0.2rem; }

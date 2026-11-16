@@ -79,6 +79,8 @@ a.cmp-slot__name:hover { color: var(--brand); }
 .cmp-table--glance td { color: var(--ink); }
 .cmp-table--glance .score--lg .score__value { font-size: var(--fs-2xl); }
 .cmp-table--glance .score--lg.score--pending .score__value { font-size: var(--fs-lg); }
+/* "/100" is one piece: in a narrow column with a larger text size it goes under the score whole ("100/1" + "00" before) */
+.cmp-table .score__value small { white-space: nowrap; }
 .cmp-table--glance .tag--top { margin-left: var(--s-2); vertical-align: 0.9em; }
 .cmp-table .breakdown { max-width: 24rem; font-size: var(--fs-xs); gap: 0.55rem; }
 .cmp-table .breakdown__row { font-size: inherit; }
@@ -302,6 +304,9 @@ html.js .cmp-noscript { display: none; }
   /* table body text stays 14px on phones (evidence notes, check descriptions, score groups);
      only captions — source and date lines, points, the legend — are 12px */
   .cmp-table th > small, .cmp-table .breakdown { font-size: var(--fs-sm); }
+  /* a larger text size leaves each product column ten characters wide: long words hyphenate where the language allows
+     ("Subscrip-tion", "Sup-ported") before the column's break-anywhere rule cuts them at the edge */
+  html[data-a11y-size] .cmp-table :is(th, td) { hyphens: auto; -webkit-hyphens: auto; }
   .cmp-tools { flex-wrap: wrap; } /* the action row wraps instead of being cut at the screen edge */
   .cmp-tools .btn, .cmp-choose__links .btn { min-height: 2.75rem; }
   .cmp-viewbar .legend { font-size: var(--fs-xs); gap: var(--s-1) var(--s-4); }
@@ -309,6 +314,10 @@ html.js .cmp-noscript { display: none; }
   /* the three views share the row down to 320px: a label wraps inside its button instead of pushing the row out */
   .cmp-view button { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: center; min-height: 2.75rem; padding-inline: 0.35rem; white-space: normal; text-align: center; line-height: 1.25; }
   .cmp-view .n { margin-left: 0.3rem; }
+  /* a larger text size: a button never gets narrower than its longest word ("Differences" was cut at 150% and 320px);
+     the buttons take rows of their own instead */
+  html[data-a11y-size] .cmp-view { flex-wrap: wrap; }
+  html[data-a11y-size] .cmp-view button { min-width: auto; }
   /* three or four products: a segmented control in the sticky header picks the two that are shown */
   .cmp--n3 .cmp-bar__grid, .cmp--n4 .cmp-bar__grid { display: none; }
   .cmp-pair { display: grid; grid-template-columns: repeat(var(--cmp-n), minmax(0, 1fr)); gap: var(--s-1); padding-block: 0.35rem; }

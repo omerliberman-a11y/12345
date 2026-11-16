@@ -152,7 +152,9 @@ Rules that keep every page consistent:
   comment describes (including the digits faces that keep `ch` widths stable).
 - Text-size preference (`html[data-a11y-size]`): the compact header is used at every width and stacked table rows
   wrap by word. Product tables stay stacked until their scaled columns fit (125%: below 75em, 150%: below 90em; from
-  48em the score, price and AI tag share the line under the product); `.dtable` column heads, button, chip, tag and
+  48em the score, price and AI tag share the line under the product), and so does the cost calculator in the same ranges
+  (tools.css: totals one row per product and each product's block with its Remove and what its total covers, as on
+  phones; inputs one block per product, as on tablets; the ready-priced offers a list); `.dtable` column heads, button, chip, tag and
   status labels, score notes, a link list's end note (it moves under the title first) and long host names in vendor
   links may wrap. Reduce-motion preference: no smooth scrolling, no animation.
 - Wrapping without the preference (a reader's own letter/word spacing, WCAG 1.4.12): chips and buttons in `main` wrap
@@ -161,7 +163,9 @@ Rules that keep every page consistent:
   a sub-line keeps the page's own layout). Each only takes effect where the text is wider than its room: measured on
   every page at 320/390/820/1440, no default layout changes. From 48em, labels in table cells stay on one line —
   wrappable ones narrow their columns and re-flow every ranking and comparison table at the default size — so a wide
-  table under a reader's spacing belongs in a `.scroller` (or is stacked by its page CSS).
+  table under a reader's spacing belongs in a `.scroller` (or is stacked by its page CSS; a profile's alternatives table,
+  which has no scroller in its markup, is its own at 50-62em and from 64em, where every profile's table fits at the
+  default size: software.css).
 - Header (layout.css): from 62em the brand keeps its size and the search field takes the room left (icon only below
   6.5rem, which only a reader's extra letter spacing reaches); a word-mark wider than its room is clipped at the brand's
   edge, never drawn over a button. A `.note` is one paragraph (links stay in its sentence); a leading `.tag` is a column
@@ -236,6 +240,12 @@ Layout rules learned the hard way:
   `visibility: hidden` once it has slid away, so Tab never reaches its old buttons.
 - Do not use `content-visibility` on blocks above anchored sections: placeholder heights moved 434 deep links
   under the sticky header.
+- A deep link scrolls (smoothly) while the page is still loading, to where its target is at that moment; anything
+  above it that settles later (a web font replacing the fallback, a script's first render) leaves the scroll short or
+  long. core.js re-applies the link once when the page has settled (loaded, `document.fonts.ready`, no scroll for
+  200 ms) if the target then sits under the sticky header or a stuck section menu — only on a fresh visit (a reload or
+  back/forward visit is the browser's own scroll restoration), and only if the visitor has not scrolled, tapped,
+  clicked or pressed a key since the page opened.
 - Category first screen (category.mjs, category-factual.mjs): head → quick answer (with the evidence line as a
   column beside it from 78em, where that column holds its longest item next to the answer's full 54rem) → filters.
   Nothing in it may depend on whether a line only just fits: the web font and its fallback differ by ~0.6% (up to
@@ -297,13 +307,25 @@ match (`data-top`): "X vs Y", "A vs B vs C", "compare A and B", "X alternatives"
 category's exact name or synonym, or the site's own page / FAQ answer for questions about the site; "X vs", "X v",
 "X or", "compare X" (X named exactly, no second product yet) open the compare tool with X chosen
 (`/compare/?scope=<category>&a=<id>`; a documentary supplier: its category's `#factual-comparison`), listed above
-X's head-to-heads. When nothing answers the query outright (`r.direct === false`, e.g. a loosely typed "crm vs"),
-or the first row is about products the query does not name ("crm pricing", "crm alternatives", "phone
-alternatives", "crm vs pipedrive": a category's word, a word several products share, a generic part of a name), the
-first group is titled "Suggestions" and has no `data-top`; Enter then opens /search/, and the palette footer says
-so ("Enter for all results"). A product counts as named by its name or an alias, by words a plain search reads as
-that product, or by its brand word typed or misspelt ("malchimp pricing") unless that word is a category's own.
-`SC.search.answers(engine, r, q)` holds this rule; the palette and the /search/ page heading both use it.
+X's head-to-heads. A category's own words with nothing else but generic ones (search.js `categoryOf`, `q.catq`) lead
+with that category, never with the product the words resolve to: "crm pricing" → its costs section (`#costs`; a
+documentary category: `#plans`), "crm alternatives", "best crm", "crm score" → its ranking, "crm vs" → its compare
+tool (`/compare/?scope=crm`; documentary: `#factual-comparison`) above its head-to-heads. They are the Best match
+when the words are one category's own (the phrase of one category, or its `own` synonym: "help desk"); words several
+categories share ("marketing pricing") list up to three of them as Suggestions, as do words that also start a
+product's name ("gemini"). "A vs B" where a name fits several products ("quickbooks vs zoho") takes the pair that can
+be compared (Zoho Books; engine `pairLevel`: a published head-to-head, a live comparison, a documentary criteria
+table), and two suppliers of one documentary category get its criteria table instead of "researched in different
+categories". When nothing answers the query outright (`r.direct === false`), or the first row is about products the
+query does not name ("phone alternatives", "crm vs pipedrive", "sales pricing", "zoho vs": a category's word, a
+generic word, a word several products' names start with), the first group is titled "Suggestions" and has no
+`data-top`; Enter then opens /search/, and the palette footer says so ("Enter for all results"). A product counts as
+named by its name or an alias, or by their first words when a plain search for those words opens it ("monday"; never
+a word inside a name: "quick" of QuickBooks, and never a generic word alone: "sales" of the alias "Sales Cloud"), or
+by its brand word misspelt or typed apart ("malchimp", "quick books") unless that word is a category's own. Words
+that start several products' names ("zoho", "google", "microsoft", "adobe") name none of them unless the other
+products of the query single one out ("zoho vs freshsales": Zoho CRM). `SC.search.answers(engine, r, q)` holds this
+rule; the palette and the /search/ page heading both use it.
 Shift+Enter always opens /search/. `SC.searchLimit` (120 characters, 20 words) and
 its message are shared by the palette, /search/ and the directory filters. The site's own vocabulary lives in
 `data/content/search-aliases.json` under `pages`

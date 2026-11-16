@@ -101,6 +101,23 @@ html:not(.js) .tl-app { display: none; }
   .tl-pending ~ .tl-cap { flex-basis: 100%; }
   .tl-totals [data-row="avg"] .num { font-size: var(--fs-sm); }
 }
+/* the largest text size on a narrow phone: each product's name has a line of its own, its total and monthly average go
+   under it at the right (side by side, "Pipedrive" ran into "$1,680.00" at 320-340px) */
+@media (max-width: 23.99em) {
+  html[data-a11y-size="150"] .tl-totals { grid-template-columns: minmax(0, 1fr); }
+  html[data-a11y-size="150"] .tl-totals thead th:not(:first-child) { padding-bottom: 0; border-bottom: 0; }
+  html[data-a11y-size="150"] .tl-totals thead th:nth-child(2) { grid-row: 1; }
+  html[data-a11y-size="150"] .tl-totals thead th:nth-child(3) { grid-row: 4; }
+  html[data-a11y-size="150"] .tl-totals thead th:nth-child(4) { grid-row: 7; }
+  html[data-a11y-size="150"] .tl-totals tbody td { grid-column: 1; }
+  html[data-a11y-size="150"] .tl-totals [data-row="total"] td { padding-top: 0.2rem; }
+  html[data-a11y-size="150"] .tl-totals [data-row="total"] td:nth-child(2) { grid-row: 2; }
+  html[data-a11y-size="150"] .tl-totals [data-row="avg"] td:nth-child(2) { grid-row: 3; }
+  html[data-a11y-size="150"] .tl-totals [data-row="total"] td:nth-child(3) { grid-row: 5; }
+  html[data-a11y-size="150"] .tl-totals [data-row="avg"] td:nth-child(3) { grid-row: 6; }
+  html[data-a11y-size="150"] .tl-totals [data-row="total"] td:nth-child(4) { grid-row: 8; }
+  html[data-a11y-size="150"] .tl-totals [data-row="avg"] td:nth-child(4) { grid-row: 9; }
+}
 
 /* ---- per-product inputs, evidence and assumptions */
 /* the compact totals bar shares its grid cell with the inputs: it takes no room in the page at any height */

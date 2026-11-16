@@ -13,7 +13,9 @@
  *   "hubspt", "mailchmp"         → typo tolerance (product and category names only)
  *   "helpdesk", "newsletter"     → synonyms → category
  *   "a vs b vs c", "compare a and b", "a or b", "a, b and c"
- *                                → the published head-to-head (two products) or the compare tool (2–4)
+ *                                → the published head-to-head (two products) or the compare tool (2–4);
+ *                                  suppliers of one documentary category: its criteria table; a name several
+ *                                  products share ("quickbooks vs zoho") is the one that can be compared
  *   "attio vs", "attio or", "compare attio"
  *                                → the compare tool with that product chosen (a documentary supplier: the
  *                                  criteria comparison on its category page), then its head-to-heads
@@ -389,7 +391,7 @@
      *  alternatives", "best crm", "crm score"). */
     function categoryRow(kind, c) {
       var scored = c.mode !== 'f';
-      if (kind === 'pricing') return { type: 'category', id: 'pricing:' + c.id, name: c.name + ' pricing', url: c.url + (scored ? '#costs' : '#plans'), sub: scored ? 'Starting prices and cost drivers · ' + c.count + ' products' : 'Plans and prices of ' + c.count + ' suppliers', why: 'Pricing' };
+      if (kind === 'pricing') return { type: 'category', id: 'pricing:' + c.id, name: c.name + ' pricing', url: c.url + (scored ? '#costs' : '#plans'), sub: scored ? 'Starting prices · ' + c.count + ' products' : 'Plans and prices · ' + c.count + ' suppliers', why: 'Pricing' };
       if (kind !== 'vs') return ext(c, { why: 'Ranking' });
       return scored
         ? { type: 'compare', id: 'compare:' + c.id, name: 'Compare products in ' + c.name, url: '/compare/?scope=' + c.id, sub: 'Pick 2–4 of its ' + c.count + ' products', why: 'Compare tool' }

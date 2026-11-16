@@ -108,6 +108,11 @@ html:not(.js) .doc-actions button { display: none; }
 .doc-ex td:last-child, .doc-ex thead th:last-child { padding-right: 0; }
 @media (max-width: 39.99em) { .doc-ex th, .doc-ex td { padding-inline: 0.4rem; } }
 .doc-breakdown { max-width: 30rem; }
+/* the group and its points share a line while both fit, else the points go under the name, at the right (the shared
+   two-column grid squeezed the name to a letter per line with a larger text size on a phone) */
+.doc-breakdown .breakdown__row { display: flex; flex-wrap: wrap; align-items: baseline; }
+.doc-breakdown .breakdown__row > span:not(.meter) { margin-left: auto; }
+.doc-breakdown .breakdown__row > .meter { flex: 1 0 100%; }
 .doc-breakdown .label { margin-bottom: var(--s-3); }
 
 .doc-jump { max-width: 28rem; }

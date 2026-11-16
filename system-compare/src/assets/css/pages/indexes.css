@@ -143,6 +143,9 @@ html[data-a11y-size] .ix-cmp .linklist a > .ix-vsmeta { flex: 0 1 auto; min-widt
 /* vendor-site link under the categories (commercial-link categories only) */
 .ix-visit { display: block; margin-top: 0.2rem; }
 .ix-visit .commercial-link { gap: 0.2rem 0.5rem; }
+/* the "Ad · affiliate link" label may wrap inside the categories column (wider than it under a reader's letter spacing
+   at 768px); it never sets that column's width at the default size, so nothing else moves */
+.ix-visit .tag { white-space: normal; }
 .ix-table td.ix-c-cats .ix-visit a { color: var(--brand-ink); font-weight: 600; }
 .ix-table .ptable__c-score { width: 10rem; }
 .ix-table .ptable__c-price { width: 12.5rem; }
@@ -198,6 +201,10 @@ html[data-a11y-size] .ix-cmp .linklist a > .ix-vsmeta { flex: 0 1 auto; min-widt
   .ix-table .ix-of { display: inline; white-space: nowrap; }
   /* quick filters wrap onto a second line rather than being cut at the screen edge */
   .ix-dir .ix-chips { flex: 1 1 100%; flex-wrap: wrap; }
+  /* a larger text size stacks the shared rows without a shortlist box (no left padding): the logo takes a line of its
+     own above the name (positioned beside it, it covered the start of "ActiveCampaign"; in a column beside it the name
+     broke mid-word at 320px) */
+  html[data-a11y-size] .ix-table .prod .logo { position: static; display: grid; margin-bottom: var(--s-2); }
 }
 
 /* documented suppliers: dense A–Z list */
@@ -243,6 +250,10 @@ html[data-a11y-size] .ix-cmp .linklist a > .ix-vsmeta { flex: 0 1 auto; min-widt
 /* the product itself sits on top of the ranking like a pinned row: one header, identical columns */
 @media (min-width: 48em) {
   .ix-alt .ptable { table-layout: fixed; }
+  /* the columns are fixed, so a label wider than its column wraps inside it instead of running into the next one
+     ("You are comparing against this" covered "Score pending" at 768-1024px; a reader's letter spacing pushed the
+     score note into the price) */
+  .ix-alt .ptable :is(.tag, .score__meta) { white-space: normal; }
   .ix-alt .ptable__c-rank { width: 3.25rem; white-space: nowrap; }
   /* the ranking keeps its header row for assistive tech and column widths, at zero height */
   .ix-alts .ptable thead th { height: 0; padding-block: 0; border: 0; line-height: 0; color: transparent; overflow: hidden; }

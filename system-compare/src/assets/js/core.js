@@ -650,9 +650,10 @@
       else if (r.q.suffix && r.top[0].type === 'product' && r.groups.product && r.groups.product[0]) ids = [r.groups.product[0].id];
       // a product named on its own, a category's own words ("crm pricing"), the site's own page: the engine read them
       if (!ids.length) return true;
-      // the words that can name a product: runs of up to four words between "vs", "alternatives", "pricing" …
+      // the words that can name a product: runs of up to four words between "vs", "alternatives", "pricing" … (word by
+      // word, so that a word typed twice stays twice: "zoho crm vs zoho books")
       var runs = [], seg = [], plainOf = Object.create(null), E = SC.searchEngine, N = productNames(engine);
-      E.words(E.capped(q).toLowerCase()).concat(['vs']).forEach(function (x) {
+      E.capped(q).toLowerCase().split(/\s+/).reduce(function (all, x) { return all.concat(E.words(x)); }, []).concat(['vs']).forEach(function (x) {
         if (!INTENT_WORD.test(x)) { seg.push(x); return; }
         for (var i = 0; i < seg.length; i++) for (var j = i + 1; j <= Math.min(seg.length, i + 4); j++) runs.push(seg.slice(i, j).join(' '));
         seg = [];
@@ -1155,6 +1156,46 @@
   }
   on(w, 'hashchange', revealHashTarget);
   revealHashTarget();
+
+  // A deep link scrolls while the page is still loading (smoothly, base.css), to where its target is at that moment.
+  // Anything above the target that settles later (a web font replacing the fallback face, the ranking's first render)
+  // then leaves the scroll short or long: on phones the section heading ended under the sticky header and menu (1 load
+  // in 4 on some pages). Once the page has settled — loaded, fonts ready, the scroll at rest — a target under the sticky
+  // chrome is put back where the link meant it (scroll-padding-top, base.css): once, only on a fresh visit (a reload or
+  // back/forward visit is the browser's own scroll restoration) and only if the visitor has not scrolled, tapped,
+  // clicked or pressed a key since the page opened.
+  (function () {
+    var hash = location.hash, nav = w.performance && performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
+    if (!hash || hash.length < 2 || (nav && nav.type && nav.type !== 'navigate') || !w.Promise) return;
+    var touched = false, done = false, timer = 0;
+    function touch() { touched = true; }
+    var INPUT = ['wheel', 'touchstart', 'keydown', 'pointerdown', 'mousedown'];
+    INPUT.forEach(function (t) { on(w, t, touch, { capture: true, passive: true }); });
+    function chrome() { // bottom of the sticky header and of a section menu stuck under it
+      var bottom = 0;
+      $$('.site-header, .subnav').forEach(function (e) {
+        var p = getComputedStyle(e).position, r = e.getBoundingClientRect();
+        if ((p === 'sticky' || p === 'fixed') && r.height > 0 && r.top <= bottom + 2 && r.bottom > bottom) bottom = r.bottom;
+      });
+      return bottom;
+    }
+    function check() {
+      if (done) return;
+      done = true;
+      w.removeEventListener('scroll', rest);
+      INPUT.forEach(function (t) { w.removeEventListener(t, touch, { capture: true }); });
+      var id, t;
+      try { id = decodeURIComponent(hash.slice(1)); } catch (e) { return; }
+      if (touched || location.hash !== hash || !(t = d.getElementById(id)) || !t.getClientRects().length) return;
+      if (t.getBoundingClientRect().top < chrome() - 1) t.scrollIntoView({ block: 'start' });
+    }
+    // the scroll is at rest: no scroll event for 200 ms (the smooth scroll to a section far down takes a second or two)
+    function rest() { clearTimeout(timer); timer = setTimeout(check, 200); }
+    var loaded = d.readyState === 'complete' ? Promise.resolve() : new Promise(function (r) { on(w, 'load', r, { once: true }); });
+    loaded.then(function () { return d.fonts && d.fonts.ready; }).then(function () {
+      w.requestAnimationFrame(function () { on(w, 'scroll', rest, { passive: true }); rest(); setTimeout(check, 5000); });
+    }, function () {});
+  })();
 
   // ------------------------------------------------------------------ header search visibility on the home page
   if (d.body.hasAttribute('data-hero-search')) {
