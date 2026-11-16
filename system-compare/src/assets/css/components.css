@@ -32,11 +32,18 @@
 .btn--block { width: 100%; }
 .btn[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-ink); }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+/* a reader text-size preference: a label that no longer fits the column ("See the full data comparison" at 320px)
+   wraps inside its button instead of pushing the page sideways; one that fits keeps its line */
+html[data-a11y-size] main .btn { max-width: 100%; white-space: normal; }
 
 /* wraps like text when the line is short (320px), the arrow stays with the last word */
 .link-arrow { font-weight: 600; max-width: 100%; }
 .link-arrow::after { content: "\00a0→"; }
-.ext::after { content: " ↗"; font-size: 0.85em; }
+/* an external link: the arrow shows it leaves the site, and where it opens a new tab, screen readers hear that in its
+   place (WCAG G201; the first declaration is for browsers without alternative text for generated content). The one
+   way the site says it: no link carries the words itself. :where() leaves the print rule (base.css) in charge. */
+.ext::after { content: " ↗"; content: " ↗" / ""; font-size: 0.85em; }
+.ext:where([target="_blank"])::after { content: " ↗"; content: " ↗" / ", opens in a new tab"; }
 
 /* ---------------------------------------------------------------- chips (interactive) and tags (static) */
 .chips { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
@@ -66,6 +73,9 @@
 .chip[aria-pressed="true"] .n { color: #c9ccdb; }
 .chip svg { width: 0.95rem; height: 0.95rem; }
 .chip--link { max-width: 100%; white-space: normal; background: var(--bg-subtle); border-color: transparent; color: var(--ink); }
+/* a reader text-size preference: a chip, tag or score note wider than its column wraps its words instead of pushing
+   the page sideways (a row of chips that scrolls sideways keeps each chip whole: its items do not shrink) */
+html[data-a11y-size] :is(.chip, .tag, .score__meta) { white-space: normal; }
 .chip--link:hover { background: var(--brand-soft); color: var(--brand-ink); border-color: transparent; }
 
 .tag {
@@ -214,6 +224,7 @@
 .st--no::before { background-color: var(--bad-soft); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 4.5l7 7m0-7l-7 7' fill='none' stroke='%23b3261e' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
 .st--unknown { color: var(--unknown); }
 .st--unknown::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8h7' fill='none' stroke='%235d6274' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
+html[data-a11y-size] .st { white-space: normal; } /* large text in a narrow column: "Not verified" wraps beside its icon */
 .st--icon { gap: 0; }
 .st--icon > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 
@@ -323,9 +334,9 @@
 .price__main { font-weight: 600; font-size: var(--fs-md); color: var(--ink); font-variant-numeric: tabular-nums; }
 .price__main--text { font-weight: 600; font-size: var(--fs-sm); color: var(--ink-2); }
 .price__unit { font-size: var(--fs-xs); color: var(--ink-3); }
-/* a price with its provenance (category ranking): the plan beside the amount, then the unit, then "Checked <date> ·
-   Source ↗" — a direct, followed link to the official pricing source that opens in a new tab (said to screen readers
-   in the link text; the arrow is decoration). Wide screens: the plan shares the amount's line when it fits. */
+/* a price with its provenance (category ranking): the amount, the plan, the unit, then "Checked <date> · Source ↗" — a
+   direct, followed link to the official pricing source that opens in a new tab (said to screen readers in the link
+   text; the arrow is decoration). */
 /* the bit of air at their ends is invisible; it moves the points where these lines wrap off the catalog's current
    prices, so (measured over every category at nine common widths) no more rows change height when the web font
    replaces its metric-matched fallback than before this line existed. Re-check after a catalog refresh. */
@@ -335,10 +346,23 @@
 .price__chk { white-space: nowrap; }
 .price__src a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .price__src a:hover { color: var(--brand-strong); text-decoration-color: currentColor; }
-.price__src .ext::after { content: "\00a0↗"; content: "\00a0↗" / ""; }
+:where(.price__src) .ext:where([target="_blank"])::after { content: "\00a0↗"; content: "\00a0↗" / ", opens in a new tab"; }
+/* wide screens: one fact per line — the amount (or the state), the plan always on the line under it, the unit, and the
+   provenance whole on a line of its own. Without an amount the plan list and the recorded pricing basis are one
+   quieter run ("Free, Starter … plans · per sales seat/month …"). The lines sit tight, so a dated price is about as
+   tall as the row's name and two-line fit, and from 75em, where the product column has room to spare, the dated
+   ranking's price column is wider, so no row of it is taller than 100px at 1440px. Its width was chosen so that no
+   row changes height when the web font replaces its fallback (measured on all 33 rankings from 1200 to 1440px);
+   re-check it after a catalog refresh, with the end padding above. */
 @media (min-width: 48em) {
-  .ptable .price--detail { flex-flow: row wrap; align-items: baseline; column-gap: 0.4rem; }
-  .ptable .price--detail > .price__unit, .ptable .price--detail > .price__src { flex-basis: 100%; }
+  .ptable .price--detail { display: block; font-size: var(--fs-xs); line-height: 1.2; }
+  .ptable .price--detail > * { display: block; }
+  .ptable .price--detail > .price__main--text ~ :is(.price__plan, .price__unit) { display: inline; }
+  .ptable .price--detail > .price__main--text ~ .price__plan { padding-right: 0; }
+  .ptable .price--detail > .price__main--text ~ .price__plan:has(+ .price__unit)::after { content: "\00a0·"; content: "\00a0·" / ""; }
+}
+@media (min-width: 75em) {
+  html:not([data-a11y-size]) .ptable--dated .ptable__c-price { width: 16.75rem; }
 }
 /* touch: the small link answers a larger hit area drawn as ::before under the cell's words (the cell is its own
    stacking context, so the price text above it keeps its taps). In a dense row a full 44px would reach the next row's
@@ -433,6 +457,36 @@
   html[data-a11y-size] .ptable__c-score { text-align: left; }
   html[data-a11y-size] .ptable .score { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 0.5rem; }
 }
+/* a reader text-size preference on wider screens, until the scaled columns fit (125%: below 75em; 150%: below 90em —
+   the table was up to 200px wider than the page at 820px and up to 420px at 992px): each row is stacked as on phones.
+   The shortlist box on the left, the product (plate beside the name) on the first line, its score, price and AI tag
+   side by side under it, any other cell on a line of its own. The score keeps its wide-screen shape in a slot of its
+   own width, so the prices line up from row to row, and that line has room to spare at every width, whatever the
+   font. The two blocks are the same rules for the two ranges. */
+@media (min-width: 48em) and (max-width: 74.99em) {
+  html[data-a11y-size] .ptable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  html[data-a11y-size] .ptable, html[data-a11y-size] .ptable tbody { display: block; }
+  html[data-a11y-size] .ptable tbody tr { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.6rem var(--s-6); position: relative; padding: 0.75rem 0 0.75rem 2.6rem; }
+  html[data-a11y-size] .ptable tbody tr:not(:has(.ptable__c-pick)) { padding-left: 0; }
+  html[data-a11y-size] .ptable tbody tr > * { flex: 1 1 100%; min-width: 0; width: auto; padding: 0; text-align: left; }
+  html[data-a11y-size] .ptable tbody td.ptable__c-pick { position: absolute; left: -0.6rem; top: 0.35rem; }
+  html[data-a11y-size] .ptable tbody td.ptable__c-rank { display: none; }
+  html[data-a11y-size] .ptable tbody td.ptable__c-score { flex: none; width: 8rem; }
+  html[data-a11y-size] .ptable tbody td.ptable__c-price { flex: 1 1 12rem; }
+  html[data-a11y-size] .ptable tbody td.ptable__c-ai { flex: none; }
+}
+@media (min-width: 75em) and (max-width: 89.99em) {
+  html[data-a11y-size="150"] .ptable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  html[data-a11y-size="150"] .ptable, html[data-a11y-size="150"] .ptable tbody { display: block; }
+  html[data-a11y-size="150"] .ptable tbody tr { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.6rem var(--s-6); position: relative; padding: 0.75rem 0 0.75rem 2.6rem; }
+  html[data-a11y-size="150"] .ptable tbody tr:not(:has(.ptable__c-pick)) { padding-left: 0; }
+  html[data-a11y-size="150"] .ptable tbody tr > * { flex: 1 1 100%; min-width: 0; width: auto; padding: 0; text-align: left; }
+  html[data-a11y-size="150"] .ptable tbody td.ptable__c-pick { position: absolute; left: -0.6rem; top: 0.35rem; }
+  html[data-a11y-size="150"] .ptable tbody td.ptable__c-rank { display: none; }
+  html[data-a11y-size="150"] .ptable tbody td.ptable__c-score { flex: none; width: 8rem; }
+  html[data-a11y-size="150"] .ptable tbody td.ptable__c-price { flex: 1 1 12rem; }
+  html[data-a11y-size="150"] .ptable tbody td.ptable__c-ai { flex: none; }
+}
 @media (max-width: 61.99em) {
   .ptable__c-ai { display: none; }
 }
@@ -488,6 +542,8 @@
 @media (max-width: 47.99em) {
   .dtable thead th, .dtable thead th.num { white-space: normal; }
 }
+/* and so may they at any width with a reader text-size preference (a profile's plans table was 116px too wide at 820px) */
+html[data-a11y-size] .dtable thead th { white-space: normal; }
 
 /* capability matrix: sticky first column, icon cells (the page scrolls vertically; only the table scrolls sideways) */
 .matrix { min-width: max-content; }
@@ -557,12 +613,25 @@ html:not(.js) .matrix__what { text-decoration: none; cursor: default; pointer-ev
    narrow phone or at a large text size, nothing is pushed out of the bar */
 .tray__inner { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); }
 .tray__label { display: none; font-size: var(--fs-sm); font-weight: 600; color: var(--ink-2); white-space: nowrap; }
-.tray__items { display: flex; gap: var(--s-2); min-width: 0; flex: 1 1 6rem; overflow-x: auto; scrollbar-width: none; }
+/* more chips than fit: the row scrolls sideways and fades at the edge where more chips are (data-fade, core.js
+   trayFade); its padding, taken back by the margin, keeps a focused × ring inside it (whole pixels of scrolling
+   included), and the scroll padding brings a focused × clear of the fade */
+.tray__items { display: flex; gap: var(--s-2); min-width: 0; flex: 1 1 6rem; overflow-x: auto; scrollbar-width: none; padding: 0.25rem 0.375rem; margin: -0.25rem -0.375rem; scroll-padding-inline: 1.5rem; }
+.tray__items::-webkit-scrollbar { display: none; }
+.tray__items[data-fade] {
+  --fade-start: 0px;
+  --fade-end: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent);
+}
+.tray__items[data-fade~="start"] { --fade-start: 1.5rem; }
+.tray__items[data-fade~="end"] { --fade-end: 1.5rem; }
 html[data-a11y-size] .tray__items { flex-basis: 8rem; } /* a larger text size: room for one whole chip, or a row of its own */
 /* the browser refused to store the list (private mode, blocked site data): a line of its own above the chips
    below 48em, where the label (which then ends "· this page only") is not shown */
 .tray__note { flex: 1 0 100%; font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-2); }
 .tray__item {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -588,12 +657,21 @@ html[data-a11y-size] .tray__items { flex-basis: 8rem; } /* a larger text size: r
      product stays readable beside them at 320px */
   .tray__actions--one .tray__clear { display: none; }
   .tray__hint { max-width: 7.75rem; padding-inline: 0.6rem; white-space: normal; text-wrap: balance; line-height: 1.15; }
+  /* two or more products: each chip is the product's logo (or initials) and its ×, so two sit whole beside Clear and
+     Compare from 375px and more scroll in under the fade; the name stays in the chip for screen readers and as its
+     title. No chip changes width with the text, so the web font arriving moves nothing. */
+  .tray__items--many { gap: 0.375rem; }
+  .tray__items--many .tray__item { gap: 0; padding-left: 0.35rem; }
+  .tray__items--many .tray__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 }
 @media (min-width: 48em) {
   .tray__label { display: block; }
   .tray__note { display: none; }
-  /* names are cut only when the bar is actually full */
+  /* names are cut only when the bar is actually full; cut short, the chips show logos only (core.js trayFit) */
   .tray__item { flex: 0 1 auto; min-width: 7rem; max-width: 22rem; }
+  .tray__items--logos { gap: 0.375rem; }
+  .tray__items--logos .tray__item { flex: none; min-width: 0; gap: 0; padding-left: 0.35rem; }
+  .tray__items--logos .tray__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 }
 body.has-tray { padding-bottom: 4.5rem; }
 
@@ -666,10 +744,12 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
   color: var(--brand-ink);
 }
 .answer strong { font-weight: 600; }
-/* wide screens: the label runs into the answer's first line (its line box is the answer's 1.6 × 18px, so the two
-   baselines meet), which saves a line before the content that follows */
+/* wide screens: the label runs into the answer's first line, which saves a line before the content that follows. It
+   floats at the start of that line, so the words start wherever it ends, whatever the letter and word spacing. The
+   float is a hair shorter than the answer's 1.6 × 18px line (as tall as the line, rounding let it indent the second
+   line too at 150% text); the offset keeps the two baselines together. Page CSS may restyle it (category.css). */
 @media (min-width: 48em) {
-  .answer__label { float: left; position: relative; top: 0.125rem; margin: 0 0.75rem 0 0; line-height: 1.8rem; }
+  .answer__label { float: left; position: relative; top: 0.175rem; margin: 0 0.75rem 0 0; line-height: 1.7rem; }
 }
 /* phones: body size, so the answer-first block stays short enough to leave room for the table or score below it */
 @media (max-width: 39.99em) {
@@ -785,6 +865,10 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 .linklist a:hover { color: var(--brand); text-decoration: none; }
 .linklist a > span:last-child:not(:first-child) { flex: none; color: var(--ink-3); font-size: var(--fs-sm); font-weight: 400; white-space: nowrap; }
 .linklist small { display: block; font-weight: 400; color: var(--ink-3); font-size: var(--fs-sm); margin-top: 0.1rem; }
+/* a reader text-size preference: the note at the end ("100 vs 91", a category's name) goes under the title when both do
+   not fit a line, and wraps if it is longer than the line */
+html[data-a11y-size] .linklist a { flex-wrap: wrap; column-gap: var(--s-3); }
+html[data-a11y-size] .linklist a > span:last-child:not(:first-child) { flex: 0 1 auto; white-space: normal; }
 
 .tile {
   display: flex;
@@ -819,7 +903,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
   color: var(--ink);
 }
 .acc summary::-webkit-details-marker { display: none; }
-.acc summary h3, .acc summary h4 { font: inherit; letter-spacing: inherit; }
+.acc summary h3, .acc summary h4 { font: inherit; letter-spacing: inherit; min-width: 0; } /* a long word breaks; the + stays in view */
 .acc summary::after {
   content: "";
   flex: none;
@@ -869,9 +953,12 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 .sources a:hover { color: var(--brand); }
 
 /* ---------------------------------------------------------------- notes and disclosures */
+/* A note is one paragraph in a tinted box: a link stays inside its sentence (as a flex row, every link and every run
+   of text between links was a column of its own). A leading tag ("Ad", "Ad · Partner link") is a column beside the
+   text on wide screens; on phones it runs into the first line, so the words keep the box's full width (beside a long
+   tag they were a narrow column, pushed off a 320px screen with large text). */
 .note {
-  display: flex;
-  gap: var(--s-3);
+  display: flow-root;
   padding: var(--s-3) var(--s-4);
   border-radius: var(--r-control);
   background: var(--bg-subtle);
@@ -882,7 +969,13 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 .note--warn { background: var(--partial-soft); color: #5f3a05; }
 .note--brand { background: var(--brand-softer); }
 .note a { color: inherit; text-decoration: underline; }
-.note > .tag { align-self: flex-start; margin-top: 0.1rem; }
+.note > .tag:first-child { float: left; margin: 0.1rem var(--s-3) 0 0; }
+.note > .tag:first-child + * { display: flow-root; }
+@media (max-width: 47.99em) {
+  /* the tag's box is a little taller than the line: its margins give that back, so the first line keeps its height */
+  .note > .tag:first-child { float: none; margin: -0.125rem var(--s-2) -0.125rem 0; vertical-align: baseline; }
+  .note > .tag:first-child + * { display: inline; }
+}
 .fineprint { font-size: var(--fs-sm); color: var(--ink-3); max-width: 80ch; }
 .fineprint a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
 
@@ -983,7 +1076,7 @@ summary:hover .info { border-color: var(--brand); color: var(--brand); }
 
 /* ---------------------------------------------------------------- dialogs: search palette, menu sheet, filter sheet, preferences */
 dialog { color: var(--ink); }
-dialog::backdrop { background: rgba(17, 19, 31, 0.45); } /* no backdrop blur: it doubled the cost of opening the search palette */
+dialog::backdrop { background: var(--scrim); } /* no backdrop blur: it doubled the cost of opening the search palette */
 .dialog {
   width: min(40rem, calc(100vw - 2rem));
   max-height: min(44rem, calc(100vh - 4rem));
@@ -1175,6 +1268,9 @@ html:not(.js) .scorebtn { pointer-events: none; }
 /* ---------------------------------------------------------------- outbound vendor link + its disclosure (ui.outLink) */
 .commercial-link { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.6rem; max-width: 100%; }
 .commercial-link .fineprint { flex-basis: 100%; font-size: var(--fs-xs); }
+/* a reader text-size preference in a narrow column: a long host name ("site.pulseem.com") may break instead of pushing
+   the page sideways (as a flex item the link could not shrink below it) */
+html[data-a11y-size] .commercial-link > a { min-width: 0; overflow-wrap: anywhere; }
 
 /* ---------------------------------------------------------------- tabs (data-tabs) */
 .tabs__list { max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-bottom: var(--s-3); }

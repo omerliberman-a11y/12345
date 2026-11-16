@@ -1,4 +1,5 @@
-/* System Compare — instant filter + sort for ranked product tables, and the capability matrix.
+/* System Compare — instant filter + sort for ranked product tables, the capability matrix, and the section menu under
+ * a category page's head (also loaded by documentary category pages for that menu alone).
  *
  * Filters and sorting only change which rows are visible and in what order. They never change a
  * published score or rank (the "#" column always shows the published rank).
@@ -79,9 +80,11 @@
     var sel = $('[data-sort-select]', controls);
     if (sel) {
       sel.value = state.sort;
-      // the chip-sized face over the select shows the current order in a few words ("lowest price")
-      var face = $('[data-sort-face]', controls), opt = sel.options[sel.selectedIndex];
-      if (face && opt) face.textContent = opt.getAttribute('data-short') || opt.textContent;
+      // the chip-sized face over the select shows the current order in a few words ("lowest price"): every option's
+      // words are in the face, stacked, and only the current one is shown, so the chip never changes its width
+      var face = $('[data-sort-face]', controls), opt = sel.options[sel.selectedIndex], faces = face ? $$('[data-face]', face) : [];
+      if (faces.length) faces.forEach(function (f) { var on = f.getAttribute('data-face') === sel.value; if (f.classList.contains('is-on') !== on) f.classList.toggle('is-on', on); });
+      else if (face && opt) face.textContent = opt.getAttribute('data-short') || opt.textContent;
     }
     $$('[data-sort-col]', table).forEach(function (th) {
       var k = th.getAttribute('data-sort-col');
@@ -93,7 +96,11 @@
     if (count) {
       count.textContent = '';
       count.appendChild(el('b', { text: filtered ? visible.length + ' of ' + total : String(total) }));
-      count.appendChild(d.createTextNode(' ' + (count.getAttribute('data-noun') || 'products') + (state.sort === 'price' ? ' · sorted by starting price (products without a public price last)' : state.sort === 'name' ? ' · sorted by name' : '')));
+      count.appendChild(d.createTextNode(' ' + (count.getAttribute('data-noun') || 'products')));
+      // the order other than the default, in its own span: the sort face shows it on screen too, so on phones, where
+      // the count shares a short line with the sort, the span is read by screen readers only (category.css)
+      var order = state.sort === 'price' ? ' · sorted by starting price (products without a public price last)' : state.sort === 'name' ? ' · sorted by name' : '';
+      if (order) count.appendChild(el('span.cat-order', { text: order }));
     }
     // the must-have panel repeats the count in its footer, so the effect of a box is visible while the sheet covers
     // the page (not a live region: the count above already announces it)
@@ -314,6 +321,21 @@
         if (!b.hasAttribute('aria-expanded')) b.setAttribute('aria-expanded', 'false');
         b.setAttribute('aria-label', cellName(k, check, textOf(b)));
       });
+    });
+  }
+
+  // ------------------------------------------------------------------ section menu under the page head
+  // Category pages (scored and documentary): the section menu waits under the opaque page head until the head has
+  // scrolled away (category.css). Keyboard focus raises it at once, which covered the end of the head (the answer's
+  // last line, "How we score") for as long as focus stayed in the menu. Now, when focus enters the menu while the head
+  // is still in view, the page scrolls until the menu sits where it sticks, right under the site header. The scroll
+  // follows the page's scroll-behavior: smooth, or instant with reduced motion (the system setting or the site's own
+  // preference, base.css and tokens.css). Once the menu sticks (the only state in which it can be clicked) nothing moves.
+  var catTop = $('.cat-top'), catMenu = catTop && catTop.nextElementSibling;
+  if (catMenu && catMenu.classList.contains('subnav')) {
+    catMenu.addEventListener('focusin', function () {
+      var dy = catMenu.getBoundingClientRect().top - (parseFloat(getComputedStyle(catMenu).top) || 0);
+      if (dy > 1) window.scrollTo(0, Math.round((window.pageYOffset || d.documentElement.scrollTop) + dy));
     });
   }
 

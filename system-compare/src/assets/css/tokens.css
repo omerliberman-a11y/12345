@@ -233,6 +233,9 @@
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --dur: 160ms;
 }
+/* the dimmed page behind a dialog (::backdrop) or a bottom sheet. Set on ::backdrop too: it inherits custom properties
+   only in browsers since 2024 (Chrome 122, Firefox 120, Safari 17.4). The site has no dark theme. */
+:root, ::backdrop { --scrim: rgba(17, 19, 31, 0.45); }
 
 @media (min-width: 56.25em) {
   :root {

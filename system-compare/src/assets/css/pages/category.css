@@ -3,23 +3,83 @@
    The page head is one opaque block (.cat-top: title, buyer question, evidence line, quick answer) and the ranking's
    filters follow it directly. The section menu after it (.subnav, sticky under the site header) is drawn under the
    head's last 3rem while the head is in view, so it takes no room in the first screen; as the head scrolls away the
-   menu comes out from under it and stays sticky as before. Keyboard focus brings it forward at once. This is plain
-   sticky positioning and stacking: no script, nothing moves, and without CSS the menu is simply in the flow. */
+   menu comes out from under it and stays sticky as before. Keyboard focus brings it forward at once, and js/table.js
+   then scrolls the page until the menu sits where it sticks, so it never covers the end of the head. This is plain
+   sticky positioning and stacking: nothing moves on its own, and without CSS the menu is simply in the flow. */
 .cat-top { position: relative; z-index: 61; background: var(--bg); }
 .cat-top + .subnav { margin-top: calc(-3rem - 1px); } /* the menu's own height: 3rem links + the 1px rule */
 .cat-top + .subnav:focus-within { z-index: 62; }
+/* a stuck menu sits inside the page's scroll-padding-top (header + 4.5rem, base.css), so Chrome took a focused link
+   there for hidden and scrolled the page about 430px up at every Tab; the links' own area starts 4.5rem lower */
+.cat-top + .subnav a { scroll-margin-top: -4.5rem; }
 .page-head.cat-head { padding-block: var(--s-4) var(--s-6); }
-/* "{Category} software: N tools compared" fits one line in the 75rem column (all 66 titles at 1440px): no early wrap */
+/* "{Category} software: N tools compared" may fill the 75rem column (no early wrap). */
 .cat-head h1 { max-width: none; }
+/* Line breaks in the head that do not depend on the font (category.mjs, "line breaks in the page head"). The title and
+   the lede carry their width in em (--fit, an upper bound for the web font and its fallback alike). Where their line
+   (100cqi of the head, at most 54rem for the lede) is at least that wide they keep to one line; where it is not, they
+   are at most --fitb wide (90% of the text: narrower than the text in every face), so they take two balanced lines in
+   every face. Narrower lines likewise: under --fitN (the line that surely holds it in N lines) it is at most --fitbN+1
+   wide, where it surely takes N + 1 lines in every face; under --fit5 it wraps freely. */
+.cat-head { container-type: inline-size; }
+.cat-head :is(h1, .lede).cat-fitline {
+  --fitL: 100cqi;
+  max-width: min(var(--fitcap, 100000px),
+    calc(var(--fitb) * 1em + clamp(0px, (var(--fitL) - var(--fit) * 1em) * 1000, 1px) * 100000),
+    calc(var(--fitb3, 999) * 1em + clamp(0px, (var(--fitL) - var(--fit2, 0) * 1em) * 1000, 1px) * 100000),
+    calc(var(--fitb4, 999) * 1em + clamp(0px, (var(--fitL) - var(--fit3, 0) * 1em) * 1000, 1px) * 100000),
+    calc(var(--fitb5, 999) * 1em + clamp(0px, (var(--fitL) - var(--fit4, 0) * 1em) * 1000, 1px) * 100000),
+    calc(var(--fitb6, 999) * 1em + clamp(0px, (var(--fitL) - var(--fit5, 0) * 1em) * 1000, 1px) * 100000));
+}
+.cat-head .lede.cat-fitline { --fitL: min(100cqi, 54rem); --fitcap: 54rem; }
+/* Where the line is at most 3% short of one that surely holds the text in fewer lines (--fit, --fitN), the text is set
+   that much smaller instead (never more), so it keeps the lines the web font needs; 0.2% to spare. --fitF: its size. */
+.cat-head h1.cat-fitline { --fitF: var(--fs-3xl); }
+.cat-head .lede.cat-fitline { --fitF: var(--fs-lg); }
+@media (max-width: 47.99em) { .cat-head .lede.cat-fitline { --fitF: var(--fs-md); } }
+.cat-head :is(h1, .lede).cat-fitline {
+  font-size: min(var(--fitF),
+    calc(var(--fitL) / (var(--fit) * 1.002) + 100000px - clamp(0px, (var(--fitL) - var(--fitF) * var(--fit) * 0.97) * 1000, 1px) * 100000),
+    calc(var(--fitL) / (var(--fit2, 1) * 1.002) + 100000px - clamp(0px, (var(--fitL) - var(--fitF) * var(--fit2, 1000) * 0.97) * 1000, 1px) * 100000),
+    calc(var(--fitL) / (var(--fit3, 1) * 1.002) + 100000px - clamp(0px, (var(--fitL) - var(--fitF) * var(--fit3, 1000) * 0.97) * 1000, 1px) * 100000),
+    calc(var(--fitL) / (var(--fit4, 1) * 1.002) + 100000px - clamp(0px, (var(--fitL) - var(--fitF) * var(--fit4, 1000) * 0.97) * 1000, 1px) * 100000),
+    calc(var(--fitL) / (var(--fit5, 1) * 1.002) + 100000px - clamp(0px, (var(--fitL) - var(--fitF) * var(--fit5, 1000) * 0.97) * 1000, 1px) * 100000));
+}
+/* the evidence line, a row of items below 78em, breaks after its second item where the whole row does not surely fit
+   but each half does (--tfit, --tfit2 on .cat-sum), and after its fourth too where the second half does not either but
+   each run of two does (--tfit3; only a documentary page has a fifth item). The breaks are empty full-width items put
+   in place with `order`. Phones show only its first and last item and are left as they are. */
+@media (min-width: 48em) and (max-width: 77.99em) {
+  .cat-sum { container-type: inline-size; }
+  .cat-sum > .trustline > :nth-child(n + 3) { order: 1; }
+  .cat-sum > .trustline > :nth-child(n + 5) { order: 3; }
+  .cat-sum > .trustline::after { content: ""; flex-basis: min(100%, (clamp(0px, (100cqi - var(--tfit3) * 1em) * 1000, 1px) - clamp(0px, (100cqi - var(--tfit) * 1em) * 1000, 1px)) * 100000); }
+  .cat-sum > .trustline::before { content: ""; order: 2; flex-basis: min(100%, (clamp(0px, (100cqi - var(--tfit3) * 1em) * 1000, 1px) - clamp(0px, (100cqi - var(--tfit2) * 1em) * 1000, 1px)) * 100000); }
+}
 /* the buyer's question shares the answer's measure (54rem), so most fit one line and the two share a right edge */
 .cat-head .lede { max-width: 54rem; }
 .cat-sum > .answer { margin-top: var(--s-5); }
-/* wide screens: the run-in "Quick answer" float is a hair shorter than the answer's 1.8rem line (rounding made it
-   indent the second line too at 150% text); the offset keeps the two baselines together */
-@media (min-width: 48em) { .cat-sum .answer__label { top: 0.175rem; line-height: 1.7rem; } }
-/* wide screens: the evidence line is a short column beside the answer instead of a row above it */
-@media (min-width: 75em) {
-  .cat-sum { display: grid; grid-template-columns: minmax(0, 54rem) minmax(13rem, 1fr); column-gap: var(--s-10); align-items: start; margin-top: var(--s-5); }
+/* The "Quick answer" label runs into the answer's first line at every width: it floats at the start of that line, so
+   the words start wherever it ends, whatever the letter and word spacing (a fixed indent under an absolutely placed
+   label let the WCAG text-spacing override run the two together). The float is a hair shorter than the answer's line
+   (rounding must not let it indent the second line too, also at 150% text); the offset keeps the baselines together.
+   The answer is 18px / 1.6 from 40em and 16px / 1.55 on phones (components.css). */
+.cat-sum .answer__label { float: left; position: relative; top: 0.175rem; margin: 0 0.75rem 0 0; line-height: 1.7rem; }
+@media (max-width: 39.99em) { .cat-sum .answer__label { top: 0.14rem; margin-right: 0.6rem; line-height: 1.45rem; } }
+/* phones and small tablets clamp the answer to three lines (components.css): here the clamp is a three-line max-height
+   with the rest clipped, because a paragraph clamped as a -webkit-box would sit beside the float instead of flowing
+   round it; "Show the full answer" lifts it */
+@supports selector(:has(*)) {
+  @media (max-width: 47.99em) {
+    .cat-sum .answer--more > p:first-of-type { display: block; max-height: 3lh; overflow: clip; }
+    .cat-sum .answer--more:has(> .answer__more[open]) > p:first-of-type { max-height: none; }
+  }
+}
+/* wide screens: the evidence line is a short column beside the answer instead of a row above it, from the width where
+   the column holds its longest item on one line ("Desk research, not hands-on testing", 242px, with 5% to spare) next
+   to the answer's full 54rem measure (narrower, the answer would wrap differently than it does everywhere else) */
+@media (min-width: 78em) {
+  .cat-sum { display: grid; grid-template-columns: minmax(0, 54rem) minmax(17.5rem, 1fr); column-gap: var(--s-10); align-items: start; margin-top: var(--s-5); }
   .cat-sum > .answer { grid-area: 1 / 1; margin-top: 0; }
   .cat-sum > .trustline { grid-area: 1 / 2; flex-direction: column; row-gap: 0.3rem; margin-top: 0; padding: 0.45rem 0 0 var(--s-6); border-left: 1px solid var(--line); }
   .cat-sum > .trustline > * { margin: 0; padding: 0; }
@@ -30,17 +90,32 @@
 @media (max-width: 47.99em) { .cat-answer { padding-bottom: var(--s-4); } }
 .cat-products { padding-top: var(--s-1); padding-bottom: var(--s-10); }
 .cat-products .toolbar { padding-top: 0; padding-bottom: var(--s-2); }
-/* filters left; the sort, the live count and the score help at the right end of the row (the sort is placed from the
-   right, so the filters' widths never move it, also not when the web font replaces its fallback) */
-.cat-chips { min-width: 0; }
-.cat-toolbar__end { display: flex; align-items: center; gap: var(--s-2); min-width: 0; }
-.cat-products .toolbar__count { margin: 0; min-width: 0; }
+/* The ranking's controls: the filters, the live count, and the sort with the score help in a slot of their own at the
+   right end. A grid of two rows at every width, so no line break in it depends on the width of a text: the web font
+   is about 0.6% wider or narrower than its fallback, and a row that only just fits wraps differently once it arrives
+   and moves the table. Below 75em the filters are the first row and the count shares the second with the sort; from
+   75em the sort and the help end the filter row (at most 1,004px of filters, "Clear filters", sort and help in the
+   1,136px column at 1200px) and the count is the line right above the table (it can be 300px, so one row for all four
+   would leave too little to spare on some pages). The sort slot is aligned to the top of its row: a count that wraps
+   (large text, a long filtered count) grows the row downwards and never moves the sort. */
+.cat-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "chips chips" "count end"; align-items: center; gap: var(--s-2) var(--s-4); }
+.cat-chips { grid-area: chips; min-width: 0; }
+.cat-products .toolbar__count { grid-area: count; margin: 0; min-width: 0; line-height: 1.4; }
+.cat-toolbar__end { grid-area: end; align-self: start; display: flex; align-items: center; gap: var(--s-2); }
+@media (min-width: 75em) {
+  html:not([data-a11y-size]) .cat-toolbar { grid-template-areas: "chips end" "count count"; }
+  /* the count line is the caption right above the table's column heads, which bring their own padding */
+  html:not([data-a11y-size]) .cat-products .cat-toolbar { padding-bottom: 0; }
+}
+/* the order other than the default, after the count (js/table.js); phones read it in the sort face's place: below */
+.cat-order { color: var(--ink-2); }
 /* the sort: a chip-sized face showing the current order, with the native <select> laid over it (it gets the taps,
-   the keyboard and the screen reader; the face is hidden from assistive technology) */
+   the keyboard and the screen reader; the face is hidden from assistive technology). The short labels of all orders
+   share one grid cell and only the current one is visible, so the chip is as wide as the longest, in whichever font
+   is showing, and choosing another order never resizes it. */
 .cat-sort {
   position: relative;
   flex: none;
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   min-height: 2.5rem;
@@ -56,35 +131,44 @@
 }
 .cat-sort:hover { border-color: var(--ink-3); }
 .cat-sort__face b { font-weight: 600; color: var(--ink); }
+.cat-sort__faces { display: inline-grid; }
+.cat-sort__faces > b { grid-area: 1 / 1; }
+.cat-sort__faces > b:not(.is-on) { visibility: hidden; }
+/* and a width of its own, a little over its longest face in any of the fonts ("Sort: lowest price" 167px, "Sort: share
+   checked" 185px where nothing is scored yet), so the web font arriving cannot nudge it either */
+@media (min-width: 48em) { .cat-sort { min-width: 11rem; } .cat-sort--cov { min-width: 12rem; } }
 .cat-sort__select { position: absolute; top: -1px; left: -1px; width: calc(100% + 2px); height: calc(100% + 2px); margin: 0; padding: 0; border: 0; border-radius: inherit; opacity: 0; font-size: 1rem; cursor: pointer; appearance: none; -webkit-appearance: none; }
 .cat-sort:has(> .cat-sort__select:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (pointer: coarse), (max-width: 47.99em) { .cat-sort { min-height: var(--tap); } }
+@media (pointer: coarse), (max-width: 47.99em) {
+  .cat-sort { min-height: var(--tap); }
+  /* the score help keeps its 44px target (components.css) right after the sort; its 20px icon ends the column */
+  .cat-toolbar__end { gap: 0; }
+  .cat-toolbar__end .pop > summary { margin-right: calc((1.25rem - var(--tap)) / 2); }
+}
 @media (max-width: 47.99em) {
   /* the buyer's question at body size, and slightly tighter steps down to the filters */
   .cat-head .lede { margin-top: var(--s-3); font-size: var(--fs-md); line-height: 1.5; }
   .cat-sum > .trustline { margin-top: var(--s-3); }
   .cat-sum > .answer { margin-top: var(--s-4); }
-  .page-head.cat-head { padding-bottom: var(--s-5); }
+  .page-head.cat-head { padding-bottom: var(--s-4); }
   .cat-products { padding-top: 0; }
-  /* phones: the filters are one row that scrolls sideways from the left edge, with the sort pinned at its end; the
-     row's right edge fades to show there is more (the must-have panel is a bottom sheet here, so the scroller never
-     clips it). The count is the line under them, right above the first product. */
-  .cat-toolbar { column-gap: var(--s-2); row-gap: var(--s-1); }
-  .cat-chips { position: relative; flex: 1 1 0; margin-left: calc(-1 * var(--gutter)); }
-  .cat-chips .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 0.3rem 2rem 0.3rem var(--gutter); scroll-padding-inline: var(--gutter) 2rem; }
+  /* the count line is 44px tall here (it holds the sort), so it needs no padding under it before the first row */
+  .cat-products .toolbar { padding-bottom: 0; }
+  /* phones: the filters are one row from edge to edge that scrolls sideways, its right edge faded to show there is more
+     (the must-have panel is a bottom sheet here, so the scroller never clips it). Under it the count line, 44px tall
+     with "Sort" and the score help at its end, right above the first product. */
+  .cat-toolbar { column-gap: var(--s-3); row-gap: var(--s-1); }
+  .cat-chips { position: relative; margin-inline: calc(-1 * var(--gutter)); }
+  .cat-chips .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 0.25rem 2rem 0.25rem var(--gutter); scroll-padding-inline: var(--gutter) 2rem; } /* 4px: a focus ring, unclipped */
   .cat-chips .chips::-webkit-scrollbar { display: none; }
+  /* nothing in the scrolling row shrinks: "Clear filters", shown once a filter is on, stays one 44px line, so the row
+     (and the chip just tapped) keeps its height */
+  .cat-chips .chips > * { flex: none; }
+  .cat-chips .chip--link { white-space: nowrap; }
   .cat-chips::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2rem; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; }
   .cat-sort__v { display: none; }
-  .cat-toolbar__end { flex: 1 1 100%; }
-  /* the score help keeps its 44px target without making the count line 44px tall */
-  .cat-toolbar__end .pop > summary { margin-block: -0.6rem; }
-}
-/* phones (the answer is 16px / 1.55 below 40em, components.css): the "Quick answer" label runs into the first of the
-   three lines, as it does on wide screens. Its text is 6.5em of the answer text wide (12px uppercase against 16px),
-   so the first line starts after it and a gap; its line box matches the answer's, nudged so the baselines meet. */
-@media (max-width: 39.99em) {
-  .cat-sum .answer__label { position: absolute; top: calc(var(--s-1) + 0.09rem); left: var(--s-5); margin: 0; line-height: 1.55rem; }
-  .cat-sum .answer > p:first-of-type { text-indent: calc(6.5em + 0.6rem); }
+  /* the count line is too short for the order as well: the face's words are the sort order on screen, this is spoken */
+  .cat-order { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 }
 /* wide screens: ranking rows no taller than their content needs (name, two-line fit, dated price) */
 @media (min-width: 48em) {
@@ -115,7 +199,7 @@ html:not(.js) .mustpop__foot { display: none; }
   .mustpop__body { padding: var(--s-5) var(--gutter) var(--s-4); }
   .mustpop__foot { padding: var(--s-3) var(--gutter) max(var(--s-3), env(safe-area-inset-bottom)); }
   /* the page behind the sheet is dimmed: a tap there closes the sheet (core.js closes a popover on any tap outside it) */
-  .js .cat-toolbar:has(.mustpop[open])::after { content: ""; position: fixed; inset: 0; z-index: 129; background: rgba(17, 19, 31, 0.45); }
+  .js .cat-toolbar:has(.mustpop[open])::after { content: ""; position: fixed; inset: 0; z-index: 129; background: var(--scrim); }
 }
 .mustpop fieldset { border: 0; padding: 0; margin: var(--s-3) 0 0; }
 .mustpop legend { padding: 0; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }

@@ -351,6 +351,31 @@
 
   var tray, trayFocus = null; // trayFocus: index of the tray button that had focus before a re-render (-1: Clear)
   var traySeq = 0; // a newer render (or closing) cancels a slide-in still waiting for its frame
+  /** A chip row wider than the tray scrolls sideways: its edge fades where more chips are (data-fade "start" / "end"),
+   *  kept in step when it scrolls and when it or a chip changes size (text size, the web font arriving). */
+  function trayFade(box) {
+    var x = box.scrollLeft, rest = box.scrollWidth - box.clientWidth - x;
+    var f = [x > 1 ? 'start' : '', rest > 1 ? 'end' : ''].join(' ').trim();
+    if ((box.getAttribute('data-fade') || '') !== f) { if (f) box.setAttribute('data-fade', f); else box.removeAttribute('data-fade'); }
+  }
+  /** A focused × and its focus ring stay clear of a fading edge: the browser only scrolls a control that is partly
+   *  out of the row, so one just inside the fade is brought in by the fade's width (1.5rem) plus the ring (4px). */
+  function trayReveal(box, x) {
+    var b = box.getBoundingClientRect(), r = x.getBoundingClientRect(), max = box.scrollWidth - box.clientWidth;
+    var room = parseFloat(getComputedStyle(root).fontSize) * 1.5 + 4;
+    if (r.right > b.right - room && box.scrollLeft < max - 1) box.scrollLeft = Math.min(max, box.scrollLeft + r.right - (b.right - room));
+    else if (r.left < b.left + room && box.scrollLeft > 1) box.scrollLeft = Math.max(0, box.scrollLeft - (b.left + room - r.left));
+  }
+  var trayRO = 'ResizeObserver' in w ? new ResizeObserver(function () { var b = tray && $('.tray__items', tray); if (b) trayFade(b); }) : null;
+  /** From 48em the chips show the names while they fit; once a name would be cut short they show logos only, as on
+   *  phones (two or more products: components.css). Decided when the tray is drawn and when the window is resized,
+   *  never when only the text changes (the web font arriving), so nothing in the bar flips between the two. */
+  function trayFit(box) {
+    box.classList.remove('tray__items--logos');
+    if ($$('.tray__item', box).length < 2 || !w.matchMedia('(min-width: 48em)').matches) return;
+    if ($$('.tray__name', box).some(function (n) { return n.scrollWidth > n.clientWidth + 1; })) box.classList.add('tray__items--logos');
+  }
+  on(w, 'resize', function () { var b = tray && $('.tray__items', tray); if (b) { trayFit(b); trayFade(b); } });
   function renderTray() {
     var o = readList();
     traySeq++;
@@ -369,14 +394,19 @@
       var o2 = readList();
       o2.ids = o2.ids.filter(function (id) { return data.vendors[id]; }); // never a raw id (an older vendors file cannot repair)
       if (!o2.ids.length) return;
-      var items = el('div.tray__items');
+      // two or more products: on phones each chip is its logo (or initials) and its × (from 48em only once a name
+      // would be cut short: trayFit); the name stays in the chip as screen-reader text and as its title
+      // (components.css .tray__items--many, .tray__items--logos)
+      var items = el('div.tray__items' + (o2.ids.length > 1 ? '.tray__items--many' : ''));
       o2.ids.forEach(function (id, i) {
         var v = data.vendors[id];
         var logo = el('span.logo' + (v[2] ? '.logo--dark' : ''));
         if (v[1]) logo.appendChild(el('img', { src: SC.url(v[1]), alt: '', width: 28, height: 28, loading: 'lazy' }));
-        if (v[1] && v[4]) SC.monogram(logo, v[0]); // a wide wordmark would be unreadable in the small chip
-        items.appendChild(el('span.tray__item', null, [logo, el('span', { text: v[0] }), el('button.tray__x', { type: 'button', 'aria-label': 'Remove ' + v[0] + ' from shortlist', text: '×', on: { click: function () { trayFocus = i; SC.shortlist.remove(id); announce(v[0], false); } } })]));
+        if (!v[1] || v[4]) SC.monogram(logo, v[0]); // a wide wordmark would be unreadable in the small chip
+        items.appendChild(el('span.tray__item', { title: v[0] }, [logo, el('span.tray__name', { text: v[0] }), el('button.tray__x', { type: 'button', 'aria-label': 'Remove ' + v[0] + ' from shortlist', text: '×', on: { click: function () { trayFocus = i; SC.shortlist.remove(id); announce(v[0], false); } } })]));
       });
+      on(items, 'scroll', function () { trayFade(items); }, { passive: true });
+      on(items, 'focusin', function (e) { trayReveal(items, e.target); });
       var canCompare = o2.ids.length >= 2, mem = !!memList; // mem: the browser refused to store it (this page view only)
       var cmp = el('a.btn.btn--sm', { href: canCompare ? SC.shortlist.compareUrl(o2) : SC.url('/shortlist/'), text: canCompare ? 'Compare ' + o2.ids.length : 'Add one more to compare', 'aria-describedby': mem ? 'sc-tray-why' : null });
       if (!canCompare) { cmp.className = 'btn btn--sm btn--ghost tray__hint'; cmp.setAttribute('aria-disabled', 'true'); cmp.removeAttribute('href'); }
@@ -393,6 +423,9 @@
       tray.appendChild(inner);
       d.body.classList.add('has-tray');
       syncBottomPad();
+      trayFit(items);
+      trayFade(items);
+      if (trayRO) { trayRO.disconnect(); trayRO.observe(items); $$('.tray__item', items).forEach(function (c) { trayRO.observe(c); }); }
       if (trayFocus != null) {
         var xs = $$('.tray__x', tray), next = xs[Math.min(trayFocus, xs.length - 1)] || $('.tray__clear', tray);
         trayFocus = null;
@@ -497,6 +530,25 @@
   /** Runs fn once the next frame has been painted (so a click shows its result before heavy work starts). */
   function afterPaint(fn) { (w.requestAnimationFrame || setTimeout)(function () { setTimeout(fn, 0); }); }
   function whenIdle(fn) { if (w.requestIdleCallback) w.requestIdleCallback(fn, { timeout: 600 }); else setTimeout(fn, 50); }
+  /** Is a the word b, or b misspelt as far as the search engine tolerates (same first letter; one edit, two from
+   *  8 letters)? */
+  function nearWord(a, b) {
+    if (a === b) return true;
+    var max = a.length >= 8 ? 2 : 1, p2 = null, p1 = [], c, i, j;
+    if (a.length < 4 || a.charAt(0) !== b.charAt(0) || Math.abs(a.length - b.length) > max) return false;
+    for (j = 0; j <= b.length; j++) p1[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      c = [i];
+      for (j = 1; j <= b.length; j++) {
+        c[j] = Math.min(p1[j] + 1, c[j - 1] + 1, p1[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+        if (i > 1 && j > 1 && a.charAt(i - 1) === b.charAt(j - 2) && a.charAt(i - 2) === b.charAt(j - 1)) c[j] = Math.min(c[j], p2[j - 2] + 1);
+      }
+      p2 = p1; p1 = c;
+    }
+    return p1[b.length] <= max;
+  }
+  // the words around product names in "X vs Y", "X alternatives", "alternatives to X", "X pricing" …
+  var INTENT_WORD = /^(?:vs|v|versus|compared?|comparisons?|to|with|against|and|or|alternatives?|competitors?|replacements?|substitutes?|for|of|similar|like|instead|replace|switch|from|pricing|prices?|costs?|plans?|reviews?|ratings?|score)$/;
   // The previous site's limits for a search, and its message (search.js reads at most this much)
   SC.searchLimit = {
     chars: 120, words: 20, message: 'Use at most 120 characters and 20 words, then search again.',
@@ -539,6 +591,49 @@
       if (r.type !== 'product') return '';
       if (r.best != null) return r.best + '/100';
       return r.profile ? 'Score pending' : '';
+    },
+    /**
+     * Does the first group of results answer the query, so that it is the "Best match" (the palette's Enter opens
+     * it), or is it "Suggestions"? Not when the engine says so (r.direct === false: "crm vs", "zoho vs"), and not
+     * when that row is about particular products (a head-to-head, the compare tool, alternatives, a product's
+     * pricing or score) that the query does not name: "crm pricing", "crm alternatives", "phone alternatives",
+     * "crm vs pipedrive". A product is named by its name or an alias, by words that a search on their own reads as
+     * that product ("monday"), or by its brand word, typed or misspelt ("malchimp pricing"), unless that word is a
+     * category's own ("crm", "chat"). The palette and /search/ use this one rule.
+     */
+    answers: function (engine, r, q) {
+      if (!r.top.length || r.direct === false) return false;
+      var it = r.q.intent, ids = [];
+      if (it && it.cmp) return true; // the exact title of a published head-to-head
+      if (it && it.kind === 'vs') ids = [it.a.id, it.b.id];
+      else if (it && it.kind === 'multi') ids = it.items.map(function (x) { return x.id; });
+      else if (it && it.kind === 'alternatives') ids = [it.a.id];
+      else if (r.q.suffix && r.top[0].type === 'product' && r.groups.product && r.groups.product[0]) ids = [r.groups.product[0].id];
+      if (!ids.length) return true; // a product named on its own, the site's own page: the engine read the words
+      // the words that can name a product: runs of up to four words between "vs", "alternatives", "pricing" …
+      var runs = [], seg = [], plainOf = Object.create(null), E = SC.searchEngine;
+      E.words(E.capped(q)).concat(['vs']).forEach(function (x) {
+        if (!INTENT_WORD.test(x)) { seg.push(x); return; }
+        for (var i = 0; i < seg.length; i++) for (var j = i + 1; j <= Math.min(seg.length, i + 4); j++) runs.push(seg.slice(i, j).join(' '));
+        seg = [];
+      });
+      function plain(run) { // the product a search for these words alone opens ('' for none)
+        if (!(run in plainOf)) {
+          var r2 = engine.query(run), t = r2.top[0];
+          plainOf[run] = t && t.type === 'product' && r2.direct !== false && !r2.q.intent && !r2.q.suffix && !r2.q.vsOf ? t.id : '';
+        }
+        return plainOf[run];
+      }
+      return ids.every(function (id) {
+        var x = engine.docs.filter(function (y) { return y.type === 'product' && y.id === id; })[0];
+        var names = x ? [x.nameNorm].concat(x.al) : [];
+        // a search can only read the words as x when they start one of its names or are all words of them
+        var could = function (run) { var ts = E.toks(run); return names.some(function (n) { return n.indexOf(run) === 0; }) || (ts.length > 0 && ts.every(function (t) { return x.f.n[t] || (x.f.a && x.f.a[t]); })); };
+        return !!x && runs.some(function (run) {
+          if (names.indexOf(run) >= 0 || (could(run) && plain(run) === id)) return true;
+          return run.indexOf(' ') < 0 && !Object.keys(engine.parse(run).cats).length && names.some(function (n) { return nearWord(run, n.split(' ')[0]); });
+        });
+      });
     },
     /** Result row. Built with textContent only — never innerHTML with user or index text. */
     hit: function (r, opts) {
@@ -646,8 +741,9 @@
     }
     // data-top: Enter opens the first best match directly ("X vs Y", "X alternatives", "X pricing", "X vs", a
     // product's name, the site's own page for a question about it). Rows that do not answer the query outright
-    // ("zoho vs": which Zoho?) are only suggestions: Enter then opens the search page, and the heading says so.
-    var direct = r.direct !== false;
+    // ("crm vs", "crm pricing": which product?) are only suggestions: Enter then opens the search page, and the
+    // heading says so (SC.search.answers, the same rule as /search/).
+    var direct = SC.search.answers(engine, r, q);
     if (r.top.length) { frag.appendChild(group(direct ? 'Best match' : 'Suggestions')); r.top.forEach(function (t, i) { add(t, { top: i === 0 && direct }); }); }
     var shown = {}; r.top.forEach(function (t) { shown[t.type + ':' + t.id] = 1; });
     // products that only list the named product as an integration: their own small, labelled group
@@ -807,10 +903,13 @@
     if (e.key !== 'Escape') return;
     $$('details[data-pop][open]').forEach(function (p) { p.open = false; var s = $('summary', p); if (s) s.focus(); });
   });
-  // ... and when focus moves on, so an open panel never covers the next focused control
+  // ... and when focus moves on, so an open panel never covers the next focused control. Focus that moves to an
+  // element around the popover is not focus moving on: a press on the text of a panel without tabindex focuses
+  // <main tabindex="-1">, and closing the popover then, in the middle of the press, crashed Chromium's renderer.
+  // A click outside still closes it (above), on release.
   on(d, 'focusout', function (e) {
-    var p = e.target.closest && e.target.closest('details[data-pop][open]');
-    if (p && e.relatedTarget && !p.contains(e.relatedTarget)) p.open = false;
+    var p = e.target.closest && e.target.closest('details[data-pop][open]'), to = e.relatedTarget;
+    if (p && to && !p.contains(to) && !to.contains(p)) p.open = false;
   });
   // keep an opened panel inside the viewport: at tablet widths its trigger can sit near either edge
   d.addEventListener('toggle', function (e) {

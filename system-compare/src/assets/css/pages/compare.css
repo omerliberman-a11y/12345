@@ -216,6 +216,9 @@ a.cmp-slot__name:hover { color: var(--brand); }
 
 /* ---------------------------------------------------------------- compare tool: picker (category → products) */
 .cmp-picker { padding-bottom: var(--s-10); }
+/* with a saved shortlist the picker keeps its room but is painted only once its "Your shortlist" box is in place
+   (compare.js showCategories), so that box never pushes painted categories down */
+.js .cmp-picker[data-wait] { visibility: hidden; }
 .cmp-picker__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3) var(--s-6); margin-bottom: var(--s-6); }
 .cmp-picker__head h2, .cmp-step h2 { display: flex; align-items: center; gap: 0.7rem; }
 .cmp-stepno { display: inline-grid; place-items: center; flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); font-family: var(--font); font-size: var(--fs-sm); font-weight: 700; letter-spacing: 0; }
@@ -232,7 +235,7 @@ a.cmp-slot__name:hover { color: var(--brand); }
 .cmp-cats .n { flex: none; font-size: var(--fs-sm); font-weight: 400; color: var(--ink-3); white-space: nowrap; }
 .cmp-picker__note { margin-top: var(--s-2); }
 .cmp-noscript { padding-bottom: var(--s-10); }
-.cmp-noscript .note { margin-bottom: var(--s-5); }
+.cmp-noscript .note { display: block; margin-bottom: var(--s-5); } /* one sentence with a link: a paragraph, not a flex row of pieces */
 html.js .cmp-noscript { display: none; }
 
 .cmp-step { padding-bottom: var(--s-4); }

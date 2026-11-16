@@ -18,6 +18,13 @@
 .srch__start { margin-top: var(--s-8); max-width: 52rem; }
 .srch__all { margin-top: var(--s-5); }
 .srch .toolbar__count { margin: var(--s-3) 0 0; }
+/* the sort sits at the right end of the type chips' row, or right-aligned under them when they wrap; at a large text
+   size on a narrow phone it may be narrower than its longest option ("Sort: price, low to high") rather than overflow */
+.srch__bar .toolbar__sort { margin-left: auto; min-width: 0; max-width: 100%; }
+.srch__bar .toolbar__sort .select { max-width: 100%; }
+/* the no-JavaScript note is one sentence with links in it: a paragraph, not .note's flex row (which set every piece
+   of it in a column of its own and ran past the screen edge) */
+.srch .note { display: block; }
 
 .faq-page .section { padding-block: var(--s-10); }
 .faq-page h2 { margin-bottom: var(--s-4); }

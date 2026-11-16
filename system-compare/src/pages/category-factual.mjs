@@ -9,6 +9,7 @@ import { html, raw, esc, text, cx, attrs, join } from '../lib/html.mjs';
 import * as ui from '../lib/components.mjs';
 import { title as seoTitle, describe } from '../lib/seo.mjs';
 import { fmtDate } from '../lib/format.mjs';
+import { fitStyle, fitItems } from './category.mjs';
 
 export function routes(ctx) {
   return ctx.factualCategories.map((category) => ({ path: ctx.url.category(category.id), render: (c) => render(c, category) }));
@@ -188,12 +189,22 @@ function render(ctx, category) {
 
   // Same first screen as the scored category page (category.mjs, category.css): one opaque head block (.cat-top) with
   // the trust strip and the answer side by side on wide screens; the section menu waits under it until it scrolls away.
+  // The heading and the evidence line break where their text says, not where the font does (category.mjs, "line breaks
+  // in the page head").
+  const heading = F.heading || category.name;
+  const trustText = [
+    `Evidence checked ${ctx.fmtDate(checked)}`,
+    `${ctx.plural(suppliers.length, 'supplier')} · ${ctx.plural(nOffers, 'offer')}`,
+    NO_SCORE_LABEL,
+    approver && `${approver.name}, ${String(approver.role || '').toLowerCase()}`,
+    'How we score',
+  ].filter(Boolean);
   const head = html`<div class="cat-top">
     <header class="wrap page-head page-head--wide cat-head">
       <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
-      <h1>${F.heading || category.name}</h1>
-      <p class="lede">${category.description}</p>
-      <div class="cat-sum">
+      <h1 class="cat-fitline" style="${fitStyle(heading, 'title')}">${heading}</h1>
+      <p class="lede cat-fitline" style="${fitStyle(category.description, 'body')}">${category.description}</p>
+      <div class="cat-sum" style="${fitItems(trustText, 2)}">
         ${ui.trustline(
           [
             html`Evidence checked ${ui.time(ctx, checked)}`,
@@ -554,7 +565,8 @@ function render(ctx, category) {
       ),
     ],
     pageExtra: { mainEntity: { '@id': `${ctx.abs(path)}#primary-list` }, about: { '@type': 'Thing', name: category.name } },
-    scripts: ['js/factual.js'],
+    // js/table.js: here only for the section menu under the page head (keyboard focus scrolls it to its sticky place)
+    scripts: ['js/factual.js', 'js/table.js'],
     body: tight(html`${head}${nav}${suppliersBlock}${plansBlock}${comparison}${choose}${checklist}${local}${deeper}${method}${sourcesBlock}${relatedBlock}`),
   };
 }

@@ -115,23 +115,28 @@ export function scoreHelp(ctx, { align } = {}) {
 
 // ------------------------------------------------------------------ price
 /**
- * The price as published. `plan`: the plan the price is for, beside the amount from 48em (phones keep it for screen
- * readers only, so a row keeps one price line where it fits); `checked`: the price-check date; `source` (the product's
- * name): a direct link to the official pricing source, as the live site's cards linked it. That link is a cited source,
- * not a vendor CTA, so it is the vendor's own URL, never /go/. No plan is printed for "SMS price not verified" (the
- * recorded plan then only says "SMS-specific plan not verified"), and no link where no source is recorded.
+ * The price as published. `plan`: the plan the price is for, on the line under the amount from 48em (phones keep it
+ * for screen readers only, so a row keeps one price line where it fits); `checked`: the price-check date; `source` (the
+ * product's name): a direct link to the official pricing source, as the live site's cards linked it. That link is a
+ * cited source, not a vendor CTA, so it is the vendor's own URL, never /go/. No plan is printed for "SMS price not
+ * verified" (the recorded plan then only says "SMS-specific plan not verified"), and no link where no source is recorded.
  */
 export function priceCell(ctx, p, { size, plan = false, checked = false, source = '' } = {}) {
   const main = p.hasAmount
     ? html`<span class="price__main num">${p.headline}</span>`
     : html`<span class="price__main price__main--text">${p.headline}</span>`;
-  // with an amount: unit + billing; without one: the pricing basis as recorded ("per sales seat/month, plus usage")
-  const unit = p.hasAmount ? [p.unit, p.billingNote].filter(Boolean).join(' · ') : p.basis;
-  const planText = plan && p.plan && !p.smsUnverified ? (source ? ctx.dropNamePrefix(source, p.planLabel) : p.planLabel) : '';
+  // with an amount: unit + billing (not twice: "per month, annual billing; 10 users" says it already); without one: the
+  // pricing basis as recorded ("per sales seat/month, plus usage")
+  const billing = /\b(annual billing|billed annually)\b/i.test(p.unit) ? '' : p.billingNote;
+  const unit = p.hasAmount ? [p.unit, billing].filter(Boolean).join(' · ') : p.basis;
+  // the plan without the product name it repeats ("Plus plan"); a plan named after the product keeps its name
+  // ("RingEX plan" in the RingCentral RingEX row, as the live card printed it), never a bare "plan"
+  const shortPlan = plan && p.plan && !p.smsUnverified ? (source ? ctx.dropNamePrefix(source, p.planLabel) : p.planLabel) : '';
+  const planText = /^(plans?|tiers?|editions?|packages?|packs?|suites?|bundles?|subscriptions?|offers?)$/i.test(shortPlan) ? p.planLabel : shortPlan;
   const date = checked && p.checkedAt ? html`<span class="price__chk">Checked ${time(ctx, p.checkedAt)}</span>` : '';
   const link =
     source && p.sourceUrl
-      ? html`<a class="ext" href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Source<span class="sr-only"> of the ${source} price (opens in a new tab)</span></a>`
+      ? html`<a class="ext" href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Source<span class="sr-only"> of the ${source} price</span></a>`
       : '';
   return html`<span class="${cx('price', size && `price--${size}`, (planText || link) && 'price--detail')}">
     ${main}
@@ -201,7 +206,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
     sortable && sortKey
       ? html`<th scope="col" class="${cls}" data-sort-col="${sortKey}"><button type="button" data-sort="${sortKey}">${label}</button></th>`
       : html`<th scope="col" class="${cls}">${label}</th>`;
-  return html`<table class="ptable" id="${id}" data-ptable data-category="${categoryId}">
+  return html`<table class="${cx('ptable', priceChecked && 'ptable--dated')}" id="${id}" data-ptable data-category="${categoryId}">
     <caption class="sr-only">${caption || `${category.name}: products ranked by documented-fit score`}</caption>
     <thead>
       <tr>

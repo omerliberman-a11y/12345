@@ -185,19 +185,34 @@
 
   // ------------------------------------------------------------------ empty state, step 1: choose a category
   function showCategories(note, userAction) {
+    var mine = token, shown = false;
     C.current(null);
     setTitle('');
     mount.textContent = '';
     if (note) mount.appendChild(note);
+    // with a saved shortlist the picker is painted once its "Your shortlist" box is in place (the names come from
+    // vendors.js, which the tray has usually loaded already): drawn into a painted picker, the box pushed the
+    // categories down. Until then it keeps its room in the page, unpainted (compare.css [data-wait]), so nothing
+    // after it moves either; a slow vendors file does not hold the categories back for long.
     picker.hidden = false;
-    renderSaved();
-    if (userAction) focusTop($('h2', picker));
+    picker.setAttribute('data-wait', '');
+    function show() {
+      if (shown || mine !== token) return;
+      shown = true;
+      picker.removeAttribute('data-wait');
+      if (userAction) focusTop($('h2', picker));
+    }
+    renderSaved().then(show, show);
+    setTimeout(show, 1500);
   }
+  /** The "Your shortlist" box at the top of the picker; resolves once it is drawn (or there is none). */
   function renderSaved() {
-    var box = $('[data-cmp-saved]', picker), o = SC.shortlist.get();
+    var box = $('[data-cmp-saved]', picker);
     box.textContent = '';
-    if (!o.ids.length || !cats[o.category]) return;
-    SC.load('vendors').then(function (V) {
+    if (!SC.shortlist.get().ids.length) return Promise.resolve();
+    return SC.load('vendors').then(function (V) {
+      var o = SC.shortlist.get(); // as repaired against the vendors file by core.js, which read it first
+      if (!o.ids.length || !cats[o.category]) return;
       var ids = o.ids.filter(function (id) { return V.vendors[id]; }).slice(0, MAX);
       if (!ids.length) return;
       var names = ids.map(function (id) { return V.vendors[id][0]; });
@@ -492,9 +507,10 @@
       rowEl(m, 'Best for', function (it) { return it.v.bf; }),
       rowEl(m, 'Look closely when', function (it) { return it.v.av; }),
     ];
+    // the panel takes focus itself (as ui.scoreHelp's does): a press on its text then keeps focus inside the popover
     var help = el('details.pop', { 'data-pop': true }, [
       el('summary', { 'aria-label': 'How the score works' }, [el('i.info', { 'aria-hidden': 'true', text: 'i' })]),
-      el('div.pop__panel', null, [
+      el('div.pop__panel', { tabindex: '-1' }, [
         el('p.pop__title', { text: 'Documented-fit score' }),
         el('p', { text: 'How much of this category’s checklist is documented in official sources, from 0 to 100. It is research, not a customer rating or a hands-on test.' }),
         el('p', { text: 'Unverified items score zero. No score is shown until 80% of the checklist weight has been checked — that is what “Score pending” means.' }),

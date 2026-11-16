@@ -24,8 +24,9 @@
   -webkit-backdrop-filter: saturate(1.6) blur(12px);
   border-bottom: 1px solid var(--line);
 }
-/* The three header controls (search, shortlist, menu) never shrink below 44 × 44; the brand gives way instead:
-   its word-mark scales down with the viewport (--fs-brand) and below 22em only the mark is shown. */
+/* The three header controls (search, shortlist, menu) never shrink below 44 × 44; in the compact header the brand gives
+   way instead: its word-mark scales down with the viewport (--fs-brand) and below 22em only the mark is shown. In the
+   full header (from 62em) the brand keeps its size and the search field takes the room that is left. */
 .site-header__bar {
   display: flex;
   align-items: center;
@@ -44,6 +45,9 @@
   margin-right: var(--s-2);
 }
 .brand:hover { color: var(--ink); text-decoration: none; }
+/* a word-mark wider than its room (letter spacing set by the reader, WCAG 1.4.12) stops at the brand's edge instead of
+   running over the search button; the margin keeps the sub-pixel overhang of a squeezed phone header painted */
+.site-header .brand { overflow: clip; overflow-clip-margin: 0.25rem; }
 .brand__mark { width: 1.75rem; height: 1.75rem; flex: none; }
 .brand__word {
   font-family: var(--font-display);
@@ -176,10 +180,15 @@ details[open] > .nav__link svg { transform: rotate(180deg); }
   html:not([data-a11y-size]) .site-header__bar { gap: var(--s-2); }
   html:not([data-a11y-size]) .nav { display: flex; }
   html:not([data-a11y-size]) .menu-btn { display: none; }
+  /* the brand never gives way here (squeezed, its word-mark ran into "Categories" from 992 to 1064px): the search
+     field takes what is left (about 177px at 62em with the tighter links below); only with a reader's extra letter
+     spacing does it get narrow, and below 6.5rem it shows its icon alone (the container query after this block) */
+  html:not([data-a11y-size]) .site-header .brand { flex: none; }
   html:not([data-a11y-size]) .searchbtn {
+    container-type: inline-size;
     flex: 1 1 16rem;
     max-width: 26rem;
-    min-width: 12rem;
+    min-width: var(--tap);
     width: auto;
     height: 2.5rem;
     justify-content: flex-start;
@@ -202,6 +211,14 @@ details[open] > .nav__link svg { transform: rotate(180deg); }
   /* Home: the hero owns the search box until it scrolls away */
   html:not([data-a11y-size]) body[data-hero-search] .searchbtn { visibility: hidden; }
   html:not([data-a11y-size]) body[data-hero-search].is-scrolled .searchbtn { visibility: visible; }
+}
+@container (max-width: 6.5rem) {
+  html:not([data-a11y-size]) .searchbtn kbd { display: none; }
+  html:not([data-a11y-size]) .searchbtn__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+}
+/* the narrowest full header: slightly tighter nav links leave the search field room for a few words */
+@media (min-width: 62em) and (max-width: 67.99em) {
+  html:not([data-a11y-size]) .nav__link { padding-inline: 0.5rem; }
 }
 /* with scaled text the word-mark only fits from 40em */
 @media (max-width: 39.99em) {

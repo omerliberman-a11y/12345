@@ -42,7 +42,9 @@
     return true;
   }
   function meta(r) {
-    if (r.type !== 'product') return '';
+    // a row into a section of a profile ("Attio pricing", "… score and evidence") has no id, score or profile flag of
+    // its own: no label (it read "Documented supplier"); its second line already gives the price or what it opens
+    if (r.type !== 'product' || !r.id) return '';
     var bits = [];
     bits.push(r.best != null ? r.best + '/100' : r.profile ? 'Score pending' : 'Documented supplier');
     if (r.amount != null && r.priceText) bits.push('from ' + r.priceText);
@@ -85,6 +87,9 @@
       }
       return;
     }
+    // "Start from a category" shows only when nothing is found, under the "No results" note: until the results are
+    // in it stays unpainted, so nothing on screen moves when that note arrives above it
+    start.hidden = true;
     // the results page waits for the whole index (descriptions, features, integrations): one complete render
     SC.search.engine({ full: true }).then(function (engine) {
       if (state.q.trim() !== q) return;
@@ -104,7 +109,7 @@
       Object.keys(groups).reduce(function (all, k) { return all.concat(groups[k]); }, r.top.slice()).forEach(function (x) { var key = x.type + ':' + (x.id || x.url); if (!seen[key]) { seen[key] = 1; total++; } });
       counts[''] = total;
       syncChips(counts);
-      controls.hidden = false;
+      controls.hidden = !total; // nothing found: no "All 0" chip and no sort over nothing above the "No results" note
       facetsBox.hidden = !((r.groups.product || []).length) || (state.type && state.type !== 'product');
       $$('[data-facet]', facetsBox).forEach(function (b) { b.setAttribute('aria-pressed', state.f[b.getAttribute('data-facet')] ? 'true' : 'false'); });
       sortSel.value = state.sort;
@@ -122,7 +127,8 @@
       status.textContent = cut + (total ? total + ' result' + (total === 1 ? '' : 's') + ' for “' + q + '”' + (notes.length ? ' · read as: ' + notes.join(', ') : '') : 'No results for “' + q + '”.');
 
       if (r.top.length && !state.type) {
-        frag.appendChild(el('h2', { text: 'Best match' }));
+        // the palette's rule: rows about products the query does not name ("crm vs", "crm pricing") are suggestions
+        frag.appendChild(el('h2', { text: SC.search.answers(engine, r, q) ? 'Best match' : 'Suggestions' }));
         var ul0 = el('ul.srch__list');
         // a comparison, alternatives or tool row names its kind on its second line: no right-hand label
         r.top.forEach(function (t) { ul0.appendChild(row(t)); });
