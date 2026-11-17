@@ -4,9 +4,10 @@
 .fx-ev { display: block; margin-top: 0.2rem; font-size: var(--fs-xs); line-height: 1.45; color: var(--ink-3); }
 .fx-ev a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .fx-ev a:hover { color: var(--brand); }
-/* the date stays whole; "Observed" goes on the line above where the column is narrower than the phrase (a reader's
-   letter spacing in the offer tables' Evidence column) */
-.fx-ev__date time { white-space: nowrap; }
+/* "Observed <date>" stays whole: it sets the offer tables' Evidence column's narrowest width, so the five columns keep
+   the balance they were designed with at every width. Under a reader's letter spacing or large text a table that no
+   longer fits scrolls inside its own box (the category's .scroller, the /vs/ page's .fx-vs-offers), not the page. */
+.fx-ev__date { white-space: nowrap; }
 .fx-links { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-5); font-size: var(--fs-sm); font-weight: 600; }
 .fx-links a { display: inline-flex; align-items: center; min-height: 1.5rem; text-decoration: none; }
 /* target sizes: source links inside evidence captions and the supplier names in offer tables are at least 24px
@@ -305,7 +306,7 @@ html:not(.js) .fx-cmp .fx-row th, html:not(.js) .fx-cmp .fx-row td { border-bott
 /* ---------------------------------------------------------------- editorial /vs/ article (same reading family as the guides) */
 .fx-article { --fx-measure: 43rem; }
 .fx-article__head { padding-bottom: var(--s-6); }
-.fx-article__head h1 { max-width: 26ch; }
+.fx-article__head h1 { max-width: 17.368em; } /* 26ch of Rubik 600 */
 .fx-cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); margin-top: var(--s-6); }
 .fx-article__layout { padding-bottom: var(--s-18); }
 .fx-article__main { min-width: 0; max-width: var(--fx-measure); }

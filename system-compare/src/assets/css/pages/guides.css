@@ -2,7 +2,7 @@
 
 /* ---------------------------------------------------------------- guide: head */
 .gd-head { padding-bottom: var(--s-6); }
-.gd-head h1 { max-width: 26ch; }
+.gd-head h1 { max-width: 17.368em; } /* 26ch of Rubik 600 */
 .gd-cats { display: flex; flex-wrap: wrap; gap: 0 0.6rem; margin-bottom: var(--s-1); }
 /* related categories wrap onto further lines on phones rather than being cut at the screen edge; the lines stay
    compact and each link gets the shared 44px touch hit area (components.css, .eyebrow a) */
@@ -133,6 +133,9 @@
 /* phones: the filter chips wrap (the shared .chips) instead of scrolling past the screen edge, so every chip and its
    focus ring stay in view */
 .gd-filter .toolbar__count { margin: 0; }
+/* button chips (research updates) need the filter script: without JavaScript they are not shown, with it they are in
+   place from the first paint (html.js is set in the head) */
+html:not(.js) .gd-filter__js { display: none; }
 .gd-index { padding-bottom: var(--s-14); }
 .gd-group { padding-top: var(--s-8); }
 .gd-group > h2 { padding-bottom: var(--s-2); border-bottom: 1px solid var(--line-strong); }

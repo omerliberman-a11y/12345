@@ -5,7 +5,7 @@
 // canonical, valid JSON-LD), duplicate ids, images without alt, template leaks ("undefined", "NaN"…)
 // and reports size budgets. Exit code 1 when errors are found.
 import { readdir, readFile, stat } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,6 +49,23 @@ const pages = [];
 
 const decode = (s) =>
   s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+/** The build file a page's URL points to (root-absolute under --base, or relative to the page), without query/fragment. */
+const resolveFile = (file, url) => {
+  let clean = String(url).split(/[?#]/)[0];
+  if (!clean || /^(https?:|data:|\/\/)/i.test(clean)) return null;
+  if (urlBase !== '/' && clean.startsWith(urlBase)) clean = '/' + clean.slice(urlBase.length);
+  return clean.startsWith('/') ? path.join(dir, clean) : path.resolve(path.dirname(file), clean);
+};
+/** Files a stylesheet loads with url(…), resolved against the stylesheet (cached per file). */
+const cssUrlCache = new Map();
+const cssUrls = (cssFile) => {
+  if (!cssUrlCache.has(cssFile)) {
+    const css = readFileSync(cssFile, 'utf8');
+    const urls = [...css.matchAll(/url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s]*))\s*\)/g)].map((m) => m[1] ?? m[2] ?? m[3]);
+    cssUrlCache.set(cssFile, new Set(urls.map((u) => resolveFile(cssFile, u)).filter(Boolean)));
+  }
+  return cssUrlCache.get(cssFile);
+};
 
 for (const file of htmlFiles) {
   const src = await readFile(file, 'utf8');
@@ -177,6 +194,25 @@ for (const pg of pages) {
     if (frag && target.endsWith('.html')) {
       const ids = idsByFile.get(target);
       if (ids && !ids.has(decodeURIComponent(frag)) && frag !== 'top') err(file, `broken anchor: ${url}`);
+    }
+  }
+
+  // ---- font preloads: each must be a font the page's own stylesheets load (same URL, so it is fetched once), with
+  // crossorigin (fonts are fetched in CORS mode; without it the browser downloads the file twice)
+  const tags = [...src.replace(/<script\b[\s\S]*?<\/script>/gi, '').matchAll(/<link\b[^>]*>/gi)].map((m) => m[0]);
+  const attr = (tag, name) => (tag.match(new RegExp(`\\s${name}(?:="([^"]*)")?(?=[\\s>])`, 'i')) || [])[1];
+  const fontPreloads = tags.filter((t) => attr(t, 'rel') === 'preload' && attr(t, 'as') === 'font');
+  if (fontPreloads.length) {
+    const used = new Set();
+    for (const t of tags.filter((t) => attr(t, 'rel') === 'stylesheet')) {
+      const css = resolveFile(file, decode(attr(t, 'href') || ''));
+      if (!css || !fileSet.has(css)) continue;
+      for (const u of cssUrls(css)) used.add(u);
+    }
+    for (const t of fontPreloads) {
+      const href = decode(attr(t, 'href') || '');
+      if (!/\scrossorigin(?:[\s=>])/i.test(t)) err(file, `font preload without crossorigin: ${href}`);
+      if (!used.has(resolveFile(file, href))) err(file, `font preload not used by the page's stylesheets: ${href}`);
     }
   }
 

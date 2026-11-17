@@ -323,6 +323,9 @@ kbd {
   padding: 0.3rem 0;
   color: var(--ink-2);
   text-align: left;
+  /* a word wider than its column (large text with a reader's letter spacing at 320px: "responsibility") breaks
+     instead of pushing the page sideways; the columns do not depend on their content, so nothing else moves */
+  overflow-wrap: anywhere;
 }
 .site-footer li a:hover, .site-footer li button:hover { color: var(--brand); text-decoration: underline; }
 /* touch: each footer link and button is a 44px row */
@@ -364,8 +367,12 @@ kbd {
 /* the separator ends the previous item, so a wrapped line never starts with "/" */
 .crumbs li:not(:last-child)::after { content: "/"; color: var(--line-strong); }
 .crumbs [aria-current] { color: var(--ink-2); }
-/* 44px touch target without changing the visual rhythm */
+/* 44px touch target without changing the visual rhythm: the padding makes one line of the link --tap tall and the
+   negative margin takes exactly that back, so a crumb that wraps onto two lines (a long category name with large
+   text or a reader's spacing) is as tall as its lines and never overlaps the line above or below it (the first rule
+   is the fallback for browsers without the lh unit; the 0.02px keeps the box from rounding to 1/64px under --tap) */
 .crumbs a { display: inline-flex; align-items: center; min-height: var(--tap); margin-block: -0.75rem; }
+.crumbs a { min-height: 0; padding-block: max(0px, (var(--tap) - 1lh) / 2 + 0.02px); margin-block: min(0px, (1lh - var(--tap)) / 2 - 0.02px); }
 @media (pointer: coarse), (max-width: 47.99em) {
   /* a short crumb ("Home") is still 44px wide: the hit area reaches over the separator gap */
   .crumbs a { position: relative; }
@@ -374,8 +381,10 @@ kbd {
 
 .page-head { padding-block: var(--s-6) var(--s-8); }
 .page-head--center { text-align: center; }
-.page-head h1 { max-width: 22ch; }
-.page-head--wide h1 { max-width: 30ch; }
+/* heading measures in em, never ch: the heading fallback face has no digits face of its own (tokens.css), so its ch
+   is narrower than Rubik's; these are the former 22ch and 30ch of Rubik 600 (1ch = 0.668em) */
+.page-head h1 { max-width: 14.696em; }
+.page-head--wide h1 { max-width: 20.04em; }
 .page-head--center h1 { margin-inline: auto; }
 .eyebrow {
   display: inline-flex;
@@ -440,7 +449,7 @@ kbd {
   gap: var(--s-2) var(--s-6);
   margin-bottom: var(--s-6);
 }
-.section-head h2 { max-width: 28ch; }
+.section-head h2 { max-width: 18.704em; } /* 28ch of Rubik 600 */
 .section-head p { margin-top: var(--s-2); max-width: 60ch; color: var(--ink-2); }
 .section-head__link { font-weight: 600; font-size: var(--fs-sm); white-space: nowrap; }
 

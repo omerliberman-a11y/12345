@@ -96,7 +96,14 @@
     if (count) {
       count.textContent = '';
       count.appendChild(el('b', { text: filtered ? visible.length + ' of ' + total : String(total) }));
-      count.appendChild(d.createTextNode(' ' + (count.getAttribute('data-noun') || 'products')));
+      var noun = count.getAttribute('data-noun') || 'products', short = count.getAttribute('data-noun-short');
+      // a filtered count on a phone shares its line with "Clear" and the sort: there it shows a short noun ("7 of 14
+      // tools") and screen readers hear the whole one (category.css), so it never takes a third line
+      if (filtered && short) {
+        count.appendChild(d.createTextNode(' '));
+        count.appendChild(el('span.cat-noun', { text: noun }));
+        count.appendChild(el('span.cat-noun-short', { 'aria-hidden': 'true', text: short }));
+      } else count.appendChild(d.createTextNode(' ' + noun));
       // the order other than the default, in its own span: the sort face shows it on screen too, so on phones, where
       // the count shares a short line with the sort, the span is read by screen readers only (category.css)
       var order = state.sort === 'price' ? ' · sorted by starting price (products without a public price last)' : state.sort === 'name' ? ' · sorted by name' : '';
@@ -257,7 +264,7 @@
     // on first use). Both use the shared SC.float popover, which moves focus into it once the content is in
     // place and closes when focus leaves it.
     var VER = { d: 'Official documentation', v: 'Vendor confirmed', '': 'Not verified' };
-    function fmtDate(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + +m[3] + ', ' + m[1] : ''; }
+    function fmtDate(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + '\u00a0' + +m[3] + ',\u00a0' + m[1] : ''; } // no-break spaces
     var TIER = { foundation: 'Foundation check', advanced: 'Shared deep check' };
     /** Opens the popover for trigger b; fill(data, box) builds its content and returns false when there is none. */
     function openPop(b, label, loading, fill, failText) {

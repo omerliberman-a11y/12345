@@ -21,7 +21,8 @@
 /* the sort sits at the right end of the type chips' row, or right-aligned under them when they wrap; at a large text
    size on a narrow phone it may be narrower than its longest option ("Sort: price, low to high") rather than overflow */
 .srch__bar .toolbar__sort { margin-left: auto; min-width: 0; max-width: 100%; }
-.srch__bar .toolbar__sort .select { max-width: 100%; }
+/* a pill, as the chips beside it and the sort on category pages (one shape for the menus in a row of chips) */
+.srch__bar .toolbar__sort .select { max-width: 100%; border-radius: var(--r-pill); }
 /* the no-JavaScript note is one sentence with links in it: a paragraph, not .note's flex row (which set every piece
    of it in a column of its own and ran past the screen edge) */
 .srch .note { display: block; }
@@ -42,4 +43,55 @@
   .srch__list .hit { flex-wrap: wrap; row-gap: 0.1rem; }
   .srch__list .hit__meta { flex-basis: 100%; padding-left: 2.8rem; white-space: normal; display: block; }
   .srch__list .hit__meta:empty { display: none; }
+}
+
+/* With JavaScript the block under the field stays unpainted until search-page.js has set it up (data-ready, in the step
+   that hides the examples under a filled field and "Start from a category"): nothing that was painted moves when the
+   head gets shorter (the block itself counted as moved: up to 0.15 when the page painted before the script). Should the
+   script never run, it shows after 2.5s anyway: a visibility switch, not motion, so it runs with reduced motion too. */
+@keyframes srch-reveal { to { visibility: visible; } }
+.js .srch:not([data-ready]) { visibility: hidden; animation: srch-reveal 0s 2.5s forwards !important; }
+/* With a query the examples under the field are hidden and the results come first. The head is then shorter, so the
+   block under it reaches further down to keep the footer out of the first screen while the results load (it starts at
+   least 14rem down, at any text size): nothing in view moves when they arrive. */
+body[data-page="search"] .page-head:has(> .fineprint[hidden]) + .srch { min-height: calc(100svh - 14rem); }
+/* Phones, once there are results: the result types are one row that scrolls sideways, its right edge faded (as the
+   category filters); the sort and the product filters share the next row, the filters scrolling sideways too; then the
+   count. Reading and focus order stay the order of the page (types, sort, filters). The first result moved from ~800px
+   to ~430px of 844 at 390px (three rows of types, the sort on its own row and two rows of filters came first). */
+@media (max-width: 47.99em) {
+  body[data-page="search"] .page-head:has(> .fineprint[hidden]) { padding-bottom: var(--s-4); }
+  .js .srch:has(> .srch__bar:not([hidden])) { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.25rem var(--s-2); align-content: start; }
+  .js .srch:has(> .srch__bar:not([hidden])) > * { grid-column: 1 / -1; }
+  .js .srch > .srch__bar:not([hidden]) { display: contents; }
+  .js .srch:has(> .srch__bar:not([hidden])) .srch__bar > .chips { grid-column: 1 / -1; margin-inline: calc(-1 * var(--gutter)); padding-left: var(--gutter); scroll-padding-inline: var(--gutter) 2rem; }
+  .js .srch:has(> .srch__bar:not([hidden])) .srch__bar > .toolbar__sort { grid-column: 1; align-self: center; margin: 0; }
+  /* the product filters: a row of their own from edge to edge, or beside the sort where both fit (below) */
+  .js .srch:has(> .srch__bar:not([hidden])) > .srch__facets { margin-inline: calc(-1 * var(--gutter)); padding-left: var(--gutter); scroll-padding-inline: var(--gutter) 2rem; }
+  /* the rows that scroll sideways: whole chips, room for a focus ring above and below, and the faded right edge where a
+     row runs on past the screen; a chip reached by keyboard is brought clear of the fade (scroll padding, search-page.js) */
+  .js .srch:has(> .srch__bar:not([hidden])) .srch__bar > .chips,
+  .js .srch:has(> .srch__bar:not([hidden])) > .srch__facets {
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-block: 0.25rem; padding-right: 2rem;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+  }
+  .js .srch:has(> .srch__bar:not([hidden])) .srch__bar > .chips::-webkit-scrollbar,
+  .js .srch:has(> .srch__bar:not([hidden])) > .srch__facets::-webkit-scrollbar { display: none; }
+  .js .srch:has(> .srch__bar:not([hidden])) .srch__bar > .chips > *,
+  .js .srch:has(> .srch__bar:not([hidden])) > .srch__facets > * { flex: none; }
+  /* the sort as wide as the order it shows, so the filters keep most of the row (others: as wide as its longest order) */
+  @supports (field-sizing: content) {
+    .js .srch:has(> .srch__bar:not([hidden])) .srch__bar > .toolbar__sort .select { field-sizing: content; }
+  }
+  .js .srch:has(> .srch__bar:not([hidden])) > .toolbar__count { margin: 0.25rem 0 0; }
+  .js .srch:has(> .srch__bar:not([hidden])) .srch__results > h2:first-child { margin-top: var(--s-5); }
+}
+/* From 23em, where the sort is as wide as the order it shows, the filters share its row: there every filter, the widest
+   ("Native AI or agents") included, still comes fully clear of the fade when it is reached by keyboard. Narrower
+   screens, a larger text size and browsers that size a select by its longest option keep the filters' own row. */
+@supports (field-sizing: content) {
+  @media (min-width: 23em) and (max-width: 47.99em) {
+    html:not([data-a11y-size]) .srch:has(> .srch__bar:not([hidden])) > .srch__facets { grid-column: 2; margin: 0 calc(-1 * var(--gutter)) 0 -0.25rem; padding-left: 0.25rem; scroll-padding-inline: 0.25rem 2rem; }
+  }
 }

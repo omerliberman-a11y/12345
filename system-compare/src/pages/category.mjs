@@ -11,6 +11,10 @@ export function routes(ctx) {
 }
 
 const GROUP_ORDER = ['core', 'integrations', 'local', 'ai'];
+// a phone's filtered count says "7 of 14 tools" (the H1's word; js/table.js). The count line also holds two hidden
+// copies, the whole unfiltered count and the widest filtered one with "Clear" ("4" is Inter's widest digit), so it is
+// as tall as its tallest state and turning a filter on or off never moves the table (category.css)
+const SHORT_NOUN = 'tools';
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const monYear = (iso) => (iso ? `${MON[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}` : '');
 
@@ -22,14 +26,18 @@ const monYear = (iso) => (iso ? `${MON[Number(iso.slice(5, 7)) - 1]} ${iso.slice
 // advances (measured in Chromium at 100px with kerning off, which only ever narrows text: on all 66 category pages
 // 0-0.7% over the rendered width for Inter and 2.7-3.7% for the title face), the widest face counts, and category.css
 // compares that with the width of the line (.cat-fitline; the evidence line: .cat-sum > .trustline::after). Measure the
-// tables again when a font, a fallback face or the heading letter-spacing changes.
+// tables again when a font, a fallback face or the heading letter-spacing changes, the same way: on /categories/crm/ at
+// 1440px, a span appended to `.cat-head h1` (title) or `.cat-head .lede` (body) with font-size 100px, font-kerning
+// none, white-space pre and the face's family alone, each character 20 times; width / 20, in thousandths of an em,
+// rounded up. The span inherits the heading's computed letter-spacing (-1.1px), which the sums rely on.
 const ADV_CHARS = '0123456789 !"#$%&\'()*+,-./:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~–—’‘“”·é…×€';
 const ADV = Object.fromEntries(
   Object.entries({
-    // h1: "SC Rubik" 600 and "SC Rubik fallback", letter-spacing -0.025em (thousandths of an em, in ADV_CHARS order)
+    // h1: "SC Rubik" 600 and "SC Rubik fallback", letter-spacing -0.025em (thousandths of an em, in ADV_CHARS order).
+    // The fallback face has no digits face of its own (tokens.css): its digits are Arial Bold's (556, re-measured)
     title: [
       '657 468 623 633 656 621 627 547 655 618 210 268 421 678 644 784 719 225 361 361 434 600 260 468 265 510 272 282 499 556 499 569 830 693 684 682 698 619 598 699 726 300 650 636 577 808 702 692 656 692 671 641 606 708 672 812 665 661 626 357 509 357 445 728 371 569 611 569 611 574 417 614 628 263 279 556 264 898 622 590 611 611 424 531 437 620 573 818 564 574 530 400 245 400 545 558 748 244 250 455 449 319 574 698 580 763',
-      '657 657 657 657 657 657 657 657 657 657 272 328 472 556 556 895 725 232 328 328 386 584 272 328 272 272 328 328 584 584 584 611 982 725 725 725 725 668 611 781 725 272 556 725 611 837 725 781 668 781 725 668 611 725 668 950 668 668 611 328 272 328 584 556 328 556 611 556 611 556 328 611 611 272 272 556 272 895 611 611 611 611 386 556 328 611 556 781 556 556 498 386 274 386 584 556 1007 272 272 498 498 328 556 1007 584 556',
+      '556 556 556 556 556 556 556 556 556 556 272 328 472 556 556 895 725 232 328 328 386 584 272 328 272 272 328 328 584 584 584 611 982 725 725 725 725 668 611 781 725 272 556 725 611 837 725 781 668 781 725 668 611 725 668 950 668 668 611 328 272 328 584 556 328 556 611 556 611 556 328 611 611 272 272 556 272 895 611 611 611 611 386 556 328 611 556 781 556 556 498 386 274 386 584 556 1007 272 272 498 498 328 556 1007 584 556',
     ],
     // body text: "Inter" 400, "Inter local" (an installed Inter) and "Inter fallback"
     body: [
@@ -99,11 +107,24 @@ export function fitStyle(text, role) {
 }
 /** The same for the evidence line (ui.trustline: 14px items 1.25rem apart, broken after its first `n` items, and
  *  after the next `n` too where that is not enough; category.css breaks after items 2 and 4): --tfit is the whole row,
- *  --tfit2 the wider of its two parts, --tfit3 the widest of its three (as --tfit2 for up to 2n items). */
-export function fitItems(items, n) {
+ *  --tfit2 the wider of its two parts, --tfit3 the widest of its three (as --tfit2 for up to 2n items). `phone` lists
+ *  the items a phone shows when they are its first and last (the others are screen-reader text there): --tfitp is
+ *  their row, so they share a line only where both surely fit. It is the plain sum, without SLACK: the body sums are
+ *  never under the rendered width in any face, and the pair is 349.4px against 348.5px drawn, so a 390px phone's
+ *  350px line keeps it on one line, as it always did. */
+export function fitItems(items, n, phone) {
   const w = items.map((t) => textEm(t, 'body') + 1.25 / 0.875), sum = (l) => l.reduce((x, y) => x + y, 0);
   const t2 = Math.max(sum(w.slice(0, n)), sum(w.slice(n))), t3 = Math.max(sum(w.slice(0, n)), sum(w.slice(n, 2 * n)), sum(w.slice(2 * n)));
-  return `--tfit:${emUp(sum(w), 'body')};--tfit2:${emUp(t2, 'body')};--tfit3:${emUp(t3, 'body')}`;
+  return `--tfit:${emUp(sum(w), 'body')};--tfit2:${emUp(t2, 'body')};--tfit3:${emUp(t3, 'body')}${phone ? `;--tfitp:${(Math.ceil(sum(phone.map((i) => w[i])) * 100) / 100).toFixed(2)}` : ''}`;
+}
+/** ui.answer for the category head. On phones category.css draws its label inside the clamped paragraph (an inline
+ *  ::before, hidden from assistive technology, while the real label is screen-reader text there), so the native
+ *  three-line clamp can end in "…" right after the last visible word; the HTML is ui.answer's own. The CSS repeats the
+ *  label's words, so the build stops if they ever differ. */
+export function quickAnswer(ctx, text, opts) {
+  const out = ui.answer(ctx, text, opts);
+  if (!String(out).includes('<span class="answer__label">Quick answer</span>')) throw new Error('quickAnswer: the answer label is no longer "Quick answer"; update category.css (.cat-sum .answer--more > p::before)');
+  return out;
 }
 
 function render(ctx, category) {
@@ -198,7 +219,7 @@ function render(ctx, category) {
       <p class="eyebrow"><a href="/categories/#${group.id}">${group.label}</a></p>
       <h1 class="cat-fitline" style="${fitStyle(h1, 'title')}">${h1}</h1>
       ${category.buyerQuestion ? html`<p class="lede cat-fitline" style="${fitStyle(category.buyerQuestion, 'body')}">${category.buyerQuestion}</p>` : ''}
-      <div class="cat-sum" style="${fitItems(trustText, 2)}">
+      <div class="cat-sum cat-sum--ends" style="${fitItems(trustText, 2, [0, trustText.length - 1])}">
         ${ui.trustline(
           [
             html`Evidence checked ${ui.time(ctx, ctx.catalog.checkedAt)}`,
@@ -208,7 +229,7 @@ function render(ctx, category) {
           ],
           { compact: true },
         )}
-        ${ui.answer(ctx, quick, { more: true })}
+        ${quickAnswer(ctx, quick, { more: true })}
       </div>
     </header>
   </div>`;
@@ -233,15 +254,17 @@ function render(ctx, category) {
   // and the sort with the help at the right end (from 75em the sort and the help end the filter row and the count is
   // the line right above the table). "Must-have capabilities", the panel with every capability filter, comes first
   // (the "all filters" place); the quick filters follow. "Clear filters" follows the live count (outside its live
-  // region) where the count shares its line with the sort (48-75em), so using a filter never re-wraps the filter row
-  // there; on phones (the row scrolls) and from 75em (the row has room; the count line is under the sort) it ends the
-  // filter row, so the keyboard meets it where it is on screen (CSS shows one of the two copies). The sort is a
+  // region) wherever the count shares its line with the sort (below 75em), so using a filter never re-wraps the filter
+  // row; on phones it is a short "Clear" beside a short filtered count ("7 of 14 tools", js/table.js; screen readers
+  // hear "Clear filters" and the whole count), so the count line keeps its height and the table never moves. From 75em
+  // (the row has room; the count line is under the sort) it ends the filter row, so the keyboard meets it where it is
+  // on screen (CSS shows one of the two copies). The sort is a
   // native <select> laid over a chip-sized face; every option's short label sits in the face, one shown at a time
   // (js/table.js), so the face is always as wide as its widest label and a new order never moves it; phones show the
   // order in one word ("Score", "Price", "A–Z"). A filter that would match nothing is not offered. The must-have panel takes focus itself (tabindex -1, as in
   // ui.scoreHelp), so a press on its text does not move focus out and close it mid-press.
   const sortOptions = [
-    unscored ? { v: 'cov', label: 'Sort: share checked', short: 'share checked', phone: 'Checked' } : { v: 'score', label: 'Sort: score', short: 'score', phone: 'Score' },
+    unscored ? { v: 'cov', label: 'Sort: share checked', short: 'share checked', phone: 'Coverage' } : { v: 'score', label: 'Sort: score', short: 'score', phone: 'Score' },
     { v: 'price', label: 'Sort: price, low to high', short: 'lowest price', phone: 'Price' },
     { v: 'name', label: 'Sort: name A–Z', short: 'name A–Z', phone: 'A–Z' },
   ];
@@ -273,7 +296,7 @@ function render(ctx, category) {
       ${nAi ? html`<button type="button" class="chip" data-filter="ai" aria-pressed="false">Native AI or agents <span class="n">${nAi}</span></button>` : ''}
       <button type="button" class="chip chip--link cat-clear-chip" data-filter-reset hidden>Clear filters</button>
     </div></div>
-    <div class="cat-count"><p class="toolbar__count" role="status" aria-live="polite" data-count data-total="${s.total}"><b>${s.total}</b> ${things}</p> <button type="button" class="cat-clear" data-filter-reset hidden>Clear filters</button></div>
+    <div class="cat-count"><div class="cat-count__line"><p class="toolbar__count" role="status" aria-live="polite" data-count data-total="${s.total}" data-noun-short="${SHORT_NOUN}"><b>${s.total}</b> ${things}</p> <button type="button" class="cat-clear" data-filter-reset hidden>Clear<span class="cat-clear__x"> filters</span></button></div><div class="cat-count__keep" aria-hidden="true"><b>${s.total}</b> ${things}</div><div class="cat-count__keep" aria-hidden="true"><b>${'4'.repeat(String(s.total).length)} of ${s.total}</b> ${SHORT_NOUN} <span class="cat-clear">Clear</span></div></div>
     <div class="cat-toolbar__end">
       <label class="${cx('cat-sort', unscored && 'cat-sort--cov')}"><span class="cat-sort__face" aria-hidden="true"><span class="cat-sort__k">Sort: </span><span class="cat-sort__faces" data-sort-face>${sortOptions.map(
         (o, i) => html`<b data-face="${o.v}"${attrs({ class: i ? null : 'is-on' })}><span class="cat-sort__l">${o.short}</span><span class="cat-sort__p">${o.phone}</span></b>`,
@@ -445,7 +468,7 @@ function render(ctx, category) {
   const pt = ctx.scoring.pointText;
   const criteria = html`<section class="wrap section" id="criteria" aria-labelledby="criteria-h">
     ${ui.sectionHead('What the score measures', { id: 'criteria-h', link: { href: '/methodology/', label: 'Full method' } })}
-    <div class="cat-two">
+    <div class="cat-two cat-two--weights">
       <div class="prose">
         <p>${ui.methodSentence(ctx)}</p>
         <p>In ${category.name}, ${activeCount} of ${features.length} checklist items are scored today${features.length > activeCount ? `; the other ${features.length - activeCount} are deep checks that join the score once they have been checked for every listed product` : ''}. Every product that shares the highest published score is marked “Recommended”.</p>

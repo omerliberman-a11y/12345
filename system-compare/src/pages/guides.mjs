@@ -72,7 +72,8 @@ const heroPreload = (ctx, image) => {
   return set ? { ...where, imagesrcset: set.srcset, imagesizes: set.sizes } : { href: image.src, ...where };
 };
 
-/** Numbered sources. A source on this site is a normal internal link; every other one opens in a new tab. */
+/** Numbered sources. A source on this site is a normal internal link; every other one opens in a new tab and is an .ext
+ *  link like ui.sources writes (its arrow and the new-tab words come from that one CSS rule: components.css .sources). */
 const hostOf = (url) => {
   try {
     return new URL(url).hostname.replace(/^www\./, '');
@@ -88,7 +89,7 @@ function sourceList(ctx, sources) {
       const host = hostOf(s.url);
       const link = internal
         ? html`<a href="${s.url.slice(origin.length)}">${s.label}</a>`
-        : html`<a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label}</a>`;
+        : html`<a class="ext" href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label}</a>`;
       return html`<li>${link}${host ? html` <span class="gd-host">${host}</span>` : ''}</li>`;
     })}
   </ol>`;

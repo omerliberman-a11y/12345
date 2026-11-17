@@ -1,10 +1,10 @@
 /* Design tokens — the only place raw colours, sizes and radii are defined. */
 
-/* The two web fonts are not preloaded and use font-display: optional: a page uses them only if they are ready when it
-   first renders (the spec allows a short block period; Chromium uses a non-preloaded optional font only once it has
-   loaded, in practice from the cache) and never swaps them in later, so nothing on a page moves when a font arrives.
-   The first page of a visit therefore shows the metric-matched faces below; the fonts still download and are cached
-   (hashed names, immutable), so every later page uses them. */
+/* The two web fonts use font-display: optional and every page preloads them (layout.mjs): a page uses them only if
+   they are ready when it first renders (Chromium holds the first render a moment for preloaded optional fonts) and
+   never swaps them in later, so nothing on a page moves when a font arrives. A cached view (hashed names, immutable)
+   or a fast first visit renders in Inter and Rubik; a slow first visit keeps the metric-matched faces below for that
+   page view, and its next page uses the web fonts. */
 @font-face {
   font-family: "Inter";
   font-style: normal;
@@ -33,8 +33,11 @@
    weight (Inter 400 body, 600 labels, 700 uppercase labels; Rubik 500/800 the wordmark, 600 headings, 700 score
    digits), with the web font's ascent and descent, so a page laid out in them looks like the one in the web fonts.
    ascent-override = ascent ÷ size-adjust (Inter 1984 and 494 of 2048 units, Rubik 935 and 250 of 1000).
-   Where text blocks are sized in ch (body text, headings) the digits get their own face, scaled so "0" — and with
-   it the ch unit — is as wide as in the web font; otherwise every ch-sized block would narrow and rewrap.
+   Body text (Inter 400) keeps a digits face of its own, scaled so "0" — and with it the ch unit that sizes reading
+   measures (max-width: 70ch …) — is as wide as in Inter (its digits come out 6% taller than its capitals). Headings
+   have none: Rubik's figures are wide, and a face that matched them drew numerals 19% taller than the capitals
+   ("14 tools compared"). Their digits are simply narrower than Rubik's, and heading measures are set in em, never
+   in ch (1ch of Rubik 600 = 0.668em: 22ch = 14.696em).
    Same unicode-range as the web fonts: characters outside it keep rendering in the system font. */
 @font-face {
   font-family: "Inter fallback";
@@ -104,17 +107,7 @@
   ascent-override: 91.84%;
   descent-override: 24.56%;
   line-gap-override: 0%;
-  unicode-range: U+0000-002F, U+003A-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: "SC Rubik fallback";
-  font-weight: 551 650;
-  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
-  size-adjust: 120.1%;
-  ascent-override: 77.85%;
-  descent-override: 20.82%;
-  line-gap-override: 0%;
-  unicode-range: U+0030-0039;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "SC Rubik fallback";
@@ -124,17 +117,7 @@
   ascent-override: 88.02%;
   descent-override: 23.54%;
   line-gap-override: 0%;
-  unicode-range: U+0000-002F, U+003A-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: "SC Rubik fallback";
-  font-weight: 651 750;
-  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
-  size-adjust: 118.86%;
-  ascent-override: 78.66%;
-  descent-override: 21.03%;
-  line-gap-override: 0%;
-  unicode-range: U+0030-0039;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "SC Rubik fallback";

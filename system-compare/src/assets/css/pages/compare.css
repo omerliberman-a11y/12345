@@ -250,7 +250,11 @@ html.js .cmp-noscript { display: none; }
 .cmp-step__head { margin-bottom: var(--s-4); }
 .cmp-step__head p { margin-top: var(--s-2); color: var(--ink-2); }
 .cmp-ptable tbody tr { cursor: pointer; }
-.cmp-ptable tr.is-full { opacity: 0.5; }
+/* four products chosen: the other rows look unavailable without dimming their text below 4.5:1 (only the tick and
+   the logo fade; the name turns secondary) */
+.cmp-ptable tr.is-full { cursor: default; }
+.cmp-ptable tr.is-full :is(.pick, .logo) { opacity: 0.45; }
+.cmp-ptable tr.is-full .prod__name { color: var(--ink-3); }
 .cmp-ptable .prod:hover .prod__name { color: var(--ink); text-decoration: none; }
 .cmp-step__h { font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; margin: var(--s-8) 0 var(--s-3); }
 .cmp-go { position: sticky; bottom: 0; z-index: 50; margin-top: var(--s-6); padding-block: 0.6rem; padding-bottom: max(0.6rem, env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: var(--shadow-bar); }
@@ -333,6 +337,16 @@ html.js .cmp-noscript { display: none; }
   .cmp[data-hide~="3"] .cmp-table [data-i="3"] { display: none; }
   .cmp-find { flex-basis: 100%; }
   .cmp-go__in { gap: var(--s-3); }
+  /* the picker's bar: the hint wraps (two lines fit beside the 44px button) instead of being cut ("Tick two to four
+     produ…"), and the ticked products' names, cut short beside the button, are spoken only: their rows are ticked */
+  .cmp-go__n { white-space: normal; text-overflow: clip; line-height: 1.3; }
+  .cmp-go__names { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+}
+/* a larger text size on a phone: the hint takes the line above the button, which spans the bar (beside the button the
+   hint had no room left at all: 0-50px at 150%) */
+@media (max-width: 47.99em) {
+  html[data-a11y-size] .cmp-go__in { flex-wrap: wrap; row-gap: var(--s-2); }
+  html[data-a11y-size] .cmp-go__n, html[data-a11y-size] .cmp-go .btn { flex: 1 1 100%; }
 }
 
 /* ---------------------------------------------------------------- a reader text-size preference (125% / 150%) */

@@ -23,6 +23,9 @@
  *                                → a category's own words and nothing else lead with that category: its costs
  *                                  section (a documentary category: its plans and prices), its ranking, its
  *                                  compare tool and head-to-heads — never one product's page
+ *   "zoho pricing", "zoho vs", "microsoft alternatives"
+ *                                → words that start several products' names: that row for each of them (suggestions);
+ *                                  "deque pricing": a documented supplier's plans and prices on its category page
  *   "how we score", "corrections", "how do you make money"
  *                                → the site's own page or FAQ answer as the best match
  *
@@ -148,6 +151,7 @@
       if (api.full || !more || more.key !== index.key || !more.x || more.x.length !== docs.length) return false;
       more.x.forEach(function (f, i) { if (f) for (var k in f) docs[i].f[k] = toSet(f[k]); });
       api.full = true;
+      intStats = null; // brandLike() counts the descriptions and integrations that have just arrived
       return true;
     }
 
@@ -239,6 +243,43 @@
       if (top.s < 100 && (strongCat || (hits[1] && hits[1].s >= top.s))) return null;
       if (hits.some(function (h) { return h !== top && h.inName; })) return null;
       return top.x;
+    }
+    // every product's name in plain lower-case words ("quickbooks online", never the "quick books" of its capitals)
+    var plainNames = docs.map(function (x) { return x.type === 'product' ? words(String(x.name).toLowerCase()).join(' ') : ''; });
+    /**
+     * Words that start the names of two or more products, as whole words ("zoho": Zoho Books, Zoho CRM …; "microsoft
+     * power": Power BI and Power Automate; "fathom": Fathom and Fathom Analytics): those products, the one these words
+     * name most exactly and the best-documented first; else null. A word that starts one name only, or only aliases
+     * ("power" of "Power BI" and "Power Automate"), is no such word.
+     */
+    var sharedMemo = Object.create(null), namedMemo = Object.create(null); // both depend on the names only
+    function sharedBy(text) {
+      var run = words(String(text).toLowerCase()).join(' '), list = [], rank = Object.create(null);
+      if (!run) return null;
+      if (run in sharedMemo) return sharedMemo[run] && sharedMemo[run].slice();
+      docs.forEach(function (x, i) { var n = plainNames[i]; if (n && (n === run || n.indexOf(run + ' ') === 0)) list.push(x); });
+      if (list.length < 2) return (sharedMemo[run] = null);
+      resolveAll(text).forEach(function (c) { rank[c.x.id] = c.s; });
+      sharedMemo[run] = list.sort(function (a, b) { return (rank[b.id] || 0) - (rank[a.id] || 0); });
+      return sharedMemo[run].slice();
+    }
+    /**
+     * Do these words, as typed, name a product: its whole name or alias, words that start several products' names
+     * ("zoho", "google"), or the start of one name or alias that a search for the words alone opens ("monday")?
+     * { one: product } or { many: [products] }, else null — generic words ("sales" of "Sales Cloud", "cloud", "quick",
+     * "open") name none.
+     */
+    function namedBy(ws) {
+      var run = ws.join(' '), many, one = null;
+      if (run in namedMemo) return namedMemo[run];
+      if ((many = run ? sharedBy(run) : null)) return (namedMemo[run] = { many: many });
+      docs.forEach(function (x, i) {
+        if (one || !run || x.type !== 'product') return;
+        var all = [plainNames[i]].concat(x.al);
+        // a name typed apart counts as typed whole ("quick books": QuickBooks)
+        if (all.indexOf(run) >= 0 || (ws.length > 1 && all.indexOf(ws.join('')) >= 0) || (all.some(function (n) { return n.indexOf(run + ' ') === 0; }) && namedProduct(run) === x)) one = x;
+      });
+      return (namedMemo[run] = one ? { one: one } : null);
     }
     /** Is the text exactly this product's name or one of its aliases ("hubspot", not "contact" for Constant Contact)? */
     function isExactName(x, text) {
@@ -337,6 +378,31 @@
       return false;
     }
     var NOT_INTEGRATION = ['n', 'a', 'c', 'f', 'b', 'ai', 'h'];
+    // dictionary words that integrations here use the way they use names, so brandLike() cannot tell them from one (each
+    // is only in integration names: "REST APIs", "Relational databases", "HubSpot Marketplace")
+    var NOT_A_NAME = toSet(['rest', 'relational', 'marketplace'].map(stem).join(' '));
+    var intStats = null;
+    /** Is token t a brand that is no product here ("gmail", "slack", "outlook")? In the integrations of two or more
+     *  products, as a word of its own (not the "talk" of "CloudTalk"), and in any other text (descriptions, features,
+     *  best-for, headings) at most once for every five products that list it — generic words ("cloud", "sales",
+     *  "calendar", "webhook") are everywhere. Needs the second part of the index. */
+    function brandLike(t) {
+      if (!api.full || t.length < 4 || NOT_A_NAME[t]) return false;
+      if (!intStats) {
+        intStats = Object.create(null);
+        docs.forEach(function (x) {
+          if (x.type !== 'product' || !x.f.i) return;
+          for (var k in x.f.i) {
+            var s = intStats[k] || (intStats[k] = { n: 0, frag: 0, prose: 0 });
+            s.n++;
+            for (var u in x.f.i) if (u !== k && u.indexOf(k) >= 0) { s.frag++; break; }
+          }
+        });
+        docs.forEach(function (x) { ['d', 'f', 'b', 'ai', 'h', 'q'].forEach(function (k) { for (var t2 in x.f[k] || {}) if (intStats[t2]) intStats[t2].prose++; }); });
+      }
+      var st = intStats[t];
+      return !!st && st.n >= 2 && !st.frag && st.prose * 5 <= st.n;
+    }
     /** The words of a product name that the query typed ("hubspot" in "HubSpot Sales Hub" → "HubSpot"). */
     function brandOf(x, terms) {
       var hit = String(x.name).split(/\s+/).filter(function (w) {
@@ -397,6 +463,18 @@
         ? { type: 'compare', id: 'compare:' + c.id, name: 'Compare products in ' + c.name, url: '/compare/?scope=' + c.id, sub: 'Pick 2–4 of its ' + c.count + ' products', why: 'Compare tool' }
         : { type: 'compare', id: 'compare:' + c.id, name: 'Compare the ' + c.name + ' suppliers', url: c.url + '#factual-comparison', sub: 'Criteria table · ' + c.count + ' suppliers', why: 'Criteria comparison' };
     }
+    /** "X pricing" / "X score" for product p: its profile's pricing section or score evidence; a documented supplier's
+     *  plans and prices on its category page (#plans-<id>; it has no score: null). */
+    function sectionRow(kind, p) {
+      var pricing = kind === 'pricing', c = p.cats[0], doc = !p.profile;
+      if (doc && (!pricing || !cats[c])) return null;
+      return {
+        type: 'product', of: p.id, name: p.name + (pricing ? ' pricing' : ' score and evidence'),
+        url: doc ? '/categories/' + c + '/#plans-' + p.id : p.url + (pricing ? '#pricing' : '#capabilities'),
+        sub: !pricing ? 'Documented-fit score and capability evidence' : doc ? 'Plans and prices · ' + cats[c][0] : p.priceText || 'Pricing details and sources',
+        logo: p.logo, dark: p.dark, wide: p.wide, why: pricing ? 'Pricing' : 'Score',
+      };
+    }
     /** The published head-to-heads of category id, the best-documented pairs first. */
     function categoryComparisons(id) {
       var best = function (c) { return Math.max.apply(null, c.pair.map(function (p) { var o = byId('product', p); return o && o.best != null ? o.best : -1; })); };
@@ -405,7 +483,7 @@
     }
 
     function parse(raw) {
-      var q = { raw: raw, filters: {}, sort: null, intent: null, boost: {}, integration: null, suffix: null, catq: null };
+      var q = { raw: raw, filters: {}, sort: null, intent: null, boost: {}, integration: null, suffix: null, rest: '', catq: null, shared: null };
       var s = ' ' + fold(raw).toLowerCase().replace(/\s+/g, ' ').trim() + ' ';
       var m, a, b, cq, typedAll = words(s).join(' ');
       // the exact title of a published head-to-head ("Intercom and Fin vs Freshdesk") is that comparison
@@ -431,22 +509,25 @@
         // "crm alternatives": the category's own words are a question about its ranking, not about the product
         // the words happen to resolve to (HubSpot through its "HubSpot CRM" alias)
         if ((cq = categoryOf(m[1]))) { cq.kind = 'alternatives'; q.catq = cq; s = ' ' + m[1] + ' '; }
-        else if ((a = resolveProduct(m[1]))) q.intent = { kind: 'alternatives', a: a };
+        // all: words that start several products' names ("zoho alternatives") list the alternatives of each of them
+        else if ((a = resolveProduct(m[1]))) q.intent = { kind: 'alternatives', a: a, all: sharedBy(m[1]) };
       }
       // "pipedrive v" / "hubspot vs" while the second name is still being typed: a comparison is coming,
       // so list that product's comparisons (and match on the name alone).
       if (!q.intent && !q.catq && !q.vsOf && (m = s.match(/^\s*(.+?)\s+(?:vs?\.?|versus|compared(?: to| with)?|against)\s*$/))) {
         // "crm vs": comparing within a category (its compare tool), not the product its words resolve to
         if ((cq = categoryOf(m[1]))) { cq.kind = 'vs'; q.catq = cq; s = ' ' + m[1] + ' '; }
-        // vsSure: the name is typed exactly or names one product only ("zoho vs" could be Zoho Books or Zoho CRM)
-        else if ((a = resolveProduct(m[1]))) { q.vsOf = a; q.vsSure = strictProduct(m[1]) === a; s = ' ' + m[1] + ' '; }
+        // vsSure: the name is typed exactly or names one product only ("zoho vs" could be Zoho Books or Zoho CRM);
+        // vsAll: the products whose names those words start ("zoho vs": each of them is compared with one to choose)
+        else if ((a = resolveProduct(m[1]))) { q.vsOf = a; q.vsAll = sharedBy(m[1]); q.vsSure = !q.vsAll && strictProduct(m[1]) === a; s = ' ' + m[1] + ' '; }
       }
-      // "attio or", "attio compare", "compare attio", "compare attio with": the same, for a product named exactly
-      // ("email or" stays a search for email tools; "compare attio and folk" is read below)
+      // "attio or", "attio compare", "compare attio", "compare attio with": the same, for a product named exactly or for
+      // words that start several products' names ("compare microsoft"); "email or" stays a search for email tools,
+      // "compare attio and folk" is read below
       if (!q.intent && !q.vsOf && !q.catq) {
         [/^\s*compare\s+(.+?)(?:\s+(?:with|to|and|or|&|vs\.?|versus|v\.?|against))?\s*$/, /^\s*(.+?)\s+(?:or|compare|comparisons?)\s*$/].some(function (re) {
-          var mm = s.match(re), p = mm && strictProduct(mm[1]);
-          if (p) { q.vsOf = p; q.vsSure = true; s = ' ' + mm[1] + ' '; }
+          var mm = s.match(re), all = mm && sharedBy(mm[1]), p = mm && (strictProduct(mm[1]) || (all && all[0]));
+          if (p) { q.vsOf = p; q.vsAll = all; q.vsSure = !all; s = ' ' + mm[1] + ' '; }
           return !!p;
         });
       }
@@ -474,9 +555,11 @@
         if (!x[1].test(s)) return;
         var rest = s.replace(x[1], ' ');
         if (!namesSomething(rest)) return;
-        q.suffix = x[0]; s = rest;
+        q.suffix = x[0]; q.rest = rest; s = rest;
         // "crm pricing", "payroll software cost", "email marketing score": the category's costs section or ranking
         if (!q.intent && !q.vsOf && !q.catq && !q.integration && !q.filters.free && q.filters.maxPrice == null && (cq = categoryOf(rest))) { cq.kind = x[0]; q.catq = cq; }
+        // "zoho pricing", "microsoft score": words that start several products' names give each of them its row
+        else if (!q.intent && !q.vsOf && !q.catq) q.shared = sharedBy(rest);
       });
       // "best crm", "top email marketing software": the category's ranking
       if (q.sort === 'score' && !q.intent && !q.vsOf && !q.catq && !q.suffix && !q.integration && !q.filters.free && q.filters.maxPrice == null && (cq = categoryOf(s))) { cq.kind = 'best'; q.catq = cq; }
@@ -550,7 +633,8 @@
       }
       if (q.intent && q.intent.kind === 'alternatives') {
         var f = q.intent.a;
-        top.push(alternativesRow(f), ext(f));
+        if (q.intent.all) q.intent.all.forEach(function (x) { top.push(alternativesRow(x)); });
+        else top.push(alternativesRow(f), ext(f));
       }
       var catHits = q.catOrder;
       var req = q.terms;
@@ -572,9 +656,21 @@
       // not a part of "Constant Contact"
       if (focus && !q.vsOf && !isExactName(focus, q.termWords.join(' ')) && docs.some(function (x) { return isSite(x) && (x.nameKey === qn || (x.aq && x.aq.indexOf(typed) >= 0)); })) focus = null;
       // Products that match only because they list the named product or service as an integration go into
-      // their own small group ("Works with HubSpot"), unless the query is a category's own name ("crm").
+      // their own small group ("Works with HubSpot"), unless the query is a category's own name ("crm"), and only when
+      // the query names what they work with: products in a comparison or alternatives query; a product its words name
+      // ("hubspot", "hubspot pricing", "zoho"), whose brand or alias each of them lists (not the "Connected systems" of
+      // "connect", Dialpad Connect's last word); a name that starts with a brand here ("google sheets"); or a brand that is
+      // no product here, which the index uses like one ("gmail", "slack": brandLike). Generic words name nothing ("sales"
+      // listed the products that work with Salesforce as "Works with sales", "cloud" those with cloud connectors): those
+      // products are then listed with the other products.
       var topCatDoc = strongCat ? byId('category', strongCat) : null;
-      var viaOk = !q.integration && req.length > 0 && !(topCatDoc && req.every(function (t) { return hasTok(topCatDoc.f.n, t); }));
+      var byWords = focus || q.intent ? null : namedBy(q.termWords);
+      var viaOne = q.vsAll || q.shared || (byWords && byWords.many) ? null : focus || (byWords && byWords.one) || null;
+      // viaKeys: the words one of a listed product's integrations must all have (any one list of them will do)
+      var viaKeys = viaOne ? [toks(String(viaOne.name).split(/\s+/)[0])].concat(viaOne.al.map(toks))
+        : focus || byWords || (q.termWords.length && namedBy(q.termWords.slice(0, 1))) || (req.length && req.every(brandLike)) ? [req] : null;
+      var viaOk = !q.integration && req.length > 0 && !(topCatDoc && req.every(function (t) { return hasTok(topCatDoc.f.n, t); })) && !!(q.intent || viaKeys);
+      if (q.intent) viaKeys = null; // a comparison or alternatives query names its products: their integrations as typed
       docs.forEach(function (x) {
         var s = 0, matched = 0, titled = 0, kinds = {}, t, best, kind, fk, set, w, u, i, fz;
         for (var ti = 0; ti < req.length; ti++) {
@@ -616,7 +712,8 @@
         if (titled === req.length && isSite(x)) r.titled = 1;
         if (viaOk && x.type === 'product' && x !== focus && matched === req.length && x.f.i &&
             !catHits.some(function (id) { return x.cats.indexOf(id) >= 0; }) &&
-            req.every(function (t2) { return hasTok(x.f.i, t2) && !NOT_INTEGRATION.some(function (k) { return hasTok(x.f[k], t2); }); })) r.via = 1;
+            req.every(function (t2) { return hasTok(x.f.i, t2) && !NOT_INTEGRATION.some(function (k) { return hasTok(x.f[k], t2); }); }) &&
+            (!viaKeys || viaKeys.some(function (ks) { return ks.length && ks.every(function (k) { return x.f.i[k]; }); }))) r.via = 1;
         res.push(r);
       });
       // Nothing has every word: rank the site's pages and FAQ answers by the words they do have (at least half)
@@ -665,10 +762,17 @@
         });
         if (catLead.kind === 'vs' && catLead.sure && top.length) categoryComparisons(catLead.id).slice(0, 5).forEach(function (c) { top.push(ext(c, { why: 'Head-to-head comparison' })); });
       }
-      // "X pricing" / "X score" → send the first product hit to the right section of its profile
-      if (q.suffix && groups.product && groups.product.length && groups.product[0].profile && !top.length) {
-        var p0 = groups.product[0];
-        top.push({ type: 'product', name: p0.name + (q.suffix === 'pricing' ? ' pricing' : ' score and evidence'), url: p0.url + (q.suffix === 'pricing' ? '#pricing' : '#capabilities'), sub: q.suffix === 'pricing' ? (p0.priceText || 'Pricing details and sources') : 'Documented-fit score and capability evidence', logo: p0.logo, dark: p0.dark, wide: p0.wide, why: q.suffix === 'pricing' ? 'Pricing' : 'Score' });
+      // "X pricing" / "X score" → the right section for the first product hit: its profile's pricing or evidence, or a
+      // documented supplier's plans and prices on its category page (a supplier has no score). Words that start several
+      // products' names ("zoho pricing", "microsoft score") give each of those products its row.
+      // The one product whose name or alias the words are comes first ("firefly pricing": Adobe Firefly, whose alias it is,
+      // not Fireflies, which the stemmer reads as "firefly"). A documented supplier gets its row only when the words name
+      // it so; otherwise the first hit gets one only if it has a profile, as before ("ai 3d asset generation pricing" is
+      // about the category, not about the supplier that happens to come first).
+      if (q.suffix && groups.product && groups.product.length && !top.length) {
+        var exactly = q.shared ? [] : docs.filter(function (x) { return x.type === 'product' && isExactName(x, q.rest) && passes(x); });
+        var p0 = exactly.length === 1 ? exactly[0] : groups.product[0].profile ? groups.product[0] : null;
+        (q.shared ? q.shared.filter(passes) : p0 ? [p0] : []).forEach(function (p) { var row = sectionRow(q.suffix, p); if (row) top.push(row); });
       }
       // direct: the first "best match" answers the query ("X vs Y", "X alternatives", "X pricing"), so Enter opens it;
       // a category's row only when the words are that one category's own ("crm pricing", not "marketing pricing")
@@ -681,7 +785,13 @@
           var nx = words(q.vsNext).join(' '), opp = function (c) { var o = byId('product', c.pair[0] === focus.id ? c.pair[1] : c.pair[0]); return !!o && words(o.name).some(function (w) { return w.indexOf(nx) === 0; }); };
           mine = mine.filter(opp).concat(mine.filter(function (c) { return !opp(c); }));
         }
-        if (q.vsOf) {
+        if (q.vsAll) {
+          // "zoho vs", "compare microsoft": words that start several products' names compare each of them with one still
+          // to choose (suggestions: which one is meant?); the published head-to-heads follow in their own group
+          q.vsAll.forEach(function (x) { var t = compareWith(x); if (t) top.push(t); });
+          if (!top.length) top.push(ext(focus));
+          direct = false;
+        } else if (q.vsOf) {
           // "X vs", "X or", "compare X" with no second product yet: comparing X with one still to choose leads
           // (Enter opens it when X is named exactly), then X's published head-to-heads
           var tool = compareWith(focus);
@@ -708,7 +818,10 @@
       var via = null, viaItems = (groups.product || []).filter(function (r) { return r.via; });
       if (viaItems.length) {
         var vs = q.intent && q.intent.kind === 'vs' ? q.intent : null, first = function (x) { return String(x.name).split(/\s+/)[0]; };
-        var named = focus ? brandOf(focus, req) : vs ? first(vs.a) + ' and ' + first(vs.b) : q.intent && q.intent.kind === 'multi' ? listText(q.intent.items.map(first)) : q.intent ? brandOf(q.intent.a, req) : q.termWords.map(spell).join(' ');
+        // the product's brand as typed ("HubSpot" of HubSpot Sales Hub), or its whole name where the words typed are a
+        // later part of it ("workspace": Google Workspace)
+        var label = function (p) { var b = brandOf(p, req); return b.toLowerCase().indexOf(String(p.name).split(/\s+/)[0].toLowerCase()) === 0 ? b : p.name; };
+        var named = focus ? label(focus) : vs ? first(vs.a) + ' and ' + first(vs.b) : q.intent && q.intent.kind === 'multi' ? listText(q.intent.items.map(first)) : q.intent ? brandOf(q.intent.a, req) : byWords && byWords.one ? label(byWords.one) : q.termWords.map(spell).join(' ');
         via = { label: 'Works with ' + named, items: viaItems };
       }
       var seen = {}, total = 0;

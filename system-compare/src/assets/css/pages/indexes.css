@@ -150,6 +150,8 @@ html[data-a11y-size] .ix-cmp .linklist a > .ix-vsmeta { flex: 0 1 auto; min-widt
 .ix-table .ptable__c-score { width: 10rem; }
 .ix-table .ptable__c-price { width: 12.5rem; }
 .ix-table .score__meta { white-space: normal; }
+/* a coverage note that wraps (768-991px) breaks before its separator ("10/11 checked" / "· 75%"), never after it */
+.ix-table .score--pending .score__meta { text-wrap: balance; }
 .ix-table .score:not(.score--pending) .score__value { font-size: var(--fs-lg); }
 .ix-of { display: none; }
 /* wide screens: dense rows (about 76px) — less padding, the name and the two-line description on tighter lines */
@@ -250,21 +252,71 @@ html[data-a11y-size] .ix-cmp .linklist a > .ix-vsmeta { flex: 0 1 auto; min-widt
 /* the product itself sits on top of the ranking like a pinned row: one header, identical columns */
 @media (min-width: 48em) {
   .ix-alt .ptable { table-layout: fixed; }
-  /* the columns are fixed, so a label wider than its column wraps inside it instead of running into the next one
-     ("You are comparing against this" covered "Score pending" at 768-1024px; a reader's letter spacing pushed the
-     score note into the price) */
-  .ix-alt .ptable :is(.tag, .score__meta) { white-space: normal; }
+  /* the score column holds the widest score note on one line ("16/18 checked · 77%"), the AI column (from 62em) the
+     widest AI tag ("AI via integration") and the action column the longest name in "vs ActiveCampaign": measured on
+     every alternatives page in the web font and in its fallback, 3.5-5.5px to spare. Re-check after a catalog refresh. */
+  .ix-alt .ptable__c-score { width: 9.5rem; }
+  /* the columns are fixed, so a label wider than its column wraps inside it instead of running into the next one: at the
+     default size only the pinned row's "You are comparing against this" where the product column is narrow (it covered
+     "Score pending" at 768-1024px), with a reader's letter spacing the notes and tags too. A note breaks before its
+     separator ("16/18 checked" / "· 77%"), a tag into balanced lines. */
+  .ix-alt .ptable :is(.tag, .score__meta) { white-space: normal; text-wrap: balance; }
   .ix-alt .ptable__c-rank { width: 3.25rem; white-space: nowrap; }
+  /* a name wraps only between its words: the product column holds the longest one (compact rows below) */
+  .ix-alt .ptable .prod__name { overflow-wrap: normal; }
   /* the ranking keeps its header row for assistive tech and column widths, at zero height */
   .ix-alts .ptable thead th { height: 0; padding-block: 0; border: 0; line-height: 0; color: transparent; overflow: hidden; }
 }
+@media (min-width: 62em) {
+  .ix-alt .ptable__c-ai { width: 9rem; }
+}
 @media (min-width: 48em) and (max-width: 74.99em) {
   .ix-alt .ptable__c-price { width: 11rem; }
-  .ix-c-vs { width: 8rem; }
+  .ix-c-vs { width: 8.5rem; }
 }
 @media (min-width: 48em) and (max-width: 61.99em) {
   .ix-alt .ptable__c-price { width: 9rem; }
-  .ix-c-vs { width: 8rem; }
+}
+/* compact rows below 71em: beside those columns the product column is too narrow for the plate and the longest name
+   side by side ("ActiveCam|paign", "EngageBa|y" broke at 768-1056px), so a row takes the phone row's shape
+   (components.css): the compact plate floated beside the name, a one-word name too long for that room below it whole,
+   the fit line under both at full width; very wide wordmarks show their initials. From 71em the pinned row's tag fits
+   beside the full plate too. Not with a text-size preference (its rows are stacked). */
+@media (min-width: 48em) and (max-width: 70.99em) {
+  html:not([data-a11y-size]) .ix-alt .ptable { --plate-w: 4rem; --plate-h: 1.75rem; --plate-img: 1.25rem; }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod { display: flow-root; }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod .logo { float: left; margin: 0 0.5rem 0 0; }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod__name { line-height: 1.75rem; }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod__name--word { display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod__fit { clear: left; }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod .logo[data-xwide] { background: var(--bg); border-color: var(--line); }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod .logo[data-xwide] img { display: none; }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod .logo[data-xwide] .logo__mono { display: grid; }
+}
+/* a text-size preference: with seven columns the scaled table fits only from 87.5em (125%) and 105em (150%), so its rows
+   stay stacked that much longer than other product tables (components.css: below 75em and 90em); in columns at
+   1200-1399px (125%) and 1440-1679px (150%) the names were set a letter per line */
+@media (min-width: 75em) and (max-width: 87.49em) {
+  html[data-a11y-size="125"] .ix-alt .ptable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  html[data-a11y-size="125"] .ix-alt .ptable, html[data-a11y-size="125"] .ix-alt .ptable tbody { display: block; }
+  html[data-a11y-size="125"] .ix-alt .ptable tbody tr { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.6rem var(--s-6); position: relative; padding: 0.75rem 0 0.75rem 2.6rem; }
+  html[data-a11y-size="125"] .ix-alt .ptable tbody tr > * { flex: 1 1 100%; min-width: 0; width: auto; padding: 0; text-align: left; }
+  html[data-a11y-size="125"] .ix-alt .ptable tbody td.ptable__c-pick { position: absolute; left: -0.6rem; top: 0.35rem; }
+  html[data-a11y-size="125"] .ix-alt .ptable tbody td.ptable__c-rank { display: none; }
+  html[data-a11y-size="125"] .ix-alt .ptable tbody td.ptable__c-score { flex: none; width: 8rem; }
+  html[data-a11y-size="125"] .ix-alt .ptable tbody td.ptable__c-price { flex: 1 1 12rem; }
+  html[data-a11y-size="125"] .ix-alt .ptable tbody td.ptable__c-ai { flex: none; }
+}
+@media (min-width: 90em) and (max-width: 104.99em) {
+  html[data-a11y-size="150"] .ix-alt .ptable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  html[data-a11y-size="150"] .ix-alt .ptable, html[data-a11y-size="150"] .ix-alt .ptable tbody { display: block; }
+  html[data-a11y-size="150"] .ix-alt .ptable tbody tr { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.6rem var(--s-6); position: relative; padding: 0.75rem 0 0.75rem 2.6rem; }
+  html[data-a11y-size="150"] .ix-alt .ptable tbody tr > * { flex: 1 1 100%; min-width: 0; width: auto; padding: 0; text-align: left; }
+  html[data-a11y-size="150"] .ix-alt .ptable tbody td.ptable__c-pick { position: absolute; left: -0.6rem; top: 0.35rem; }
+  html[data-a11y-size="150"] .ix-alt .ptable tbody td.ptable__c-rank { display: none; }
+  html[data-a11y-size="150"] .ix-alt .ptable tbody td.ptable__c-score { flex: none; width: 8rem; }
+  html[data-a11y-size="150"] .ix-alt .ptable tbody td.ptable__c-price { flex: 1 1 12rem; }
+  html[data-a11y-size="150"] .ix-alt .ptable tbody td.ptable__c-ai { flex: none; }
 }
 .ix-ref .ptable tbody tr { border-bottom-color: var(--line-strong); }
 .ix-panel__note { margin-top: var(--s-4); }

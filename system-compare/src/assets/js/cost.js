@@ -245,7 +245,7 @@
     try { return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD', minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(n); }
     catch (e) { return n + ' ' + currency; }
   }
-  function dateText(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? MONTHS[Number(m[2]) - 1] + ' ' + Number(m[3]) + ', ' + m[1] : ''; }
+  function dateText(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? MONTHS[Number(m[2]) - 1] + '\u00a0' + Number(m[3]) + ',\u00a0' + m[1] : ''; } // no-break spaces
   function timeEl(iso) { return el('time', { datetime: iso, text: dateText(iso) }); }
   // the compact bar has a third of a phone's width per product: long totals are shown rounded there (the table has the exact figure)
   var compactFmt = null;

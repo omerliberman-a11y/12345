@@ -3,12 +3,16 @@
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-/** '2026-11-05' or ISO timestamp → 'Nov 5, 2026' (no timezone drift: the date part is used as written). */
-export function fmtDate(iso, { long = false } = {}) {
+/** '2026-11-05' or ISO timestamp → 'Nov 5, 2026' (no timezone drift: the date part is used as written).
+ *  { nbsp: true } joins the parts with no-break spaces, so a printed date never wraps away from its year — for the
+ *  visible text of a <time> only (ui.time, ui.dated); text that goes into JSON-LD, meta tags, feeds, llms files or
+ *  data files keeps plain spaces. */
+export function fmtDate(iso, { long = false, nbsp = false } = {}) {
   const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!m) return '';
   const name = (long ? MONTHS_LONG : MONTHS)[Number(m[2]) - 1];
-  return `${name} ${Number(m[3])}, ${m[1]}`;
+  const sp = nbsp ? '\xa0' : ' ';
+  return `${name}${sp}${Number(m[3])},${sp}${m[1]}`;
 }
 export const isoDate = (iso) => (String(iso || '').match(/^\d{4}-\d{2}-\d{2}/) || [''])[0];
 export const maxDate = (...dates) => dates.flat().map(isoDate).filter(Boolean).sort().pop() || null;

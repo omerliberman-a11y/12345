@@ -79,7 +79,7 @@
   /** The reader's own timestamp, shown as a date in their time zone ("Nov 14, 2026"); '' when it cannot be read. */
   function fmtDate(iso) {
     var t = iso ? new Date(iso) : null;
-    return t && !isNaN(t.getTime()) ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear() : '';
+    return t && !isNaN(t.getTime()) ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][t.getMonth()] + '\u00a0' + t.getDate() + ',\u00a0' + t.getFullYear() : ''; // no-break spaces
   }
   function logo(v) {
     var box = el('span.logo' + (v.dk ? '.logo--dark' : ''), { 'aria-hidden': 'true' });

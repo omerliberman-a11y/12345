@@ -9,7 +9,7 @@ import { html, raw, esc, text, cx, attrs, join } from '../lib/html.mjs';
 import * as ui from '../lib/components.mjs';
 import { title as seoTitle, describe } from '../lib/seo.mjs';
 import { fmtDate } from '../lib/format.mjs';
-import { fitStyle, fitItems } from './category.mjs';
+import { fitStyle, fitItems, quickAnswer } from './category.mjs';
 
 export function routes(ctx) {
   return ctx.factualCategories.map((category) => ({ path: ctx.url.category(category.id), render: (c) => render(c, category) }));
@@ -34,7 +34,7 @@ export const NO_SCORE_LABEL = 'Documented comparison — no score or ranked orde
 
 export const dated = (s) => {
   const parts = String(s ?? '').split(/\b(20\d\d-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01]))\b/);
-  return parts.length === 1 ? s : raw(parts.map((part, i) => (i % 2 ? `<time datetime="${part}">${fmtDate(part)}</time>` : esc(part))).join(''));
+  return parts.length === 1 ? s : raw(parts.map((part, i) => (i % 2 ? `<time datetime="${part}">${fmtDate(part, { nbsp: true })}</time>` : esc(part))).join(''));
 };
 
 /** evidence_id → source record of a documentary category. */
@@ -216,7 +216,7 @@ function render(ctx, category) {
           ],
           { compact: true },
         )}
-        ${ui.answer(ctx, quick, { meta: lowest ? 'Units and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.' : null, more: true })}
+        ${quickAnswer(ctx, quick, { meta: lowest ? 'Units and billing terms differ between suppliers, so the lowest amount is not a like-for-like price.' : null, more: true })}
       </div>
     </header>
   </div>`;

@@ -9,6 +9,8 @@
   var input = $('#search-q'), form = input && input.form;
   var results = $('[data-search-results]'), status = $('[data-search-status]'), start = $('[data-search-start]');
   var controls = $('[data-search-controls]'), facetsBox = $('[data-search-facets]'), typeChips = $('[data-type-chips]'), sortSel = $('[data-search-sort]');
+  // the examples under the field ("Try a product …"): shown until there is a query, then the results come first
+  var head = input && input.closest('.page-head'), hint = head && $('.fineprint', head);
   var TYPES = [['', 'All'], ['category', 'Categories'], ['product', 'Products'], ['comparison', 'Comparisons'], ['guide', 'Guides'], ['faq', 'Questions'], ['page', 'Pages']];
   var HEAD = { category: 'Categories', product: 'Products', comparison: 'Comparisons', guide: 'Buying guides', faq: 'Questions and answers', page: 'Pages' };
   var state = { q: '', type: '', sort: '', f: {} };
@@ -72,9 +74,33 @@
     });
   }
   var focusResults = false; // after "Show all …", focus moves to the first heading of the new list
+  /** Phones: the result types and the product filters are rows that scroll sideways (search.css). The pressed type is
+   *  kept in view (?type=guide opens with Guides visible), clear of the faded right edge (2rem) and the page margin. */
+  function revealPressed(row) {
+    var b = row && $('[aria-pressed="true"]', row);
+    if (!b || row.scrollWidth <= row.clientWidth + 1) return;
+    var r = row.getBoundingClientRect(), c = b.getBoundingClientRect(), rem = parseFloat(getComputedStyle(d.documentElement).fontSize) || 16;
+    if (c.right > r.right - 2 * rem) row.scrollLeft += c.right - (r.right - 2 * rem);
+    else if (c.left < r.left + rem) row.scrollLeft -= r.left + rem - c.left;
+  }
+  // a chip reached with the keyboard comes fully into view in its row, clear of the fade (the row's scroll padding), as
+  // on category pages (table.js)
+  [typeChips, facetsBox].forEach(function (row) {
+    if (row) row.addEventListener('focusin', function (e) {
+      var t = e.target, kbd = true;
+      if (t.parentNode !== row || row.scrollWidth <= row.clientWidth + 1) return;
+      try { kbd = t.matches(':focus-visible'); } catch (err) { /* older browsers: always */ }
+      if (kbd) t.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
+  });
   function render() {
     var q = state.q.trim();
     if (input && input.value !== state.q) input.value = state.q;
+    // at once, in the same step that hides "Start from a category" and lets the block under the field be painted
+    // (data-ready: until now it stayed unpainted, search.css), so nothing painted moves; the block keeps the footer out
+    // of view until the results are in
+    if (hint) hint.hidden = !!q;
+    page.setAttribute('data-ready', '');
     d.title = (q ? '“' + q + '” — ' : '') + 'Search | System Compare';
     if (!q) {
       results.textContent = ''; status.textContent = ''; status.classList.remove('sr-only'); controls.hidden = true; facetsBox.hidden = true; start.hidden = false;
@@ -168,6 +194,7 @@
       }
       results.textContent = '';
       results.appendChild(frag);
+      revealPressed(typeChips);
       if (focusResults) {
         focusResults = false;
         var h = $('h2', results);

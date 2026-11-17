@@ -48,13 +48,21 @@
 /* the evidence line, a row of items below 78em, breaks after its second item where the whole row does not surely fit
    but each half does (--tfit, --tfit2 on .cat-sum), and after its fourth too where the second half does not either but
    each run of two does (--tfit3; only a documentary page has a fifth item). The breaks are empty full-width items put
-   in place with `order`. Phones show only its first and last item and are left as they are. */
+   in place with `order`. Phones show only its first and last item (below). */
 @media (min-width: 48em) and (max-width: 77.99em) {
   .cat-sum { container-type: inline-size; }
   .cat-sum > .trustline > :nth-child(n + 3) { order: 1; }
   .cat-sum > .trustline > :nth-child(n + 5) { order: 3; }
   .cat-sum > .trustline::after { content: ""; flex-basis: min(100%, (clamp(0px, (100cqi - var(--tfit3, 0) * 1em) * 1000, 1px) - clamp(0px, (100cqi - var(--tfit, 0) * 1em) * 1000, 1px)) * 100000); }
   .cat-sum > .trustline::before { content: ""; order: 2; flex-basis: min(100%, (clamp(0px, (100cqi - var(--tfit3, 0) * 1em) * 1000, 1px) - clamp(0px, (100cqi - var(--tfit2, 0) * 1em) * 1000, 1px)) * 100000); }
+}
+/* phones show the first and the last item of a ranking's evidence line: the last starts a line of its own unless both
+   surely fit (--tfitp), so the two faces break it alike (the pair needs 348.5px in the web font and 347.9px in its
+   fallback, and a 348px line wrapped it in one face only). The line is measured on .cat-sum as a size container; its
+   gap to the lede is .cat-sum's margin there (below), so it still collapses with the lede's as before. */
+@media (max-width: 47.99em) {
+  .cat-sum--ends { container-type: inline-size; }
+  .cat-sum--ends > .trustline > :last-child { min-width: min(100%, clamp(0px, (var(--tfitp, 0) * 1em - 100cqi) * 1000, 1px) * 100000); }
 }
 /* the buyer's question shares the answer's measure (54rem), so most fit one line and the two share a right edge */
 .cat-head .lede { max-width: 54rem; }
@@ -66,16 +74,21 @@
    The answer is 18px / 1.6 from 40em and 16px / 1.55 on phones (components.css). */
 .cat-sum .answer__label { float: left; position: relative; top: 0.175rem; margin: 0 0.75rem 0 0; line-height: 1.7rem; }
 @media (max-width: 39.99em) { .cat-sum .answer__label { top: 0.14rem; margin-right: 0.6rem; line-height: 1.45rem; } }
-/* phones and small tablets clamp the answer to three lines (components.css): here the clamp is a three-line max-height
-   with the rest clipped, because a paragraph clamped as a -webkit-box would sit beside the float instead of flowing
-   round it; "Show the full answer" lifts it. While clamped, the end of the third line fades into "…" (the clamped
-   answer of a profile ends in "…" too); the answer runs on for more than three lines at every phone width. */
+/* phones and small tablets clamp the answer to three lines (components.css: a -webkit-box, "Show the full answer"
+   lifts it), and a float cannot run into a clamped box. There the paragraph draws the label itself, an inline ::before
+   with the label's look and the float's width and margin (so the lines break where they did; hidden from assistive
+   technology), and the label element is screen-reader text: the clamp then ends the third line in "…" right after its
+   last word, as on a profile. The HTML, the text and the reading order are ui.answer's (category.mjs quickAnswer
+   checks the words). The box stays three line-heights in every face (a bold run's fallback face is a little taller). */
 @supports selector(:has(*)) {
   @media (max-width: 47.99em) {
-    .cat-sum .answer--more > p:first-of-type { position: relative; display: block; max-height: 3lh; overflow: clip; }
-    .cat-sum .answer--more > p:first-of-type::after { content: "…"; content: "…" / ""; position: absolute; right: 0; bottom: 0; width: 4em; height: 1lh; text-align: right; background: linear-gradient(to right, transparent, var(--bg) 2.75em); }
+    .cat-sum .answer--more > .answer__label { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; float: none; }
+    .cat-sum .answer--more > p:first-of-type { max-height: 3lh; }
+    .cat-sum .answer--more > p:first-of-type::before { content: "Quick answer"; content: "Quick answer" / ""; margin-right: 0.75rem; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand-ink); }
     .cat-sum .answer--more:has(> .answer__more[open]) > p:first-of-type { max-height: none; }
-    .cat-sum .answer--more:has(> .answer__more[open]) > p:first-of-type::after { content: none; }
+  }
+  @media (max-width: 39.99em) {
+    .cat-sum .answer--more > p:first-of-type::before { margin-right: 0.6rem; }
   }
 }
 /* wide screens: the evidence line is a short column beside the answer instead of a row above it, from the width where
@@ -107,30 +120,44 @@
    the button is outside the live region (only the count is announced). A text button in the line: 28px tall without
    growing the line, 44px to a finger. */
 .cat-count { grid-area: count; min-width: 0; font-size: var(--fs-sm); line-height: 1.4; color: var(--ink-2); }
-.cat-products .cat-count > .toolbar__count { display: inline; margin: 0; }
+.cat-products .cat-count .toolbar__count { display: inline; margin: 0; }
 .cat-clear { position: relative; padding: 0.25rem 0; margin: -0.25rem 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--brand-ink); white-space: nowrap; cursor: pointer; }
 .cat-clear::before { content: "·\00a0"; content: "·\00a0" / ""; display: inline-block; font-weight: 400; color: var(--ink-3); }
 .cat-clear:hover { text-decoration: underline; }
 @media (pointer: coarse) { .cat-clear::after { content: ""; position: absolute; inset: -0.5rem -0.25rem; } }
-/* One of the two "Clear filters" shows (both hidden until a filter is on). Where the count shares its line with the
-   sort (48-75em, and every width with the text-size preference), after the count: the filter row, which wraps there,
-   never changes when it appears. On phones (the filter row scrolls; the count line has no room) and from 75em (the
-   filter row has room to spare, and the count line is under the sort) it ends the filter row, so the keyboard meets it
-   right after the filters, where it is on screen. */
-.cat-count > .cat-clear { display: none; }
-@media (min-width: 48em) {
-  .cat-count > .cat-clear { display: inline-block; }
-  .cat-clear-chip { display: none; }
-}
+/* One of the two "Clear filters" shows (both hidden until a filter is on). Below 75em (and at every width with the
+   text-size preference) the count shares its line with the sort and the button follows the count: the filter row,
+   which wraps at 48-75em, never changes when it appears, and on phones, where the row scrolls sideways and its end is
+   off screen, it is a short "Clear" right above the table, beside a short filtered count ("7 of 14 tools", js/table.js;
+   screen readers hear "Clear filters" and the whole count). From 75em the count line is under the sort, so it ends the
+   filter row (which has room to spare there) and the keyboard meets it right after the filters, where it is on screen. */
+.cat-clear-chip { display: none; }
 @media (min-width: 75em) {
-  html:not([data-a11y-size]) .cat-count > .cat-clear { display: none; }
+  html:not([data-a11y-size]) .cat-count .cat-clear { display: none; }
   html:not([data-a11y-size]) .cat-clear-chip { display: inline-flex; }
 }
-/* "Must-have capabilities" opens a panel (a bottom sheet on phones): a chevron like the sort's, turned while open */
-.mustpop > summary.chip { padding-right: 0.75rem; }
+.cat-noun-short, .cat-count__keep { display: none; }
+@media (max-width: 47.99em) {
+  .cat-count .cat-noun, .cat-clear__x { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .cat-noun-short { display: inline; }
+  /* the count line is as tall as its tallest state: hidden copies of the whole unfiltered count (a long noun takes three
+     lines beside the sort at 320px) and of the widest filtered count with "Clear" (with large text) share its grid
+     cell (category.mjs), so turning a filter on or off never moves the table */
+  .cat-count { display: grid; align-items: center; }
+  .cat-count > * { grid-area: 1 / 1; min-width: 0; }
+  .cat-count__keep { display: block; visibility: hidden; }
+}
+/* "Must-have capabilities" opens a panel (a bottom sheet on phones): a pill like the other filters and the sort (the
+   shared .pop summary radius is squarer), with a chevron like the sort's, turned while open */
+.mustpop > summary.chip { padding-right: 0.75rem; border-radius: var(--r-pill); }
 .mustpop > summary.chip::after { content: ""; flex: none; width: 1.2rem; height: 0.95rem; margin-left: auto; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6.5l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right center / 0.95rem no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6.5l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right center / 0.95rem no-repeat; transition: transform var(--dur) var(--ease); }
 .mustpop > summary.chip::after { transform-origin: calc(100% - 0.475rem) 50%; }
 .mustpop[open] > summary.chip::after { transform: rotate(180deg); }
+/* the text-size preference: the chevron box is no wider than its glyph and the filter icon is left out (the chevron
+   already says the button opens a panel), so the button is no wider than before it had a chevron and a filter row that
+   fitted one line still does (HR at 820px with 150% text) */
+html[data-a11y-size] .mustpop > summary.chip > svg { display: none; }
+html[data-a11y-size] .mustpop > summary.chip::after { width: 0.95rem; }
 .cat-toolbar__end { grid-area: end; align-self: start; display: flex; align-items: center; gap: var(--s-2); }
 @media (min-width: 75em) {
   html:not([data-a11y-size]) .cat-toolbar { grid-template-areas: "chips end" "count count"; }
@@ -180,7 +207,10 @@
 @media (max-width: 47.99em) {
   /* the buyer's question at body size, and slightly tighter steps down to the filters */
   .cat-head .lede { margin-top: var(--s-3); font-size: var(--fs-md); line-height: 1.5; }
-  .cat-sum > .trustline { margin-top: var(--s-3); }
+  /* the step down to the evidence line is .cat-sum's own margin (a size container on rankings, above, keeps its first
+     child's margin inside), so it collapses with the lede's margin exactly as the evidence line's did */
+  .cat-sum { margin-top: var(--s-3); }
+  .cat-sum > .trustline { margin-top: 0; }
   .cat-sum > .answer { margin-top: var(--s-4); }
   .page-head.cat-head { padding-bottom: var(--s-4); }
   .cat-products { padding-top: 0; }
@@ -196,15 +226,16 @@
   /* nothing in the scrolling row shrinks or wraps, so the row keeps its height */
   .cat-chips .chips > * { flex: none; }
   .cat-chips::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2rem; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; }
-  /* the sort shows the current order in one word ("Score", "Price", "A–Z"; "Checked" where nothing is scored yet). The
-     words share one grid cell and the chip has a width a little over the longest in any font, so choosing another
-     order never resizes it */
+  /* the sort shows the current order in one word ("Score", "Price", "A–Z"; "Coverage" where nothing is scored yet and
+     the rows read "7/10 checked · 71%"). The words share one grid cell and the chip has a width a little over the
+     longest in any font, so choosing another order never resizes it */
   .cat-sort__k, .cat-sort__l { display: none; }
   .cat-sort__p { display: inline; }
   /* a little tighter than the wide chip, so the count beside it keeps nearly the room it had beside "Sort" (156 of 159px
-     at 320px: a filtered count takes a third line only on the narrowest phones, on a few pages with long names) */
+     at 320px). "Coverage", the longest word, sits a little tighter still, so its chip keeps 106px (104.6px at most, in
+     any face) and a long count beside it ("3 VPN tools for individual professionals") still takes two lines at 320px */
   .cat-sort { min-width: 5.25rem; padding-inline: 0.75rem 1.85rem; background-position: right 0.6rem center; }
-  .cat-sort--cov { min-width: 6.625rem; }
+  .cat-sort--cov { min-width: 6.625rem; padding-inline: 0.6rem 1.7rem; background-position: right 0.5rem center; }
   /* the count line is too short for the order as well: the sort's word says it on screen, this is spoken */
   .cat-order { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 }
@@ -212,8 +243,15 @@
    own width where that is more), so the first quick filter always runs past the edge with about 5rem of it clear of
    the fade, whatever the labels and counts. With content-sized chips alone, some chip ends within 4rem of the edge at
    some phone width on every page, and the next one then starts under the fade (no sign of more). From 28.5em the
-   chips' own widths leave the third one peeking. */
+   chips' own widths leave the next one peeking, except at 31-37em on rows with all three quick filters (below). */
 @media (max-width: 28.49em) { .mustpop > summary.chip { min-width: calc(100vw - 8.75rem); } }
+/* 31-37em: a row with all three quick filters ends, with natural widths, close to the edge (502-577px: the last filter
+   starts under the fade). There the button is as wide as the screen less 15.75rem, so the next filter is whole and the
+   one after it runs past the edge with about 3.5rem of it clear of the fade. Rows with fewer filters fit these screens
+   or run past the edge early enough, and keep their natural widths. */
+@media (min-width: 31em) and (max-width: 36.99em) {
+  .cat-chips .chips:has(> [data-filter] + [data-filter] + [data-filter]) > .mustpop > summary.chip { min-width: calc(100vw - 15.75rem); }
+}
 /* wide screens: ranking rows no taller than their content needs (name, two-line fit, dated price) */
 @media (min-width: 48em) {
   .cat-products .ptable td, .cat-products .ptable tbody th { padding-block: 0.6rem; }
@@ -271,6 +309,13 @@ html:not(.js) .mustpop__foot { display: none; }
   html[data-a11y-size] .cat-weights :is(th, td) { overflow-wrap: anywhere; hyphens: auto; }
 }
 @media (min-width: 62em) { .cat-two { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-14); } }
+/* 150% text at 62-72em: the score-weights table's column heads and longest group name ("Integrations"), with a reader's
+   letter spacing too, are wider than the second column there (past the page at 992-1032px; breaking them inside the
+   word, as a phone's narrow column must, would also break them without the spacing). That section keeps one column,
+   the table under the text at full width, until the column holds it. */
+@media (min-width: 62em) and (max-width: 71.99em) {
+  html[data-a11y-size="150"] .cat-two--weights { grid-template-columns: minmax(0, 1fr); gap: var(--s-10); }
+}
 .cat-aside h3 { font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; margin-bottom: var(--s-3); }
 .cat-aside h3:not(:first-child) { margin-top: var(--s-8); }
 .cat-criteria li { padding: 0.6rem 0; border-bottom: 1px solid var(--line); }

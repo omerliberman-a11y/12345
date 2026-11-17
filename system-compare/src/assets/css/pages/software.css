@@ -180,7 +180,7 @@
 }
 
 /* ---------------------------------------------------------------- shared bits inside sections */
-[data-page="software"] .section-head h2 { max-width: 40ch; }
+[data-page="software"] .section-head h2 { max-width: 26.72em; } /* 40ch of Rubik 600 */
 [data-page="software"] .section-head__link { display: inline-flex; align-items: center; min-height: var(--tap); white-space: normal; }
 .sw-plan .btn { white-space: normal; }
 .sw-two { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); align-items: start; }
@@ -448,26 +448,26 @@ html[data-a11y-size] .sw-plan .sw-ev td.num { white-space: normal; }
   .sw-alts .ptable__c-go { width: 6rem; white-space: normal; }
 }
 .sw-alts .scorebtn { min-height: var(--tap); }
+/* a score note stays on one line at the default size; where a larger text size makes it wrap, it breaks before its
+   separator ("16/18 checked" / "· 77%"), never after it. The longhand: the text-wrap shorthand would also switch the
+   note's nowrap (components.css) to wrap, and the table's auto layout would then wrap notes at every width. */
+.sw-alts .ptable .score__meta { text-wrap-style: balance; }
 /* published comparisons: the score pair ("pending vs pending") moves under the title when both do not fit on a line
    (narrow screens with a larger text size) */
 .sw-alts .linklist a { flex-wrap: wrap; }
 /* a larger text size on wide screens: "Read comparison →" may wrap, so the table keeps to the page width */
 html[data-a11y-size] .sw-alts .ptable__c-go { white-space: normal; }
-/* the table does not push the page sideways: where its columns need more than the page's width (a reader's own letter
-   and word spacing: up to 75px at 820px) it scrolls inside its own width, as a .scroller would (its markup has none);
-   where it fits, nothing changes. Only where every profile's table fits at the default size (measured on all 149 from
-   768 to 1440px): at the narrow end of each layout (768-799 and 992-1023px) a pending product's coverage note makes two
-   tables up to 25px wider than the column, and a scroller there would cut off their "Compare →" links. Not while a
-   text-size preference stacks its rows (components.css: 125% below 75em, 150% below 90em): a stacked row's shortlist
-   box reaches outside the row. */
-@media (min-width: 50em) and (max-width: 61.99em), (min-width: 64em) {
-  html:not([data-a11y-size]) .sw-alts .ptable { display: block; position: relative; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
-}
-@media (min-width: 75em) {
-  html[data-a11y-size="125"] .sw-alts .ptable { display: block; position: relative; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
-}
-@media (min-width: 90em) {
-  html[data-a11y-size="150"] .sw-alts .ptable { display: block; position: relative; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+/* the table sits in a .scroller (software.mjs): where a reader's own letter spacing or a larger text size makes its
+   columns wider than the page, it scrolls inside that box and stays a table. At the default size every profile's table
+   fits its column (measured on all 149 at 768-1440px, in the web font and in its fallback): where the product column is
+   too narrow for a row's plate, the gap and that row's longest word side by side, the plate gives way (down to the phone
+   plate's 4rem) instead of the table growing past its column. That happened only at the narrow end of a layout: 1-3px on
+   14 profiles at 768px, and up to 23px where a pending note and "ActiveCampaign" share a table (brevo, pulseem at
+   768-791px and 992-1011px). The plate's size is its flex basis and the text's basis is 0, so wherever both fit the row
+   is as before, and a table that fits keeps every column: its product column takes the room the others leave. */
+@media (min-width: 48em) {
+  .sw-alts .ptable .prod .logo { width: auto; flex: 0 1 var(--plate-w); min-width: 4rem; }
+  .sw-alts .ptable .prod__text { flex: 1 1 0%; min-width: auto; }
 }
 @media (max-width: 47.99em) {
   /* phones: the shared table drops its action column; here the comparison link stays, under the price */

@@ -26,7 +26,7 @@
   var CSV_HEAD = ['Category', 'Product', 'Evidence scope', 'Check', 'Support', 'Earned points', 'Possible points', 'Maximum points', 'Evidence coverage %', 'Note', 'Source', 'Checked at'];
 
   // ------------------------------------------------------------------ small helpers
-  function fmtDate(iso) { return iso ? MON[Number(iso.slice(5, 7)) - 1] + ' ' + Number(iso.slice(8, 10)) + ', ' + iso.slice(0, 4) : ''; }
+  function fmtDate(iso) { return iso ? MON[Number(iso.slice(5, 7)) - 1] + '\u00a0' + Number(iso.slice(8, 10)) + ',\u00a0' + iso.slice(0, 4) : ''; } // no-break spaces: a printed date never wraps away from its year
   function pt(v) { return Number(Number(v || 0).toFixed(1)).toString(); }
   function plural(n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); }
   function listText(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }

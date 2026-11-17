@@ -171,6 +171,14 @@ const AFFILIATE_NOTICE = html`<div class="wrap" data-nosnippet>
   <p class="note" role="note"><span class="tag tag--ad">Ad</span> <span><strong>Affiliate advertising.</strong> Some links on this page are marked “Ad · affiliate link”. We may earn a commission if you buy through them. Commissions never change a score or a ranking. <a href="/how-we-make-money/">How we make money</a></span></p>
 </div>`;
 
+// Both web fonts (font-display: optional, tokens.css) are preloaded: Chromium then holds the first render a moment
+// for them, so a cached view or a fast first visit renders Inter and Rubik from the first paint, while a slow first
+// visit keeps the fallback faces for that page view — a page never switches face. Not in the portable build: opened
+// from file://, a crossorigin preload is refused by CORS (origin "null"), two console errors on every page.
+const FONT_PRELOADS = ['static:assets/fonts/inter-latin.woff2', 'static:assets/fonts/rubik-latin.woff2'];
+const fontPreloads = (ctx) =>
+  ctx.links === 'portable' ? '' : FONT_PRELOADS.map((f) => html`<link rel="preload" as="font" type="font/woff2" crossorigin href="${ctx.asset(f)}">`);
+
 // Applied before first paint: reader preferences + the saved-shortlist count (avoids a flash of "0").
 const EARLY_JS = `(function(){var d=document.documentElement;d.className+=' js';try{var p=JSON.parse(localStorage.getItem('sc-accessibility-v1')||'{}');if(p.size&&p.size!==100)d.setAttribute('data-a11y-size',p.size);['contrast','spacing','links','motion'].forEach(function(k){if(p[k])d.setAttribute('data-a11y-'+k,'1')})}catch(e){}})();`;
 
@@ -275,6 +283,7 @@ ${raw(site.verificationMetaHtml)}
 <link rel="manifest" href="/site.webmanifest">
 ${(page.preload || []).map((p) => html`<link rel="preload"${attrs(p)}>`)}
 ${(ctx.stylesFor ? ctx.stylesFor(route.module, bodyStr, page.styles) : [ctx.asset('site.css')]).map((u) => html`<link rel="stylesheet" href="${u}">`)}
+${fontPreloads(ctx)}
 <link rel="prefetch" as="script" href="${ctx.asset('js/search.js')}" id="sc-search-engine">
 <script>${raw(EARLY_JS)}</script>
 <script type="application/ld+json">${jsonForScript({ '@context': 'https://schema.org', '@graph': graph })}</script>

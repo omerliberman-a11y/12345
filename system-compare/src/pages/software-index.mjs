@@ -117,7 +117,9 @@ function render(ctx) {
       ? html` <span class="ix-visit">${ui.outLink(ctx, v, { intent: 'website', from: 'decision-directory', cls: 'ix-visit__a', explain: false })}</span>`
       : '';
 
-  const table = html`<table class="ptable ix-table" id="directory" data-ix-table data-page-size="${PAGE_SIZE}">
+  // in a .scroller like every other wide table: at the default size it fits; under a reader's text-spacing override
+  // (768-777 px) it scrolls inside its box instead of widening the page
+  const table = html`<div class="scroller"><table class="ptable ix-table" id="directory" data-ix-table data-page-size="${PAGE_SIZE}">
     <caption class="sr-only">Software directory: ${total} products with their highest documented-fit score, starting price and AI level</caption>
     <thead>
       <tr>
@@ -171,7 +173,7 @@ function render(ctx) {
         </tr>`;
       })}
     </tbody>
-  </table>`;
+  </table></div>`;
 
   const products = html`<section class="wrap ix-dir" data-ix="software" aria-label="Products">
     ${controls}

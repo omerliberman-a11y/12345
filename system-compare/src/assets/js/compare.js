@@ -313,7 +313,8 @@
         tr.classList.toggle('is-full', full);
       });
       countEl.textContent = '';
-      add(countEl, picked.length ? [el('b', { text: picked.length + ' of ' + MAX }), ' selected: ' + picked.map(function (id) { return byId[id].n; }).join(', ')] : ['Tick two to four products.']);
+      // the names in a span of their own: phones show "2 of 4 selected" and screen readers hear the names (compare.css)
+      add(countEl, picked.length ? [el('b', { text: picked.length + ' of ' + MAX }), ' selected', el('span.cmp-go__names', { text: ': ' + picked.map(function (id) { return byId[id].n; }).join(', ') })] : ['Tick two to four products.']);
       goBtn.disabled = picked.length < 2;
       goBtn.textContent = picked.length < 2 ? 'Select ' + (picked.length ? 'one more' : 'two products') : 'Compare ' + picked.length + ' products';
     }

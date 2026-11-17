@@ -534,8 +534,10 @@ function render(ctx, vendor) {
       decisionTemplate ? html` <span class="sw-visit">${ui.outLink(ctx, other, { intent: 'website', from: 'decision-directory', cls: 'sw-visit__a', explain: false })}</span>` : ''
     }`;
   };
+  // in a .scroller: where a reader's letter spacing or a larger text size makes the table wider than the page, it scrolls
+  // inside its own box and stays a table for every browser and screen reader (software.css)
   const altTable = top.length
-    ? ui.productTable(ctx, primary.id, altRows, {
+    ? html`<div class="scroller">${ui.productTable(ctx, primary.id, altRows, {
         id: 'alternatives-table',
         focalId: vendor.id,
         focalTag: 'This product',
@@ -544,7 +546,7 @@ function render(ctx, vendor) {
         action: vsLink,
         actionLabel: html`<span class="sr-only">Compare</span>`,
         caption: top.length === 1 ? `${name} and the one alternative we researched in ${primary.name}` : `${name} and the ${top.length} alternatives with the highest documented-fit scores in ${primary.name}`,
-      })
+      })}</div>`
     : '';
   const vsItems = publishedVs.map((x) => {
     const names = ctx.comparisonNames(x);

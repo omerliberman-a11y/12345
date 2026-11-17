@@ -385,8 +385,11 @@ html[data-a11y-size] :is(.tag, .score__meta, .st) { white-space: normal; }
   .price__src a { position: relative; }
   .price__src a::before { content: ""; position: absolute; inset: -0.25rem -0.25rem -1rem; z-index: -1; }
   /* with larger text the stacked row puts the score button right above the price: nothing above the words */
-  html[data-a11y-size] .price__src a::before { top: 0; }
+  html[data-a11y-size] .price__src a::before { top: 0.2em; }
 }
+/* with a reader's text size the link's own box is at least 24px tall (WCAG 2.5.8; it was 19px at 125%): vertical
+   padding on an inline link grows its box, not its line, so nothing moves */
+html[data-a11y-size] .price__src a { padding-block: 0.2em; }
 .price--lg .price__main { font-family: var(--font-display); font-size: var(--fs-2xl); letter-spacing: -0.02em; }
 .price--lg .price__main--text { font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 600; color: var(--ink); }
 .price--lg .price__unit { font-size: var(--fs-sm); }
@@ -454,6 +457,10 @@ html[data-a11y-size] :is(.tag, .score__meta, .st) { white-space: normal; }
   .ptable:not(.ix-table) .prod { display: block; }
   .ptable:not(.ix-table) .prod .logo { float: left; margin: 0 0.5rem 0.2rem 0; }
   .ptable:not(.ix-table) .prod__name { line-height: 1.75rem; overflow-wrap: normal; }
+  /* a one-word name (ui.productTable marks it) is one box: it still moves below the plate whole, and only where it is
+     wider than the whole cell (a reader's letter spacing at 320px; "ActiveCampaign" in a 320px alternatives row) does
+     it break inside that box instead of running under the score */
+  .ptable:not(.ix-table) .prod__name--word { display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
   .ptable:not(.ix-table) .prod__fit { clear: left; }
   .prod__name { display: inline; }
   /* every data-xwide wordmark would render under 10px tall in the compact plate: initials instead (see above) */
@@ -1285,6 +1292,11 @@ dialog::backdrop { background: var(--scrim); } /* no backdrop blur: it doubled t
 .scorepop { width: min(23rem, calc(100vw - 1.5rem)); }
 .scorepop__big { font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; color: var(--ink); line-height: 1.1; margin-top: 0.2rem; }
 .scorepop .breakdown { margin: var(--s-3) 0; gap: var(--s-2); }
+/* a group's name keeps the row's width: its points go under it, at the right, when both do not fit one line (large
+   text on a phone squeezed the names to ~49px); as the profile's and the methodology page's breakdowns */
+.scorepop .breakdown__row { display: flex; flex-wrap: wrap; align-items: baseline; }
+.scorepop .breakdown__row > span:not(.meter) { margin-left: auto; }
+.scorepop .breakdown__row > .meter { flex: 1 0 100%; }
 .scorebtn {
   display: inline-flex;
   text-align: left;

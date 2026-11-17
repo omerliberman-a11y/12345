@@ -1,0 +1,337 @@
+/* Documentary ("factual") category pages, documentary /vs/ pages and editorial /vs/ articles. Prefix: .fx- */
+
+/* ---------------------------------------------------------------- shared small pieces */
+.fx-ev { display: block; margin-top: 0.2rem; font-size: var(--fs-xs); line-height: 1.45; color: var(--ink-3); }
+.fx-ev a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
+.fx-ev a:hover { color: var(--brand); }
+/* "Observed <date>" stays whole: it sets the offer tables' Evidence column's narrowest width, so the five columns keep
+   the balance they were designed with at every width. Under a reader's letter spacing or large text a table that no
+   longer fits scrolls inside its own box (the category's .scroller, the /vs/ page's .fx-vs-offers), not the page. */
+.fx-ev__date { white-space: nowrap; }
+.fx-links { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-5); font-size: var(--fs-sm); font-weight: 600; }
+.fx-links a { display: inline-flex; align-items: center; min-height: 1.5rem; text-decoration: none; }
+/* target sizes: source links inside evidence captions and the supplier names in offer tables are at least 24px
+   (inline padding grows the target, not the line); on touch, links that stand alone get 44px */
+.fx-ev a, .fx-offers tbody th > a { padding-block: 0.3rem; }
+@media (pointer: coarse) {
+  .fx-links a { min-height: var(--tap); }
+  .fx-offers tbody th > a { display: inline-block; padding-block: 0.75rem; margin-block: -0.75rem; }
+}
+.fx-p-bill, .fx-p-tax, .fx-p-note, .fx-p-up { display: block; }
+.fx-p-tax { color: var(--ink-3); }
+.fx-p-up { margin-top: 0.3rem; color: var(--partial); }
+.price .fx-p-cur { color: var(--partial); }
+
+/* ---------------------------------------------------------------- suppliers at a glance */
+/* the suppliers table follows the page head directly (the section menu waits under the head, category.css) */
+.fx-suppliers { padding-top: var(--s-3); padding-bottom: var(--s-10); }
+.fx-head { margin-bottom: var(--s-4); }
+.fx-head p, .fx-scope { margin-top: var(--s-2); max-width: 78ch; color: var(--ink-2); }
+.fx-scope { margin-top: var(--s-5); }
+.fx-glance tbody th { width: 21%; }
+.fx-glance .fx-name { display: block; font-size: var(--fs-md); font-weight: 600; letter-spacing: -0.01em; }
+.fx-glance tbody th small { font-weight: 400; }
+.fx-glance tbody th small a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line-strong); }
+.fx-glance td:nth-child(2) { width: 25%; }
+.fx-glance td:nth-child(3) { width: 28%; }
+.fx-glance td:nth-child(4) { width: 16%; }
+.fx-glance__go { width: 10%; text-align: right !important; white-space: nowrap; vertical-align: middle !important; }
+/* tablets and up: the column widths above are kept (fixed layout), so long names and the "N offers" link wrap
+   inside the content column instead of widening the table past it (820px) */
+@media (min-width: 48em) {
+  .fx-glance { table-layout: fixed; }
+  .fx-glance thead th, .fx-glance__go { white-space: normal; }
+}
+.fx-glance tr:target { background: var(--brand-softer); }
+.fx-glance tbody td, .fx-glance tbody th { padding-block: var(--s-4); }
+.fx-glance td { font-size: var(--fs-sm); line-height: 1.5; }
+
+/* ---------------------------------------------------------------- stacked tables on phones (rows become blocks; no sideways scroll) */
+@media (max-width: 47.99em) {
+  .fx-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  .fx-stack, .fx-stack tbody, .fx-stack tr, .fx-stack tbody th, .fx-stack td { display: block; width: auto !important; }
+  .fx-stack tr { padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+  .fx-stack tbody tr:first-child { border-top: 1px solid var(--line-strong); }
+  .fx-stack tbody th, .fx-stack td { padding: 0 !important; border: 0; text-align: left !important; }
+  .fx-stack td { margin-top: var(--s-3); }
+  .fx-stack td[data-l]::before {
+    content: attr(data-l);
+    display: block;
+    margin-bottom: 0.1rem;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .fx-stack td.fx-empty { display: none; }
+  .fx-stack tbody th { font-size: var(--fs-md); }
+  .fx-glance__go a { display: inline-block; padding-block: 0.7rem; }
+  .fx-related .chip { min-height: var(--tap); }
+}
+/* large text (html[data-a11y-size]) on a tablet: the offer tables stack as on phones (their five columns no longer fit
+   the width), and the marks of the criteria tables (suppliers, and offers side by side) show their icon only — the
+   label stays for assistive technology; the legend above the table names the icons */
+@media (min-width: 48em) and (max-width: 61.99em) {
+  html[data-a11y-size] .fx-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  html[data-a11y-size] :is(.fx-stack, .fx-stack tbody, .fx-stack tr, .fx-stack tbody th, .fx-stack td) { display: block; width: auto !important; }
+  html[data-a11y-size] .fx-stack tr { padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+  html[data-a11y-size] .fx-stack tbody tr:first-child { border-top: 1px solid var(--line-strong); }
+  html[data-a11y-size] :is(.fx-stack tbody th, .fx-stack td) { padding: 0 !important; border: 0; text-align: left !important; }
+  html[data-a11y-size] .fx-stack td { margin-top: var(--s-3); }
+  html[data-a11y-size] .fx-stack td[data-l]::before { content: attr(data-l); display: block; margin-bottom: 0.1rem; font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+  html[data-a11y-size] .fx-stack td.fx-empty { display: none; }
+  html[data-a11y-size] :is(.fx-cmp .fx-row, .fx-cells tbody) td .st { gap: 0; }
+  html[data-a11y-size] :is(.fx-cmp .fx-row, .fx-cells tbody) td .st > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+}
+
+/* ---------------------------------------------------------------- plans and prices */
+.fx-supplier { padding-top: var(--s-6); }
+.fx-supplier + .fx-supplier { margin-top: var(--s-6); border-top: 1px solid var(--line); }
+.fx-supplier__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem var(--s-4); margin-bottom: var(--s-2); }
+.fx-supplier__head h3 { margin: 0; }
+.fx-supplier__head p { color: var(--ink-3); font-size: var(--fs-sm); }
+.fx-offers tbody th { width: 17%; font-size: var(--fs-md); }
+.fx-offers td:nth-child(2) { width: 17%; }
+.fx-offers td:nth-child(3) { width: 17%; }
+.fx-offers td:nth-child(4) { width: 29%; }
+.fx-offers td:nth-child(5) { width: 20%; }
+.fx-offers .fx-ev { margin-top: 0; font-size: var(--fs-sm); }
+.fx-offers .price { gap: 0.15rem; }
+.fx-offers .price__unit { font-size: var(--fs-sm); }
+.fx-offers tbody th small { font-weight: 400; }
+.fx-offers tbody th a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); }
+.fx-offers tbody th a:hover { color: var(--brand); }
+
+/* "What each offer includes" disclosure under a supplier's offers */
+.fx-more > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.1rem var(--s-3);
+  min-height: var(--tap);
+  padding: var(--s-3) 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--brand);
+}
+.fx-more > summary::-webkit-details-marker { display: none; }
+.fx-more > summary::before {
+  content: "";
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--brand-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3.5v9M3.5 8h9' fill='none' stroke='%232c20b4' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / 0.7rem;
+  transition: transform var(--dur) var(--ease);
+}
+.fx-more[open] > summary::before { transform: rotate(45deg); }
+.fx-more > summary:hover span { text-decoration: underline; }
+.fx-more > summary small { font-weight: 400; color: var(--ink-3); }
+.fx-more__body { padding: 0 0 var(--s-5); }
+.fx-more__body > * + * { margin-top: var(--s-3); }
+.fx-more__none { padding: var(--s-3) 0; }
+.fx-more__none b { color: var(--ink-2); font-weight: 600; }
+.fx-all { display: inline-block; vertical-align: middle; margin-left: 0.6rem; font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+.fx-cells td > .st { vertical-align: middle; }
+
+/* ---------------------------------------------------------------- comparison tables: shared header (sticks under the section tabs) */
+.fx-controls { justify-content: space-between; padding-top: 0; }
+/* a long supplier name wraps inside its chip (large text, narrow screens) instead of pushing the page sideways */
+.fx-controls .chip { white-space: normal; text-align: left; }
+.fx-compare__meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-2) var(--s-6); padding-block: var(--s-2) var(--s-3); }
+.fx-compare__meta .toolbar__count { margin: 0; }
+.fx-compare__meta .fx-controls { padding: 0; }
+.fx-cmp, .fx-cells { table-layout: fixed; }
+.fx-cmp thead th, .fx-cells thead th {
+  position: sticky;
+  top: calc(var(--header-h) + 3rem + 1px);
+  z-index: 5;
+  background: var(--bg);
+  border-bottom: 0;
+  box-shadow: inset 0 -1px 0 var(--line-strong);
+  white-space: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+  color: var(--ink);
+}
+.fx-cmp thead th:first-child, .fx-cells thead th:first-child { width: 30%; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); }
+.fx-cmp thead th a { color: inherit; }
+.fx-cmp thead th a:hover { color: var(--brand); }
+.fx-cmp thead th small, .fx-cells thead th small { display: block; margin-top: 0.1rem; font-weight: 400; color: var(--ink-3); }
+
+/* ---------------------------------------------------------------- criteria × suppliers: marks, a row opens its notes */
+.fx-cmp .fx-row th { padding: 0; font-weight: 400; vertical-align: middle; }
+.fx-cmp .fx-row td { vertical-align: middle; padding-block: 0.5rem; }
+.fx-rowbtn, .fx-rowlabel {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  text-align: left;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--ink);
+  overflow-wrap: anywhere; /* "Programmable/embedded" has no break: under large text it would push the page sideways */
+}
+.fx-rowbtn::before, .fx-rowlabel::before {
+  content: "";
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m6 3.5 4.5 4.5L6 12.5' fill='none' stroke='%235d6274' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / 0.9rem;
+  transition: transform var(--dur) var(--ease);
+}
+.fx-rowlabel { color: var(--ink-3); }
+.fx-rowlabel::before, .fx-rowbtn:disabled::before { visibility: hidden; }
+.fx-rowbtn:disabled { cursor: default; color: var(--ink-3); }
+.fx-rowbtn:hover:not(:disabled) { color: var(--brand); }
+.fx-row.is-open .fx-rowbtn::before { transform: rotate(90deg); }
+html:not(.js) .fx-rowbtn::before { transform: rotate(90deg); }
+.js .fx-cmp .fx-row:has(.fx-rowbtn:enabled) { cursor: pointer; }
+.js .fx-cmp .fx-row:has(.fx-rowbtn:enabled):hover th, .js .fx-cmp .fx-row:has(.fx-rowbtn:enabled):hover td { background: var(--bg-subtle); }
+.fx-cmp .fx-row.is-open th, .fx-cmp .fx-row.is-open td { border-bottom-color: transparent; }
+html:not(.js) .fx-cmp .fx-row th, html:not(.js) .fx-cmp .fx-row td { border-bottom-color: transparent; }
+.fx-detail > td { padding: 0 0 var(--s-4); }
+.js .fx-cmp .fx-detail { display: none; }
+.js .fx-cmp .fx-row.is-open + .fx-detail { display: table-row; }
+.fx-notes { display: grid; grid-template-columns: 30% repeat(var(--fx-n, 4), minmax(0, 1fr)); }
+.fx-notes li { grid-row: 1; padding: 0 0.75rem; font-size: var(--fs-sm); line-height: 1.5; min-width: 0; }
+.fx-notes li > b { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.fx-notes li[data-i="1"] { grid-column: 2; }
+.fx-notes li[data-i="2"] { grid-column: 3; }
+.fx-notes li[data-i="3"] { grid-column: 4; }
+.fx-notes li[data-i="4"] { grid-column: 5; }
+
+/* Phones: the criterion gets its own line and the marks sit below it in equal columns, so every supplier name
+   fits its column in whole words (no mid-word breaks) and the header still sticks under the section tabs. */
+@media (max-width: 47.99em) {
+  .fx-controls .chip { min-height: var(--tap); }
+  .fx-cmp, .fx-cmp thead, .fx-cmp tbody { display: block; }
+  .fx-cmp thead { position: sticky; top: calc(var(--header-h) + 3rem + 1px); z-index: 5; background: var(--bg); box-shadow: inset 0 -1px 0 var(--line-strong); }
+  .fx-cmp thead tr, .fx-cmp .fx-row { display: grid; grid-template-columns: repeat(var(--fx-n, 4), minmax(0, 1fr)); }
+  .fx-cmp thead th { position: static; display: block; align-self: end; padding: 0.5rem 0.2rem; box-shadow: none; text-align: center; font-size: var(--fs-xs); font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; overflow-wrap: break-word; }
+  .fx-cmp thead th:first-child { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .fx-cmp thead th small { display: none; }
+  .fx-cmp .fx-row { position: relative; border-bottom: 1px solid var(--line); }
+  .fx-cmp .fx-row th, .fx-cmp .fx-row td { display: block; border: 0; }
+  .fx-cmp .fx-row th { grid-column: 1 / -1; }
+  .fx-cmp .fx-row td { padding: 0 0 0.6rem; text-align: center; line-height: 1; }
+  /* marks only: the label stays for assistive tech (visually hidden), the icon carries the status */
+  .fx-cmp .fx-row td .st { gap: 0; }
+  .fx-cmp .fx-row td .st > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .fx-rowbtn, .fx-rowlabel { gap: 0.3rem; min-height: var(--tap); padding: 0.5rem 0 0.2rem; font-size: var(--fs-md); line-height: 1.3; }
+  .fx-rowbtn::before { margin-left: -0.2rem; }
+  .fx-rowlabel::before { display: none; }
+  .fx-rowbtn::after { content: ""; position: absolute; inset: 0; } /* the whole row is the tap target */
+  .fx-cmp .fx-row.is-open, html:not(.js) .fx-cmp .fx-row:has(+ .fx-detail) { border-bottom-color: transparent; }
+  .fx-cmp .fx-detail, .fx-cmp .fx-detail > td { display: block; }
+  .js .fx-cmp .fx-detail { display: none; }
+  .js .fx-cmp .fx-row.is-open + .fx-detail { display: block; }
+  .fx-notes { display: block; padding-left: 1.1rem; }
+  .fx-notes li { padding: 0; }
+  .fx-notes li + li { margin-top: var(--s-3); }
+  .fx-notes li > b { position: static; width: auto; height: auto; clip: auto; white-space: normal; display: block; color: var(--ink); }
+}
+
+/* ---------------------------------------------------------------- criteria × offers: the note sits under each mark;
+   on phones every criterion becomes a block with one labelled line per offer (no sideways scroll) */
+.fx-cells tbody th { padding: 0.8rem 0.75rem 0.8rem 0; font-weight: 600; vertical-align: top; }
+.fx-cells tbody td { padding-block: 0.8rem; vertical-align: top; }
+.fx-cells .fx-note { display: block; margin-top: 0.3rem; line-height: 1.5; }
+.fx-planfacts thead th:first-child { width: 26%; }
+.fx-planfacts tbody th { font-weight: 400; }
+@media (max-width: 47.99em) {
+  .fx-cells thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  .fx-cells, .fx-cells tbody, .fx-cells tbody tr, .fx-cells tbody th, .fx-cells tbody td { display: block; }
+  .fx-cells tbody tr { padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+  .fx-cells tbody tr:first-child { border-top: 1px solid var(--line-strong); }
+  .fx-cells tbody th { padding: 0; border: 0; font-size: var(--fs-md); font-weight: 600; }
+  .fx-cells tbody td {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.1rem var(--s-3);
+    margin-top: var(--s-3);
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+  .fx-cells tbody td::before { content: attr(data-l); font-size: var(--fs-sm); font-weight: 600; color: var(--ink); }
+  .fx-cells tbody td .st { font-size: var(--fs-sm); gap: 0.4rem; }
+  .fx-cells .fx-note { grid-column: 1 / -1; margin-top: 0; }
+  .fx-cells .fx-all { display: none; }
+}
+
+/* ---------------------------------------------------------------- which to choose */
+.fx-choose__faq { max-width: var(--wrap-narrow); }
+.fx-confirm { margin-top: var(--s-14); }
+.fx-confirm > h3 { margin-bottom: var(--s-5); }
+.fx-confirm__grid { display: grid; gap: var(--s-8) var(--s-10); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 48em) { .fx-confirm__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 75em) { .fx-confirm__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-8); } }
+.fx-confirm__grid h4 { font-size: var(--fs-md); margin-bottom: var(--s-3); }
+.fx-confirm__grid h4 a { color: var(--ink); }
+.fx-confirm__grid h4 a:hover { color: var(--brand); }
+.fx-confirm__grid li { font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
+
+/* ---------------------------------------------------------------- checklist */
+.fx-costnote { max-width: 70ch; margin-bottom: var(--s-6); font-size: var(--fs-lg); line-height: 1.55; color: var(--ink); }
+.fx-steps { max-width: 70ch; color: var(--ink-2); }
+.fx-aside-p { color: var(--ink-2); }
+.fx-aside .dots { color: var(--ink-2); }
+
+/* ---------------------------------------------------------------- documentary /vs/ */
+/* the offers table scrolls inside its section where it cannot fit (a reader's letter spacing makes a note's slash
+   compound, "Implementation/services", wider than its column); at the default spacing nothing scrolls */
+.fx-vs-offers { padding-top: var(--s-8); padding-bottom: var(--s-10); overflow-x: auto; }
+.fx-choices { display: grid; gap: var(--s-8) var(--s-10); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 62em) {
+  .fx-choices--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fx-choices--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.fx-choices h3 { font-size: var(--fs-lg); font-family: var(--font); font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; }
+.fx-choices p { margin-top: var(--s-3); color: var(--ink-2); max-width: 70ch; }
+.fx-choices .fx-ev { margin-top: var(--s-3); font-size: var(--fs-sm); }
+.fx-log li { padding: var(--s-3) 0; border-bottom: 1px solid var(--line); max-width: 80ch; color: var(--ink-2); }
+.fx-log li:first-child { border-top: 1px solid var(--line); }
+.fx-log time { display: block; font-size: var(--fs-sm); font-weight: 600; color: var(--ink); }
+.fx-also { margin-top: var(--s-10); margin-bottom: var(--s-4); }
+
+/* ---------------------------------------------------------------- editorial /vs/ article (same reading family as the guides) */
+.fx-article { --fx-measure: 43rem; }
+.fx-article__head { padding-bottom: var(--s-6); }
+.fx-article__head h1 { max-width: 26ch; }
+.fx-cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); margin-top: var(--s-6); }
+.fx-article__layout { padding-bottom: var(--s-18); }
+.fx-article__main { min-width: 0; max-width: var(--fx-measure); }
+.fx-article__main .prose { max-width: none; }
+@media (min-width: 68em) {
+  .fx-article__layout.with-rail { grid-template-columns: minmax(0, var(--fx-measure)) 15rem; gap: var(--s-18); }
+}
+.fx-hero { margin-top: var(--s-10); }
+.fx-hero img { width: 100%; border-radius: var(--r-surface); background: var(--bg-subtle); }
+.fx-sec { margin-top: var(--s-14); }
+.fx-sec--first { margin-top: 0; }
+.fx-sec > h2 + * { margin-top: var(--s-3); }
+.fx-sec__sub { color: var(--ink-2); }
+.fx-sec .sources { margin-top: var(--s-3); }
+.fx-twocol { display: grid; gap: var(--s-6) var(--s-10); grid-template-columns: minmax(0, 1fr); margin-top: var(--s-8); }
+@media (min-width: 40em) { .fx-twocol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.prose .fx-twocol h3 { margin-top: 0; font-family: var(--font); font-size: var(--fs-lg); font-weight: 600; letter-spacing: -0.01em; }
+.prose .fx-twocol p { margin-top: var(--s-2); }
+.prose .fx-twocol + .fineprint { margin-top: var(--s-8); }
+.fx-decision { margin-top: var(--s-5); font-size: var(--fs-sm); }
+.fx-decision thead th { white-space: normal; }
+.fx-decision tbody th { width: 21%; }
+.fx-decision td { width: 39.5%; line-height: 1.5; }
+.fx-data { margin-top: var(--s-5); }
+.fx-updated { margin-top: var(--s-14); font-size: var(--fs-sm); color: var(--ink-3); }
+/* shared reading layout and heading scale (layout.css, base.css): the guides' measure, and h2 steps down on phones */
+.fx-article { --fx-measure: var(--wrap-narrow); }
+

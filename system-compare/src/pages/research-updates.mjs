@@ -66,7 +66,7 @@ function render(ctx) {
         ${cat ? html`<small>${cat.name}</small>` : ''}
       </th>
       <td class="gd-upd__when">
-        <time datetime="${review.observedAt}">${ctx.fmtDate(review.observedAt)}</time>
+        <time datetime="${review.observedAt}">${ctx.fmtDate(review.observedAt, { nbsp: true })}</time>
         <span class="tag ${review.status === 'verified' ? 'tag--ok' : 'tag--warn'}">${review.status === 'verified' ? 'Check complete' : 'Open questions'}</span>
       </td>
       <td class="gd-upd__what">
@@ -102,8 +102,11 @@ function render(ctx) {
   </div>`;
 
   const chip = (value, label, n) => html`<button type="button" class="chip" data-gd-chip="${value}" aria-pressed="${value ? 'false' : 'true'}">${label} <span class="n">${n}</span></button>`;
+  // the chips are buttons, so they show only where scripts run (guides.css: html.js, which the head script sets before the
+  // first paint): in place from the first paint, never revealed later by the filter script at the end of the page, which
+  // moved the list down by their height when a paint came first
   const filter = html`<div class="wrap gd-filter" data-nosnippet>
-    <div class="chips" role="group" aria-label="Filter updates" data-gd-filter hidden>
+    <div class="chips gd-filter__js" role="group" aria-label="Filter updates" data-gd-filter>
       ${chip('', 'All', items.length)}
       ${chip('verified', 'Check complete', nComplete)}
       ${chip('partial', 'Open questions', nOpen)}

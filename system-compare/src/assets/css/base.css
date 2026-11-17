@@ -6,7 +6,13 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-top: calc(var(--header-h) + 4.5rem);
-  scroll-behavior: smooth;
+}
+/* In-page links scroll smoothly where JavaScript runs. A deep link still lands at once: core.js jumps to its target once
+   the page scripts have set the page up, before the browser's own (smooth) scroll there has got going. Without
+   JavaScript, and with reduced motion (the system setting, or the site's own preference: tokens.css), every scroll is
+   instant. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js { scroll-behavior: smooth; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

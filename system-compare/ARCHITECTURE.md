@@ -81,7 +81,9 @@ Rules that keep every page consistent:
   `data-href`, `data-src` for the chosen link mode. In client JS always wrap paths with `SC.url('/x/')`.
 - **Never build HTML by string concatenation.** Use `html```; interpolations are escaped automatically. Use
   `raw()` only for markup we generated or for the publisher's own page HTML from the catalog.
-- **Dates**: `ui.time(ctx, iso)` → `<time datetime>` + "Nov 5, 2026". Never print a build date.
+- **Dates**: `ui.time(ctx, iso)` → `<time datetime>` + "Nov 5, 2026", its words joined by no-break spaces so a printed
+  date never wraps away from its year (`ui.dated` does the same; build any other visible date with
+  `fmtDate(iso, { nbsp: true })`, and keep plain spaces in JSON-LD, meta tags, feeds and data). Never print a build date.
 - **Outbound vendor links**: only through `ui.outLink(ctx, vendor, { intent: 'website'|'pricing', from: '<placement>' })`.
   It writes the `/go/{id}/?intent=&from=` URL, the five `data-outbound-*` attributes analytics reads, the right
   `rel`, and — for affiliate vendors — the visible "Ad · affiliate link" label. The layout adds the page-level
@@ -93,7 +95,7 @@ Rules that keep every page consistent:
   A `.ext` link shows "↗"; when it opens a new tab (`target="_blank"`) screen readers hear ", opens in a new tab" in
   the arrow's place (CSS alternative text in components.css). That is the one way the site says it: never add the
   words to a link's text, or they are read twice. Source lists are no exception: `ui.sources` writes `.ext` links, and
-  any new-tab link in an `ol.sources` (guides build their own) gets the same arrow, kept with its last word.
+  any new-tab link in an `ol.sources` (guides build their own, also `.ext`) gets the same arrow, kept with its last word.
 - **Scores**: use `ctx.score(categoryId, vendorId)` (`value`, `pending`, `checked`, `total`, `coveragePct`,
   `recommended`, `groups`, `rows`, verbatim `valueText`/`coverageText`/`documentedText`). Never compute a
   score yourself, never print a number for a pending score, never show stars or "rating"/"review" wording, and
@@ -140,19 +142,31 @@ Rules that keep every page consistent:
 - Type: `--fs-xs` (12px, captions only) … `--fs-3xl`; body 16px; weights 400/600/700 (the word-mark keeps its
   own). One heading scale in base.css (h2 28px → 22px on phones, h3 18px, h4 16px). Headings use
   `--font-display`. Use the tokens in `tokens.css` — never raw colours, sizes or radii in page CSS. Fonts: the two
-  web fonts (Inter, SC Rubik) are not preloaded and use `font-display: optional`, so a page view never switches face
-  and nothing moves when a font arrives (with `swap`, late fonts re-wrapped breadcrumbs, answers and notes: up to 0.33
-  layout shift). The cost: a first visit shows the metric-matched fallback faces (`--font`/`--font-display` fall back to
-  Inter local, Inter fallback, SC Rubik fallback in tokens.css) for that page view — in Chromium on every first page
-  view, because a non-preloaded optional font is used only if it has loaded before the page first renders, fast
-  connection or not — while the files download into the HTTP cache (hashed, immutable), and every later page renders
-  in Inter and Rubik. A preview server that sends `no-store` (scripts/serve.mjs) therefore shows the fallback faces on
-  every page in Chromium. The fallback faces carry the web fonts' widths (`size-adjust`) and ascent/descent, so first
+  web fonts (Inter, SC Rubik) use `font-display: optional` and every page preloads both (layout.mjs, after the
+  stylesheets), so a page view never switches face and nothing moves when a font arrives (with `swap`, late fonts
+  re-wrapped breadcrumbs, answers and notes: up to 0.33 layout shift). Chromium holds a page's first render a moment
+  (about 0.1 s after its stylesheets) for preloaded optional fonts and uses them only if they are ready by then: a
+  cached view (the next page, a new tab, a link opened in a new tab, a new browser session — the files are hashed and
+  immutable) and a fast first visit render in Inter and Rubik from the first paint; a slow first visit (Slow 4G with
+  gzip) keeps the metric-matched fallback faces (`--font`/`--font-display` fall back to Inter local, Inter fallback,
+  SC Rubik fallback in tokens.css) for that page view, and its next page has the web fonts. Without the preload,
+  Chromium used an optional font only once it was in memory, so the first page of every tab and session showed the
+  fallback faces. The cost is first paint on slow first visits: about 0.2-0.3 s on emulated Slow 4G, where the fonts
+  share the bandwidth with the stylesheets (0-60 ms on 4G, where they arrive in time and render). The portable build
+  has no preloads (from file:// a crossorigin preload fails CORS); check.mjs fails a font preload the page's
+  stylesheets do not load or that lacks `crossorigin`.
+  scripts/serve.mjs caches the hashed folders as HOSTING.md asks of production, so a preview shows the same faces as
+  the live site. The fallback faces carry the web fonts' widths (`size-adjust`) and ascent/descent, so first
   and later visits are laid out alike; if the fonts or their weights change, re-measure `size-adjust` as the tokens.css
-  comment describes (including the digits faces that keep `ch` widths stable).
+  comment describes (including the body digits face that keeps `ch` widths stable). The heading fallback face has no
+  digits face (one matched to Rubik's wide figures drew them 19% taller than the capitals), so its digits, and its
+  `ch`, are about 15% narrower than Rubik's: size headings in em, never in ch (1ch of Rubik 600 = 0.668em). The
+  category head-fit advance tables (category.mjs) must hold these narrower fallback digits: re-measure them in the
+  fallback face whenever a fallback face changes (they were re-measured for this one).
 - Text-size preference (`html[data-a11y-size]`): the compact header is used at every width and stacked table rows
-  wrap by word. Product tables stay stacked until their scaled columns fit (125%: below 75em, 150%: below 90em; from
-  48em the score, price and AI tag share the line under the product), and so does the cost calculator in the same ranges
+  wrap by word. Product tables stay stacked until their scaled columns fit (125%: below 75em, 150%: below 90em; the
+  alternatives pages' seven columns: below 87.5em and 105em, indexes.css; from 48em the score, price and AI tag share
+  the line under the product), and so does the cost calculator in the same ranges
   (tools.css: totals one row per product and each product's block with its Remove and what its total covers, as on
   phones; inputs one block per product, as on tablets; the ready-priced offers a list); `.dtable` column heads, button, chip, tag and
   status labels, score notes, a link list's end note (it moves under the title first) and long host names in vendor
@@ -163,9 +177,10 @@ Rules that keep every page consistent:
   a sub-line keeps the page's own layout). Each only takes effect where the text is wider than its room: measured on
   every page at 320/390/820/1440, no default layout changes. From 48em, labels in table cells stay on one line —
   wrappable ones narrow their columns and re-flow every ranking and comparison table at the default size — so a wide
-  table under a reader's spacing belongs in a `.scroller` (or is stacked by its page CSS; a profile's alternatives table,
-  which has no scroller in its markup, is its own at 50-62em and from 64em, where every profile's table fits at the
-  default size: software.css).
+  table under a reader's spacing belongs in a `.scroller` (or is stacked by its page CSS; a profile's alternatives table
+  is in one, software.mjs; the alternatives pages' fixed columns are sized for their widest label, so there a label wraps
+  only where a reader's spacing makes it wider than its column: a score note before its "·", a tag into balanced lines,
+  indexes.css).
 - Header (layout.css): from 62em the brand keeps its size and the search field takes the room left (icon only below
   6.5rem, which only a reader's extra letter spacing reaches); a word-mark wider than its room is clipped at the brand's
   edge, never drawn over a button. A `.note` is one paragraph (links stay in its sentence); a leading `.tag` is a column
@@ -217,12 +232,27 @@ first rows of a table the script re-orders eager.
   the sentence, anything else is bracketed as published; never splice `p.unit` into prose.
 
 Layout rules learned the hard way:
-- Phone product rows: a compact plate floated beside the name, the fit line and price at full width under it.
+- Phone product rows: a compact plate floated beside the name, the fit line and price at full width under it. A one-word
+  name (`.prod__name--word`, set by ui.productTable) is one inline box: it moves below the plate whole, and breaks inside
+  that box only where it is wider than the whole cell (a reader's letter spacing at 320px), never under the score. Do not
+  give the name column an intrinsic minimum instead: the floated plate and the price row (which spans both columns)
+  inflate its min-content, re-flowing rows that had room and pushing some profiles 52px past a 320px screen.
+  Alternatives pages keep this row shape from 48em to 71em (indexes.css): beside their score, price, AI and "vs" columns
+  the product column cannot hold the full plate and the longest name ("ActiveCampaign") side by side. A profile's
+  alternatives table (auto layout) lets a row's plate narrow to 4rem instead where a row's longest word does not fit
+  beside it (software.css), so the table never grows past its column.
 - Script-rendered tools reserve their space before the first paint (compare mount min-height while empty or
   loading, and with a saved shortlist the category picker keeps its room unpainted (`data-wait`) until its "Your
   shortlist" box is in place; the shortlist paints only its status line while `data-state="loading"`; `/search/` results keep a
   min-height, and with a query its "Start from a category" stays unpainted until the results are in, so the "No
-  results" note appears above it without moving it) — target CLS under 0.1, also when the script arrives late. The cost calculator (`[data-cost]`,
+  results" note appears above it without moving it; with JavaScript the whole block under the field stays unpainted
+  until search-page.js has set it up (`data-ready`, the step that also hides the examples under a filled field; a 2.5s
+  CSS fallback as the cost calculator's), because the block itself counted as moved when the head got shorter; its
+  min-height then reaches further down, so the footer stays out of view) — target CLS under 0.1, also when the script
+  arrives late. On phones `/search/` with results sets the result types in one row that scrolls sideways (right edge
+  faded), then the sort beside a sideways row of product filters, then the count (search.css: a grid over `.srch`, the
+  toolbar `display: contents`, DOM and focus order unchanged); the pressed type is scrolled into view and a chip reached
+  by keyboard comes clear of the fade (search-page.js). The cost calculator (`[data-cost]`,
   js/cost.js sets `data-state` "loading" → "ready") keeps its fine print and everything after it unpainted from the
   first paint until its first state is drawn — an element hidden only after it was painted still counts as moved
   when it reappears — with a 2.5s CSS fallback if the script never runs. Its sticky totals bar shares a grid cell
@@ -240,12 +270,19 @@ Layout rules learned the hard way:
   `visibility: hidden` once it has slid away, so Tab never reaches its old buttons.
 - Do not use `content-visibility` on blocks above anchored sections: placeholder heights moved 434 deep links
   under the sticky header.
-- A deep link scrolls (smoothly) while the page is still loading, to where its target is at that moment; anything
-  above it that settles later (a web font replacing the fallback, a script's first render) leaves the scroll short or
-  long. core.js re-applies the link once when the page has settled (loaded, `document.fonts.ready`, no scroll for
-  200 ms) if the target then sits under the sticky header or a stuck section menu — only on a fresh visit (a reload or
-  back/forward visit is the browser's own scroll restoration), and only if the visitor has not scrolled, tapped,
-  clicked or pressed a key since the page opened.
+- A deep link lands at once. `scroll-behavior: smooth` (base.css) applies only to `html.js`, never with reduced motion
+  or the site's own preference; on its own it also animated the browser's scroll to a deep link (`/categories/crm/#costs`
+  scrolled past the page from the top for a second). That animation starts a moment after the first paint, so core.js
+  jumps to the target first, at DOMContentLoaded, once the page scripts have changed what they change above it (a
+  phone profile's collapsing facts, a documentary table's controls). Do not make the arrival instant at the browser's
+  first layout instead (smooth only after load): the target is then on screen while those scripts run, and their changes
+  counted as layout shifts (0.03-0.75 on profiles and documentary categories). Without JavaScript every scroll is instant.
+  Anything above the target that settles later still (a web font replacing the fallback) leaves the arrival short or
+  long, and the early arrival itself ends a few px off now and then (126 for 128): core.js re-applies the link once, at
+  once too, when the page has settled (loaded, `document.fonts.ready`, no scroll for 200 ms) if the target then sits under
+  the sticky header or a stuck section menu, or more than 1px from where the link puts it (scroll-padding-top; not at the
+  end of the page). Both only on a fresh visit (a reload or back/forward visit is the browser's own scroll restoration)
+  and only if the visitor has not scrolled, tapped, clicked or pressed a key since the page opened.
 - Category first screen (category.mjs, category-factual.mjs): head → quick answer (with the evidence line as a
   column beside it from 78em, where that column holds its longest item next to the answer's full 54rem) → filters.
   Nothing in it may depend on whether a line only just fits: the web font and its fallback differ by ~0.6% (up to
@@ -259,26 +296,39 @@ Layout rules learned the hard way:
   and for narrower lines `--fitN` (a line that surely holds it in N lines, its words wrapped by their sums) and
   `--fitbN` (at most that wide it surely takes N), compared with the line's width in CSS (`.cat-fitline`, container
   units; up to 3% short of fewer lines, the text is set up to 3% smaller instead; the evidence line breaks after its
-  second item, and after its fourth where five items do not fit two lines, `--tfit`/`--tfit2`/`--tfit3`). Re-measure
-  those tables if a font, a fallback face or the heading letter-spacing changes. Those values come in a style
+  second item, and after its fourth where five items do not fit two lines, `--tfit`/`--tfit2`/`--tfit3`; on a ranking's
+  phone line, which shows only the first and last item, those two share the line only from `--tfitp`). Re-measure
+  those tables if a font, a fallback face or the heading letter-spacing changes, by the method the comment above ADV
+  in category.mjs describes (last done when the heading fallback face lost its digits face). Those values come in a style
   attribute; every `var()` that reads them has a neutral fallback, so where a policy blocks style attributes (CSP
   `style-src-attr`) the head keeps its normal size and simply wraps. Only the answer paragraph (4-6 lines of running
-  text) can still gain or lose a line at some widths; its phone clamp (three lines, `max-height: 3lh`) ends in a fade
-  into "…" until "Show the full answer" opens it. The sort is a native `<select>` laid over a
+  text) can still gain or lose a line at some widths; its phone clamp (the native three-line `-webkit-line-clamp`,
+  capped at `3lh` so the box is three line-heights in every face) ends in "…" right after the last visible word until
+  "Show the full answer" opens it: on phones the paragraph draws the "Quick answer" label as an inline `::before`
+  (hidden from assistive technology; the label element is screen-reader text there), since a float cannot run into a
+  clamped box; from 48em the label element floats into the first line, as before. The HTML is ui.answer's own
+  (`quickAnswer`, category.mjs, checks the label's words that the CSS repeats). Inside a clamped paragraph Chromium
+  wraps greedily, not `text-wrap: pretty`. The sort is a native `<select>` laid over a
   chip-sized face that table.js keeps in step; the face holds every order's short label stacked in one cell (one
   shown) and has a min-width over the longest, so a new order or the web font never resizes or moves it (phones
-  show the order in one word, "Score", "Price", "A–Z" or "Checked", the same way; the count's "· sorted by …" is then
-  screen-reader text). "Must-have capabilities" (the panel with every capability filter; a chevron like the sort's)
-  comes first in the filter row at every width, the quick filters after it. Phones: the filter chips are one row
-  from edge to edge that scrolls sideways (right edge faded), and the count line under it (44px) holds the sort and
+  show the order in one word, "Score", "Price", "A–Z" or "Coverage", the same way; the count's "· sorted by …" is then
+  screen-reader text). "Must-have capabilities" (the panel with every capability filter; a pill with a chevron like
+  the sort's, and without its filter icon under the text-size preference, so the row is no longer than before the
+  chevron) comes first in the filter row at every width, the quick filters after it. Phones: the filter chips are one
+  row from edge to edge that scrolls sideways (right edge faded), and the count line under it (44px) holds the sort and
   the help. Up to 28.5em the must-have button is as wide as the screen less 8.75rem (its own width where that is
   more), so the first quick filter always runs past the edge with about 5rem of it clear of the fade: with
   content-sized chips some chip ends within 4rem of the edge at some phone width on every page, and the next one then
-  starts under the fade. "Clear filters" follows the live count (outside its live region) where the count shares its
-  line with the sort (48-75em, and any width with the text-size preference), so the wrapping filter row never changes
-  when it appears; on phones (the row scrolls, the count line has no room) and from 75em (the row has room, the count
-  line is under the sort) it ends the filter row, so focus order stays the visual order. When it clears, focus moves
-  to "Must-have capabilities". A chip reached by keyboard is scrolled fully into view (table.js). The must-have panel is a disclosure (no focus
+  starts under the fade. At 31-37em a row with all three quick filters does the same with the screen less 15.75rem
+  (the next filter whole, the one after it past the edge, about 3.5rem clear of the fade). "Clear filters" follows the
+  live count (outside its live region) wherever the count shares its line with the sort (below 75em, and any width with
+  the text-size preference), so the wrapping filter row never changes when it appears; on phones it is a short "Clear"
+  (screen readers hear "Clear filters") and a filtered count shows a short noun ("7 of 14 tools", table.js; the whole
+  count is screen-reader text), and hidden copies of the whole unfiltered count and of the widest filtered count with
+  "Clear" share the count's grid cell, so the count line is always as tall as its tallest state (a long noun takes three
+  lines at 320px; large text more) and the table never moves. From 75em (the row has
+  room, the count line is under the sort) it ends the filter row, so focus order stays the visual order. When it
+  clears, focus moves to "Must-have capabilities". A chip reached by keyboard is scrolled fully into view (table.js). The must-have panel is a disclosure (no focus
   trap): a popover on wide screens (fitted to the room below its chip), a full-width bottom sheet over a dimmed page on phones (the backdrop is the
   toolbar's `::after`, so a tap on it counts as outside), with a footer holding the live "n of N match" count and a
   Done button that closes it and returns focus to its chip.
@@ -323,9 +373,19 @@ generic word, a word several products' names start with), the first group is tit
 named by its name or an alias, or by their first words when a plain search for those words opens it ("monday"; never
 a word inside a name: "quick" of QuickBooks, and never a generic word alone: "sales" of the alias "Sales Cloud"), or
 by its brand word misspelt or typed apart ("malchimp", "quick books") unless that word is a category's own. Words
-that start several products' names ("zoho", "google", "microsoft", "adobe") name none of them unless the other
+that start several products' names ("zoho", "google", "microsoft", "adobe", "fathom") name none of them unless the other
 products of the query single one out ("zoho vs freshsales": Zoho CRM). `SC.search.answers(engine, r, q)` holds this
-rule; the palette and the /search/ page heading both use it.
+rule; the palette and the /search/ page heading both use it. Such words list a row for each of those products as
+Suggestions (search.js `sharedBy`): "zoho pricing" each Zoho product's pricing, "zoho alternatives" each one's
+alternatives, "zoho vs" / "compare microsoft" each one's compare tool. "X pricing" opens a documented supplier's plans
+and prices on its category page (`#plans-<id>`) when the words name it ("deque pricing"; a supplier has no score row);
+the product whose name or alias the words are exactly comes first ("firefly pricing": Adobe Firefly, not Fireflies).
+A "Works with X" group (products that list X among their integrations) appears only when the query names X: products
+of a comparison or alternatives query, a product the words name (its rows must list its brand or an alias), a name
+starting with a brand here ("google sheets"), or a brand that is no product here which the index uses only like one
+(`brandLike`: "gmail", "slack", "outlook"); generic words ("sales", "cloud", "quick", "connect") form none, and those
+products stay with the other products. The palette repaints when the second part of the index changes a row, a
+heading or the total ("See all 48 results", not part 1's 46).
 Shift+Enter always opens /search/. `SC.searchLimit` (120 characters, 20 words) and
 its message are shared by the palette, /search/ and the directory filters. The site's own vocabulary lives in
 `data/content/search-aliases.json` under `pages`

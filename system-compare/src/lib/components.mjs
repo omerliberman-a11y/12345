@@ -5,7 +5,8 @@ import { html, raw, attrs, cx, join, Raw } from './html.mjs';
 import { icon } from './layout.mjs';
 
 // ------------------------------------------------------------------ small pieces
-export const time = (ctx, iso, opts) => (iso ? html`<time datetime="${ctx.isoDate(iso)}">${ctx.fmtDate(iso, opts)}</time>` : '');
+// the visible date never wraps away from its year (no-break spaces; the datetime attribute is the machine-readable form)
+export const time = (ctx, iso, opts) => (iso ? html`<time datetime="${ctx.isoDate(iso)}">${ctx.fmtDate(iso, { ...opts, nbsp: true })}</time>` : '');
 
 export const tag = (label, kind) => html`<span class="${cx('tag', kind && `tag--${kind}`)}">${label}</span>`;
 
@@ -242,7 +243,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
             <a class="prod" href="${ctx.url.software(vendor.id)}">
               ${logo(ctx, vendor, { lazy: eagerIds ? !eagerIds.has(vendor.id) : i >= lazyFrom })}
               <span class="prod__text">
-                <span class="prod__name">${vendor.name}</span>${s.recommended ? tag('Recommended', 'top') : ''}${vendor.id === focalId && focalTag ? tag(focalTag) : ''}
+                <span class="${cx('prod__name', !/\s/.test(vendor.name.trim()) && 'prod__name--word')}">${vendor.name}</span>${s.recommended ? tag('Recommended', 'top') : ''}${vendor.id === focalId && focalTag ? tag(focalTag) : ''}
                 <span class="prod__fit">${note || vendor.bestFor}</span>
               </span>
             </a>
@@ -265,13 +266,13 @@ export const tableNote = (ctx) =>
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const DATE_RE = /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* (\d{1,2}), (\d{4})\b/g;
 /**
- * Plain generated text → escaped HTML in which every printed date ("Nov 5, 2026") is a <time datetime>.
- * Raw fragments pass through unchanged (their author already marked up the dates).
+ * Plain generated text → escaped HTML in which every printed date ("Nov 5, 2026") is a <time datetime>, its words
+ * joined by no-break spaces as ui.time does. Raw fragments pass through unchanged (their author already marked up the dates).
  */
 export function dated(value) {
   if (typeof value !== 'string') return value;
   return raw(
-    String(html`${value}`).replace(DATE_RE, (m, mon, day, year) => `<time datetime="${year}-${String(MON.indexOf(mon) + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}">${m}</time>`),
+    String(html`${value}`).replace(DATE_RE, (m, mon, day, year) => `<time datetime="${year}-${String(MON.indexOf(mon) + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}">${m.replace(/ /g, '\xa0')}</time>`),
   );
 }
 /** Answer-first summary. `text` may be a Raw fragment with <strong>.

@@ -647,7 +647,7 @@
       else if (it && it.kind === 'multi') ids = it.items.map(function (x) { return x.id; });
       else if (it && it.kind === 'alternatives') ids = [it.a.id];
       else if (r.q.vsOf && r.top[0].type === 'compare') ids = [r.q.vsOf.id]; // "attio vs": the compare tool with Attio chosen
-      else if (r.q.suffix && r.top[0].type === 'product' && r.groups.product && r.groups.product[0]) ids = [r.groups.product[0].id];
+      else if (r.q.suffix && r.top[0].type === 'product' && r.groups.product && r.groups.product[0]) ids = [r.top[0].of || r.groups.product[0].id]; // the product the row is about
       // a product named on its own, a category's own words ("crm pricing"), the site's own page: the engine read them
       if (!ids.length) return true;
       // the words that can name a product: runs of up to four words between "vs", "alternatives", "pricing" … (word by
@@ -810,29 +810,33 @@
       sig.push(h.getAttribute('href') + (opts && opts.top ? '*' : ''));
       frag.appendChild(h);
     }
+    function head(title) { sig.push('§' + title); frag.appendChild(group(title)); }
     // data-top: Enter opens the first best match directly ("X vs Y", "X alternatives", "X pricing", "X vs", a
     // product's name, the site's own page for a question about it). Rows that do not answer the query outright
     // ("crm vs", "crm pricing": which product?) are only suggestions: Enter then opens the search page, and the
     // heading says so (SC.search.answers, the same rule as /search/).
     var direct = SC.search.answers(engine, r, q);
-    if (r.top.length) { frag.appendChild(group(direct ? 'Best match' : 'Suggestions')); r.top.forEach(function (t, i) { add(t, { top: i === 0 && direct }); }); }
+    if (r.top.length) { head(direct ? 'Best match' : 'Suggestions'); r.top.forEach(function (t, i) { add(t, { top: i === 0 && direct }); }); }
     var shown = {}; r.top.forEach(function (t) { shown[t.type + ':' + t.id] = 1; });
     // products that only list the named product as an integration: their own small, labelled group
     var via = r.via && r.via.items.length ? r.via : null;
     GROUPS.forEach(function (g) {
       var list = (r.groups[g[0]] || []).filter(function (x) { return !shown[x.type + ':' + x.id] && !(via && x.via); });
       if (list.length) {
-        frag.appendChild(group(g[1]));
+        head(g[1]);
         // a query that is exactly a category's name ("crm"): Enter opens that category
         list.slice(0, r.top.length ? Math.min(3, g[2]) : g[2]).forEach(function (x) { add(x, { top: !!(r.exact && r.exact.type === x.type && r.exact.id === x.id) }); });
       }
       if (g[0] === 'product' && via) {
         var more = via.items.filter(function (x) { return !shown[x.type + ':' + x.id]; }).slice(0, 3);
-        if (more.length) { frag.appendChild(group(via.label)); more.forEach(function (x) { add(x); }); }
+        if (more.length) { head(via.label); more.forEach(function (x) { add(x); }); }
       }
     });
     var found = n;
-    if (refine && sig.join('|') === palSig) return; // the second part of the index changed nothing on screen
+    // the second part of the index changed nothing on screen: not a row, a heading, nor the total that "See all N
+    // results" and the status give (it often adds results below the rows shown: "email marketing" 46 → 48)
+    sig.push('#' + r.total);
+    if (refine && sig.join('|') === palSig) return;
     palSig = sig.join('|');
     // the query was cut at 120 characters or 20 words: say so, as the previous site did (above the results, or in
     // the "No results" note)
@@ -1051,7 +1055,7 @@
   };
   on(d, 'focusin', function (e) { if (floatPop && !floatPop.contains(e.target) && e.target !== floatFor) closeFloat(); });
   $$('[data-score-pop]').forEach(function (b) { if (!b.hasAttribute('aria-haspopup')) b.setAttribute('aria-haspopup', 'dialog'); if (!b.hasAttribute('aria-expanded')) b.setAttribute('aria-expanded', 'false'); });
-  function fmtDay(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + +m[3] + ', ' + m[1] : ''; }
+  function fmtDay(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + '\u00a0' + +m[3] + ',\u00a0' + m[1] : ''; } // no-break spaces, as format.mjs fmtDate(…, { nbsp: true })
   SC.fmtDay = fmtDay;
   on(d, 'click', function (e) {
     var b = e.target.closest && e.target.closest('[data-score-pop]');
@@ -1157,20 +1161,43 @@
   on(w, 'hashchange', revealHashTarget);
   revealHashTarget();
 
-  // A deep link scrolls while the page is still loading (smoothly, base.css), to where its target is at that moment.
-  // Anything above the target that settles later (a web font replacing the fallback face, the ranking's first render)
-  // then leaves the scroll short or long: on phones the section heading ended under the sticky header and menu (1 load
-  // in 4 on some pages). Once the page has settled — loaded, fonts ready, the scroll at rest — a target under the sticky
-  // chrome is put back where the link meant it (scroll-padding-top, base.css): once, only on a fresh visit (a reload or
+  // A deep link lands at once. With JavaScript <html> scrolls smoothly (base.css), so the browser's own scroll to the
+  // target is an animation that starts a moment after the first paint (it scrolled past the whole page from the top for a
+  // second: /categories/crm/#costs). Once the page scripts have run (DOMContentLoaded), before that animation has got
+  // going, the page jumps to the target instead. Landing earlier, at the browser's first layout (no smooth scrolling while
+  // loading), put the target on screen while the scripts were still changing the page above it (a phone profile's
+  // collapsing facts, a documentary table's controls): those moves then counted as layout shifts (up to 0.75).
+  // The arrival can still end short or long when something above the target settles later (a web font replacing the
+  // fallback face): on phones the section heading ended under the sticky header and menu (1 load in 4 on some pages).
+  // Once the page has settled — loaded, fonts ready, the scroll at rest — a target under the sticky chrome, or off where
+  // the link puts it, is put back (scroll-padding-top, base.css), at once as well. Both only on a fresh visit (a reload or
   // back/forward visit is the browser's own scroll restoration) and only if the visitor has not scrolled, tapped,
   // clicked or pressed a key since the page opened.
   (function () {
     var hash = location.hash, nav = w.performance && performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
     if (!hash || hash.length < 2 || (nav && nav.type && nav.type !== 'navigate') || !w.Promise) return;
-    var touched = false, done = false, timer = 0;
+    var touched = false, done = false, landed = false, timer = 0;
     function touch() { touched = true; }
     var INPUT = ['wheel', 'touchstart', 'keydown', 'pointerdown', 'mousedown'];
     INPUT.forEach(function (t) { on(w, t, touch, { capture: true, passive: true }); });
+    function target() {
+      var id, t;
+      try { id = decodeURIComponent(hash.slice(1)); } catch (e) { return null; }
+      return location.hash === hash && (t = d.getElementById(id)) && t.getClientRects().length ? t : null;
+    }
+    /** Scrolls to t at once, whatever the page's smooth scrolling (an inline style for this one call). */
+    function jump(t) {
+      var s = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      t.scrollIntoView({ block: 'start' });
+      root.style.scrollBehavior = s;
+    }
+    function land() { if (landed) return; landed = true; var t = !touched && target(); if (t) jump(t); }
+    // The deferred page scripts run before DOMContentLoaded; the jump comes a painted frame later, so their changes are
+    // drawn first, where the page still is (out of view of the target): a change and the jump in one frame counted as
+    // a shift at the target. Load as well, should DOMContentLoaded have passed already.
+    function soon() { afterPaint(land); }
+    if (d.readyState === 'complete') soon(); else { on(d, 'DOMContentLoaded', soon, { once: true }); on(w, 'load', soon, { once: true }); }
     function chrome() { // bottom of the sticky header and of a section menu stuck under it
       var bottom = 0;
       $$('.site-header, .subnav').forEach(function (e) {
@@ -1184,12 +1211,15 @@
       done = true;
       w.removeEventListener('scroll', rest);
       INPUT.forEach(function (t) { w.removeEventListener(t, touch, { capture: true }); });
-      var id, t;
-      try { id = decodeURIComponent(hash.slice(1)); } catch (e) { return; }
-      if (touched || location.hash !== hash || !(t = d.getElementById(id)) || !t.getClientRects().length) return;
-      if (t.getBoundingClientRect().top < chrome() - 1) t.scrollIntoView({ block: 'start' });
+      var t = !touched && target();
+      if (!t) return;
+      // under the sticky chrome, or not where the link puts it (scroll-padding-top; an early arrival can end a few px
+      // off: 126 for 128 in 1 load of 20) unless the page cannot scroll that far: a jump, like the arrival it corrects
+      var top = t.getBoundingClientRect().top, pad = parseFloat(getComputedStyle(root).scrollPaddingTop) || 0;
+      var end = w.pageYOffset >= root.scrollHeight - w.innerHeight - 1;
+      if (top < chrome() - 1 || (!end && Math.abs(top - pad) > 1)) jump(t);
     }
-    // the scroll is at rest: no scroll event for 200 ms (the smooth scroll to a section far down takes a second or two)
+    // the scroll is at rest: no scroll event for 200 ms (the browser's own smooth scroll, where it ran, takes a second)
     function rest() { clearTimeout(timer); timer = setTimeout(check, 200); }
     var loaded = d.readyState === 'complete' ? Promise.resolve() : new Promise(function (r) { on(w, 'load', r, { once: true }); });
     loaded.then(function () { return d.fonts && d.fonts.ready; }).then(function () {
@@ -1285,6 +1315,15 @@
   }
   if (scrollers.length && 'ResizeObserver' in w) { var scrollRO = new ResizeObserver(function (en) { en.forEach(function (x) { labelScroller(x.target); }); }); scrollers.forEach(function (s) { scrollRO.observe(s); }); }
   else if (scrollers.length) afterPaint(function () { scrollers.forEach(labelScroller); });
+  // Keyboard focus inside a wide table: browsers scroll only a fully hidden target into view, so a link half outside
+  // the scroller stayed half hidden. Bring it fully into view (keyboard focus only, so a click never moves the table).
+  if (scrollers.length) on(d, 'focusin', function (e) {
+    var t = e.target, s = t && t.closest ? t.closest('.scroller') : null;
+    if (!s || s === t || !t.scrollIntoView) return;
+    try { if (!t.matches(':focus-visible')) return; } catch (err) { /* older browsers: always */ }
+    var r = t.getBoundingClientRect(), b = s.getBoundingClientRect();
+    if (r.left < b.left || r.right > b.right) t.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  });
   // Skip link moves focus to main.
   on($('.skip-link'), 'click', function () { var m = d.getElementById('main'); if (m) setTimeout(function () { m.focus(); }, 0); });
   // Copy-to-clipboard buttons: <button data-copy="text or #selector">

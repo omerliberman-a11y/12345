@@ -82,4 +82,5 @@ opened just before a deploy still asks for them.
   head, JSON-LD, page data, two small list filters) and inline `style` attributes; there are no inline `<style>`
   blocks. After analytics consent the site loads `https://www.googletagmanager.com/gtag/js` and sends to Google
   Analytics; fonts, images and scripts are otherwise all same-origin.
-- `scripts/serve.mjs` is a preview server only: it sends `Cache-Control: no-store` and no compression.
+- `scripts/serve.mjs` is a preview server only: it sends the cache policy above (the content-hashed folders
+  immutable, `no-cache` with an ETag everywhere else, 304 on revalidation) but no compression.

@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 // Minimal static file server for previewing a build:  node scripts/serve.mjs [dir=dist] [port=4173]
+// Caching as HOSTING.md proposes for production, so a preview behaves like the live site (a browser that has the web
+// fonts cached renders them from the first paint): the content-hashed folders are immutable, everything else (HTML,
+// /data, feeds, fixed-name images) is revalidated on every use and answered with 304 when it has not changed.
 import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
@@ -23,6 +26,7 @@ const TYPES = {
   '.woff2': 'font/woff2',
   '.webmanifest': 'application/manifest+json',
 };
+const IMMUTABLE = /^\/assets\/(?:css|js|fonts|articles\/sized)\//;
 
 http
   .createServer(async (req, res) => {
@@ -44,10 +48,20 @@ http
         res.writeHead(404, { 'Content-Type': TYPES['.html'] });
         return res.end(nf);
       }
-      res.writeHead(200, {
+      const etag = `W/"${st.size.toString(36)}-${Math.floor(st.mtimeMs).toString(36)}"`;
+      const headers = {
         'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
-        'Cache-Control': 'no-store',
-      });
+        'Cache-Control': IMMUTABLE.test(p) ? 'public, max-age=31536000, immutable' : 'no-cache',
+        ETag: etag,
+        'Last-Modified': st.mtime.toUTCString(),
+      };
+      const since = Date.parse(req.headers['if-modified-since'] || '');
+      const fresh = req.headers['if-none-match'] ? req.headers['if-none-match'] === etag : since >= Math.floor(st.mtimeMs / 1000) * 1000;
+      if (fresh) {
+        res.writeHead(304, headers);
+        return res.end();
+      }
+      res.writeHead(200, headers);
       res.end(await readFile(file));
     } catch (e) {
       res.writeHead(e.code === 403 ? 403 : 500);

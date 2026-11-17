@@ -7,7 +7,8 @@
   ],
   "hubspot-sales": [
    "hubspot",
-   "hubspot crm"
+   "hubspot crm",
+   "sales hub"
   ],
   "salesforce-sales": [
    "salesforce",
@@ -35,6 +36,9 @@
   "adobe-acrobat": [
    "adobe sign",
    "acrobat sign"
+  ],
+  "adobe-firefly": [
+   "firefly"
   ],
   "docusign": [
    "docu sign"
@@ -116,7 +120,8 @@
    "d365"
   ],
   "netsuite": [
-   "oracle netsuite"
+   "oracle netsuite",
+   "netsuite"
   ],
   "ringcentral": [
    "ring central",
