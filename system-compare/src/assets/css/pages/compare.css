@@ -254,7 +254,7 @@ html.js .cmp-noscript { display: none; }
    the logo fade; the name turns secondary) */
 .cmp-ptable tr.is-full { cursor: default; }
 .cmp-ptable tr.is-full :is(.pick, .logo) { opacity: 0.45; }
-.cmp-ptable tr.is-full .prod__name { color: var(--ink-3); }
+.cmp-ptable tr.is-full :is(.prod__name, .prod__fit, .score, .score *, .price, .price *) { color: var(--ink-3); }
 .cmp-ptable .prod:hover .prod__name { color: var(--ink); text-decoration: none; }
 .cmp-step__h { font-family: var(--font); font-size: var(--fs-md); font-weight: 600; letter-spacing: 0; margin: var(--s-8) 0 var(--s-3); }
 .cmp-go { position: sticky; bottom: 0; z-index: 50; margin-top: var(--s-6); padding-block: 0.6rem; padding-bottom: max(0.6rem, env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: var(--shadow-bar); }

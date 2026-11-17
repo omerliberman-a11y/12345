@@ -96,6 +96,9 @@
 .fx-offers td:nth-child(3) { width: 17%; }
 .fx-offers td:nth-child(4) { width: 29%; }
 .fx-offers td:nth-child(5) { width: 20%; }
+/* no Notes column (no offer of that supplier has a note): the evidence column takes its room */
+.fx-offers--no-notes tbody th, .fx-offers--no-notes td:nth-child(2), .fx-offers--no-notes td:nth-child(3) { width: 21%; }
+.fx-offers--no-notes td:nth-child(4) { width: 37%; }
 .fx-offers .fx-ev { margin-top: 0; font-size: var(--fs-sm); }
 .fx-offers .price { gap: 0.15rem; }
 .fx-offers .price__unit { font-size: var(--fs-sm); }

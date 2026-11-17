@@ -330,7 +330,7 @@ function renderIndex(ctx) {
     ${ui.trustline([
       `${guides.length} guides`,
       `${sourceTotal} cited sources`,
-      html`Sources checked ${ui.time(ctx, oldest)} – ${ui.time(ctx, newest)}`,
+      html`Sources checked ${ui.time(ctx, oldest)} – ${ui.time(ctx, newest)}`,
       'System Compare research desk',
     ])}
   </header>`;

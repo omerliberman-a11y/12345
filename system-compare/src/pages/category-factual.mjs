@@ -318,6 +318,9 @@ function render(ctx, category) {
     </details>`;
   };
 
+  // a supplier's offer table shows a Notes column only when at least one of its offers carries a note or an announced change
+  const hasNotes = (s) => s.plans.some((plan) => { const o = offerPrice(ctx, plan.pricing); return o.note || o.upcoming; });
+
   const plansBlock = html`<section class="wrap section fx-plans" id="plans" aria-labelledby="plans-h">
     ${ui.sectionHead('Plans and prices', {
       id: 'plans-h',
@@ -333,10 +336,11 @@ function render(ctx, category) {
         </div>
         ${/* in a scroller: a reader's letter spacing can make a note's slash compound ("Implementation/services") wider
             than its column, and the five columns then no longer fit (nothing scrolls at the default spacing) */ ''}
-        <div class="scroller"><table class="dtable fx-stack fx-offers">
+        ${/* a supplier whose offers carry no note gets no Notes column (an empty column read as unfinished) */ ''}
+        <div class="scroller"><table class="${cx('dtable fx-stack fx-offers', !hasNotes(s) && 'fx-offers--no-notes')}">
           <caption class="sr-only">${s.name} — observed offers, checked ${ui.time(ctx, checked)}</caption>
           <thead>
-            <tr><th scope="col">Offer</th><th scope="col">Observed price</th><th scope="col">Billing and tax</th><th scope="col">Notes</th><th scope="col">Evidence</th></tr>
+            <tr><th scope="col">Offer</th><th scope="col">Observed price</th><th scope="col">Billing and tax</th>${hasNotes(s) ? html`<th scope="col">Notes</th>` : ''}<th scope="col">Evidence</th></tr>
           </thead>
           <tbody>
             ${s.plans.map((plan) => {
@@ -345,9 +349,9 @@ function render(ctx, category) {
                 <th scope="row">${plan.name}</th>
                 <td data-l="Observed price">${offerPriceCell(o)}</td>
                 <td data-l="Billing and tax">${o.billing ? html`<span class="fx-p-bill">${o.billing}</span>` : ''}<span class="fx-p-tax">${o.tax}</span></td>
-                <td${attrs({ 'data-l': o.note || o.upcoming ? 'Notes' : null, class: o.note || o.upcoming ? null : 'fx-empty' })}>${o.note ? html`<span class="fx-p-note">${o.note}</span>` : ''}${
+                ${hasNotes(s) ? html`<td${attrs({ 'data-l': o.note || o.upcoming ? 'Notes' : null, class: o.note || o.upcoming ? null : 'fx-empty' })}>${o.note ? html`<span class="fx-p-note">${o.note}</span>` : ''}${
                   o.upcoming ? html`<span class="fx-p-up">Announced invoice change from ${ui.time(ctx, o.upcoming.date)}: ${o.upcoming.text}</span>` : ''
-                }</td>
+                }</td>` : ''}
                 <td data-l="Evidence">${offerEvidence(ctx, srcMap, o)}</td>
               </tr>`;
             })}

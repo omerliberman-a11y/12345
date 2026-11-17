@@ -82,7 +82,7 @@ function render(ctx) {
   const head = html`<header class="wrap page-head page-head--wide">
       <h1>${H1}</h1>
       ${ui.trustline([
-        firstDate ? html`List prices checked ${ui.time(ctx, firstDate)}${lastDate !== firstDate ? html` – ${ui.time(ctx, lastDate)}` : ''}` : null,
+        firstDate ? html`List prices checked ${ui.time(ctx, firstDate)}${lastDate !== firstDate ? html` – ${ui.time(ctx, lastDate)}` : ''}` : null,
         'Taxes excluded',
         'Not a quote',
       ])}

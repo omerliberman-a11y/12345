@@ -52,7 +52,7 @@ function render(ctx) {
   const span = (dates) => {
     const from = dates[0];
     const to = dates[dates.length - 1];
-    return from === to ? ui.time(ctx, to) : html`${ui.time(ctx, from)} – ${ui.time(ctx, to)}`;
+    return from === to ? ui.time(ctx, to) : html`${ui.time(ctx, from)} – ${ui.time(ctx, to)}`;
   };
   const aiChecked = span(aiDates);
 

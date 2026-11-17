@@ -8,7 +8,7 @@ Node ≥ 20 builds all 543 pages in a few seconds.
 node build.mjs --report            # build → dist/
 node scripts/check.mjs dist        # QA every page (links, srcset, anchors, headings, titles, JSON-LD, alt text)
 node scripts/seo-audit.mjs dist    # 36 SEO/GEO acceptance checks (index policy, sitemaps, JSON-LD, answers …)
-node scripts/serve.mjs dist 4173   # preview at http://127.0.0.1:4173/
+node scripts/serve.mjs dist 4173   # preview at http://127.0.0.1:4173/ (caches hashed assets like production)
 node scripts/fetch-catalog.mjs     # refresh data/catalog.json from the live catalog API, then rebuild
 ```
 
@@ -31,13 +31,13 @@ node scripts/fetch-catalog.mjs     # refresh data/catalog.json from the live cat
 | | Before | After |
 |---|---|---|
 | Finding something | Four different matchers; 40 of 70 realistic buyer queries returned nothing | One search (`/` or Ctrl/Cmd+K) that understands “X vs Y”, “A vs B vs C”, “X alternatives”, “free …”, “under $50”, typos, synonyms and questions about the site itself (“how we score”, “how do you make money”); Enter on a product or category name opens it; a full results page at `/search/` |
-| Category page | 3 cards, then the same products again as 361px rows; the matrix hidden in a closed box 7 screens down | Answer first, then one ranked table with instant filters, sort and a shareable URL — the first rows are on the first screen; a capability matrix where every mark opens its evidence and every check explains itself |
+| Category page | 3 cards, then the same products again as 361px rows; the matrix hidden in a closed box 7 screens down | Answer first, then one ranked table with instant filters, sort and a shareable URL — the ranking starts on the first screen at every width, and using a filter or sort never moves the page; a capability matrix where every mark opens its evidence and every check explains itself |
 | Comparing | ≥ 3 clicks and a 7.5 MB download; a 9,000px table inside a 646px scroll box | Tick rows → sticky tray → compare. Verdict and differences first; nothing scrolls inside the page |
 | Score | Five repeated lines per card | One token; click it for the weighted groups and the exact checks that did not earn full credit |
 | Ranking | Tied products listed in alphabetical order with no sign of the tie | Products with the same score share a place (“=1”); score-pending products have no place |
 | Software directory | 94,191px tall (234,323px on a phone), 1 MB of HTML | One row per product, filterable, a few screens long |
 | Header | 190px desktop / 284px mobile, two rows, two search boxes | 64px / 56px, one row, one search, a categories menu, a mobile menu — usable down to 320px and with large text |
-| Page weight | CRM category 347 KB HTML, 135 KB CSS | ≈ 95 KB HTML; 12.7 KB (gzip) shared stylesheet + 0.7–4.6 KB for the page type, never more than two stylesheets; no render-blocking script; no font preloads |
+| Page weight | CRM category 347 KB HTML, 135 KB CSS | ≈ 100 KB HTML; 13.6 KB (gzip) shared stylesheet + 0.7–4.9 KB for the page type, never more than two stylesheets; no render-blocking script; both web fonts preloaded with `font-display: optional`, so no page ever switches face |
 | Accessibility | — | axe-core finds 0 violations on every page at desktop and phone width; every popover, toast and dialog works with the keyboard and a screen reader |
 
 Nothing a buyer could read before has been removed: every score, price, evidence note, source link, date,
@@ -81,36 +81,40 @@ per-cell evidence notes load on demand; they are in the static HTML of every pro
   engines (the rest are one click away on `/categories/`).
 - **Social cards**: 1200×630 JPEG/PNG on every page (the 30 product research cards, article heroes re-framed for
   social, and the site card elsewhere).
-- **Speed**: static HTML, small shared CSS, deferred scripts; self-hosted fonts, not preloaded, with
-  metric-matched fallback faces so nothing moves when they arrive; responsive hero images (`srcset`); logos at no
-  more than 2× their displayed size; the search index loads in two parts after the palette opens; no layout shift
-  when the compare, shortlist, search and cost tools draw themselves.
+- **Speed and stability**: static HTML, small shared CSS, deferred scripts; self-hosted fonts, preloaded, with
+  `font-display: optional` and metric-matched fallback faces — a cached or fast view renders Inter and Rubik from
+  the first paint, a slow first view keeps the fallback faces for that page, and no page ever switches face, so
+  text never moves when a font arrives; responsive hero images (`srcset`); logos at no more than 2× their
+  displayed size; the search index loads in two parts after the palette opens; no layout shift when the compare,
+  shortlist, search and cost tools draw themselves; deep links land on their section at once.
 
 ## How it was verified
 
-Every template was built by one engineer and reviewed by another against the mirrored live site. Then three
+Every template was built by one engineer and reviewed by another against the mirrored live site. Then seven
 rounds of independent site-wide verification ran on the finished build — SEO/GEO, content integrity,
-accessibility (WCAG 2.2 AA), user journeys and compatibility, visual consistency and performance — each followed
-by a fix round. The verifiers' working scripts are not part of the repository; `scripts/check.mjs` and
-`scripts/seo-audit.mjs` are, and both pass:
+accessibility (WCAG 2.2 AA), user journeys and compatibility, visual design and performance — each followed by a
+fix round; the last design review found no blocker and no major issue. The verifiers' working scripts are not
+part of the repository; `scripts/check.mjs` and `scripts/seo-audit.mjs` are, and both pass:
 
 - `check.mjs`: 543 pages, 0 errors, 0 warnings (also for the portable and the sub-path builds).
 - `seo-audit.mjs`: 36 checks, 0 failing (the remaining warnings are listed under “Decisions for the owner”).
 - Content: 117,555 sentences of the old site traced to their new place — no catalog content lost; every number
   recomputed independently (0 mismatches); generated statements checked fact by fact.
 - Accessibility: axe-core 0 violations on all 542 pages at 1440 and 390 px; keyboard walks of every template;
-  reflow at 320 px and 400 % zoom; the site's own text-size, contrast, spacing and motion preferences.
+  reflow at 320 px and 400 % zoom; no page scrolls sideways at 320, 390, 820 or 1440 px with the site's 125 % and
+  150 % text sizes or under the WCAG 1.4.12 text-spacing override; the site's own contrast, spacing and motion
+  preferences.
 - Journeys: the seven buyer jobs, 23 legacy URLs, every must-preserve anchor, old saved shortlists, private
   mode, no JavaScript, three link modes, failed data loads and 126 XSS probes.
-- Performance: Lighthouse 12.8 on 18 page types at phone and desktop size, served with gzip: performance
-  96–100, accessibility 100, best practices 100, SEO 100 on every indexable page (pages kept `noindex` by the
-  index policy score 66–69, because Lighthouse counts `noindex` itself). Largest paint is faster than on the live
-  site in all 18 desktop runs and 16 of 18 phone runs; layout shift is 0 everywhere (the live search, compare and
-  shortlist pages shifted by up to 0.59). On a real Slow-4G connection the first paint lands at 0.45–0.54 s, and
-  the web fonts arrive about 0.5 s later without moving anything. Lighthouse's *simulated* phone first paint
-  reads 1.3–1.7 s on some pages (live site: about 1.05 s). The simulation counts the two web fonts as
-  render-blocking whenever they happen to finish before the first paint of its unthrottled trace. They use
-  `font-display: swap` with size-matched fallback fonts, so they never delay a real paint.
+- Performance: Lighthouse 12.8, served with gzip: desktop performance 100; phone performance 92–98 with the
+  font preloads (95–99 without them); accessibility 100, best practices 100, SEO 100 on every indexable page
+  (pages kept `noindex` by the index policy score 66–69, because Lighthouse counts `noindex` itself).
+- Layout shift: 0 on every page type at 320–1440 px with the web fonts on time, 1–3 s late or blocked (the live
+  search, compare and shortlist pages shifted by up to 0.59). Nothing moves when a font arrives, because no page
+  ever switches face.
+- First paint on an emulated Slow-4G first visit (1.6 Mbps, 150 ms RTT, gzip): 0.7–0.9 s on a phone, and that
+  page keeps the metric-matched fallback faces. The font preloads cost 0.2–0.3 s there (0.5–0.7 s without them);
+  on faster or repeat visits they are what lets Inter and Rubik render from the first paint (see decision 34).
 
 ## Decisions for the owner
 
@@ -177,28 +181,57 @@ Switches live in `site.config.mjs`; the rest are questions only the publisher ca
     the site; keep, restyle or drop.
 22. **Phones**: the quick answer is clamped to three lines with “Show the full answer” (the full text is in the
     HTML); key facts on product profiles are collapsed; removing a product from the compare tool on a phone goes
-    through “Change products”.
+    through “Change products”. Below 62em, product profiles show Visit and Add to shortlist right under the name
+    and score (one copy rendered per width, same placement and tracking attributes), so the quick answer starts
+    about 60 px lower (up to 120 px on affiliate pages, where the per-link commission sentence also shows).
+23. **Category first screen**: the section menu (Ranking, Capabilities, Costs …) slides in once the visitor scrolls
+    past the page head, on every width (keyboard users reach it in normal tab order); from 1250 px the evidence line
+    sits beside the quick answer; “Must-have capabilities” leads the filter row; on phones the sort shows one word
+    (“Score”, “Price”, “A–Z”, “Coverage”) and a filtered count reads “N of M tools · Clear”. Please confirm.
+24. **Search wording**: “X vs” with no second product opens the compare tool with X chosen (“Compare X with another
+    product”; for documentary suppliers “Compare X with the other suppliers”); brand words shared by several
+    products (zoho, google, microsoft …) list each product as Suggestions, Zoho CRM first because the alias “zoho”
+    names it; category questions (“crm pricing”, “best crm”) lead with the category's costs section or ranking;
+    “<supplier> pricing” opens that supplier's plans (“Plans and prices · <category>”). With a query, `/search/`
+    hides its example paragraph and its privacy sentence (“Searches run in your browser …”) unless nothing is found;
+    the palette footer still says it.
+25. **Shortlist on phones**: with storage blocked (private mode) the tray says “Not saved · Kept only until you
+    leave this page”; with two or more products the phone tray shows logos or initials (names in the accessible
+    name and title).
+26. **Pricing sources**: category tables now print the plan and a direct “Source ↗” link to the vendor's pricing
+    page, as the live cards did (“Official pricing source ↗”); the comparison pages' price-source row goes through
+    `/go/{id}/?intent=pricing` (decision 9). Choose one approach for both. Plan names are visible from 48em and read
+    only by screen readers on phones (showing them adds a line to many phone rows).
+27. **Tables on tablets**: from 768 to 1135 px alternatives rows use the phone's compact row (small logo beside the
+    name) so names never break mid-word; on the brevo and pulseem profiles at 768–791 and 992–1011 px one row's logo
+    plate is narrower so the table fits its column. Comparison library: groups show their first pairs in published
+    order with the rest in a disclosure (4,251 px at 1440, was 5,152); featuring the editorial and indexable
+    comparisons first would reorder the library.
 
 **Accessibility and performance standards**
 
-23. **Consent panel** now comes right after the skip link in reading order (its position on screen and the
+28. **Consent panel** now comes right after the skip link in reading order (its position on screen and the
     consent logic are unchanged), so keyboard and screen-reader users meet it first. Please sign off.
-24. **/accessibility/ statement** (your text): Space activation, visible focus, text size and reduce motion now
+29. **/accessibility/ statement** (your text): Space activation, visible focus, text size and reduce motion now
     work as it promises; review its “Known limitations”. A VoiceOver check on an iPhone is recommended before launch:
     stacked tables keep their table semantics in Chromium, but WebKit could not be tested here.
-25. **Touch targets**: WCAG 2.2 AA (24 px) is met everywhere; every control is 44 px on touch; small links inside
-    text and tables use invisible 44 px hit areas. Decide whether dense in-table source links must also be 44 px
-    boxes.
-26. **Small text**: nothing is under 12 px, but evidence tables on comparison and product pages keep 12–13 px
+30. **Touch targets**: WCAG 2.2 AA (24 px) is met everywhere; every control is 44 px on touch; small links inside
+    text and tables use invisible 44 px hit areas; the in-row pricing “Source” link has a 31–46 px area so it does
+    not take taps from the next row. Decide whether dense in-table source links must also be 44 px boxes.
+31. **Small text**: nothing is under 12 px, but evidence tables on comparison and product pages keep 12–13 px
     captions, so more than 15 % of characters are under 14 px on about 250 pages. Density or the 15 % target?
-27. **Page budgets**: every product profile carries all of its capability evidence in static HTML, so all 149 are
+32. **Page budgets**: every product profile carries all of its capability evidence in static HTML, so all 149 are
     over the 60 KB content-page budget (median 75 KB, gzip 15 KB) and three pages are over 3,000 elements. Accept a
     higher budget for evidence-carrying pages, or move non-primary categories to links.
-28. **Hosting headers**: HOSTING.md proposes the policy; what the host can set, and whether its CDN keys `/data/`
+33. **Hosting headers**: HOSTING.md proposes the policy; what the host can set, and whether its CDN keys `/data/`
     on the query string, is the host's call. The search engine is prefetched on every page (5–7 KB gzip); skip it
     on Save-Data connections if you prefer.
-29. **Fonts**: Inter is 48 KB, over the 40 KB per-file budget; subsetting it needs font tools that were not
-    available here (`pyftsubset`).
+34. **Fonts**: both web fonts are preloaded and use `font-display: optional`. Every cached view and every fast
+    first visit renders Inter and Rubik from the first paint, and no page ever switches face; a slow first visit
+    paints about 0.25 s later than it would without the preloads and keeps the metric-matched fallback faces for
+    that page. To drop the preloads (faster slow first paint, but the first page of every visit in the fallback
+    faces), delete the `${fontPreloads(ctx)}` line in `src/lib/layout.mjs`. Inter is 48 KB, over the 40 KB
+    per-file budget; subsetting it needs font tools that were not available here (`pyftsubset`).
 
 ## How it is put together
 

@@ -264,7 +264,7 @@ function render(ctx, category) {
   // order in one word ("Score", "Price", "A–Z"). A filter that would match nothing is not offered. The must-have panel takes focus itself (tabindex -1, as in
   // ui.scoreHelp), so a press on its text does not move focus out and close it mid-press.
   const sortOptions = [
-    unscored ? { v: 'cov', label: 'Sort: share checked', short: 'share checked', phone: 'Coverage' } : { v: 'score', label: 'Sort: score', short: 'score', phone: 'Score' },
+    unscored ? { v: 'cov', label: 'Sort: coverage (share checked)', short: 'coverage', phone: 'Coverage' } : { v: 'score', label: 'Sort: score', short: 'score', phone: 'Score' },
     { v: 'price', label: 'Sort: price, low to high', short: 'lowest price', phone: 'Price' },
     { v: 'name', label: 'Sort: name A–Z', short: 'name A–Z', phone: 'A–Z' },
   ];

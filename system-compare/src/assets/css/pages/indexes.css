@@ -285,7 +285,7 @@ html[data-a11y-size] .ix-cmp .linklist a > .ix-vsmeta { flex: 0 1 auto; min-widt
 @media (min-width: 48em) and (max-width: 70.99em) {
   html:not([data-a11y-size]) .ix-alt .ptable { --plate-w: 4rem; --plate-h: 1.75rem; --plate-img: 1.25rem; }
   html:not([data-a11y-size]) .ix-alt .ptable .prod { display: flow-root; }
-  html:not([data-a11y-size]) .ix-alt .ptable .prod .logo { float: left; margin: 0 0.5rem 0 0; }
+  html:not([data-a11y-size]) .ix-alt .ptable .prod .logo { float: left; margin: 0 0.5rem 0.2rem 0; } /* the phone row's float margin: a name's second line starts under its first */
   html:not([data-a11y-size]) .ix-alt .ptable .prod__name { line-height: 1.75rem; }
   html:not([data-a11y-size]) .ix-alt .ptable .prod__name--word { display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
   html:not([data-a11y-size]) .ix-alt .ptable .prod__fit { clear: left; }

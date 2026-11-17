@@ -1,8 +1,12 @@
 // Shared HTML components. Every function takes ctx first and returns a Raw fragment (see html.mjs).
 // Styles live in src/assets/css/components.css — class names here and there must stay in sync.
 
-import { html, raw, attrs, cx, join, Raw } from './html.mjs';
+import { html, raw, attrs, cx, join, Raw, esc } from './html.mjs';
 import { icon } from './layout.mjs';
+
+/** A one-word name with an inner capital ('ActiveCampaign', 'GetResponse') may break only between its parts when a
+ *  narrow cell forces it (<wbr> at each lower-to-upper boundary; the text itself is unchanged). */
+const wordBreaks = (name) => (/\s/.test(String(name).trim()) ? name : raw(esc(name).replace(/([a-z])([A-Z])/g, '$1<wbr>$2')));
 
 // ------------------------------------------------------------------ small pieces
 // the visible date never wraps away from its year (no-break spaces; the datetime attribute is the machine-readable form)
@@ -243,7 +247,7 @@ export function productTable(ctx, categoryId, rows, opts = {}) {
             <a class="prod" href="${ctx.url.software(vendor.id)}">
               ${logo(ctx, vendor, { lazy: eagerIds ? !eagerIds.has(vendor.id) : i >= lazyFrom })}
               <span class="prod__text">
-                <span class="${cx('prod__name', !/\s/.test(vendor.name.trim()) && 'prod__name--word')}">${vendor.name}</span>${s.recommended ? tag('Recommended', 'top') : ''}${vendor.id === focalId && focalTag ? tag(focalTag) : ''}
+                <span class="${cx('prod__name', !/\s/.test(vendor.name.trim()) && 'prod__name--word')}">${wordBreaks(vendor.name)}</span>${s.recommended ? tag('Recommended', 'top') : ''}${vendor.id === focalId && focalTag ? tag(focalTag) : ''}
                 <span class="prod__fit">${note || vendor.bestFor}</span>
               </span>
             </a>

@@ -189,7 +189,8 @@ Rules that keep every page consistent:
   short of the 0.5rem gap, so it looks the same.
 - Plain words in the interface: "Score", "checked", "Score pending", "Shortlist", "Source", "How we score".
 - Every interactive target ≥ 44px tall on touch; visible focus; no horizontal page scroll at 390px (wide
-  tables go inside `<div class="scroller">`); no nested vertical scrolling ever.
+  tables go inside `<div class="scroller">`); no nested vertical scrolling ever. Keyboard focus that lands on a link
+  partly outside a scroller brings it fully into view (core.js, focus-visible only, so a click never moves a table).
 - Sticky chrome budget: header (56/64px) + optional `.subnav` (48px) + compare tray when non-empty. On category
   pages the `.subnav` takes no room in the first screen: it waits under the opaque page head (`.cat-top`, stacked
   above it, `margin-top: -(3rem + 1px)` on the menu) and comes into view, sticky, as the head scrolls away; keyboard
@@ -234,7 +235,8 @@ first rows of a table the script re-orders eager.
 Layout rules learned the hard way:
 - Phone product rows: a compact plate floated beside the name, the fit line and price at full width under it. A one-word
   name (`.prod__name--word`, set by ui.productTable) is one inline box: it moves below the plate whole, and breaks inside
-  that box only where it is wider than the whole cell (a reader's letter spacing at 320px), never under the score. Do not
+  that box only where it is wider than the whole cell (a reader's letter spacing at 320px), never under the score; a
+  camel-case name ("ActiveCampaign") carries a `<wbr>` at its inner capital, so such a break falls between its parts. Do not
   give the name column an intrinsic minimum instead: the floated plate and the price row (which spans both columns)
   inflate its min-content, re-flowing rows that had room and pushing some profiles 52px past a 320px screen.
   Alternatives pages keep this row shape from 48em to 71em (indexes.css): beside their score, price, AI and "vs" columns

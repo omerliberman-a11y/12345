@@ -187,7 +187,10 @@
         }
       });
       if (!total) {
-        frag.appendChild(el('div.empty', null, [el('b', { text: 'No results for “' + q + '”.' }), d.createTextNode(state.over ? limit.message : 'Check the spelling, try a category name such as “CRM” or “payroll”, or start from a category below.')]));
+        frag.appendChild(el('div.empty', null, [el('b', { text: 'No results for “' + q + '”.' }), d.createTextNode(state.over ? limit.message : 'Check the spelling, try a category name such as “CRM” or “payroll”, or start from a category below.'),
+          // the examples under the field are hidden once there is a query; when nothing is found they help most, so they
+          // are repeated here (inside the new results, so nothing painted moves), with the privacy line
+          el('p.fineprint', { text: 'Try a product (“HubSpot”), a need (“help desk”), a comparison (“Asana vs monday”), “QuickBooks alternatives”, “free email marketing” or “payroll under $50”. Searches run in your browser and are not sent anywhere.' })]));
         if (r.catHits && r.catHits.length) {
           var ulc = el('ul.srch__list'); r.catHits.slice(0, 4).forEach(function (x) { ulc.appendChild(row(x)); }); frag.appendChild(ulc);
         }
